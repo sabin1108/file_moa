@@ -1,0 +1,829 @@
+{
+  "checkedAt": "2026-10-26T01:26:45.887Z",
+  "base": "http://127.0.0.1:3000",
+  "scope": "Synthetic display/callback review only; no native picker, storage or login integration",
+  "checks": [
+    {
+      "name": "1440 미연결: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "연결한 폴더 없음",
+        "status": "미연결",
+        "actions": [
+          "폴더 연결"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1440 미연결: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "연결한 폴더 없음",
+        "status": "미연결",
+        "actions": [
+          "폴더 연결"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1440 미연결: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "1440 미연결: 폴더 연결 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 폴더 연결 · 누른 횟수: 1회",
+        "status": "미연결"
+      }
+    },
+    {
+      "name": "1440 다시 연결 필요: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "다시 연결 필요",
+        "actions": [
+          "다시 연결",
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1440 다시 연결 필요: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "다시 연결 필요",
+        "actions": [
+          "다시 연결",
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1440 다시 연결 필요: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "1440 다시 연결 필요: 다시 연결 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 다시 연결 · 누른 횟수: 1회",
+        "status": "다시 연결 필요"
+      }
+    },
+    {
+      "name": "1440 다시 연결 필요: 연결 해제 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 연결 해제 · 누른 횟수: 2회",
+        "status": "다시 연결 필요"
+      }
+    },
+    {
+      "name": "1440 연결됨: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1440 연결됨: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1440 연결됨: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "1440 연결됨: 연결 해제 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 연결 해제 · 누른 횟수: 1회",
+        "status": "연결됨"
+      }
+    },
+    {
+      "name": "1440 긴 이름: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "2026년_프로젝트별_학습기록과참고자료를모아둔아주긴폴더이름_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1440 긴 이름: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "2026년_프로젝트별_학습기록과참고자료를모아둔아주긴폴더이름_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1440 긴 이름: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "1440 긴 이름: 연결 해제 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 연결 해제 · 누른 횟수: 1회",
+        "status": "연결됨"
+      }
+    },
+    {
+      "name": "1440 Enter calls reconnect",
+      "passed": true,
+      "detail": {
+        "text": "마지막 호출: 다시 연결 · 누른 횟수: 1회",
+        "focus": "다시 연결"
+      }
+    },
+    {
+      "name": "1440 Tab order and visible focus",
+      "passed": true,
+      "detail": {
+        "text": "연결 해제",
+        "outline": "solid",
+        "width": "2px"
+      }
+    },
+    {
+      "name": "1440 Space calls disconnect",
+      "passed": true
+    },
+    {
+      "name": "1440 callback log is sole live region in scene",
+      "passed": true
+    },
+    {
+      "name": "1440 no browser exceptions",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "1920 미연결: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "연결한 폴더 없음",
+        "status": "미연결",
+        "actions": [
+          "폴더 연결"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1920 미연결: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "연결한 폴더 없음",
+        "status": "미연결",
+        "actions": [
+          "폴더 연결"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1920 미연결: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "1920 미연결: 폴더 연결 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 폴더 연결 · 누른 횟수: 1회",
+        "status": "미연결"
+      }
+    },
+    {
+      "name": "1920 다시 연결 필요: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "다시 연결 필요",
+        "actions": [
+          "다시 연결",
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1920 다시 연결 필요: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "다시 연결 필요",
+        "actions": [
+          "다시 연결",
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1920 다시 연결 필요: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "1920 다시 연결 필요: 다시 연결 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 다시 연결 · 누른 횟수: 1회",
+        "status": "다시 연결 필요"
+      }
+    },
+    {
+      "name": "1920 다시 연결 필요: 연결 해제 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 연결 해제 · 누른 횟수: 2회",
+        "status": "다시 연결 필요"
+      }
+    },
+    {
+      "name": "1920 연결됨: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1920 연결됨: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1920 연결됨: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "1920 연결됨: 연결 해제 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 연결 해제 · 누른 횟수: 1회",
+        "status": "연결됨"
+      }
+    },
+    {
+      "name": "1920 긴 이름: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "2026년_프로젝트별_학습기록과참고자료를모아둔아주긴폴더이름_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1920 긴 이름: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "2026년_프로젝트별_학습기록과참고자료를모아둔아주긴폴더이름_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "1920 긴 이름: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "1920 긴 이름: 연결 해제 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 연결 해제 · 누른 횟수: 1회",
+        "status": "연결됨"
+      }
+    },
+    {
+      "name": "1920 Enter calls reconnect",
+      "passed": true,
+      "detail": {
+        "text": "마지막 호출: 다시 연결 · 누른 횟수: 1회",
+        "focus": "다시 연결"
+      }
+    },
+    {
+      "name": "1920 Tab order and visible focus",
+      "passed": true,
+      "detail": {
+        "text": "연결 해제",
+        "outline": "solid",
+        "width": "2px"
+      }
+    },
+    {
+      "name": "1920 Space calls disconnect",
+      "passed": true
+    },
+    {
+      "name": "1920 callback log is sole live region in scene",
+      "passed": true
+    },
+    {
+      "name": "1920 no browser exceptions",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "768 미연결: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "연결한 폴더 없음",
+        "status": "미연결",
+        "actions": [
+          "폴더 연결"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "768 미연결: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "연결한 폴더 없음",
+        "status": "미연결",
+        "actions": [
+          "폴더 연결"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "768 미연결: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "768 미연결: 폴더 연결 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 폴더 연결 · 누른 횟수: 1회",
+        "status": "미연결"
+      }
+    },
+    {
+      "name": "768 다시 연결 필요: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "다시 연결 필요",
+        "actions": [
+          "다시 연결",
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "768 다시 연결 필요: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "다시 연결 필요",
+        "actions": [
+          "다시 연결",
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "768 다시 연결 필요: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "768 다시 연결 필요: 다시 연결 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 다시 연결 · 누른 횟수: 1회",
+        "status": "다시 연결 필요"
+      }
+    },
+    {
+      "name": "768 다시 연결 필요: 연결 해제 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 연결 해제 · 누른 횟수: 2회",
+        "status": "다시 연결 필요"
+      }
+    },
+    {
+      "name": "768 연결됨: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "768 연결됨: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "768 연결됨: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "768 연결됨: 연결 해제 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 연결 해제 · 누른 횟수: 1회",
+        "status": "연결됨"
+      }
+    },
+    {
+      "name": "768 긴 이름: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "2026년_프로젝트별_학습기록과참고자료를모아둔아주긴폴더이름_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "768 긴 이름: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "2026년_프로젝트별_학습기록과참고자료를모아둔아주긴폴더이름_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 40,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "768 긴 이름: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "768 긴 이름: 연결 해제 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 연결 해제 · 누른 횟수: 1회",
+        "status": "연결됨"
+      }
+    },
+    {
+      "name": "768 Enter calls reconnect",
+      "passed": true,
+      "detail": {
+        "text": "마지막 호출: 다시 연결 · 누른 횟수: 1회",
+        "focus": "다시 연결"
+      }
+    },
+    {
+      "name": "768 Tab order and visible focus",
+      "passed": true,
+      "detail": {
+        "text": "연결 해제",
+        "outline": "solid",
+        "width": "2px"
+      }
+    },
+    {
+      "name": "768 Space calls disconnect",
+      "passed": true
+    },
+    {
+      "name": "768 callback log is sole live region in scene",
+      "passed": true
+    },
+    {
+      "name": "768 no browser exceptions",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "390 미연결: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "연결한 폴더 없음",
+        "status": "미연결",
+        "actions": [
+          "폴더 연결"
+        ],
+        "overflow": false,
+        "minHeight": 44,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "390 미연결: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "연결한 폴더 없음",
+        "status": "미연결",
+        "actions": [
+          "폴더 연결"
+        ],
+        "overflow": false,
+        "minHeight": 44,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "390 미연결: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "390 미연결: 폴더 연결 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 폴더 연결 · 누른 횟수: 1회",
+        "status": "미연결"
+      }
+    },
+    {
+      "name": "390 다시 연결 필요: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "다시 연결 필요",
+        "actions": [
+          "다시 연결",
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 44,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "390 다시 연결 필요: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "다시 연결 필요",
+        "actions": [
+          "다시 연결",
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 44,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "390 다시 연결 필요: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "390 다시 연결 필요: 다시 연결 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 다시 연결 · 누른 횟수: 1회",
+        "status": "다시 연결 필요"
+      }
+    },
+    {
+      "name": "390 다시 연결 필요: 연결 해제 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 연결 해제 · 누른 횟수: 2회",
+        "status": "다시 연결 필요"
+      }
+    },
+    {
+      "name": "390 연결됨: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 44,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "390 연결됨: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "학습 노트",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 44,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "390 연결됨: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "390 연결됨: 연결 해제 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 연결 해제 · 누른 횟수: 1회",
+        "status": "연결됨"
+      }
+    },
+    {
+      "name": "390 긴 이름: name/status/actions",
+      "passed": true,
+      "detail": {
+        "title": "2026년_프로젝트별_학습기록과참고자료를모아둔아주긴폴더이름_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 44,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "390 긴 이름: fit/target size",
+      "passed": true,
+      "detail": {
+        "title": "2026년_프로젝트별_학습기록과참고자료를모아둔아주긴폴더이름_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        "status": "연결됨",
+        "actions": [
+          "연결 해제"
+        ],
+        "overflow": false,
+        "minHeight": 44,
+        "record": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+      }
+    },
+    {
+      "name": "390 긴 이름: fresh callback log",
+      "passed": true,
+      "detail": "호출 기록 없음 · 위 버튼을 눌러 확인하세요."
+    },
+    {
+      "name": "390 긴 이름: 연결 해제 callback once, input preserved",
+      "passed": true,
+      "detail": {
+        "record": "마지막 호출: 연결 해제 · 누른 횟수: 1회",
+        "status": "연결됨"
+      }
+    },
+    {
+      "name": "390 Enter calls reconnect",
+      "passed": true,
+      "detail": {
+        "text": "마지막 호출: 다시 연결 · 누른 횟수: 1회",
+        "focus": "다시 연결"
+      }
+    },
+    {
+      "name": "390 Tab order and visible focus",
+      "passed": true,
+      "detail": {
+        "text": "연결 해제",
+        "outline": "solid",
+        "width": "2px"
+      }
+    },
+    {
+      "name": "390 Space calls disconnect",
+      "passed": true
+    },
+    {
+      "name": "390 callback log is sole live region in scene",
+      "passed": true
+    },
+    {
+      "name": "390 no browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "frames": [
+    "docs/verification/source-folder-connection/1440-permission.png",
+    "docs/verification/source-folder-connection/1440-long-name.png",
+    "docs/verification/source-folder-connection/390-permission.png",
+    "docs/verification/source-folder-connection/390-long-name.png"
+  ]
+}

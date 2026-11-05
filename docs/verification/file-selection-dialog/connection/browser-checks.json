@@ -1,0 +1,413 @@
+{
+  "at": "2026-10-28T07:37:40.159Z",
+  "base": "http://127.0.0.1:3009",
+  "boundary": "Real settings and files UI, shared workspace navigation, IndexedDB, Web Locks and OPFS; injected picker/permission/failures; NOT native permission dialog, external source folder or real login verification",
+  "fixture": "Synthetic OPFS directories and one sentinel text file; deterministic names; no random seed; core regression set, no holdout",
+  "checks": [
+    {
+      "name": "initial disconnected; no permission request",
+      "passed": true
+    },
+    {
+      "name": "pending blocks repeat actions and has explanatory status",
+      "passed": true
+    },
+    {
+      "name": "one pending selection opens only one picker",
+      "passed": true
+    },
+    {
+      "name": "pending selection survives route change and blocks duplicate actions in files",
+      "passed": true
+    },
+    {
+      "name": "connect saves real handle, read mode and activation",
+      "passed": true
+    },
+    {
+      "name": "files shares connection with read-only queries, no permission request/picker/storage reload",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "settings return retains the same connection",
+      "passed": true
+    },
+    {
+      "name": "cancel retains previous folder and shows attention",
+      "passed": true
+    },
+    {
+      "name": "denied selection retains previous connection",
+      "passed": true
+    },
+    {
+      "name": "storage failure preserves old name and stored handle",
+      "passed": true
+    },
+    {
+      "name": "storage error and prior connection are shared with files",
+      "passed": true
+    },
+    {
+      "name": "replacement succeeds only after persistence",
+      "passed": true
+    },
+    {
+      "name": "settings has no simulated profile inputs or tabs",
+      "passed": true
+    },
+    {
+      "name": "reload restores handle as needs-permission without automatic query/request",
+      "passed": true
+    },
+    {
+      "name": "reconnect denial keeps name and retry",
+      "passed": true
+    },
+    {
+      "name": "denied 1440: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "다시 연결",
+            "height": 40.000030517578125
+          },
+          {
+            "label": "연결 해제",
+            "height": 40.000030517578125
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 40
+          }
+        ]
+      }
+    },
+    {
+      "name": "denied 390: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "다시 연결",
+            "height": 44
+          },
+          {
+            "label": "연결 해제",
+            "height": 44
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "name": "keyboard reconnect has user activation and read mode",
+      "passed": true
+    },
+    {
+      "name": "failed removal stops memory but keeps retry and disables new selection",
+      "passed": true
+    },
+    {
+      "name": "disconnect failure follows navigation and still blocks reselection",
+      "passed": true
+    },
+    {
+      "name": "remove-failed 390: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "폴더 연결",
+            "height": 44
+          },
+          {
+            "label": "연결 해제 다시 시도",
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "name": "removal retry deletes only stored reference and keeps original file",
+      "passed": true
+    },
+    {
+      "name": "files reflects removal retried from settings",
+      "passed": true
+    },
+    {
+      "name": "connected 1440: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "연결 해제",
+            "height": 40
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 40
+          }
+        ]
+      }
+    },
+    {
+      "name": "connected 1920: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "연결 해제",
+            "height": 40.000030517578125
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 40
+          }
+        ]
+      }
+    },
+    {
+      "name": "connected 768: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "연결 해제",
+            "height": 40
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 40
+          }
+        ]
+      }
+    },
+    {
+      "name": "connected 390: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "연결 해제",
+            "height": 44
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "name": "route roundtrip 1: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 2: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 3: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 4: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 5: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 6: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 7: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 8: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 9: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 10: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrips do not reload handles or ask permission",
+      "passed": true
+    },
+    {
+      "name": "shared route journey measurement",
+      "passed": true,
+      "detail": {
+        "routeTimes": [
+          35.26590000000033,
+          24.651800000000094,
+          28.608799999999974,
+          105.61789999999974,
+          99.58690000000024,
+          98.89930000000004,
+          102.94029999999975,
+          101.97159999999985,
+          103.2556999999997,
+          102.50980000000027
+        ],
+        "routeHeapBefore": 7668264,
+        "routeHeapAfter": 8482016,
+        "garbageCollectionForced": false,
+        "note": "Ten files-chat-settings-files loops; wall time includes automation and route polling; no native picker wait."
+      }
+    },
+    {
+      "name": "browser back preserves connection",
+      "passed": true
+    },
+    {
+      "name": "browser forward preserves connection",
+      "passed": true
+    },
+    {
+      "name": "repeated selection measurement (not native user wait)",
+      "passed": true,
+      "detail": {
+        "timing": [
+          11.399999998509884,
+          11.399999998509884,
+          13,
+          11.300000000745058,
+          8.5,
+          13.400000002235174,
+          7.399999998509884,
+          11.099999997764826,
+          7.399999998509884,
+          11
+        ],
+        "heapBefore": 8803964,
+        "heapAfter": 10532964,
+        "garbageCollectionForced": false
+      }
+    },
+    {
+      "name": "leaving workspace stops late selection and preview does not read handles",
+      "passed": true
+    },
+    {
+      "name": "return from preview starts a new lifecycle needing explicit permission",
+      "passed": true
+    },
+    {
+      "name": "preload error does not show disconnected actions",
+      "passed": true
+    },
+    {
+      "name": "preload failure is shared in files with retry",
+      "passed": true
+    },
+    {
+      "name": "preload retry restores without permission request",
+      "passed": true
+    },
+    {
+      "name": "unsupported browser offers explanation without false connection",
+      "passed": true
+    },
+    {
+      "name": "unsupported 390: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": []
+      }
+    },
+    {
+      "name": "no external or mutating HTTP requests",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "no React hydration or console errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timing": [
+    11.399999998509884,
+    11.399999998509884,
+    13,
+    11.300000000745058,
+    8.5,
+    13.400000002235174,
+    7.399999998509884,
+    11.099999997764826,
+    7.399999998509884,
+    11
+  ],
+  "visualFindings": [
+    {
+      "width": 1440,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "blank-gap",
+          "width": 1440,
+          "message": "A 448px stretch at 484px holds nothing.",
+          "fix": "Check that it is a deliberate rest (once per page at most); otherwise close it to the normal section gap."
+        },
+        {
+          "level": "WARN",
+          "id": "panel-void",
+          "width": 1440,
+          "message": "1 card(s) hold a blank band inside: 50px in \"폴더 연결 관리\".",
+          "fix": "A card stretches to its neighbour only when it has content to fill. Keep a legend or a note directly under its chart (only an action or a total may sit at a stretched card's foot), let a short card keep its own height (align-items: start), and let a filtered block shrink to its rows."
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "blank-gap",
+          "width": 1920,
+          "message": "A 448px stretch at 484px holds nothing.",
+          "fix": "Check that it is a deliberate rest (once per page at most); otherwise close it to the normal section gap."
+        },
+        {
+          "level": "WARN",
+          "id": "panel-void",
+          "width": 1920,
+          "message": "1 card(s) hold a blank band inside: 50px in \"폴더 연결 관리\".",
+          "fix": "A card stretches to its neighbour only when it has content to fill. Keep a legend or a note directly under its chart (only an action or a total may sit at a stretched card's foot), let a short card keep its own height (align-items: start), and let a filtered block shrink to its rows."
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "findings": []
+    },
+    {
+      "width": 390,
+      "findings": []
+    }
+  ]
+}

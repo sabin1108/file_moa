@@ -1,0 +1,48 @@
+pnpm.exe : $ pnpm --filter @personal-ai/web lint
+위치 C:\Users\sabin\AppData\Roaming\npm\pnpm.ps1:14 문자:3
++   & "$basedir/node_modules/pnpm/pnpm.exe"   $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ pnpm --filter @personal-ai/web lint:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+$ eslint .
+
+E:\project\ai_folder_project\apps\web\src\app\(workspace)\files\page.tsx
+  4:16  error  app/(workspace)/files/page.tsx cannot depend on features/prototype/components/workspace-ui.module.css. Shared UI belongs in src/shared; examples belong in src/prototypes  structure/feature-boundary
+
+E:\project\ai_folder_project\apps\web\src\app\(workspace)\page.tsx
+  4:22  error  app/(workspace)/page.tsx cannot depend on features/prototype/styles/composer.module.css. Shared UI belongs in src/shared; examples belong in src/prototypes  structure/feature-boundary
+
+E:\project\ai_folder_project\apps\web\src\app\(workspace)\settings\page.tsx
+  3:16  error  app/(workspace)/settings/page.tsx cannot depend on features/prototype/components/workspace-ui.module.css. Shared UI belongs in src/shared; examples belong in src/prototypes  structure/feature-boundary
+
+E:\project\ai_folder_project\apps\web\src\features\local-folders\FolderListingView.tsx
+  4:31  error  features/local-folders/FolderListingView.tsx cannot depend on features/prototype/components/PreviewButton. Shared UI belongs in src/shared; examples belong in src/prototypes  structure/feature-boundary
+
+E:\project\ai_folder_project\apps\web\src\features\local-folders\SourceDocumentPreview.tsx
+  4:31  error  features/local-folders/SourceDocumentPreview.tsx cannot depend on features/prototype/components/PreviewButton. Shared UI belongs in src/shared; examples belong in src/prototypes  structure/feature-boundary
+
+E:\project\ai_folder_project\apps\web\src\features\local-folders\SourceFolderConnection.tsx
+  4:28  error  features/local-folders/SourceFolderConnection.tsx cannot depend on features/prototype/settings/SettingRow. Shared UI belongs in src/shared; examples belong in src/prototypes       structure/feature-boundary
+  5:29  error  features/local-folders/SourceFolderConnection.tsx cannot depend on features/prototype/components/StatusLabel. Shared UI belongs in src/shared; examples belong in src/prototypes    structure/feature-boundary
+  6:31  error  features/local-folders/SourceFolderConnection.tsx cannot depend on features/prototype/components/PreviewButton. Shared UI belongs in src/shared; examples belong in src/prototypes  structure/feature-boundary
+
+E:\project\ai_folder_project\apps\web\src\features\local-folders\SourceFolderSettings.tsx
+  4:31  error  features/local-folders/SourceFolderSettings.tsx cannot depend on features/prototype/components/PreviewButton. Shared UI belongs in src/shared; examples belong in src/prototypes  structure/feature-boundary
+
+E:\project\ai_folder_project\apps\web\src\features\workspace\UnavailableFeature.tsx
+  1:28  error  features/workspace/UnavailableFeature.tsx cannot depend on features/prototype/components/ActionLink. Shared UI belongs in src/shared; examples belong in src/prototypes  structure/feature-boundary
+
+E:\project\ai_folder_project\apps\web\src\features\workspace\WorkspaceShell.tsx
+  4:28  error  features/workspace/WorkspaceShell.tsx cannot depend on features/prototype/components/ActionLink. Shared UI belongs in src/shared; examples belong in src/prototypes               structure/feature-boundary
+  5:21  error  features/workspace/WorkspaceShell.tsx cannot depend on features/prototype/styles/sidebar.module.css. Shared UI belongs in src/shared; examples belong in src/prototypes           structure/feature-boundary
+  6:16  error  features/workspace/WorkspaceShell.tsx cannot depend on features/prototype/components/workspace-ui.module.css. Shared UI belongs in src/shared; examples belong in src/prototypes  structure/feature-boundary
+
+✖ 13 problems (13 errors, 0 warnings)
+
+[ELIFECYCLE] Command failed with exit code 1.
+Error: ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL
+
+  × "pnpm recursive run" failed in E:\project\ai_folder_project\apps\web
+
+[ELIFECYCLE] Command failed with exit code 1.

@@ -1,0 +1,33 @@
+{
+  "name": "personal-ai-workspace",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@12.15.0",
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @personal-ai/web dev",
+    "build": "pnpm --filter @personal-ai/web build",
+    "start": "pnpm --filter @personal-ai/web start",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm --filter @personal-ai/web lint",
+    "test": "vitest run",
+    "test:boundaries": "node tests/architecture/check-server-boundary.mjs",
+    "test:structure": "node tests/architecture/check-feature-boundary.mjs",
+    "test:s0-graph": "node tests/architecture/check-s0-module-graph.mjs",
+    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm test:boundaries && pnpm test:structure && pnpm build"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "typescript": "5.9.3",
+    "vitest": "5.0.5"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24.22.1",
+      "onFail": "download"
+    }
+  }
+}

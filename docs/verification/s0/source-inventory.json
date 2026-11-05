@@ -1,0 +1,46 @@
+{
+  "inspectedAt": "2026-10-25T05:39:28.072Z",
+  "scope": "User-authorized note directory; hidden entries and links excluded",
+  "directories": 57,
+  "files": 216,
+  "skipped": 3,
+  "counts": {
+    ".md": {
+      "count": 204,
+      "bytes": 1481655,
+      "maxBytes": 61346
+    },
+    ".png": {
+      "count": 8,
+      "bytes": 1891377,
+      "maxBytes": 393954
+    },
+    ".base": {
+      "count": 1,
+      "bytes": 37,
+      "maxBytes": 37
+    },
+    ".resolved": {
+      "count": 1,
+      "bytes": 5123,
+      "maxBytes": 5123
+    },
+    ".html": {
+      "count": 1,
+      "bytes": 21058,
+      "maxBytes": 21058
+    },
+    ".sql": {
+      "count": 1,
+      "bytes": 5147,
+      "maxBytes": 5147
+    }
+  },
+  "sample": {
+    "count": 3,
+    "utf8Valid": 3,
+    "stableReads": 3,
+    "contentExported": false
+  },
+  "limitations": "Metadata inventory plus at most three bounded UTF-8/hash reads. No browser permission test, PDF parsing or source writes."
+}

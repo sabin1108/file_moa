@@ -1,0 +1,30 @@
+{
+  "at": "2026-10-27T00:26:30.822Z",
+  "base": "http://127.0.0.1:3001",
+  "boundary": "Real settings UI, IndexedDB, Web Locks and OPFS; injected picker/permission/failures; NOT native permission dialog, external source folder or real login verification",
+  "fixture": "Synthetic OPFS directories and one sentinel text file; deterministic names; no random seed; core regression set, no holdout",
+  "checks": [
+    {
+      "name": "initial disconnected; no permission request",
+      "passed": true
+    },
+    {
+      "name": "pending blocks repeat actions and has explanatory status",
+      "passed": true
+    },
+    {
+      "name": "one pending selection opens only one picker",
+      "passed": true
+    },
+    {
+      "name": "connect saves real handle, read mode and activation",
+      "passed": true
+    },
+    {
+      "name": "files shares the connected folder without requesting permission again",
+      "passed": false
+    }
+  ],
+  "timing": [],
+  "visualFindings": []
+}

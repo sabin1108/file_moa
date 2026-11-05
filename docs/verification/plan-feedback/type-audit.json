@@ -1,0 +1,9 @@
+{
+  "sourceFiles": 148,
+  "explicitAny": [],
+  "strict": true,
+  "declaredZod": "4.6.7",
+  "staticBytes": 913858,
+  "clientZodMarkers": [],
+  "limitation": "AnyKeyword is syntax evidence, not proof that every external boundary is safe. Client string scan is corroborating evidence; the vault module has no current client import path."
+}

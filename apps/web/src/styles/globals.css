@@ -1,0 +1,54 @@
+:root {
+  color-scheme: dark;
+  /* 사용자 제공 팔레트: 배경 → 패널 → 선택 → 경계 → 보조 본문 → 주요 본문 */
+  --navy-950: #06141b;
+  --navy-900: #11212d;
+  --navy-800: #253745;
+  --navy-600: #4a5c6a;
+  --silver-400: #9ba8ab;
+  --silver-200: #ccd0cf;
+  --ground: var(--navy-950);
+  --surface: var(--navy-900);
+  --active: var(--navy-800);
+  --border: var(--navy-800);
+  --text: var(--silver-200);
+  --muted: var(--silver-400);
+  --focus: var(--silver-200);
+  --font-ui: "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  --radius: 8px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body { background: var(--ground); color: var(--text); font-family: var(--font-ui); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+button, textarea { font: inherit; color: inherit; }
+button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin: 0; padding: 0; border: 0; background: none; text-align: left; }
+button[aria-disabled="true"] { cursor: default; }
+button { transition: background-color 140ms ease, color 140ms ease; }
+button:hover { color: var(--text); }
+svg { flex-shrink: 0; }
+button:focus-visible, textarea:focus-visible, a:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+a { color: inherit; }
+h1, h2, h3, h4, h5, p { margin: 0; }
+::selection { background: var(--navy-600); color: var(--silver-200); }
+* { scrollbar-width: thin; scrollbar-color: var(--navy-800) transparent; }
+.sr-only, .skip-link:not(:focus) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skip-link:focus { position: fixed; z-index: 10; left: 16px; top: 12px; padding: 10px 14px; background: var(--text); color: var(--ground); border-radius: var(--radius); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+
+/* 밝은 읽기 영역: 기존 은회색 팔레트에서 파생한 면, 네이비 본문. */
+.reading-surface {
+  color-scheme: light;
+  --ground: #e4e8e6;
+  --surface: #f2f4f1;
+  --active: #d3dcda;
+  --selection: #dbe4e0;
+  --border: #bcc7c4;
+  --text: #253745;
+  --muted: #4a5c6a;
+  --focus: #253745;
+  background: var(--ground);
+  color: var(--text);
+  font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+}
+
+button:disabled { opacity: .5; cursor: not-allowed; }

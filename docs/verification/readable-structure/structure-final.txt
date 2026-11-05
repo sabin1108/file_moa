@@ -1,0 +1,8 @@
+pnpm.exe : $ node tests/architecture/check-feature-boundary.mjs
+위치 C:\Users\sabin\AppData\Roaming\npm\pnpm.ps1:14 문자:3
++   & "$basedir/node_modules/pnpm/pnpm.exe"   $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ node tests/ar...re-boundary.mjs:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Structure: 25 web import fixtures, 6 domain import fixtures, 3 layout checks and actual domain imports passed (not authorization).

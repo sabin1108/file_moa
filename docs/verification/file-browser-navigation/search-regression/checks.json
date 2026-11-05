@@ -1,0 +1,371 @@
+{
+  "at": "2026-10-29T10:05:58.080Z",
+  "base": "http://127.0.0.1:3010",
+  "checks": [
+    {
+      "name": "SEARCH-003 no fake search before listing is available",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-001 labelled search with scoped hint",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-001 only matching filename is rendered",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-004 visible select-all preserves hidden file",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-004 checkbox counts visible selection, not total",
+      "passed": true
+    },
+    {
+      "name": "filtered-selection/1440: no horizontal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "filtered-selection/1920: no horizontal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "filtered-selection/768: no horizontal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "filtered-selection/390: no horizontal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-004 deselect-all removes only visible selection",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-003 no-match is not a claimed empty folder",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-004 zero-match all checkbox is disabled but hidden selection remains reviewable",
+      "passed": true
+    },
+    {
+      "name": "no-match/390: no horizontal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-003 search/selection adds zero enumeration, body reads, writes or permission requests",
+      "passed": true,
+      "detail": {
+        "ioBefore": {
+          "scans": 1,
+          "requests": 0,
+          "reads": 0,
+          "writes": 0
+        },
+        "ioAfter": {
+          "scans": 1,
+          "requests": 0,
+          "reads": 0,
+          "writes": 0
+        }
+      }
+    },
+    {
+      "name": "SEARCH-006 plan receives hidden selected file",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-006 hidden selection yields correct real plan row",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-005 clear preserves input focus",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-006 preview return preserves query, selection and filename focus",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-002 ten route roundtrips preserve query and selection",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-005 Escape clears only search",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-005 composition edits draft without filtering",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-005 composition Enter does not open a preview or plan",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-005 composition commit filters once text is confirmed",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-002 folder navigation resets query and selection",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-001/002 refresh preserves case-insensitive search",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-003 real empty directory remains distinguished",
+      "passed": true
+    },
+    {
+      "name": "cross-layer regression: Unicode and bracket search is literal",
+      "passed": true
+    },
+    {
+      "name": "long-name/390: no horizontal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-003 100 dataset search does not enumerate again",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-003 1000 dataset search does not enumerate again",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-003 1001 dataset search does not enumerate again",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-003 omitted item is not found; partial scope remains explicit",
+      "passed": true
+    },
+    {
+      "name": "partial-no-match/390: no horizontal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-003 stale list can be filtered while selection stays disabled",
+      "passed": true
+    },
+    {
+      "name": "stale/390: no horizontal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "SEARCH-002 replacement connection clears old query and collapses tools",
+      "passed": true
+    },
+    {
+      "name": "source unchanged and zero product writes",
+      "passed": true,
+      "detail": {
+        "before": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793268352161,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "after": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793268352161,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "writes": 0
+      }
+    },
+    {
+      "name": "no external requests or console errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timing": [
+    {
+      "entries": 100,
+      "samplesMs": [
+        28.11720000000014,
+        13.359399999999823,
+        10.547300000000178
+      ],
+      "boundary": "CDP input dispatch + filter + React commit + polling, 390x1000, no filesystem I/O; not field INP"
+    },
+    {
+      "entries": 1000,
+      "samplesMs": [
+        99.09149999999954,
+        24.772100000000137,
+        16.69050000000061
+      ],
+      "boundary": "CDP input dispatch + filter + React commit + polling, 390x1000, no filesystem I/O; not field INP"
+    },
+    {
+      "entries": 1001,
+      "samplesMs": [
+        50.290500000000065,
+        18.08260000000064,
+        16.330200000000332
+      ],
+      "boundary": "CDP input dispatch + filter + React commit + polling, 390x1000, no filesystem I/O; not field INP"
+    }
+  ],
+  "visual": [
+    {
+      "label": "filtered-selection",
+      "width": 1440,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "blank-gap",
+          "width": 1440,
+          "message": "A 424px stretch at 508px holds nothing.",
+          "fix": "Check that it is a deliberate rest (once per page at most); otherwise close it to the normal section gap."
+        },
+        {
+          "level": "WARN",
+          "id": "hero-void",
+          "width": 1440,
+          "message": "40% of the first screen is one empty block (1440×400px at 0,533).",
+          "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+        },
+        {
+          "level": "WARN",
+          "id": "panel-void",
+          "width": 1440,
+          "message": "1 card(s) hold a blank band inside: 493px in \"검증 자료 A\".",
+          "fix": "A card stretches to its neighbour only when it has content to fill. Keep a legend or a note directly under its chart (only an action or a total may sit at a stretched card's foot), let a short card keep its own height (align-items: start), and let a filtered block shrink to its rows."
+        }
+      ]
+    },
+    {
+      "label": "filtered-selection",
+      "width": 1920,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "blank-gap",
+          "width": 1920,
+          "message": "A 424px stretch at 508px holds nothing.",
+          "fix": "Check that it is a deliberate rest (once per page at most); otherwise close it to the normal section gap."
+        },
+        {
+          "level": "WARN",
+          "id": "hero-void",
+          "width": 1920,
+          "message": "41% of the first screen is one empty block (1680×467px at 240,533).",
+          "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+        },
+        {
+          "level": "WARN",
+          "id": "panel-void",
+          "width": 1920,
+          "message": "1 card(s) hold a blank band inside: 493px in \"검증 자료 A\".",
+          "fix": "A card stretches to its neighbour only when it has content to fill. Keep a legend or a note directly under its chart (only an action or a total may sit at a stretched card's foot), let a short card keep its own height (align-items: start), and let a filtered block shrink to its rows."
+        }
+      ]
+    },
+    {
+      "label": "filtered-selection",
+      "width": 768,
+      "findings": []
+    },
+    {
+      "label": "filtered-selection",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "no-match",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "long-name",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "partial-no-match",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "stale",
+      "width": 390,
+      "findings": []
+    }
+  ],
+  "consoleErrors": [],
+  "boundary": "Real UI/store/session/IDB/Web Locks/OPFS; synthetic picker/permission and CDP composition; native OS IME/picker not verified"
+}

@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-04T01:43:45.234Z",
+  "base": "http://127.0.0.1:3020",
+  "boundary": "Real UI/controller/session/IDB/Web Locks/OPFS; synthetic OS picker, permission and failures; no personal files or real login",
+  "checks": [
+    {
+      "name": "source connection stays on settings for vault setup",
+      "passed": true
+    },
+    {
+      "name": "successful settings connection opens files without body reads",
+      "passed": true
+    },
+    {
+      "name": "eight real direct children, unsupported extension included",
+      "passed": true
+    },
+    {
+      "name": "first listing once; no automatic permission request",
+      "passed": true
+    },
+    {
+      "name": "root name is not repeated in a redundant breadcrumb",
+      "passed": false
+    }
+  ],
+  "timing": [],
+  "visual": [],
+  "consoleErrors": []
+}

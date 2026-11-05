@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "모아 · 화면 진입에서 로컬 파일 읽기까지",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1380,
+      690
+    ]
+  },
+  "components": [
+    {
+      "id": "root-layout",
+      "type": "frontend",
+      "label": "app/layout.tsx",
+      "sublabel": "문서 · 언어 · 전역 CSS",
+      "pos": [
+        40,
+        60
+      ],
+      "size": [
+        250,
+        78
+      ]
+    },
+    {
+      "id": "workspace-layout",
+      "type": "frontend",
+      "label": "공통 작업 영역",
+      "sublabel": "layout → Provider → hook",
+      "pos": [
+        390,
+        60
+      ],
+      "size": [
+        250,
+        78
+      ]
+    },
+    {
+      "id": "files-page",
+      "type": "frontend",
+      "label": "/files · page.tsx",
+      "sublabel": "WorkspaceShell과 작업 면 조합",
+      "pos": [
+        740,
+        60
+      ],
+      "size": [
+        250,
+        78
+      ]
+    },
+    {
+      "id": "browser-composer",
+      "type": "frontend",
+      "label": "SourceFolderBrowser",
+      "sublabel": "상태 구독 · 초점 · 표시 전환",
+      "pos": [
+        740,
+        280
+      ],
+      "size": [
+        250,
+        78
+      ]
+    },
+    {
+      "id": "display-views",
+      "type": "frontend",
+      "label": "목록 · 본문 표시",
+      "sublabel": "props와 콜백 · 파일 정보 접힘",
+      "pos": [
+        1090,
+        280
+      ],
+      "size": [
+        250,
+        78
+      ]
+    },
+    {
+      "id": "controllers",
+      "type": "frontend",
+      "label": "상태 controller",
+      "sublabel": "연결 소유 · 목록/본문 수명 분리",
+      "pos": [
+        390,
+        280
+      ],
+      "size": [
+        250,
+        78
+      ]
+    },
+    {
+      "id": "connection-session",
+      "type": "security",
+      "label": "연결 session",
+      "sublabel": "소유자 · 연결 세대 · 늦은 결과 차단",
+      "pos": [
+        390,
+        510
+      ],
+      "size": [
+        250,
+        78
+      ]
+    },
+    {
+      "id": "local-reader",
+      "type": "frontend",
+      "label": "읽기 함수 · domain 규칙",
+      "sublabel": "목록 / UTF-8 · 2MiB · create:false",
+      "pos": [
+        740,
+        510
+      ],
+      "size": [
+        250,
+        78
+      ]
+    },
+    {
+      "id": "source-files",
+      "type": "external",
+      "label": "사용자 로컬 폴더",
+      "sublabel": "브라우저 읽기 권한 · 원본 보존",
+      "pos": [
+        1090,
+        510
+      ],
+      "size": [
+        250,
+        78
+      ]
+    },
+    {
+      "id": "handle-store",
+      "type": "database",
+      "label": "IndexedDB",
+      "sublabel": "연결 참조만 저장 · 본문 저장 없음",
+      "pos": [
+        40,
+        510
+      ],
+      "size": [
+        250,
+        78
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "root-layout",
+      "to": "workspace-layout",
+      "label": "라우트 중첩"
+    },
+    {
+      "from": "workspace-layout",
+      "to": "files-page",
+      "label": "children"
+    },
+    {
+      "from": "files-page",
+      "to": "browser-composer",
+      "label": "화면 조합",
+      "labelDy": 80
+    },
+    {
+      "from": "browser-composer",
+      "to": "display-views",
+      "label": "표시값 · 콜백"
+    },
+    {
+      "from": "browser-composer",
+      "to": "controllers",
+      "label": "명시적 사용자 동작"
+    },
+    {
+      "from": "controllers",
+      "to": "connection-session",
+      "label": "읽기 요청",
+      "labelDy": 80
+    },
+    {
+      "from": "connection-session",
+      "to": "local-reader",
+      "label": "유효 요청만"
+    },
+    {
+      "from": "local-reader",
+      "to": "source-files",
+      "label": "읽기 전용"
+    },
+    {
+      "from": "connection-session",
+      "to": "handle-store",
+      "label": "참조 저장 · 복원"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "생명주기",
+      "items": [
+        "Provider가 controller를 한 번 소유한다.",
+        "설정·대화 왕복에도 목록과 본문 상태를 유지한다."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "현재 경계",
+      "items": [
+        "localhost 개발 연결이며 실제 인증은 미구현이다.",
+        "파일 본문은 서버로 보내지 않고 텍스트로 표시한다."
+      ]
+    }
+  ]
+}

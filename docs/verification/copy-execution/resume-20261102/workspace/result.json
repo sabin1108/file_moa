@@ -1,0 +1,234 @@
+{
+  "date": "2026-11-02T00:00:42.487Z",
+  "checks": [
+    {
+      "name": "disconnected listing offers connection management",
+      "passed": true
+    },
+    {
+      "name": "connection control stays inside listing at 390",
+      "passed": true
+    },
+    {
+      "name": "connection control stays inside listing at 768",
+      "passed": true
+    },
+    {
+      "name": "connection control stays inside listing at 1440",
+      "passed": true
+    },
+    {
+      "name": "connection control stays inside listing at 1920",
+      "passed": true
+    },
+    {
+      "name": "connection dialog restores focus to relocated control",
+      "passed": true
+    },
+    {
+      "name": "checkbox plus textual state",
+      "passed": true
+    },
+    {
+      "name": "selection 1440 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "selection 390 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "cancel clears all and closes selection controls",
+      "passed": true
+    },
+    {
+      "name": "visited parent column displays current path in words",
+      "passed": true
+    },
+    {
+      "name": "desktop preview preserves visible listing",
+      "passed": true
+    },
+    {
+      "name": "preview 1440 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "preview 1920 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "preview 768 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "preview 390 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "mobile preview is native modal bottom sheet",
+      "passed": true
+    },
+    {
+      "name": "no journal picker control",
+      "passed": true
+    },
+    {
+      "name": "actual OPFS folder exists",
+      "passed": true
+    },
+    {
+      "name": "durable journal has pending and ready for same operation",
+      "passed": true
+    },
+    {
+      "name": "no extra native folder picker and no journal at root",
+      "passed": true
+    },
+    {
+      "name": "write permission requested in active user gesture",
+      "passed": true
+    },
+    {
+      "name": "new-folder 390 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "new-folder 1440 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "collision preserved folder",
+      "passed": true
+    },
+    {
+      "name": "permission denial did not create requested folder",
+      "passed": true
+    },
+    {
+      "name": "destination form also honors explicit TXT with folder selected",
+      "passed": true
+    },
+    {
+      "name": "created folder becomes explicit destination",
+      "passed": true
+    },
+    {
+      "name": "new destination plan is valid",
+      "passed": true
+    },
+    {
+      "name": "source sentinel unchanged",
+      "passed": true
+    },
+    {
+      "name": "list form uses its own current location without records connection",
+      "passed": true
+    },
+    {
+      "name": "IME composing Enter does not submit creation",
+      "passed": true
+    },
+    {
+      "name": "keyboard reaches creation submit",
+      "passed": true
+    },
+    {
+      "name": "creates empty txt with correct extension",
+      "passed": true
+    },
+    {
+      "name": "creates empty md with correct extension",
+      "passed": true
+    },
+    {
+      "name": "duplicate filename rejected",
+      "passed": true
+    },
+    {
+      "name": "preview honors explicit extension aaa.txt",
+      "passed": true
+    },
+    {
+      "name": "explicit-extension 390 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "explicit-extension 1440 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "actual empty file and matching journal kind for aaa.txt",
+      "passed": true
+    },
+    {
+      "name": "preview honors explicit extension 작성.MD",
+      "passed": true
+    },
+    {
+      "name": "actual empty file and matching journal kind for 작성.MD",
+      "passed": true
+    },
+    {
+      "name": "preview honors explicit extension 종류 충돌.md",
+      "passed": true
+    },
+    {
+      "name": "actual empty file and matching journal kind for 종류 충돌.md",
+      "passed": true
+    },
+    {
+      "name": "preview honors explicit extension 다른 종류.TXT",
+      "passed": true
+    },
+    {
+      "name": "actual empty file and matching journal kind for 다른 종류.TXT",
+      "passed": true
+    },
+    {
+      "name": "no OS folder picker during folder or file creation",
+      "passed": true
+    },
+    {
+      "name": "new-file 390 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "new-file 1440 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "created TXT opens as empty document",
+      "passed": true
+    },
+    {
+      "name": "refresh retains row position (1021.734375 → 1021.734375)",
+      "passed": true
+    },
+    {
+      "name": "source sentinel remains unchanged after all new file cases",
+      "passed": true
+    },
+    {
+      "name": "permission 390 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "permission actions do not cover the folder title at 390",
+      "passed": true
+    },
+    {
+      "name": "permission 1440 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "permission actions do not cover the folder title at 1440",
+      "passed": true
+    },
+    {
+      "name": "connection management stays available after read permission loss",
+      "passed": true
+    }
+  ],
+  "note": "Real Chromium/OPFS/JSON files; picker and permissions are fixtures. Native OS prompts unverified."
+}

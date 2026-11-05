@@ -1,0 +1,166 @@
+{
+  "checks": [
+    {
+      "name": "app permission guide is visible without triggering a picker or permission request",
+      "passed": true
+    },
+    {
+      "name": "permission guide contained 390",
+      "passed": true
+    },
+    {
+      "name": "permission guide contained 1440",
+      "passed": true
+    },
+    {
+      "name": "vault reading actions and connection management have separate named groups",
+      "passed": true
+    },
+    {
+      "name": "empty connected vault is shown honestly inside settings",
+      "passed": true
+    },
+    {
+      "name": "nested archive Escape retains settings and restores its trigger",
+      "passed": true
+    },
+    {
+      "name": "preview and edit use the same document geometry and typography",
+      "passed": true,
+      "detail": {
+        "previewMetrics": {
+          "x": 673,
+          "y": 196.796875,
+          "width": 690,
+          "font": "\"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI\", sans-serif",
+          "size": "17px",
+          "line": "31.45px",
+          "padding": "20px"
+        },
+        "editorMetrics": {
+          "x": 673,
+          "y": 196.796875,
+          "width": 690,
+          "font": "\"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI\", sans-serif",
+          "size": "17px",
+          "line": "31.45px",
+          "padding": "20px"
+        }
+      }
+    },
+    {
+      "name": "desktop editing replaces preview without another modal",
+      "passed": true
+    },
+    {
+      "name": "URL contains an opaque ID and no document text or filename",
+      "passed": true
+    },
+    {
+      "name": "first explicit save writes bytes and preserves the original once",
+      "passed": true
+    },
+    {
+      "name": "second save reuses the original preservation",
+      "passed": true
+    },
+    {
+      "name": "periodic save writes without permission prompts or another backup",
+      "passed": true
+    },
+    {
+      "name": "inline editor contained 390",
+      "passed": true
+    },
+    {
+      "name": "inline editor contained 768",
+      "passed": true
+    },
+    {
+      "name": "inline editor contained 1440",
+      "passed": true
+    },
+    {
+      "name": "inline editor contained 1920",
+      "passed": true
+    },
+    {
+      "name": "F5 resumes granted connections and dirty inline draft without requests or writes",
+      "passed": true
+    },
+    {
+      "name": "F5 checkpoint permits explicit save without a second backup",
+      "passed": true
+    },
+    {
+      "name": "external modification pauses saving and retains the local draft",
+      "passed": true
+    },
+    {
+      "name": "explicit baseline reload reads the external version",
+      "passed": true
+    },
+    {
+      "name": "folder copy starts at the same explicit destination plan as file copy",
+      "passed": true
+    },
+    {
+      "name": "folder operations reuse the full destination form with a nonempty root",
+      "passed": true
+    },
+    {
+      "name": "folder destination confirmation returns to the plan without automatic inspection",
+      "passed": true
+    },
+    {
+      "name": "folder review and destination survive F5 without replaying a write",
+      "passed": true
+    },
+    {
+      "name": "temporary restore notice auto-dismisses while the actual review remains",
+      "passed": true
+    },
+    {
+      "name": "resumed folder copy requires explicit execution and creates the selected target",
+      "passed": true
+    },
+    {
+      "name": "completed result survives F5 as a local record without repeating the copy",
+      "passed": true
+    },
+    {
+      "name": "temporary notice also has a working explicit close button",
+      "passed": true
+    },
+    {
+      "name": "shared stepper keeps preservation and overwrite stages visible",
+      "passed": true
+    },
+    {
+      "name": "copy conflict review resumes read-only after F5",
+      "passed": true
+    },
+    {
+      "name": "stepper advances to overwrite after explicit preservation",
+      "passed": true
+    },
+    {
+      "name": "user-facing settings retain the selected interval across reload",
+      "passed": true
+    },
+    {
+      "name": "editor settings contained 390",
+      "passed": true
+    },
+    {
+      "name": "editor settings contained 1440",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

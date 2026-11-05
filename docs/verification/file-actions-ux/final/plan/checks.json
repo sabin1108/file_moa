@@ -1,0 +1,460 @@
+{
+  "at": "2026-11-02T05:18:19.965Z",
+  "base": "http://127.0.0.1:3011",
+  "checks": [
+    {
+      "name": "PLAN-001 no selection disables move",
+      "passed": true
+    },
+    {
+      "name": "PLAN-007 named native modal with title focus",
+      "passed": true
+    },
+    {
+      "name": "PLAN-007 every Tab stays in modal",
+      "passed": true,
+      "detail": [
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "SELECT",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "SELECT",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "SELECT",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "SELECT",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "name": "PLAN-002 invalid path is explained",
+      "passed": true
+    },
+    {
+      "name": "invalid/390: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "PLAN-002 synthetic composition Enter does not submit",
+      "passed": true
+    },
+    {
+      "name": "PLAN-003 move tree contains real destination and no conflicts",
+      "passed": true
+    },
+    {
+      "name": "move/1440: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "move/1920: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "move/768: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "move/390: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "PLAN-002 editing input discards old result immediately",
+      "passed": true
+    },
+    {
+      "name": "PLAN-003 copy explicitly preserves original",
+      "passed": true
+    },
+    {
+      "name": "PLAN-004 same paths and exact conflicts flagged",
+      "passed": true
+    },
+    {
+      "name": "conflict/390: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "PLAN-003 manual classification removed for chatbot-only flow",
+      "passed": true
+    },
+    {
+      "name": "PLAN-007 Escape preserves selection and restores move trigger",
+      "passed": true
+    },
+    {
+      "name": "loading/390: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "PLAN-007 cancel discards late result",
+      "passed": true
+    },
+    {
+      "name": "PLAN-007 removed cancel control restores focus inside modal",
+      "passed": true
+    },
+    {
+      "name": "PLAN-008 read error retains destination",
+      "passed": true
+    },
+    {
+      "name": "read-error/390: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "PLAN-008 permission loss closes plan and updates shared connection",
+      "passed": true
+    },
+    {
+      "name": "holdout: file and directory name conflicts",
+      "passed": true
+    },
+    {
+      "name": "holdout: long filename remains contained in plan",
+      "passed": true
+    },
+    {
+      "name": "100 selected produces 100 real plan rows",
+      "passed": true
+    },
+    {
+      "name": "1000 selected produces 1000 real plan rows",
+      "passed": true
+    },
+    {
+      "name": "reduced-motion plan has no forced animation",
+      "passed": true
+    },
+    {
+      "name": "PLAN-006 original unchanged, no product writes/body reads, read-only permission",
+      "passed": true,
+      "detail": {
+        "before": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793596692889,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "after": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793596692889,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "writes": 0,
+        "bodies": 0,
+        "modes": [
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read"
+        ]
+      }
+    },
+    {
+      "name": "no external requests or browser errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timing": [
+    {
+      "name": "ten-open-close-heap",
+      "before": 10056664,
+      "after": 7781060,
+      "boundary": "JS heap without forced GC; not proof of leak absence"
+    },
+    {
+      "count": 100,
+      "samplesMs": [
+        63.48939999999993,
+        67.87789999999995,
+        75.3130000000001
+      ],
+      "viewport": "390x1000",
+      "boundary": "CDP click + source/destination enumeration + React render + polling, not field INP"
+    },
+    {
+      "count": 1000,
+      "samplesMs": [
+        546.6284999999998,
+        638.9618999999993,
+        665.3036000000002
+      ],
+      "viewport": "390x1000",
+      "boundary": "CDP click + source/destination enumeration + React render + polling, not field INP"
+    }
+  ],
+  "visual": [
+    {
+      "label": "invalid",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "move",
+      "width": 1440,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "unused-canvas",
+          "width": 1440,
+          "message": "The content stops 327px short of the right edge while it starts 16px from the sidebar.",
+          "fix": "Let the grid fill the canvas (columns in fr units), or centre a capped canvas with equal margins. A dead strip on one side reads as unfinished."
+        }
+      ]
+    },
+    {
+      "label": "move",
+      "width": 1920,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "unused-canvas",
+          "width": 1920,
+          "message": "The content stops 567px short of the right edge while it starts 16px from the sidebar.",
+          "fix": "Let the grid fill the canvas (columns in fr units), or centre a capped canvas with equal margins. A dead strip on one side reads as unfinished."
+        }
+      ]
+    },
+    {
+      "label": "move",
+      "width": 768,
+      "findings": []
+    },
+    {
+      "label": "move",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "conflict",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "loading",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "read-error",
+      "width": 390,
+      "findings": []
+    }
+  ],
+  "consoleErrors": [],
+  "boundary": "Real UI/store/session/IDB/Web Locks/OPFS; synthetic picker/permission and composition; no native OS IME/picker, real disk or login validation"
+}

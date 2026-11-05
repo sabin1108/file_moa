@@ -1,0 +1,188 @@
+{
+  "checks": [
+    {
+      "name": "missing history is empty",
+      "passed": true
+    },
+    {
+      "name": "empty read creates no directory and requests no permission",
+      "passed": true
+    },
+    {
+      "name": "Escape restores opener focus",
+      "passed": true
+    },
+    {
+      "name": "actual creation pair is grouped into one completed TXT",
+      "passed": true
+    },
+    {
+      "name": "creation record starts as one collapsed summary",
+      "passed": true
+    },
+    {
+      "name": "click expands creation details",
+      "passed": true
+    },
+    {
+      "name": "dialog fits 390",
+      "passed": true
+    },
+    {
+      "name": "dialog fits 768",
+      "passed": true
+    },
+    {
+      "name": "dialog fits 1440",
+      "passed": true
+    },
+    {
+      "name": "dialog fits 1920",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 0: {\"tag\":\"BUTTON\",\"html\":\"<button type=\\\"button\\\" class=\\\"g8QydG_action g8QydG_ghost\\\" aria-label=\\\"작업 기록 닫기\\\">닫기</button>\",\"inModal\":true,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 1: {\"tag\":\"BUTTON\",\"html\":\"<button type=\\\"button\\\" class=\\\"g8QydG_action g8QydG_secondary\\\">기록 새로고침</button>\",\"inModal\":true,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 2: {\"tag\":\"BUTTON\",\"html\":\"<button type=\\\"button\\\" class=\\\"g8QydG_action g8QydG_ghost\\\" aria-pressed=\\\"false\\\">복사 0</button>\",\"inModal\":true,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 3: {\"tag\":\"BUTTON\",\"html\":\"<button type=\\\"button\\\" class=\\\"g8QydG_action g8QydG_ghost\\\" aria-pressed=\\\"false\\\">이동 0</button>\",\"inModal\":true,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 4: {\"tag\":\"BUTTON\",\"html\":\"<button type=\\\"button\\\" class=\\\"g8QydG_action g8QydG_primary\\\" aria-pressed=\\\"true\\\">생성 1</button>\",\"inModal\":true,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 5: {\"tag\":\"BUTTON\",\"html\":\"<button type=\\\"button\\\" class=\\\"g8QydG_action g8QydG_ghost\\\" aria-pressed=\\\"false\\\">복원 0</button>\",\"inModal\":true,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 6: {\"tag\":\"SUMMARY\",\"html\":\"<summary><strong>기록 확인.txt</strong><span class=\\\"g8QydG_status\\\">완료 기록</span><time datetime=\\\"2026-11-05T00:11:18.629Z\\\">2026. 11. 5. 9시 11분 18초</time></summary>\",\"inModal\":true,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 7: {\"tag\":\"BODY\",\"html\":\"<body><div hidden=\\\"\\\"><!--$--><!--/$--></div><div class=\\\"Qavmna_system QlgK_W_theme\\\"><div class=\\\"QlgK_W_workspace\\\"><header class=\\\"QlgK_W_header\\\"><div class=\\\"QlgK\",\"inModal\":false,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "selected file survives history dialog",
+      "passed": true
+    },
+    {
+      "name": "pending is uncertain; foreign owner is excluded; markup is inert text",
+      "passed": true
+    },
+    {
+      "name": "corruption makes all shown outcomes uncertain",
+      "passed": true
+    },
+    {
+      "name": "existing file is observed without changing uncertain record",
+      "passed": true
+    },
+    {
+      "name": "target result fits 390",
+      "passed": true
+    },
+    {
+      "name": "target result fits 768",
+      "passed": true
+    },
+    {
+      "name": "target result fits 1440",
+      "passed": true
+    },
+    {
+      "name": "target result fits 1920",
+      "passed": true
+    },
+    {
+      "name": "missing target is a current observation, not a failed operation",
+      "passed": true
+    },
+    {
+      "name": "different actual kind is reported",
+      "passed": true
+    },
+    {
+      "name": "target permission error clears prior observation",
+      "passed": true
+    },
+    {
+      "name": "target cancellation ignores late history revalidation",
+      "passed": true
+    },
+    {
+      "name": "changed journal does not inspect a different path silently",
+      "passed": true
+    },
+    {
+      "name": "history refresh discards target results",
+      "passed": true
+    },
+    {
+      "name": "permission denial clears prior rows",
+      "passed": true
+    },
+    {
+      "name": "cancel ignores late enumeration",
+      "passed": true
+    },
+    {
+      "name": "nested location shows its own empty history",
+      "passed": true
+    },
+    {
+      "name": "closed dialog stays closed after late response",
+      "passed": true
+    },
+    {
+      "name": "all history flows made no writes or permission requests",
+      "passed": true
+    },
+    {
+      "name": "source sentinel bytes and metadata unchanged",
+      "passed": true
+    },
+    {
+      "name": "original journal records unchanged",
+      "passed": true
+    },
+    {
+      "name": "target checks never read target file metadata or contents",
+      "passed": true
+    }
+  ],
+  "openToReadyMs": [
+    46.29899999999998,
+    52.36000000000013,
+    44.211199999999735,
+    46.86229999999978
+  ],
+  "targetCheckMs": [
+    {
+      "run": 1,
+      "ms": 45.015899999999874,
+      "scenario": "existing empty TXT; six journal files including malformed/foreign records"
+    },
+    {
+      "run": 2,
+      "ms": 47.86369999999988,
+      "scenario": "existing empty TXT; six journal files including malformed/foreign records"
+    },
+    {
+      "run": 3,
+      "ms": 44.97739999999976,
+      "scenario": "existing empty TXT; six journal files including malformed/foreign records"
+    }
+  ],
+  "consoleErrors": []
+}

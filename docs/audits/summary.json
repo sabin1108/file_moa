@@ -1,0 +1,73 @@
+{
+  "note": "Single local production-build run per route/profile; no real file operations or model calls",
+  "runs": [
+    {
+      "name": "chat-desktop",
+      "at": "2026-10-23T12:59:27.433Z",
+      "lighthouse": "13.5.0",
+      "chrome": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100
+      },
+      "metrics": {
+        "largest-contentful-paint": 484.7087,
+        "cumulative-layout-shift": 0,
+        "total-blocking-time": 0
+      },
+      "failedBinary": []
+    },
+    {
+      "name": "files-desktop",
+      "at": "2026-10-23T12:59:40.228Z",
+      "lighthouse": "13.5.0",
+      "chrome": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "best-practices": 100
+      },
+      "metrics": {
+        "largest-contentful-paint": 475.2437,
+        "cumulative-layout-shift": 0,
+        "total-blocking-time": 0
+      },
+      "failedBinary": []
+    },
+    {
+      "name": "chat-mobile",
+      "at": "2026-10-23T12:59:52.995Z",
+      "lighthouse": "13.5.0",
+      "chrome": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+      "scores": {
+        "performance": 99,
+        "accessibility": 100,
+        "best-practices": 100
+      },
+      "metrics": {
+        "largest-contentful-paint": 2073.2585,
+        "cumulative-layout-shift": 0,
+        "total-blocking-time": 65
+      },
+      "failedBinary": []
+    },
+    {
+      "name": "files-mobile",
+      "at": "2026-10-23T13:01:51.911Z",
+      "lighthouse": "13.5.0",
+      "chrome": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+      "scores": {
+        "performance": 99,
+        "accessibility": 100,
+        "best-practices": 100
+      },
+      "metrics": {
+        "largest-contentful-paint": 2058.0865,
+        "cumulative-layout-shift": 0,
+        "total-blocking-time": 52
+      },
+      "failedBinary": []
+    }
+  ]
+}

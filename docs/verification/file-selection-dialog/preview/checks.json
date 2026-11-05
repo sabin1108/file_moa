@@ -1,0 +1,381 @@
+{
+  "at": "2026-10-28T07:36:17.365Z",
+  "base": "http://127.0.0.1:3009",
+  "boundary": "Real UI/session/controller/OPFS/IDB; synthetic picker/permissions/file failures; no personal data or native permission dialog",
+  "checks": [
+    {
+      "name": "connection headings do not skip a level before a folder is selected",
+      "passed": true
+    },
+    {
+      "name": "listing does not read file bodies",
+      "passed": true
+    },
+    {
+      "name": "unsupported PDF is not a preview control",
+      "passed": true
+    },
+    {
+      "name": "Enter opens actual source text and focuses heading",
+      "passed": true
+    },
+    {
+      "name": "source HTML/Markdown has no executable DOM or remote resources",
+      "passed": true
+    },
+    {
+      "name": "file information defaults closed; source list DOM preserved",
+      "passed": true
+    },
+    {
+      "name": "document/1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "document/1440: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "document/1920: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "document/1920: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "document/768: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "document/768: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "document/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "document/390: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "metadata toggle preserves body DOM and shows source data",
+      "passed": true
+    },
+    {
+      "name": "information/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "information/390: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "ten route roundtrips preserve document without rereading",
+      "passed": true
+    },
+    {
+      "name": "back clears body and restores visible listing",
+      "passed": true
+    },
+    {
+      "name": "back restores file focus and list scroll",
+      "passed": true
+    },
+    {
+      "name": "nested file has correct body and relative location",
+      "passed": true
+    },
+    {
+      "name": "zero-byte successful read shows empty-file message",
+      "passed": true
+    },
+    {
+      "name": "empty/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "empty/390: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "잘못된 UTF8.txt: no stale text, correct error",
+      "passed": true
+    },
+    {
+      "name": "encoding/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "encoding/390: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "큰 문서.txt: no stale text, correct error",
+      "passed": true
+    },
+    {
+      "name": "oversized file rejected before arrayBuffer",
+      "passed": true
+    },
+    {
+      "name": "too-large/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "too-large/390: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "deleted-file refresh preserves previous text with stale warning",
+      "passed": true
+    },
+    {
+      "name": "missing/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "missing/390: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "refreshing/1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "refreshing/1440: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "cancel immediately leaves pending phase",
+      "passed": true
+    },
+    {
+      "name": "cancel restores focus after its button disappears",
+      "passed": true
+    },
+    {
+      "name": "refresh reacquires externally changed file",
+      "passed": true
+    },
+    {
+      "name": "permission loss exposes connection status and disables preview refresh",
+      "passed": true
+    },
+    {
+      "name": "permission/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "permission/390: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "explicit reconnect reopens the same document",
+      "passed": true
+    },
+    {
+      "name": "2MiB/1440/run1: entire text without overflow",
+      "passed": true
+    },
+    {
+      "name": "2MiB/1440/run2: entire text without overflow",
+      "passed": true
+    },
+    {
+      "name": "2MiB/1440/run3: entire text without overflow",
+      "passed": true
+    },
+    {
+      "name": "2MiB/390/run1: entire text without overflow",
+      "passed": true
+    },
+    {
+      "name": "2MiB/390/run2: entire text without overflow",
+      "passed": true
+    },
+    {
+      "name": "2MiB/390/run3: entire text without overflow",
+      "passed": true
+    },
+    {
+      "name": "close prevents late text from replacing the next document",
+      "passed": true
+    },
+    {
+      "name": "failed disconnect still clears document and listing",
+      "passed": true
+    },
+    {
+      "name": "original sentinel unchanged and product never writes",
+      "passed": true,
+      "detail": {
+        "before": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793172973590,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "after": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793172973590,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "writes": 0
+      }
+    },
+    {
+      "name": "no external requests or browser errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timing": [
+    {
+      "bytes": 2097152,
+      "width": 1440,
+      "samplesMs": [
+        276.7114999999999,
+        174.72980000000007,
+        144.9016999999999
+      ],
+      "boundary": "CDP click + File read/decode + React commit/layout query + polling; not INP or isolated decode time"
+    },
+    {
+      "bytes": 2097152,
+      "width": 390,
+      "samplesMs": [
+        192.55209999999988,
+        191.2479999999996,
+        192.4488999999994
+      ],
+      "boundary": "CDP click + File read/decode + React commit/layout query + polling; not INP or isolated decode time"
+    }
+  ],
+  "visual": [
+    {
+      "label": "document",
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "label": "document",
+      "width": 1920,
+      "findings": []
+    },
+    {
+      "label": "document",
+      "width": 768,
+      "findings": []
+    },
+    {
+      "label": "document",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "information",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "empty",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "encoding",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "too-large",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "missing",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "refreshing",
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "label": "permission",
+      "width": 390,
+      "findings": []
+    }
+  ],
+  "consoleErrors": []
+}

@@ -1,0 +1,169 @@
+{
+  "at": "2026-10-28T04:56:44.437Z",
+  "base": "http://127.0.0.1:3003",
+  "boundary": "Real UI/session/controller/OPFS/IDB; synthetic picker/permissions/file failures; no personal data or native permission dialog",
+  "checks": [
+    {
+      "name": "listing does not read file bodies",
+      "passed": true
+    },
+    {
+      "name": "unsupported PDF is not a preview control",
+      "passed": true
+    },
+    {
+      "name": "Enter opens actual source text and focuses heading",
+      "passed": true
+    },
+    {
+      "name": "source HTML/Markdown has no executable DOM or remote resources",
+      "passed": true
+    },
+    {
+      "name": "file information defaults closed; source list DOM preserved",
+      "passed": true
+    },
+    {
+      "name": "document/1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "document/1920: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "document/768: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "document/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "metadata toggle preserves body DOM and shows source data",
+      "passed": true
+    },
+    {
+      "name": "information/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "ten route roundtrips preserve document without rereading",
+      "passed": true
+    },
+    {
+      "name": "back clears body and restores visible listing",
+      "passed": true
+    },
+    {
+      "name": "back restores file focus and list scroll",
+      "passed": true
+    },
+    {
+      "name": "nested file has correct body and relative location",
+      "passed": true
+    },
+    {
+      "name": "zero-byte successful read shows empty-file message",
+      "passed": true
+    },
+    {
+      "name": "empty/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "잘못된 UTF8.txt: no stale text, correct error",
+      "passed": true
+    },
+    {
+      "name": "encoding/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "큰 문서.txt: no stale text, correct error",
+      "passed": true
+    },
+    {
+      "name": "oversized file rejected before arrayBuffer",
+      "passed": true
+    },
+    {
+      "name": "too-large/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "deleted-file refresh preserves previous text with stale warning",
+      "passed": true
+    },
+    {
+      "name": "missing/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "refreshing/1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "cancel immediately leaves pending phase",
+      "passed": true
+    },
+    {
+      "name": "cancel restores focus after its button disappears",
+      "passed": false
+    }
+  ],
+  "timing": [],
+  "visual": [
+    {
+      "label": "document",
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "label": "document",
+      "width": 1920,
+      "findings": []
+    },
+    {
+      "label": "document",
+      "width": 768,
+      "findings": []
+    },
+    {
+      "label": "document",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "information",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "empty",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "encoding",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "too-large",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "missing",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "refreshing",
+      "width": 1440,
+      "findings": []
+    }
+  ],
+  "consoleErrors": []
+}

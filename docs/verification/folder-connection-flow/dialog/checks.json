@@ -1,0 +1,62 @@
+{
+  "at": "2026-11-04T01:43:43.835Z",
+  "base": "http://127.0.0.1:3020",
+  "checks": [
+    {
+      "name": "DIALOG-001 no automatic popup; labelled settings trigger",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 modal has name, safe title focus and native modal state",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 Tab remains inside modal",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 background cannot receive programmatic focus",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 backdrop click does not dismiss settings",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 Escape restores trigger focus",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-003 picker cancel keeps popup and error context",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-003 save failure keeps popup",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-003 explicit setup finish closes popup and preserves files route",
+      "passed": true
+    },
+    {
+      "name": "SELECT-001 file extensions selectable; no directory checkbox",
+      "passed": true
+    },
+    {
+      "name": "SELECT-002 master checkbox is mixed",
+      "passed": true
+    },
+    {
+      "name": "SELECT-001 Space toggles a focused native checkbox",
+      "passed": true
+    },
+    {
+      "name": "SELECT-002 select all counts six displayed files, not two folders",
+      "passed": true
+    }
+  ],
+  "timing": [],
+  "visual": [],
+  "consoleErrors": [],
+  "boundary": "Real UI/state/IDB/Web Locks/OPFS; injected picker/permission/failure; synthetic files only; no native picker or real login validation"
+}

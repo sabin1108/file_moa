@@ -1,0 +1,165 @@
+{
+  "scope": "14 existing code files plus the new shared helper; documentation and generated artifacts excluded",
+  "files": {
+    "rows": [
+      {
+        "path": "apps/web/src/features/local-folders/store/destination-picker-controller.ts",
+        "beforeLines": 54,
+        "afterLines": 55,
+        "beforeBytes": 3082,
+        "afterBytes": 3119
+      },
+      {
+        "path": "apps/web/src/features/local-folders/services/copy-journal-storage.ts",
+        "beforeLines": 100,
+        "afterLines": 100,
+        "beforeBytes": 6750,
+        "afterBytes": 6745
+      },
+      {
+        "path": "apps/web/src/features/local-folders/services/folder-history.ts",
+        "beforeLines": 85,
+        "afterLines": 85,
+        "beforeBytes": 4219,
+        "afterBytes": 4214
+      },
+      {
+        "path": "apps/web/src/features/local-folders/services/create-entry.ts",
+        "beforeLines": 63,
+        "afterLines": 63,
+        "beforeBytes": 3660,
+        "afterBytes": 3655
+      },
+      {
+        "path": "apps/web/src/features/local-folders/services/folder-tree-search.ts",
+        "beforeLines": 94,
+        "afterLines": 95,
+        "beforeBytes": 2292,
+        "afterBytes": 2324
+      },
+      {
+        "path": "apps/web/src/features/local-folders/services/folder-creation-journal.ts",
+        "beforeLines": 53,
+        "afterLines": 53,
+        "beforeBytes": 3011,
+        "afterBytes": 3006
+      },
+      {
+        "path": "apps/web/src/features/local-folders/services/history-target-inspection.ts",
+        "beforeLines": 60,
+        "afterLines": 60,
+        "beforeBytes": 3560,
+        "afterBytes": 3555
+      },
+      {
+        "path": "apps/web/src/features/local-folders/services/source-file-preview.ts",
+        "beforeLines": 59,
+        "afterLines": 59,
+        "beforeBytes": 2802,
+        "afterBytes": 2797
+      },
+      {
+        "path": "apps/web/src/features/local-folders/services/source-folder-listing.ts",
+        "beforeLines": 68,
+        "afterLines": 67,
+        "beforeBytes": 2530,
+        "afterBytes": 2477
+      },
+      {
+        "path": "apps/web/src/features/local-folders/components/history/folder-history.module.css",
+        "beforeLines": 25,
+        "afterLines": 23,
+        "beforeBytes": 1971,
+        "afterBytes": 1800
+      },
+      {
+        "path": "apps/web/src/features/local-folders/components/managed/managed-files.module.css",
+        "beforeLines": 6,
+        "afterLines": 5,
+        "beforeBytes": 634,
+        "afterBytes": 595
+      },
+      {
+        "path": "apps/web/src/features/local-folders/components/plan/file-change-plan.module.css",
+        "beforeLines": 140,
+        "afterLines": 125,
+        "beforeBytes": 12451,
+        "afterBytes": 10915
+      },
+      {
+        "path": "tests/browser/check-recovery-archive-ui.mjs",
+        "beforeLines": 226,
+        "afterLines": 209,
+        "beforeBytes": 17864,
+        "afterBytes": 17211
+      },
+      {
+        "path": "tests/browser/check-recovery-restore-ui.mjs",
+        "beforeLines": 310,
+        "afterLines": 293,
+        "beforeBytes": 24405,
+        "afterBytes": 23872
+      },
+      {
+        "path": "tests/fixtures/browser-actions.mjs",
+        "beforeLines": 0,
+        "afterLines": 19,
+        "beforeBytes": 0,
+        "afterBytes": 981
+      }
+    ],
+    "total": {
+      "beforeLines": 1343,
+      "afterLines": 1311,
+      "beforeBytes": 89231,
+      "afterBytes": 87266
+    }
+  },
+  "staticAnalysis": {
+    "tool": "fallow 3.39.0 --no-cache --format json --lean",
+    "before": {
+      "unused": {
+        "total_issues": 132,
+        "unused_files": 61,
+        "unused_exports": 43,
+        "unused_types": 5,
+        "unused_class_members": 13,
+        "unresolved_imports": 10
+      },
+      "duplication": {
+        "total_files": 301,
+        "files_with_clones": 60,
+        "total_lines": 22150,
+        "duplicated_lines": 2486,
+        "total_tokens": 267972,
+        "duplicated_tokens": 34517,
+        "clone_groups": 114,
+        "clone_families": 83,
+        "clone_instances": 307,
+        "duplication_percentage": 11.223476297968398
+      }
+    },
+    "after": {
+      "unused": {
+        "total_issues": 128,
+        "unused_files": 62,
+        "unused_exports": 38,
+        "unused_types": 5,
+        "unused_class_members": 13,
+        "unresolved_imports": 10
+      },
+      "duplication": {
+        "total_files": 302,
+        "files_with_clones": 61,
+        "total_lines": 22118,
+        "duplicated_lines": 2455,
+        "total_tokens": 267509,
+        "duplicated_tokens": 26470,
+        "clone_groups": 121,
+        "clone_families": 87,
+        "clone_instances": 318,
+        "duplication_percentage": 11.09955692196401
+      }
+    }
+  }
+}

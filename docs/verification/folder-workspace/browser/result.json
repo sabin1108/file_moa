@@ -1,0 +1,98 @@
+{
+  "date": "2026-10-30T12:04:03.651Z",
+  "checks": [
+    {
+      "name": "checkbox plus textual state",
+      "passed": true
+    },
+    {
+      "name": "selection 1440 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "selection 390 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "cancel clears all and closes selection controls",
+      "passed": true
+    },
+    {
+      "name": "visited parent column displays current path in words",
+      "passed": true
+    },
+    {
+      "name": "desktop preview preserves visible listing",
+      "passed": true
+    },
+    {
+      "name": "preview 1440 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "preview 1920 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "preview 768 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "preview 390 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "mobile preview is native modal bottom sheet",
+      "passed": true
+    },
+    {
+      "name": "actual OPFS folder exists",
+      "passed": true
+    },
+    {
+      "name": "durable journal has pending and ready for same operation",
+      "passed": true
+    },
+    {
+      "name": "write permission requested in active user gesture",
+      "passed": true
+    },
+    {
+      "name": "new-folder 390 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "new-folder 1440 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "collision preserved folder",
+      "passed": true
+    },
+    {
+      "name": "permission denial did not create requested folder",
+      "passed": true
+    },
+    {
+      "name": "created folder becomes explicit destination",
+      "passed": true
+    },
+    {
+      "name": "new destination plan is valid",
+      "passed": true
+    },
+    {
+      "name": "source sentinel unchanged",
+      "passed": true
+    },
+    {
+      "name": "journal connection shared with list form",
+      "passed": true
+    },
+    {
+      "name": "refresh retains row position",
+      "passed": true
+    }
+  ],
+  "note": "Real Chromium/OPFS/JSON files; picker and permissions are fixtures. Native OS prompts unverified."
+}

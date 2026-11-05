@@ -1,0 +1,17 @@
+﻿{
+    "date":  "2026-10-27",
+    "projectNode":  "v24.22.1",
+    "webNode":  "v24.22.1",
+    "domainNode":  "v24.22.1",
+    "systemNode":  "v24.16.0",
+    "pnpm":  "12.15.0",
+    "pnpmCommand":  "C:\\Users\\sabin\\AppData\\Roaming\\npm\\pnpm.ps1",
+    "systemNpm":  "11.13.0",
+    "next":  "16.4.3",
+    "saveExact":  "true",
+    "frozenInstallExit":  0,
+    "checkExit":  0,
+    "s0TypecheckExit":  0,
+    "msiExit":  1603,
+    "msiReason":  "Error 1730: Administrator required to remove existing Node installation"
+}

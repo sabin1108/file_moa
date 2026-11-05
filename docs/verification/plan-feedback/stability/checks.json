@@ -1,0 +1,2812 @@
+{
+  "checks": [
+    {
+      "name": "repeated checkbox toggles preserve every row position",
+      "passed": true
+    },
+    {
+      "name": "목적지 선택: input retained",
+      "passed": true
+    },
+    {
+      "name": "목적지 선택: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "목적지 선택: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: input retained",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: input retained",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: input retained",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: input retained",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: input retained",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: input retained",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: input retained",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: input retained",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: input retained",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: input retained",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "상위 폴더: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "slow navigation retains input and blocks stale selection",
+      "passed": true
+    },
+    {
+      "name": "failed navigation preserves previous listing with explicit error",
+      "passed": true
+    },
+    {
+      "name": "contained 390",
+      "passed": true
+    },
+    {
+      "name": "contained 768",
+      "passed": true
+    },
+    {
+      "name": "contained 1440",
+      "passed": true
+    },
+    {
+      "name": "contained 1920",
+      "passed": true
+    },
+    {
+      "name": "복사 전 검사: input retained",
+      "passed": true
+    },
+    {
+      "name": "복사 전 검사: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "복사 전 검사: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "목적지 선택: input retained",
+      "passed": true
+    },
+    {
+      "name": "목적지 선택: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "목적지 선택: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: input retained",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: no whole-area fade or travel",
+      "passed": true
+    },
+    {
+      "name": "하위 자료 목적지 폴더 열기: dialog top stays fixed",
+      "passed": true
+    },
+    {
+      "name": "Escape restores destination trigger",
+      "passed": true
+    },
+    {
+      "name": "no source writes",
+      "passed": true
+    },
+    {
+      "name": "no browser errors",
+      "passed": true
+    }
+  ],
+  "samples": [
+    {
+      "label": "목적지 선택",
+      "frames": [
+        {
+          "t": 16.5,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 31.599999994039536,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 48.5,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 65.5,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 82.69999998807907,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 98.69999998807907,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 115.59999999403954,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 131.59999999403954,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 149.19999998807907,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 165.3999999910593,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 191.59999999403954,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 199.09999999403954,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 216,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 232.29999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 248.69999998807907,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 264.8999999910593,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 281.79999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 298.59999999403954,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 314.8999999910593,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 332.29999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 348.29999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 366.29999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "하위 자료 목적지 폴더 열기",
+      "frames": [
+        {
+          "t": 13.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 30.400000005960464,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 47.20000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 64.20000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 80.80000001192093,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 96.70000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 113.70000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 130,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 147.1000000089407,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 164.1000000089407,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 181,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 197,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 213.70000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 230.70000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 246.6000000089407,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 263.70000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 280.70000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 296.80000001192093,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 313.80000001192093,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 330.80000001192093,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 346.70000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 363.70000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "상위 폴더",
+      "frames": [
+        {
+          "t": 14.5,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 32.30000001192093,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 47.400000005960464,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 64.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 82.30000001192093,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 97.30000001192093,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 114.90000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 130.80000001192093,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 148.90000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 163.90000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 181,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 198.90000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 213.90000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 231.1000000089407,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 249.1000000089407,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 265.1000000089407,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 281.1000000089407,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 299.1000000089407,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 314.6000000089407,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 330.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 348.6000000089407,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 364.80000001192093,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "하위 자료 목적지 폴더 열기",
+      "frames": [
+        {
+          "t": 14.699999988079071,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 31.299999997019768,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 49.3999999910593,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 65.29999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 82.29999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 99.29999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 114.3999999910593,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 131.29999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 148.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 165.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 181.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 198.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 215.3999999910593,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 231.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 247.79999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 265.8999999910593,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 282.79999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 298.69999998807907,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 315.69999998807907,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 331.79999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 348.29999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 365.29999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "상위 폴더",
+      "frames": [
+        {
+          "t": 14.299999997019768,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 30.700000002980232,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 47.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 63.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 80.09999999403954,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 97.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 114.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 130.09999999403954,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 147.09999999403954,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 164.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 180.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 196.79999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 213.59999999403954,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 230.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 247.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 263.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 280.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 297.29999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 314.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 331.29999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 347.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 364.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "하위 자료 목적지 폴더 열기",
+      "frames": [
+        {
+          "t": 15.599999994039536,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 32,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 48.099999994039536,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 66,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 82,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 99,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 114.59999999403954,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 131.59999999403954,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 148.69999998807907,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 165.79999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 181.59999999403954,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 197.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 214.69999998807907,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 231.69999998807907,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 247.8999999910593,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 264.59999999403954,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 281.59999999403954,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 297.59999999403954,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 315.79999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 330.8999999910593,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 349.19999998807907,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 364.79999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "상위 폴더",
+      "frames": [
+        {
+          "t": 7.799999997019768,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 23,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 38.29999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 55.599999994039536,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 73.40000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 88.29999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 105.40000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 123.40000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 139.79999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 154.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 172.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 188.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 204.79999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 222.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 239.29999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 255.29999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 272.40000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 289.29999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 305.79999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 322.90000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 339.29999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 354.79999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "하위 자료 목적지 폴더 열기",
+      "frames": [
+        {
+          "t": 15.299999997019768,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 32,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 48,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 64.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 81.90000000596046,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 98,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 115.90000000596046,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 131,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 147.90000000596046,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 165.09999999403954,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 181.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 198.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 214.59999999403954,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 231.40000000596046,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 249.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 264.29999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 282,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 299,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 315,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 331,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 348.59999999403954,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 365.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "상위 폴더",
+      "frames": [
+        {
+          "t": 14,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 31.799999997019768,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 48.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 64.79999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 80.79999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 97.3999999910593,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 113.79999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 130.79999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 147.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 164.29999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 181.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 197.8999999910593,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 214.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 231.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 247.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 265.09999999403954,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 281.3999999910593,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 297.5,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 313.59999999403954,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 330.79999999701977,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 348.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 363.8999999910593,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "하위 자료 목적지 폴더 열기",
+      "frames": [
+        {
+          "t": 15.400000005960464,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 32,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 48.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 66.70000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 81.70000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 99.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 116.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 131.59999999403954,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 147.90000000596046,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 165.90000000596046,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 182.20000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 199,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 214.90000000596046,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 232.79999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 248.40000000596046,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 265.5,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 282.40000000596046,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 299.29999999701977,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 316.40000000596046,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 331.40000000596046,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 348.70000000298023,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 364.59999999403954,
+          "top": 16,
+          "listTop": 730.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "상위 폴더",
+      "frames": [
+        {
+          "t": 15.300000011920929,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 31.900000005960464,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 47.900000005960464,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 64.90000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 81.90000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 97.90000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 115.6000000089407,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 131.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 148.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 165.6000000089407,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 182.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 198.20000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 215,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 232.90000000596046,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 248,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 265,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 281.5,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 298.6000000089407,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 315.6000000089407,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 332.5,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 348.5,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 364.70000000298023,
+          "top": 16,
+          "listTop": 652.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "복사 전 검사",
+      "frames": [
+        {
+          "t": 8.099999994039536,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 19.599999994039536,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 35.79999999701977,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 52.70000000298023,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 68.59999999403954,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 85.5,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 102.40000000596046,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 119.40000000596046,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 135.5,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 153.5,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 169.5,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 186,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 204.20000000298023,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 220,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 236.90000000596046,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 253,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 269,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 286.09999999403954,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 302.20000000298023,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 320.29999999701977,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 337.09999999403954,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 352.20000000298023,
+          "top": 16,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "목적지 선택",
+      "frames": [
+        {
+          "t": 13.5,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 28.5,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 45.5,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 61.70000000298023,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 78.20000000298023,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 95.3999999910593,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 112.20000000298023,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 128.20000000298023,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 146.09999999403954,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 162.29999999701977,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 177.79999999701977,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 194.70000000298023,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 211.59999999403954,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 227.59999999403954,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 245.5,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 261.5,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 278.5,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 294.59999999403954,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 312.3999999910593,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 327.70000000298023,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 344.5,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 361.5,
+          "top": 16,
+          "listTop": 580.53125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "하위 자료 목적지 폴더 열기",
+      "frames": [
+        {
+          "t": 15.400000005960464,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 31.400000005960464,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 48.400000005960464,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 64.5,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 81.5,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 99.1000000089407,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 115.1000000089407,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 132.1000000089407,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 148.90000000596046,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 165,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 181.90000000596046,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 198.90000000596046,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 214.90000000596046,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 231.90000000596046,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 248.5,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 265.40000000596046,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 281.40000000596046,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 299.20000000298023,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 315.20000000298023,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 331.20000000298023,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 348.29999999701977,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 365.29999999701977,
+          "top": 16,
+          "listTop": 658.140625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    }
+  ],
+  "visual": [
+    {
+      "width": 390,
+      "findings": [
+        {
+          "level": "FAIL",
+          "id": "no-title",
+          "width": 390,
+          "message": "The page has no visible h1.",
+          "fix": "Give the first screen a clear title in an h1 that says what this is (a name with what it does, the product with what it is for, the event with its date and place)."
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "findings": [
+        {
+          "level": "FAIL",
+          "id": "off-centre",
+          "width": 768,
+          "message": "The page sits off-centre: its content comes to 16px from the left edge but only to 222px from the right, at 768px.",
+          "fix": "Give the page one pair of equal margins. Check the wrapper for a max-width without margin-inline: auto, a grid with an empty last column, or padding on one side only. If one side is meant to hold air, it must still be closed by something that reaches the margin (a picture, the navigation's last item, a figure)."
+        },
+        {
+          "level": "FAIL",
+          "id": "no-title",
+          "width": 768,
+          "message": "The page has no visible h1.",
+          "fix": "Give the first screen a clear title in an h1 that says what this is (a name with what it does, the product with what it is for, the event with its date and place)."
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "findings": [
+        {
+          "level": "FAIL",
+          "id": "off-centre",
+          "width": 1440,
+          "message": "The page sits off-centre: its content comes to 16px from the left edge but only to 718px from the right, at 1440px.",
+          "fix": "Give the page one pair of equal margins. Check the wrapper for a max-width without margin-inline: auto, a grid with an empty last column, or padding on one side only. If one side is meant to hold air, it must still be closed by something that reaches the margin (a picture, the navigation's last item, a figure)."
+        },
+        {
+          "level": "FAIL",
+          "id": "no-title",
+          "width": 1440,
+          "message": "The page has no visible h1.",
+          "fix": "Give the first screen a clear title in an h1 that says what this is (a name with what it does, the product with what it is for, the event with its date and place)."
+        },
+        {
+          "level": "WARN",
+          "id": "unused-canvas",
+          "width": 1440,
+          "message": "The content stops 314px short of the right edge while it starts 16px from the sidebar.",
+          "fix": "Let the grid fill the canvas (columns in fr units), or centre a capped canvas with equal margins. A dead strip on one side reads as unfinished."
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "findings": [
+        {
+          "level": "FAIL",
+          "id": "off-centre",
+          "width": 1920,
+          "message": "The page sits off-centre: its content comes to 16px from the left edge but only to 1198px from the right, at 1920px.",
+          "fix": "Give the page one pair of equal margins. Check the wrapper for a max-width without margin-inline: auto, a grid with an empty last column, or padding on one side only. If one side is meant to hold air, it must still be closed by something that reaches the margin (a picture, the navigation's last item, a figure)."
+        },
+        {
+          "level": "FAIL",
+          "id": "no-title",
+          "width": 1920,
+          "message": "The page has no visible h1.",
+          "fix": "Give the first screen a clear title in an h1 that says what this is (a name with what it does, the product with what it is for, the event with its date and place)."
+        },
+        {
+          "level": "WARN",
+          "id": "unused-canvas",
+          "width": 1920,
+          "message": "The content stops 554px short of the right edge while it starts 16px from the sidebar.",
+          "fix": "Let the grid fill the canvas (columns in fr units), or centre a capped canvas with equal margins. A dead strip on one side reads as unfinished."
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

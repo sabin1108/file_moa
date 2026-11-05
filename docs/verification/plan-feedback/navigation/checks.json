@@ -1,0 +1,303 @@
+{
+  "checks": [
+    {
+      "name": "one path form after child 0",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 0",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 1",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 1",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 2",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 2",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 3",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 3",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 4",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 4",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 5",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 5",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 6",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 6",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 7",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 7",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 8",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 8",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 9",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 9",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 10",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 10",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 11",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 11",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 12",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 12",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 13",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 13",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 14",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 14",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 15",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 15",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 16",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 16",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 17",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 17",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 18",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 18",
+      "passed": true
+    },
+    {
+      "name": "one path form after child 19",
+      "passed": true
+    },
+    {
+      "name": "one path form after parent 19",
+      "passed": true
+    },
+    {
+      "name": "picker parent button names actual parent",
+      "passed": true
+    },
+    {
+      "name": "picker ancestor goes directly to requested level",
+      "passed": true
+    },
+    {
+      "name": "each destination folder has its own increasing depth",
+      "passed": true
+    },
+    {
+      "name": "deep tree contained 390",
+      "passed": true
+    },
+    {
+      "name": "deep tree contained 768",
+      "passed": true
+    },
+    {
+      "name": "deep tree contained 1440",
+      "passed": true
+    },
+    {
+      "name": "deep tree contained 1920",
+      "passed": true
+    },
+    {
+      "name": "step does not replay whole-area entrance",
+      "passed": true
+    },
+    {
+      "name": "reduced motion suppresses step transition",
+      "passed": true
+    },
+    {
+      "name": "holding shows selection progress",
+      "passed": true
+    },
+    {
+      "name": "long press selects file without preview",
+      "passed": true
+    },
+    {
+      "name": "long press selects folder without navigating",
+      "passed": true
+    },
+    {
+      "name": "folder selection explains unsupported recursive actions",
+      "passed": true
+    },
+    {
+      "name": "drag cancels selection and accidental open",
+      "passed": true
+    },
+    {
+      "name": "blur cancels pending hold",
+      "passed": true
+    },
+    {
+      "name": "mobile exposes intermediate ancestor controls and named parent",
+      "passed": true
+    },
+    {
+      "name": "parent action reaches actual parent",
+      "passed": true
+    },
+    {
+      "name": "mobile breadcrumb reaches ancestor directly",
+      "passed": true
+    },
+    {
+      "name": "touch hold enters file selection",
+      "passed": true,
+      "detail": {
+        "trace": [
+          {
+            "type": "scroll",
+            "time": 11016.5
+          },
+          {
+            "type": "pointerdown",
+            "time": 11050.70000000298,
+            "target": "SPAN",
+            "label": null,
+            "pointer": "touch",
+            "primary": true,
+            "button": 0
+          },
+          {
+            "type": "pointerup",
+            "time": 11786.300000011921,
+            "target": "SPAN",
+            "label": null,
+            "pointer": "touch",
+            "primary": true,
+            "button": 0
+          },
+          {
+            "type": "blur",
+            "time": 11787.40000000596,
+            "target": "H2",
+            "label": null
+          }
+        ],
+        "selected": true
+      }
+    },
+    {
+      "name": "long press suppresses its context menu across shifted rows",
+      "passed": true
+    },
+    {
+      "name": "secondary pointer cannot release long-press click guard",
+      "passed": true
+    },
+    {
+      "name": "new right-button gesture is not mistaken for the previous hold",
+      "passed": true
+    },
+    {
+      "name": "unsupported preview format still supports long-press selection",
+      "passed": true
+    },
+    {
+      "name": "keyboard checkbox remains an alternative to holding",
+      "passed": true
+    },
+    {
+      "name": "source unchanged and no product writes",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

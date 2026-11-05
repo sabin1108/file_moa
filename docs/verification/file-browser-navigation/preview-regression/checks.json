@@ -1,0 +1,124 @@
+{
+  "at": "2026-10-29T10:03:26.738Z",
+  "base": "http://127.0.0.1:3010",
+  "boundary": "Real UI/session/controller/OPFS/IDB; synthetic picker/permissions/file failures; no personal data or native permission dialog",
+  "checks": [
+    {
+      "name": "connection headings do not skip a level before a folder is selected",
+      "passed": true
+    },
+    {
+      "name": "listing does not read file bodies",
+      "passed": true
+    },
+    {
+      "name": "unsupported PDF is not a preview control",
+      "passed": true
+    },
+    {
+      "name": "Enter opens actual source text and focuses heading",
+      "passed": true
+    },
+    {
+      "name": "source HTML/Markdown has no executable DOM or remote resources",
+      "passed": true
+    },
+    {
+      "name": "file information defaults closed; source list DOM preserved",
+      "passed": true
+    },
+    {
+      "name": "document/1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "document/1440: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "document/1920: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "document/1920: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "document/768: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "document/768: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "document/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "document/390: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "metadata toggle preserves body DOM and shows source data",
+      "passed": true
+    },
+    {
+      "name": "information/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "information/390: semantic structure and disclosure targets",
+      "passed": true
+    },
+    {
+      "name": "ten route roundtrips preserve document without rereading",
+      "passed": true
+    },
+    {
+      "name": "back clears body and restores visible listing",
+      "passed": true
+    },
+    {
+      "name": "back restores file focus and list scroll",
+      "passed": false
+    }
+  ],
+  "timing": [],
+  "visual": [
+    {
+      "label": "document",
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "label": "document",
+      "width": 1920,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "hero-void",
+          "width": 1920,
+          "message": "28% of the first screen is one empty block (720×733px at 0,267).",
+          "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+        }
+      ]
+    },
+    {
+      "label": "document",
+      "width": 768,
+      "findings": []
+    },
+    {
+      "label": "document",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "information",
+      "width": 390,
+      "findings": []
+    }
+  ],
+  "consoleErrors": []
+}

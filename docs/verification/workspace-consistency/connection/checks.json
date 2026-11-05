@@ -1,0 +1,10 @@
+{
+  "checks": [
+    {
+      "name": "vault requires source connection",
+      "passed": true
+    }
+  ],
+  "timings": [],
+  "errors": []
+}

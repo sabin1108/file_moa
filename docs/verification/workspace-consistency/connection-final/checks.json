@@ -1,0 +1,96 @@
+{
+  "checks": [
+    {
+      "name": "vault requires source connection",
+      "passed": true
+    },
+    {
+      "name": "source connection continues to vault in the same dialog",
+      "passed": true
+    },
+    {
+      "name": "deep source location refused with clear repair and zero writes",
+      "passed": true
+    },
+    {
+      "name": "repair action is visible in the error",
+      "passed": true
+    },
+    {
+      "name": "location selection writes zero",
+      "passed": true
+    },
+    {
+      "name": "creation form is contained at 390px",
+      "passed": true
+    },
+    {
+      "name": "denied write reports permission stage",
+      "passed": true
+    },
+    {
+      "name": "denied write creates no folder",
+      "passed": true
+    },
+    {
+      "name": "separate creation requests permission in a user gesture",
+      "passed": true
+    },
+    {
+      "name": "vault created outside source",
+      "passed": true
+    },
+    {
+      "name": "no overflow 390",
+      "passed": true
+    },
+    {
+      "name": "no overflow 768",
+      "passed": true
+    },
+    {
+      "name": "no overflow 1440",
+      "passed": true
+    },
+    {
+      "name": "no overflow 1920",
+      "passed": true
+    },
+    {
+      "name": "disconnect preserves vault identity",
+      "passed": true
+    },
+    {
+      "name": "normal folder is not adopted",
+      "passed": true
+    },
+    {
+      "name": "source sentinel unchanged",
+      "passed": true
+    },
+    {
+      "name": "explicit finish closes setup",
+      "passed": true
+    },
+    {
+      "name": "reload resumes granted source and validates the vault without permission prompts",
+      "passed": true
+    },
+    {
+      "name": "Escape closes and restores focus",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timings": [
+    {
+      "operation": "create-and-verify",
+      "elapsedMs": 215
+    }
+  ],
+  "errors": []
+}

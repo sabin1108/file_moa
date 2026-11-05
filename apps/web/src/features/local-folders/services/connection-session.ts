@@ -1,0 +1,825 @@
+/**
+ * 브라우저 폴더 연결의 핵심 서비스다. 연결 controller가 호출하며 소유자·권한·연결 세대를 검증한다.
+ * 핸들 저장은 handle-repository, 직계 목록/원문 읽기는 같은 services의 reader에 위임한다. 실제 로그인 인증 자체는 별도다.
+ */
+import { connectionKey, validateFolderHandle } from "../lib/connection-validation";
+import type { ConnectionOwner, FolderConnectionView, FolderHandle, FolderKind, HandleRepository } from "../types";
+import { readSourceFolderListing, type FolderListing } from "./source-folder-listing";
+import { readSourceFilePreview, type SourceFilePreview } from "./source-file-preview";
+import { searchFolderTree } from "./folder-tree-search";
+import { inspectCopyPlan } from "./copy-inspection";
+import type { CopyInspection } from "../lib/copy-inspection";
+import type { FileChangePlan } from "../lib/file-change-plan";
+import { createEntry } from "./create-entry";
+import type { EntryKind } from "../lib/new-entry";
+import { DirectoryFolderCreationJournal } from "./folder-creation-journal";
+import { readFolderHistory } from "./folder-history";
+import { inspectHistoryTarget } from "./history-target-inspection";
+import type { HistoryGroup } from "../lib/folder-history";
+import { executeCopy, type CopyExecution } from "./copy-execution";
+import { readCopyHistory } from "./copy-journal-storage";
+import { readRestoreHistory } from "./recovery-restore-history";
+import { inspectRestoredFile } from "./restore-history-inspection";
+import type { RestoreHistoryGroup } from "../lib/recovery-restore-history";
+import { inspectCopyHistoryTargets } from "./copy-history-inspection";
+import type { CopyGroup } from "../lib/copy-journal";
+import { assertVaultLocation, assertVaultParentLocation } from "./recovery-vault-location";
+import { recoveryStage } from "../lib/recovery-connection-error";
+import { createRecoveryVault } from "./create-recovery-vault";
+import { readVaultIdentity } from "./recovery-vault";
+import { inspectRecoveryBackup, type BackupEntryIdentity } from "./recovery-backup-input";
+import { executeRecoveryBackup, type BackupExecution } from "./recovery-backup";
+import type { BackupInspection } from "../lib/recovery-backup";
+import { executeRecoveryOverwrite, type OverwriteExecution } from "./recovery-overwrite";
+import { readRecoveryArchive, inspectRecoveryArchiveItem, type RecoveryArchiveSnapshot } from "./recovery-archive";
+import { createCopyHasher } from "./copy-hash";
+import { prepareRecoveryRestore, executeRecoveryRestore, type PreparedRestore } from "./recovery-restore";
+import type { RestorePreview, RestoreExecution } from "../lib/recovery-restore";
+import type { ManagedRequest, ManagedPreview, ManagedResult } from "../lib/managed-files";
+import { prepareManagedOperation, readManagedEdit, type PreparedManaged, type EditBaseline } from "./managed-inspection";
+import { executeManagedOperation } from "./managed-execution";
+import { readManagedArchiveList } from "./managed-archive";
+import { WorkflowDraftRepository, type WorkflowDraft } from "./workflow-drafts";
+import { InlineEditorSession } from "./inline-editor-session";
+
+type Slot = { handle?: FolderHandle; connected: boolean; sequence: number };
+const emptySlots = (): Record<FolderKind, Slot> => ({ source: { connected: false, sequence: 0 }, "ai-records": { connected: false, sequence: 0 }, recovery: { connected: false, sequence: 0 } });
+const modeFor = (kind: FolderKind) => kind === "source" ? "read" as const : "readwrite" as const;
+
+/** Owner comes from the trusted authentication boundary; this class does not authenticate callers. */
+export class FolderConnectionSession {
+  private owner: ConnectionOwner | null = null;
+  private generation = 0;
+  private listingSequence = 0;
+  private searchSequence = 0;
+  private previewSequence = 0;
+  private inspectionSequence = 0;
+  private ready = false;
+  private inspectedCopy: { plan: string; report: CopyInspection; generation: number; sequence: number } | null = null;
+  private copying = false;
+  private backingUp = false;
+  private backupSequence = 0;
+  private archiveSequence = 0;
+  private archiveSnapshot: RecoveryArchiveSnapshot | null = null;
+  private restoring = false;
+  private managedPrepared: PreparedManaged | null = null;
+  private editBaseline: EditBaseline | null = null;
+  private managedSequence = 0;
+  private managedExecuting = false;
+  private readonly drafts = new WorkflowDraftRepository();
+  private readonly inlineEditor = new InlineEditorSession(() => this.backupContext(),
+    () => this.copying || this.backingUp || this.restoring, value => { this.backingUp = value; });
+  private restoreSequence = 0;
+  private preparedRestore: PreparedRestore | null = null;
+  private inspectedBackup: { plan: string; report: BackupInspection; generation: number; sourceSequence: number; vaultSequence: number } | null = null;
+  private completedBackup: { plan: string; report: BackupInspection; result: BackupExecution; sequence: number;
+    generation: number; sourceSequence: number; vaultSequence: number; identity: BackupEntryIdentity } | null = null;
+  private pendingRecoveryCreation: { parent: FolderHandle; operation: ReturnType<FolderConnectionSession["recoveryOperation"]> } | null = null;
+  private slots = emptySlots();
+  constructor(private readonly repository: HandleRepository) {}
+
+  state(kind: FolderKind): FolderConnectionView["status"] {
+    return this.view(kind).status;
+  }
+
+  /** A fresh display snapshot; reading it does not request permission or access storage. */
+  view(kind: FolderKind): FolderConnectionView {
+    if (kind !== "source" && kind !== "ai-records" && kind !== "recovery") {
+      throw Error("invalid-folder-kind");
+    }
+    const slot = this.slots[kind];
+    if (!slot.handle) return { status: "disconnected", folderName: null };
+    const connected = slot.connected && (kind !== "recovery" || this.slots.source.connected);
+    return { status: connected ? "connected" : "needs-permission", folderName: slot.handle.name };
+  }
+
+  async switchOwner(next: ConnectionOwner | null): Promise<void> {
+    this.inlineEditor.invalidate();
+    this.discardManaged();
+    this.editBaseline = null;
+    this.restoreSequence++;
+    this.preparedRestore = null;
+    this.archiveSequence++;
+    this.archiveSnapshot = null;
+    this.completedBackup = null;
+    this.pendingRecoveryCreation = null;
+    const generation = ++this.generation;
+    this.owner = null;
+    this.ready = false;
+    this.slots = emptySlots();
+    if (!next) { this.ready = true; return; }
+    connectionKey(next, "source");
+    const owner = Object.freeze({ userId: next.userId, workspaceId: next.workspaceId });
+    this.owner = owner;
+    let source: FolderHandle | undefined, records: FolderHandle | undefined, recovery: FolderHandle | undefined;
+    try { [source, records, recovery] = await Promise.all([this.repository.read(owner, "source"), this.repository.read(owner, "ai-records"), this.repository.read(owner, "recovery")]); }
+    catch (error) {
+      if (generation !== this.generation) throw new Error("stale-connection-operation");
+      throw error;
+    }
+    if (generation !== this.generation) throw new Error("stale-connection-operation");
+    if (source) validateFolderHandle(source);
+    if (records) validateFolderHandle(records);
+    if (recovery) validateFolderHandle(recovery);
+    this.slots.source.handle = source;
+    this.slots["ai-records"].handle = records;
+    this.slots.recovery.handle = recovery;
+    this.ready = true;
+  }
+
+  private begin(kind: FolderKind) {
+    if (!this.owner) throw new Error("no-connection-owner");
+    connectionKey(this.owner, kind);
+    if (!this.ready) throw new Error("connection-not-ready");
+    if (kind === "source") {
+      this.cancelRecovery();
+    }
+    const owner = this.owner, generation = this.generation, slot = this.slots[kind];
+    const sequence = ++slot.sequence;
+    return {
+      owner, slot,
+      assertCurrent: () => {
+        if (generation !== this.generation || sequence !== slot.sequence) throw new Error("stale-connection-operation");
+      },
+    };
+  }
+
+  /** F5 재진입: 이미 허용된 권한만 확인한다. 권한창/쓰기/자동 실행은 열지 않는다. */
+  resumeGrantedConnections = async () => {
+    const generation = this.generation;
+    const source = this.slots.source;
+    const recovery = this.slots.recovery;
+    const owner = this.owner;
+    const check = () => {
+      if (generation !== this.generation || source !== this.slots.source || owner !== this.owner) throw Error("stale-connection-operation");
+    };
+    if (!owner || !source.handle || !this.ready) return;
+    const permission = await source.handle.queryPermission({ mode: "read" });
+    check();
+    if (permission !== "granted") return;
+    source.connected = true;
+    if (!recovery.handle) return;
+    try {
+      if (await recovery.handle.queryPermission({ mode: "read" }) !== "granted") return;
+      check();
+      await this.validateRecovery(recovery.handle, owner, [source.handle], check);
+      check();
+      recovery.connected = true;
+    } catch {
+      check();
+      recovery.connected = false;
+    }
+  };
+
+  async select(kind: FolderKind, picker: (options: { mode: "read" | "readwrite" }) => Promise<FolderHandle>): Promise<void> {
+    if (kind === "recovery") throw Error("use-recovery-vault-action");
+    const operation = this.begin(kind);
+    try {
+      const selected = await picker({ mode: modeFor(kind) });
+      operation.assertCurrent();
+      validateFolderHandle(selected);
+      if (await selected.queryPermission({ mode: modeFor(kind) }) !== "granted") {
+        operation.assertCurrent();
+        throw new DOMException("Folder permission required", "NotAllowedError");
+      }
+      operation.assertCurrent();
+      await this.repository.write(operation.owner, kind, selected);
+      operation.assertCurrent();
+      operation.slot.handle = selected;
+      operation.slot.connected = true;
+    } catch (error) { operation.assertCurrent(); throw error; }
+  }
+
+  async reconnect(kind: FolderKind): Promise<void> {
+    if (kind === "recovery") {
+      return this.reconnectRecovery();
+    }
+    const operation = this.begin(kind);
+    const handle = operation.slot.handle;
+    if (!handle) throw new Error("no-folder-connection");
+    operation.slot.connected = false;
+    try {
+      // Deliberately no await before requestPermission: called by an explicit user gesture.
+      const permission = await handle.requestPermission({ mode: modeFor(kind) });
+      operation.assertCurrent();
+      if (permission !== "granted") throw new DOMException("Folder permission required", "NotAllowedError");
+      operation.slot.connected = true;
+    } catch (error) { operation.assertCurrent(); throw error; }
+  }
+
+  cancelRecovery = () => {
+    this.inlineEditor.invalidate();
+    this.discardManaged();
+    this.editBaseline = null;
+    this.restoreSequence++;
+    this.preparedRestore = null;
+    this.archiveSequence++;
+    this.archiveSnapshot = null;
+    this.completedBackup = null;
+    this.pendingRecoveryCreation = null;
+    this.backupSequence++;
+    this.inspectedBackup = null;
+    this.slots.recovery.sequence++;
+    this.slots.recovery.connected = false;
+  };
+
+  private recoveryOperation() {
+    const operation = this.begin("recovery");
+    const source = this.slots.source;
+    const root = source.handle;
+    const sequence = source.sequence;
+    if (!root || !source.connected) throw Error("source-folder-not-connected");
+    const check = () => {
+      operation.assertCurrent();
+      if (source.handle !== root || source.sequence !== sequence || !source.connected) {
+        throw Error("stale-connection-operation");
+      }
+    };
+    return { ...operation, roots: [root], check };
+  }
+
+  /** picker는 클릭 흐름에서 즉시 시작한다. 검증된 보관함만 별도 recovery 키에 저장한다. */
+  selectRecovery = async (picker: (options: { mode: "read" | "readwrite" }) => Promise<FolderHandle>, create: boolean) => {
+    const operation = this.recoveryOperation();
+    const selected = await recoveryStage("select-location", () => picker({ mode: create ? "readwrite" : "read" }));
+    operation.check();
+    validateFolderHandle(selected);
+    const directory = create
+      ? await navigator.locks.request("moa-recovery-vault-creation", () => createRecoveryVault(selected, operation.owner, operation.roots, operation.check))
+      : selected;
+    operation.check();
+    await recoveryStage("verify-identity", () => this.validateRecovery(directory, operation.owner, operation.roots, operation.check));
+    await recoveryStage("save-connection", () => this.repository.write(operation.owner, "recovery", directory));
+    operation.check();
+    operation.slot.handle = directory;
+    operation.slot.connected = true;
+  };
+
+  /** 1단계는 읽기 picker로 생성 위치만 고른다. 파일/폴더는 만들지 않는다. */
+  prepareRecoveryCreation = async (picker: (options: { mode: "read" | "readwrite" }) => Promise<FolderHandle>) => {
+    this.pendingRecoveryCreation = null;
+    const operation = this.recoveryOperation();
+    const parent = await recoveryStage("select-location", () => picker({ mode: "read" }));
+    operation.check();
+    validateFolderHandle(parent);
+    await recoveryStage("check-location", () => assertVaultParentLocation(parent, operation.roots, operation.check));
+    operation.check();
+    this.pendingRecoveryCreation = { parent, operation };
+    return { folderName: parent.name };
+  };
+
+  /** 별도 생성 클릭에서 권한을 먼저 요청한다. picker 선택을 실제 생성으로 표시하지 않는다. */
+  createPreparedRecovery = async () => {
+    const pending = this.pendingRecoveryCreation;
+    if (!pending) throw Error("recovery-creation-location-required");
+    const { parent, operation } = pending;
+    operation.check();
+    await recoveryStage("request-write", async () => {
+      // 이 호출 앞에는 await가 없다. 생성 버튼의 사용자 제스처를 유지한다.
+      const permission = await parent.requestPermission({ mode: "readwrite" });
+      operation.check();
+      if (permission !== "granted") throw new DOMException("Vault write permission required", "NotAllowedError");
+    });
+    const directory = await recoveryStage("create-directory", () => navigator.locks.request("moa-recovery-vault-creation", () =>
+      createRecoveryVault(parent, operation.owner, operation.roots, operation.check)));
+    operation.check();
+    await recoveryStage("verify-identity", () => this.validateRecovery(directory, operation.owner, operation.roots, operation.check));
+    await recoveryStage("save-connection", () => this.repository.write(operation.owner, "recovery", directory));
+    operation.check();
+    operation.slot.handle = directory;
+    operation.slot.connected = true;
+    this.pendingRecoveryCreation = null;
+  };
+
+  private async validateRecovery(directory: FolderHandle, owner: ConnectionOwner, roots: readonly FolderHandle[], check: () => void) {
+    await assertVaultLocation(directory, roots, check);
+    const identity = await readVaultIdentity(directory, owner, check);
+    check();
+    if (identity.status !== "ready") throw Error(`recovery-vault-${identity.status}`);
+    await assertVaultLocation(directory, roots, check);
+  }
+
+  reconnectRecovery = async () => {
+    const operation = this.recoveryOperation();
+    const directory = operation.slot.handle;
+    if (!directory) throw Error("no-folder-connection");
+    operation.slot.connected = false;
+    const permission = await directory.requestPermission({ mode: "read" });
+    operation.check();
+    if (permission !== "granted") throw new DOMException("Vault permission required", "NotAllowedError");
+    await this.validateRecovery(directory, operation.owner, operation.roots, operation.check);
+    operation.check();
+    operation.slot.connected = true;
+  };
+
+  /** 저장된 핸들/권한을 실제 존재로 간주하지 않는다. 읽기만 하며 사라진 보관함을 만들지 않는다. */
+  checkRecoveryPresence = async (): Promise<"connected" | "missing" | "permission" | "invalid" | "idle"> => {
+    const slot = this.slots.recovery;
+    if (!slot.connected || !slot.handle || !this.slots.source.connected || !this.owner) return "idle";
+    const context = this.backupContext();
+    let failure: "missing" | "permission" | "invalid" = "invalid";
+    try {
+      const identity = await readVaultIdentity(context.vault, context.owner, context.check);
+      context.check();
+      if (identity.status === "ready") {
+        await assertVaultLocation(context.vault, [context.root], context.check);
+        context.check();
+        return "connected";
+      }
+      failure = identity.status === "missing" ? "missing" : "invalid";
+    } catch (error) {
+      context.check();
+      failure = error instanceof Error && error.name === "NotFoundError" ? "missing"
+        : error instanceof Error && ["NotAllowedError", "SecurityError"].includes(error.name) ? "permission" : "invalid";
+    }
+    context.check();
+    this.cancelRecovery();
+    return failure;
+  };
+
+  /** Read display values without exposing handles or invalidating connection operations. */
+  async listSourceFolder(path: readonly string[], signal?: AbortSignal): Promise<FolderListing> {
+    const listingSequence = ++this.listingSequence;
+    const generation = this.generation;
+    const slot = this.slots.source;
+    const sequence = slot.sequence;
+    const handle = slot.handle;
+    if (!this.owner || !this.ready || !slot.connected || !handle) {
+      throw new Error("source-folder-not-connected");
+    }
+
+    const assertCurrent = () => {
+      if (generation !== this.generation || sequence !== slot.sequence || listingSequence !== this.listingSequence || handle !== slot.handle) {
+        throw new Error("stale-connection-operation");
+      }
+      if (signal?.aborted) throw new DOMException("Folder listing cancelled", "AbortError");
+    };
+
+    try {
+      assertCurrent();
+      const result = await readSourceFolderListing(handle, path, assertCurrent);
+      assertCurrent();
+      return result;
+    } catch (error) {
+      // Old failures must not revoke a replacement connection's permission state.
+      assertCurrent();
+      if (error instanceof DOMException && error.name === "NotAllowedError") {
+        slot.connected = false;
+      }
+      throw error;
+    }
+  }
+
+  searchSourceFolder = async (path: readonly string[], query: string, signal: AbortSignal) => {
+    const searchSequence = ++this.searchSequence, generation = this.generation;
+    const slot = this.slots.source, sequence = slot.sequence, handle = slot.handle;
+    if (!this.owner || !this.ready || !slot.connected || !handle) throw Error("source-folder-not-connected");
+    const check = () => {
+      if (signal.aborted || generation !== this.generation || sequence !== slot.sequence || handle !== slot.handle || searchSequence !== this.searchSequence) throw new DOMException("Search cancelled", "AbortError");
+    };
+    try { return await searchFolderTree(path, query, child => readSourceFolderListing(handle, child, check), check); }
+    catch (error) { check(); if (error instanceof DOMException && error.name === "NotAllowedError") slot.connected = false; throw error; }
+  };
+
+  /** 목록과 본문의 요청 순서는 독립적이지만 소유자·폴더 교체/해제의 수명은 함께 검증한다. */
+  async readSourceFile(path: readonly string[], signal?: AbortSignal): Promise<SourceFilePreview> {
+    const previewSequence = ++this.previewSequence;
+    const generation = this.generation;
+    const slot = this.slots.source;
+    const sequence = slot.sequence;
+    const handle = slot.handle;
+    if (!this.owner || !this.ready || !slot.connected || !handle) throw new Error("source-folder-not-connected");
+    const assertCurrent = () => {
+      if (generation !== this.generation || sequence !== slot.sequence || previewSequence !== this.previewSequence || handle !== slot.handle) {
+        throw new Error("stale-connection-operation");
+      }
+      if (signal?.aborted) throw new DOMException("File preview cancelled", "AbortError");
+    };
+    try {
+      assertCurrent();
+      const result = await readSourceFilePreview(handle, path, assertCurrent);
+      assertCurrent();
+      return result;
+    } catch (error) {
+      assertCurrent();
+      if (error instanceof DOMException && error.name === "NotAllowedError") slot.connected = false;
+      throw error;
+    }
+  }
+
+  /** Inspection is independent of navigation reads but expires with its source connection. */
+  async inspectSourceCopy(plan: FileChangePlan, signal?: AbortSignal): Promise<CopyInspection> {
+    this.inspectedCopy = null;
+    const inspectionSequence = ++this.inspectionSequence;
+    const generation = this.generation;
+    const slot = this.slots.source;
+    const sequence = slot.sequence;
+    const handle = slot.handle;
+    if (!this.owner || !this.ready || !slot.connected || !handle) throw new Error("source-folder-not-connected");
+    const assertCurrent = () => {
+      if (generation !== this.generation || sequence !== slot.sequence || inspectionSequence !== this.inspectionSequence || handle !== slot.handle) {
+        throw new Error("stale-connection-operation");
+      }
+      if (signal?.aborted) throw new DOMException("Copy inspection cancelled", "AbortError");
+    };
+    try {
+      const result = await inspectCopyPlan(handle, plan, assertCurrent, signal);
+      assertCurrent();
+      this.inspectedCopy = { plan: JSON.stringify(plan), report: structuredClone(result), generation, sequence };
+      return result;
+    } catch (error) {
+      assertCurrent();
+      if (error instanceof DOMException && error.name === "NotAllowedError") slot.connected = false;
+      throw error;
+    }
+  }
+
+  /** 검사한 동일 계획을 사용자의 실행 제스처에서만 복사한다. 승인 snapshot은 서비스 안에 보관한다. */
+  executeSourceCopy = async (plan: FileChangePlan, report: CopyInspection, signal: AbortSignal, progress: (result: CopyExecution) => void) => {
+    const prepared = this.inspectedCopy, generation = this.generation, slot = this.slots.source, sequence = slot.sequence;
+    const root = slot.handle, owner = this.owner;
+    if (!root || !owner || !slot.connected || !prepared || this.copying || this.backingUp || this.restoring || prepared.generation !== generation || prepared.sequence !== sequence
+      || prepared.plan !== JSON.stringify(plan) || JSON.stringify(prepared.report) !== JSON.stringify(report)) throw Error("copy-inspection-required");
+    if (typeof navigator !== "undefined" && navigator.userActivation && !navigator.userActivation.isActive) throw Error("copy-user-action-required");
+    const check = () => { if (generation !== this.generation || sequence !== slot.sequence || root !== slot.handle) throw Error("stale-connection-operation"); };
+    this.copying = true; this.inspectedCopy = null;
+    try { return await executeCopy(root, plan, prepared.report, owner, check, signal, progress); }
+    finally { this.copying = false; }
+  };
+
+  private backupContext() {
+    const source = this.slots.source;
+    const recovery = this.slots.recovery;
+    const root = source.handle;
+    const vault = recovery.handle;
+    const owner = this.owner;
+    const generation = this.generation;
+    const sourceSequence = source.sequence;
+    const vaultSequence = recovery.sequence;
+    if (!this.ready || !owner || !root || !vault || !source.connected || !recovery.connected) {
+      throw Error("backup-connections-required");
+    }
+    const check = () => {
+      if (generation !== this.generation || sourceSequence !== source.sequence || vaultSequence !== recovery.sequence
+        || root !== source.handle || vault !== recovery.handle || !source.connected || !recovery.connected) {
+        throw Error("stale-connection-operation");
+      }
+    };
+    return { root, vault, owner, generation, sourceSequence, vaultSequence, check };
+  }
+
+  recoveryVersion = () => `${this.generation}/${this.slots.source.sequence}/${this.slots.recovery.sequence}`;
+
+  readRecoveryArchiveList = async (signal: AbortSignal) => {
+    if (this.restoring) throw Error("restore-operation-running");
+    this.discardRecoveryRestore();
+    const context = this.backupContext();
+    const sequence = ++this.archiveSequence;
+    this.archiveSnapshot = null;
+    const check = () => {
+      context.check();
+      if (sequence !== this.archiveSequence) throw Error("stale-connection-operation");
+    };
+    const snapshot = await readRecoveryArchive(context.root, context.vault, context.owner, check, signal);
+    check();
+    this.archiveSnapshot = snapshot;
+    return structuredClone(snapshot.view);
+  };
+
+  inspectRecoveryArchiveDetail = async (id: string, signal: AbortSignal) => {
+    if (this.restoring) throw Error("restore-operation-running");
+    const snapshot = this.archiveSnapshot;
+    if (!snapshot) throw Error("archive-list-required");
+    snapshot.check();
+    const hasher = createCopyHasher(signal);
+    try { return await inspectRecoveryArchiveItem(snapshot, id, hasher.hash, signal); }
+    finally { hasher.dispose(); }
+  };
+
+  readRestoreDestination = async (path: readonly string[], signal: AbortSignal) => {
+    const context = this.backupContext();
+    const check = () => {
+      context.check();
+      if (signal.aborted) throw new DOMException("Restore browsing cancelled", "AbortError");
+    };
+    return readSourceFolderListing(context.root, path, check);
+  };
+
+  discardRecoveryRestore = () => {
+    this.preparedRestore = null;
+    if (!this.restoring) this.restoreSequence++;
+  };
+
+  prepareRecoveryRestore = async (id: string, path: readonly string[], signal: AbortSignal) => {
+    if (this.restoring || this.copying || this.backingUp) throw Error("restore-operation-running");
+    const context = this.backupContext();
+    const snapshot = this.archiveSnapshot;
+    if (!snapshot) throw Error("archive-list-required");
+    this.preparedRestore = null;
+    const sequence = ++this.restoreSequence;
+    const check = () => {
+      context.check();
+      if (sequence !== this.restoreSequence) throw Error("stale-connection-operation");
+    };
+    const hasher = createCopyHasher(signal);
+    try {
+      const prepared = await prepareRecoveryRestore(snapshot, id, path, check, signal, hasher.hash);
+      check();
+      this.preparedRestore = prepared;
+      return structuredClone(prepared.view);
+    } finally { hasher.dispose(); }
+  };
+
+  executeRecoveryRestore = async (view: RestorePreview, signal: AbortSignal, progress: (result: RestoreExecution) => void) => {
+    const context = this.backupContext();
+    const prepared = this.preparedRestore;
+    if (!prepared || this.restoring || this.copying || this.backingUp || JSON.stringify(prepared.view) !== JSON.stringify(view)) throw Error("restore-inspection-required");
+    prepared.snapshot.check();
+    if (typeof navigator !== "undefined" && navigator.userActivation && !navigator.userActivation.isActive) throw Error("restore-user-action-required");
+    this.preparedRestore = null;
+    this.restoring = true;
+    const sequence = ++this.restoreSequence;
+    const check = () => {
+      context.check();
+      if (sequence !== this.restoreSequence) throw Error("stale-connection-operation");
+    };
+    const hasher = createCopyHasher(signal);
+    try {
+      const result = await executeRecoveryRestore(prepared, context.owner, check, signal, progress, hasher.hash);
+      check();
+      return result;
+    } finally { hasher.dispose(); this.restoring = false; }
+  };
+
+  /** 읽기 검사의 snapshot을 내부에 보관한다. 호출자 DTO를 실행 권한으로 신뢰하지 않는다. */
+  inspectSourceBackup = async (plan: FileChangePlan, signal: AbortSignal): Promise<BackupInspection> => {
+    if (this.backingUp || this.copying || this.restoring) throw Error("backup-operation-running");
+    this.completedBackup = null;
+    this.inspectedBackup = null;
+    const sequence = ++this.backupSequence;
+    const context = this.backupContext();
+    const fixedPlan = structuredClone(plan);
+    const check = () => {
+      context.check();
+      if (sequence !== this.backupSequence) throw Error("stale-connection-operation");
+    };
+    const report = await inspectRecoveryBackup(context.root, context.vault, fixedPlan, context.owner, check, signal);
+    check();
+    this.inspectedBackup = { plan: JSON.stringify(fixedPlan), report: structuredClone(report),
+      generation: context.generation, sourceSequence: context.sourceSequence, vaultSequence: context.vaultSequence };
+    return report;
+  };
+
+  /** 충돌 UI의 후속 연결점. 실제 실행은 새 사용자 제스처·동일 검사·두 연결 수명을 요구한다. */
+  executeSourceBackup = async (plan: FileChangePlan, report: BackupInspection, signal: AbortSignal, progress: (result: BackupExecution) => void) => {
+    const context = this.backupContext();
+    const inspected = this.inspectedBackup;
+    if (!inspected || this.copying || this.backingUp || this.restoring || inspected.plan !== JSON.stringify(plan)
+      || JSON.stringify(inspected.report) !== JSON.stringify(report) || inspected.generation !== context.generation
+      || inspected.sourceSequence !== context.sourceSequence || inspected.vaultSequence !== context.vaultSequence) {
+      throw Error("backup-inspection-required");
+    }
+    if (typeof navigator !== "undefined" && navigator.userActivation && !navigator.userActivation.isActive) {
+      throw Error("backup-user-action-required");
+    }
+    const sequence = ++this.backupSequence;
+    this.inspectedBackup = null;
+    this.backingUp = true;
+    this.completedBackup = null;
+    const check = () => {
+      context.check();
+      if (sequence !== this.backupSequence) throw Error("stale-connection-operation");
+    };
+    try {
+      let identity: BackupEntryIdentity | null = null;
+      const result = await executeRecoveryBackup(context.root, context.vault, plan, inspected.report, context.owner, check, signal, progress,
+        undefined, undefined, value => { identity = value; });
+      check();
+      if (identity && result.phase === "completed" && result.journalComplete && result.items.every(item => item.status === "verified")) {
+        this.completedBackup = { ...inspected, result: structuredClone(result), sequence, identity };
+      }
+      return result;
+    } finally {
+      this.backingUp = false;
+    }
+  };
+
+  discardSourceOverwrite = () => { this.completedBackup = null; };
+
+  /** 성공 DTO는 권한이 아니다. 내부 완료 snapshot과 새 사용자 제스처를 한 번만 소비한다. */
+  executeSourceOverwrite = async (plan: FileChangePlan, report: BackupInspection, backup: BackupExecution,
+    signal: AbortSignal, progress: (result: OverwriteExecution) => void) => {
+    const context = this.backupContext();
+    const completed = this.completedBackup;
+    if (!completed || this.copying || this.backingUp || this.restoring || completed.plan !== JSON.stringify(plan)
+      || JSON.stringify(completed.report) !== JSON.stringify(report) || JSON.stringify(completed.result) !== JSON.stringify(backup)
+      || completed.generation !== context.generation || completed.sourceSequence !== context.sourceSequence
+      || completed.vaultSequence !== context.vaultSequence || completed.sequence !== this.backupSequence) throw Error("overwrite-backup-required");
+    if (typeof navigator !== "undefined" && navigator.userActivation && !navigator.userActivation.isActive) throw Error("overwrite-user-action-required");
+    this.completedBackup = null;
+    this.inspectedBackup = null;
+    this.backingUp = true;
+    const sequence = ++this.backupSequence;
+    const check = () => {
+      context.check();
+      if (sequence !== this.backupSequence) throw Error("stale-connection-operation");
+    };
+    try {
+      const result = await executeRecoveryOverwrite(context.root, context.vault, plan, completed.report, completed.result,
+        context.owner, check, signal, progress, undefined, undefined, completed.identity);
+      check();
+      return result;
+    } finally { this.backingUp = false; }
+  };
+
+  async disconnect(kind: FolderKind): Promise<void> {
+    const operation = this.begin(kind);
+    operation.slot.handle = undefined;
+    operation.slot.connected = false;
+    try { await this.repository.remove(operation.owner, kind); }
+    catch (error) { operation.assertCurrent(); throw error; }
+    operation.assertCurrent();
+  }
+
+  /** 생성 권한 거부는 읽기 연결을 해제하지 않는다. journal은 캡처한 소유자에게만 기록한다. */
+  createSourceEntry = async (path: readonly string[], name: string, kind: EntryKind = "folder"): Promise<readonly string[]> => {
+    if (this.restoring || this.backingUp || this.copying) throw Error("managed-operation-running");
+    const generation = this.generation, slot = this.slots.source, sequence = slot.sequence;
+    const root = slot.handle, owner = this.owner;
+    if (!owner || !this.ready || !slot.connected || !root) throw new Error("source-folder-not-connected");
+    const assertCurrent = () => {
+      if (generation !== this.generation || sequence !== slot.sequence || root !== slot.handle) throw new Error("stale-connection-operation");
+    };
+    return createEntry(root, path, name, assertCurrent, new DirectoryFolderCreationJournal(root, owner, root.name, path, assertCurrent),
+      async work => await navigator.locks.request("moa-folder-creation", work), kind);
+  };
+
+  /** 기록 조회는 읽기 권한만 확인한다. 생성/목록 요청의 순번은 변경하지 않는다. */
+  readSourceHistory = async (path: readonly string[], signal?: AbortSignal) => {
+    const generation = this.generation, slot = this.slots.source, sequence = slot.sequence;
+    const root = slot.handle, owner = this.owner;
+    if (!owner || !this.ready || !slot.connected || !root) throw new Error("source-folder-not-connected");
+    const assertCurrent = () => {
+      if (generation !== this.generation || sequence !== slot.sequence || root !== slot.handle) throw new Error("stale-connection-operation");
+      if (signal?.aborted) throw new DOMException("History reading cancelled", "AbortError");
+    };
+    const result = await readFolderHistory(root, path, owner, assertCurrent);
+    const copies = await readCopyHistory(root, path, owner, assertCurrent);
+    const restores = await readRestoreHistory(root, path, owner, assertCurrent);
+    assertCurrent();
+    return { ...result, copies, restores };
+  };
+
+  inspectSourceHistoryTarget = async (path: readonly string[], group: HistoryGroup, signal: AbortSignal) => {
+    const generation = this.generation, slot = this.slots.source, sequence = slot.sequence;
+    const root = slot.handle, owner = this.owner;
+    if (!owner || !this.ready || !slot.connected || !root) throw new Error("source-folder-not-connected");
+    const assertCurrent = () => {
+      if (generation !== this.generation || sequence !== slot.sequence || root !== slot.handle) throw new Error("stale-connection-operation");
+      if (signal.aborted) throw new DOMException("History target inspection cancelled", "AbortError");
+    };
+    const result = await inspectHistoryTarget(root, path, owner, group, assertCurrent);
+    assertCurrent();
+    return result;
+  };
+
+  inspectSourceCopyHistory = async (path: readonly string[], group: CopyGroup, signal: AbortSignal) => {
+    const generation = this.generation, slot = this.slots.source, sequence = slot.sequence, root = slot.handle, owner = this.owner;
+    if (!root || !owner || !slot.connected || !this.ready) throw Error("source-folder-not-connected");
+    const check = () => { if (generation !== this.generation || sequence !== slot.sequence || root !== slot.handle) throw Error("stale-connection-operation"); };
+    return inspectCopyHistoryTargets(root, path, group, owner, check, signal);
+  };
+
+  inspectSourceRestoreHistory = async (path: readonly string[], group: RestoreHistoryGroup, signal: AbortSignal) => {
+    const generation = this.generation;
+    const slot = this.slots.source;
+    const sequence = slot.sequence;
+    const root = slot.handle;
+    const owner = this.owner;
+    if (!root || !owner || !slot.connected || !this.ready) throw Error("source-folder-not-connected");
+    const check = () => {
+      if (generation !== this.generation || sequence !== slot.sequence || root !== slot.handle) throw Error("stale-connection-operation");
+      if (signal.aborted) throw new DOMException("cancelled", "AbortError");
+    };
+    return inspectRestoredFile(root, path, group, owner, check, signal);
+  };
+
+  discardManaged = () => {
+    this.managedPrepared = null;
+    if (!this.managedExecuting) this.managedSequence++;
+  };
+
+  readManagedDestination = async (path: readonly string[], signal: AbortSignal) => {
+    const slot = this.slots.source;
+    const root = slot.handle;
+    const generation = this.generation;
+    const sequence = slot.sequence;
+    if (!root || !slot.connected || !this.ready || !this.owner) throw Error("source-folder-not-connected");
+    const check = () => {
+      if (generation !== this.generation || sequence !== slot.sequence || root !== slot.handle) throw Error("stale-connection-operation");
+      if (signal.aborted) throw new DOMException("cancelled", "AbortError");
+    };
+    return readSourceFolderListing(root, path, check);
+  };
+
+  readManagedArchives = async (signal: AbortSignal) => {
+    const context = this.backupContext();
+    const check = () => { context.check(); if (signal.aborted) throw new DOMException("cancelled", "AbortError"); };
+    const hasher = createCopyHasher(signal);
+    try { return await readManagedArchiveList({ ...context, check }, hasher.hash); }
+    finally { hasher.dispose(); }
+  };
+
+  openManagedEditor = async (path: readonly string[], signal: AbortSignal) => {
+    if (this.copying || this.backingUp || this.restoring) throw Error("managed-operation-running");
+    this.editBaseline = null;
+    this.managedPrepared = null;
+    const context = this.backupContext();
+    const sequence = ++this.managedSequence;
+    const check = () => {
+      context.check();
+      if (sequence !== this.managedSequence) throw Error("stale-connection-operation");
+      if (signal.aborted) throw new DOMException("cancelled", "AbortError");
+    };
+    const hasher = createCopyHasher(signal);
+    try {
+      const value = await readManagedEdit({ ...context, check }, path, hasher.hash);
+      check();
+      this.editBaseline = value;
+      return { id: value.id, text: value.text, path: [...path] };
+    } finally { hasher.dispose(); }
+  };
+
+  prepareManaged = async (request: ManagedRequest, signal: AbortSignal) => {
+    if (this.copying || this.backingUp || this.restoring) throw Error("managed-operation-running");
+    this.managedPrepared = null;
+    const context = this.backupContext();
+    const sequence = ++this.managedSequence;
+    const check = () => {
+      context.check();
+      if (sequence !== this.managedSequence) throw Error("stale-connection-operation");
+      if (signal.aborted) throw new DOMException("cancelled", "AbortError");
+    };
+    if (request.kind === "edit" && (!this.editBaseline || this.editBaseline.id !== request.editId)) throw Error("managed-edit-required");
+    const hasher = createCopyHasher(signal);
+    try {
+      const prepared = await prepareManagedOperation({ ...context, check }, request, hasher.hash, this.editBaseline ?? undefined);
+      check();
+      // 검사의 AbortSignal 대신 연결 세대를 실행 수명의 기준으로 보관한다.
+      prepared.context = context;
+      this.managedPrepared = prepared;
+      return structuredClone(prepared.view);
+    } finally { hasher.dispose(); }
+  };
+
+  executeManaged = async (view: ManagedPreview, signal: AbortSignal, progress: (result: ManagedResult) => void) => {
+    const prepared = this.managedPrepared;
+    if (!prepared || JSON.stringify(prepared.view) !== JSON.stringify(view) || this.copying || this.backingUp || this.restoring) throw Error("managed-inspection-required");
+    prepared.context.check();
+    if (typeof navigator !== "undefined" && navigator.userActivation && !navigator.userActivation.isActive) throw Error("managed-user-action-required");
+    this.managedPrepared = null;
+    this.managedExecuting = true;
+    this.backingUp = true;
+    const hasher = createCopyHasher(signal);
+    try {
+      const result = await executeManagedOperation(prepared, signal, hasher.hash, progress);
+      prepared.context.check();
+      return result;
+    }
+    finally { hasher.dispose(); this.managedExecuting = false; this.backingUp = false; }
+  };
+
+  persistWorkflow = async (value: WorkflowDraft) => {
+    const source = this.slots.source;
+    const root = source.handle;
+    const owner = this.owner;
+    if (!root || !owner || !source.connected) throw Error("source-folder-not-connected");
+    await this.drafts.write(owner, root, value, value.flow === "edit" ? this.inlineEditor.checkpoint(value.id) : undefined);
+  };
+  readWorkflow = async (id: string) => {
+    const source = this.slots.source;
+    const root = source.handle;
+    const owner = this.owner;
+    const generation = this.generation;
+    if (!root || !owner || !source.connected) throw Error("source-folder-not-connected");
+    const stored = await this.drafts.read(owner, root, id);
+    if (generation !== this.generation || root !== this.slots.source.handle) throw Error("stale-connection-operation");
+    return stored?.value ?? null;
+  };
+  removeWorkflow = async (id: string) => {
+    const root = this.slots.source.handle;
+    const owner = this.owner;
+    if (root && owner && await this.drafts.read(owner, root, id)) await this.drafts.remove(id);
+  };
+  openInlineEditor = async (path: readonly string[], signal: AbortSignal, draftId?: string) => {
+    const context = this.backupContext();
+    const stored = draftId ? await this.drafts.read(context.owner, context.root, draftId) : null;
+    context.check();
+    if (stored && (stored.value.flow !== "edit" || JSON.stringify([...stored.value.source, ...stored.value.names]) !== JSON.stringify(path))) throw Error("editor-draft-mismatch");
+    const result = await this.inlineEditor.open(path, signal, stored ? { id: stored.value.id, checkpoint: stored.editor } : undefined);
+    context.check();
+    return { ...result, originalText: result.text, text: stored?.value.text ?? result.text };
+  };
+  saveInlineEditor = (id: string, text: string, signal: AbortSignal, manual: boolean) => this.inlineEditor.save(id, text, signal, manual);
+  closeInlineEditor = () => this.inlineEditor.invalidate();
+}

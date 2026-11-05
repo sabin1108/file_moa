@@ -1,0 +1,194 @@
+{
+  "at": "2026-10-28T07:28:37.555Z",
+  "base": "http://127.0.0.1:3006",
+  "checks": [
+    {
+      "name": "DIALOG-001 no automatic popup; labelled settings trigger",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 modal has name, safe title focus and native modal state",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 Tab remains inside modal",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 background cannot receive programmatic focus",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 backdrop click does not dismiss settings",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 Escape restores trigger focus",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-003 picker cancel keeps popup and error context",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-003 save failure keeps popup",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-003 successful connection closes popup and preserves files route",
+      "passed": true
+    },
+    {
+      "name": "SELECT-001 file extensions selectable; no directory checkbox",
+      "passed": true
+    },
+    {
+      "name": "SELECT-002 master checkbox is mixed",
+      "passed": true
+    },
+    {
+      "name": "SELECT-001 Space toggles a focused native checkbox",
+      "passed": true
+    },
+    {
+      "name": "SELECT-002 select all counts six displayed files, not two folders",
+      "passed": true
+    },
+    {
+      "name": "SELECT-003 clear selection resets master state",
+      "passed": true
+    },
+    {
+      "name": "SELECT-004 preview preserves selection and return focus",
+      "passed": true
+    },
+    {
+      "name": "SELECT-004 ten route roundtrips preserve selection",
+      "passed": true
+    },
+    {
+      "name": "selected/1440: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "selected/1920: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "selected/768: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "selected/390: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "dialog/1440: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "dialog/768: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "dialog/390: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "SELECT-004 changing folder clears prior selection",
+      "passed": true
+    },
+    {
+      "name": "SELECT-004 parent navigation clears child selection",
+      "passed": true
+    },
+    {
+      "name": "SELECT-005 failure retains selection but disables additions",
+      "passed": true
+    },
+    {
+      "name": "SELECT-005 clear remains available after failure",
+      "passed": true
+    },
+    {
+      "name": "SELECT-005 successful refresh prunes absent selected files",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-004 permission loss stays visible without forced popup",
+      "passed": true
+    },
+    {
+      "name": "SELECT-006 reconnect revalidates and preserves existing selection",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-003 old completion cannot close a reopened popup; replacement clears selection",
+      "passed": true
+    }
+  ],
+  "timing": [],
+  "visual": [
+    {
+      "label": "selected",
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "label": "selected",
+      "width": 1920,
+      "findings": []
+    },
+    {
+      "label": "selected",
+      "width": 768,
+      "findings": []
+    },
+    {
+      "label": "selected",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "dialog",
+      "width": 1440,
+      "findings": [
+        {
+          "level": "FAIL",
+          "id": "heavy-shadow",
+          "width": 1440,
+          "message": "1 panel shadow(s) heavy enough to read as floating: rgba(6, 20, 27, 0.18) 0px 16px 48px 0px",
+          "fix": "Panels sit on the ground: separate them with a fill one step from the ground or a quiet 1px border. A shadow, if any, is under 8% black with a small blur. Real overlays (menus, dialogs, popovers) may float."
+        }
+      ]
+    },
+    {
+      "label": "dialog",
+      "width": 768,
+      "findings": [
+        {
+          "level": "FAIL",
+          "id": "heavy-shadow",
+          "width": 768,
+          "message": "1 panel shadow(s) heavy enough to read as floating: rgba(6, 20, 27, 0.18) 0px 16px 48px 0px",
+          "fix": "Panels sit on the ground: separate them with a fill one step from the ground or a quiet 1px border. A shadow, if any, is under 8% black with a small blur. Real overlays (menus, dialogs, popovers) may float."
+        }
+      ]
+    },
+    {
+      "label": "dialog",
+      "width": 390,
+      "findings": [
+        {
+          "level": "FAIL",
+          "id": "heavy-shadow",
+          "width": 390,
+          "message": "1 panel shadow(s) heavy enough to read as floating: rgba(6, 20, 27, 0.18) 0px 16px 48px 0px",
+          "fix": "Panels sit on the ground: separate them with a fill one step from the ground or a quiet 1px border. A shadow, if any, is under 8% black with a small blur. Real overlays (menus, dialogs, popovers) may float."
+        }
+      ]
+    }
+  ],
+  "consoleErrors": [],
+  "boundary": "Real UI/state/IDB/Web Locks/OPFS; injected picker/permission/failure; synthetic files only; no native picker or real login validation"
+}

@@ -1,0 +1,140 @@
+{
+  "at": "2026-11-04T00:31:09.807Z",
+  "moduleCount": 125,
+  "checks": [
+    {
+      "name": "inspection writes zero",
+      "passed": true
+    },
+    {
+      "name": "inspection source plus target byte total",
+      "passed": true
+    },
+    {
+      "name": "real session backup completed",
+      "passed": true
+    },
+    {
+      "name": "all items verified",
+      "passed": true
+    },
+    {
+      "name": "source bytes/size/mtime unchanged",
+      "passed": true
+    },
+    {
+      "name": "target bytes/size/mtime unchanged",
+      "passed": true
+    },
+    {
+      "name": "no writable opened on original names",
+      "passed": true
+    },
+    {
+      "name": "retention is explicitly undecided",
+      "passed": true
+    },
+    {
+      "name": "old destination preserved 0",
+      "passed": true
+    },
+    {
+      "name": "paired verified record 0",
+      "passed": true
+    },
+    {
+      "name": "old destination preserved 1",
+      "passed": true
+    },
+    {
+      "name": "paired verified record 1",
+      "passed": true
+    },
+    {
+      "name": "old destination preserved 2",
+      "passed": true
+    },
+    {
+      "name": "paired verified record 2",
+      "passed": true
+    },
+    {
+      "name": "real Worker hashes disposed",
+      "passed": true
+    },
+    {
+      "name": "completion journal survives reread",
+      "passed": true
+    }
+  ],
+  "samples": [
+    {
+      "operation": "inspection",
+      "elapsedMs": 70
+    },
+    {
+      "operation": "backup-and-dual-audit",
+      "elapsedMs": 2913.7000000178814
+    },
+    {
+      "operation": "repeat-inspection",
+      "payloadBytes": 1048576,
+      "elapsedMs": 65.59999999403954
+    },
+    {
+      "operation": "backup-and-dual-audit",
+      "elapsedMs": 1026.9000000059605
+    },
+    {
+      "operation": "repeat-inspection",
+      "payloadBytes": 1048576,
+      "elapsedMs": 56.30000001192093
+    },
+    {
+      "operation": "backup-and-dual-audit",
+      "elapsedMs": 1174.0999999940395
+    },
+    {
+      "operation": "repeat-inspection",
+      "payloadBytes": 16777216,
+      "elapsedMs": 190.2999999821186
+    },
+    {
+      "operation": "backup-and-dual-audit",
+      "elapsedMs": 1503.5999999940395
+    }
+  ],
+  "totalBytes": 2097207,
+  "workers": {
+    "workers": 2,
+    "terminated": 2
+  },
+  "result": {
+    "id": "65bc8604-c8e7-4e7a-9141-118bdd674142",
+    "phase": "completed",
+    "issue": null,
+    "journalComplete": true,
+    "items": [
+      {
+        "itemId": "item-0001",
+        "recoveryId": "468a3ecf-8495-45e8-a3aa-f97e24f8b0e5",
+        "status": "verified"
+      },
+      {
+        "itemId": "item-0002",
+        "recoveryId": "dd68a003-01f7-4ad1-a9df-c8f129b0ef30",
+        "status": "verified"
+      },
+      {
+        "itemId": "item-0003",
+        "recoveryId": "2d7a2415-0055-435f-9c82-f04301b7811c",
+        "status": "verified"
+      }
+    ]
+  },
+  "browserErrors": [],
+  "finalWorkerCounts": {
+    "workers": 8,
+    "terminated": 8
+  }
+}

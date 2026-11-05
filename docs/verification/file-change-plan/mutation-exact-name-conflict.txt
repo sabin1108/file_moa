@@ -1,0 +1,28 @@
+
+ RUN  v5.0.5 E:/project/ai_folder_project
+
+ ❯ apps/web/tests/local-folders/lib/file-change-plan.test.ts (11 tests | 1 failed) 16ms
+   ❯ read-only file change rules (11)
+     × PLAN-004 blocks exact file or directory name collision 5ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  08:48:57
+   Duration  184ms (import 35%, transform 34%, tests 25%, worker 6%)
+
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/web/tests/local-folders/lib/file-change-plan.test.ts > read-only file change rules > PLAN-004 blocks exact file or directory name collision
+AssertionError: expected [ 'ambiguous-name' ] to include 'name-conflict'
+ ❯ apps/web/tests/local-folders/lib/file-change-plan.test.ts:46:95
+     44|   it("PLAN-004 blocks exact file or directory name collision", () => {
+     45|     for (const kind of ["file", "directory"] as const) {
+     46|       expect(plan("move", [{ ...target, entries: [{ name: "a.md", kind…
+       |                                                                                               ^
+     47|     }
+     48|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

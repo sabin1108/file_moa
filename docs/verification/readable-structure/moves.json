@@ -1,0 +1,417 @@
+[
+  {
+    "from": "apps/web/src/app/globals.css",
+    "to": "apps/web/src/styles/globals.css",
+    "beforeSha256": "02a0363d4a3e1bce3f3aa7e8f3f3124ed637e2cff462f9bab256d06178a5e652"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/browser/handle-repository.ts",
+    "to": "apps/web/src/features/local-folders/services/handle-repository.ts",
+    "beforeSha256": "a50dcb4f4c89c46e8ad5d80974e965e94904b6f07afad1039ce8ca30b759f697"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/browser/source-file-preview.test.ts",
+    "to": "apps/web/tests/local-folders/services/source-file-preview.test.ts",
+    "beforeSha256": "a54c5008fc83f49fa947a607964f20b4bd057d65903257da020964547e693b0f"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/browser/source-file-preview.ts",
+    "to": "apps/web/src/features/local-folders/services/source-file-preview.ts",
+    "beforeSha256": "64bdb6ccf90a9af7a4637d40c5e439487e6e5bef791486a5d8d2f773a1aab157"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/browser/source-folder-listing.test.ts",
+    "to": "apps/web/tests/local-folders/services/source-folder-listing.test.ts",
+    "beforeSha256": "f1a8a47936f9c3d12983be72405419e1f4734d5b088f5b133449e1e4a17a5fc4"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/browser/source-folder-listing.ts",
+    "to": "apps/web/src/features/local-folders/services/source-folder-listing.ts",
+    "beforeSha256": "ca41fcb5b16934240453bf32ffbfb1e5cff3af7250d96c267e00f41d625b4dfd"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/contracts.ts",
+    "to": "apps/web/src/features/local-folders/types.ts",
+    "beforeSha256": "33ec2123bff0e0b9fdc88042cd999f2b8fafe89f4b3b4356558b81cd4718996b"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/state/connection-session.test.ts",
+    "to": "apps/web/tests/local-folders/services/connection-session.test.ts",
+    "beforeSha256": "b8741d58b584a379ac2dbdea5e8e5504b05776b45c9fa01c166d17faa36029d8"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/state/connection-session.ts",
+    "to": "apps/web/src/features/local-folders/services/connection-session.ts",
+    "beforeSha256": "28b8269c765d4bc64508656dbf62e239089698277e7ffecdfdedb6f46c8e3914"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/state/source-connection-controller.test.ts",
+    "to": "apps/web/tests/local-folders/store/source-connection-controller.test.ts",
+    "beforeSha256": "797139440807fc3f7b451e5ee0b9e6ad3a8d7dc22e652d8d635d967bd4199af4"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/state/source-connection-controller.ts",
+    "to": "apps/web/src/features/local-folders/store/source-connection-controller.ts",
+    "beforeSha256": "3235c7da0c2cbc4589d7ba303d1be9709a32959a511f3d4bf6e130396e15440e"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/state/source-listing-controller.test.ts",
+    "to": "apps/web/tests/local-folders/store/source-listing-controller.test.ts",
+    "beforeSha256": "081f469c1b0a6c7a3878d0dd2e3d479914a698d6f20f73796c47485fe7757075"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/state/source-listing-controller.ts",
+    "to": "apps/web/src/features/local-folders/store/source-listing-controller.ts",
+    "beforeSha256": "2164a72e23f3b3e07ad05000b6275a7c356b9cea9cf996e7dc6486fdf0947461"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/state/source-preview-controller.test.ts",
+    "to": "apps/web/tests/local-folders/store/source-preview-controller.test.ts",
+    "beforeSha256": "ff6defc9e12ddce0f2c28cd4f04ebe286436a9b80b95e665d772704d7bd1de50"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/state/source-preview-controller.ts",
+    "to": "apps/web/src/features/local-folders/store/source-preview-controller.ts",
+    "beforeSha256": "0c9fd355870cbc6dbf13ec296f3ab9af4be2fdffd5dffd11da7e0c83063e4d37"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/state/source-selection.test.ts",
+    "to": "apps/web/tests/local-folders/store/source-selection.test.ts",
+    "beforeSha256": "7f226340b22dae690fc0d8ba17f453ec817671728129863c9631b43bb7646ea2"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/state/SourceFolderProvider.tsx",
+    "to": "apps/web/src/features/local-folders/providers/SourceFolderProvider.tsx",
+    "beforeSha256": "38aef73e52faf234c1ad64dd69182701291265615ed85b745c7caeeda9f2087e"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/state/use-source-folder-connection.ts",
+    "to": "apps/web/src/features/local-folders/hooks/use-source-folder-connection.ts",
+    "beforeSha256": "73ebde637daf022dab07561b3c01c3e85e1454f9a8ed94c5acd8fae7ecc83fe0"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/ui/file-selection.module.css",
+    "to": "apps/web/src/features/local-folders/components/listing/file-selection.module.css",
+    "beforeSha256": "6aee1742aa97a2e30401915c0ecf1976eed5d7f9d29cf1b511d422391bc40390"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/ui/FileSelectionToolbar.tsx",
+    "to": "apps/web/src/features/local-folders/components/listing/FileSelectionToolbar.tsx",
+    "beforeSha256": "9cf75e4259c610ca0ba4915cb7fb3dec6051382715df1af812d598a54a3946cb"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/ui/FolderListingView.tsx",
+    "to": "apps/web/src/features/local-folders/components/listing/FolderListingView.tsx",
+    "beforeSha256": "a61e31a79116b30cebcf7e178eb0778606b3437f460f1c67f7a55baae87ef5b3"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/ui/source-document-preview.module.css",
+    "to": "apps/web/src/features/local-folders/components/preview/source-document-preview.module.css",
+    "beforeSha256": "325d5ea2b28be2bca29b2e3c92631163a426b27eb226c7905477086f9b09d2a0"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/ui/source-folder-browser.module.css",
+    "to": "apps/web/src/features/local-folders/components/listing/source-folder-browser.module.css",
+    "beforeSha256": "7ae2bd76d1b0c5826b2ca2ece81d2c396867f45dc56e0ba8e6e9fe636f9b47c5"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/ui/source-folder-connection.module.css",
+    "to": "apps/web/src/features/local-folders/components/connection/source-folder-connection.module.css",
+    "beforeSha256": "e69b61a2c51d1c46f969ada84b2552696b573fd6330281d4530369f970c62e3a"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/ui/source-folder-settings-dialog.module.css",
+    "to": "apps/web/src/features/local-folders/components/connection/source-folder-settings-dialog.module.css",
+    "beforeSha256": "184bb0d02bebe337e5fc5203c4172306f91cc6a5d0333e7885a833ce86727a4b"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/ui/SourceDocumentPreview.tsx",
+    "to": "apps/web/src/features/local-folders/components/preview/SourceDocumentPreview.tsx",
+    "beforeSha256": "4e713c32cafe1f6b3a2a72374c7b6bd9283956144b53decc71fc8ba095335f2f"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/ui/SourceFileRow.tsx",
+    "to": "apps/web/src/features/local-folders/components/listing/SourceFileRow.tsx",
+    "beforeSha256": "33f592e1c0cf901247fc7702564a4f30c29134e4d13651f1f1fb5274d3ee4601"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/ui/SourceFolderBrowser.tsx",
+    "to": "apps/web/src/features/local-folders/components/listing/SourceFolderBrowser.tsx",
+    "beforeSha256": "6cfd9fd3974f67efaf01ed1bd4cce357afd6acbffff36a5dbb7160edb5576cd1"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/ui/SourceFolderConnection.tsx",
+    "to": "apps/web/src/features/local-folders/components/connection/SourceFolderConnection.tsx",
+    "beforeSha256": "e5fa34aca473929ad24524b11fd20113a2bef99c7e95e4b57859527474608eb3"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/ui/SourceFolderSettings.tsx",
+    "to": "apps/web/src/features/local-folders/components/connection/SourceFolderSettings.tsx",
+    "beforeSha256": "67bbeb3de628b153741a986b5a59eba05d09bf536cca39e5e5f7ccce6824fcba"
+  },
+  {
+    "from": "apps/web/src/features/local-folders/ui/SourceFolderSettingsDialog.tsx",
+    "to": "apps/web/src/features/local-folders/components/connection/SourceFolderSettingsDialog.tsx",
+    "beforeSha256": "5255a4a33089d510943d2439fde135daf17e8b63ad35db2105ae2a501ea405ff"
+  },
+  {
+    "from": "apps/web/src/features/workspace/live-workspace.module.css",
+    "to": "apps/web/src/styles/workspace-layout.module.css",
+    "beforeSha256": "74e649cd4925973bf29f5d6735643dfa24020ae7e02c28b987cb95996b3de3d7"
+  },
+  {
+    "from": "apps/web/src/features/workspace/UnavailableFeature.tsx",
+    "to": "apps/web/src/components/ui/feedback/UnavailableFeature.tsx",
+    "beforeSha256": "a7890e351cade4715d87904db817cf367a1fb00b2e8dee7d23f587e63413bb4f"
+  },
+  {
+    "from": "apps/web/src/features/workspace/WorkspaceShell.tsx",
+    "to": "apps/web/src/components/layout/WorkspaceShell.tsx",
+    "beforeSha256": "5ff18eb0e5f663a37425754ad2182e38324b6addbdfdd071102c6edbc85369a5"
+  },
+  {
+    "from": "apps/web/src/shared/README.md",
+    "to": "apps/web/src/components/README.md",
+    "beforeSha256": "a6b98777bf35fe184ec1cb6feb50758fb326c393d89fff3d4ecadb8c2e02ffd5"
+  },
+  {
+    "from": "apps/web/src/shared/styles/composer.module.css",
+    "to": "apps/web/src/styles/composer.module.css",
+    "beforeSha256": "01ebe49e23c62a7968727a2064e8ed027519512248cdc472cfb2c56e489b9e18"
+  },
+  {
+    "from": "apps/web/src/shared/styles/controls.module.css",
+    "to": "apps/web/src/styles/controls.module.css",
+    "beforeSha256": "538c8b92af835bb4f99201020ca777bd64f0dfdc1c3c97b6994e6ec87fc17fc1"
+  },
+  {
+    "from": "apps/web/src/shared/styles/sidebar.module.css",
+    "to": "apps/web/src/styles/sidebar.module.css",
+    "beforeSha256": "65d20379f4883d8e4f746c2598cecf73376792b4dfcf25e7183c08bfcebad64e"
+  },
+  {
+    "from": "apps/web/src/shared/styles/workspace-ui.module.css",
+    "to": "apps/web/src/styles/workspace-ui.module.css",
+    "beforeSha256": "a11f7d08f7211861aa0eda3c934d7aa489223d2ac7953e1c1434e3378e769846"
+  },
+  {
+    "from": "apps/web/src/shared/ui/action-classes.ts",
+    "to": "apps/web/src/components/ui/action-classes.ts",
+    "beforeSha256": "8ba4615e22a9320f7ef8760130fe870644e8f47ddaf181b1f1341e1e4c07d928"
+  },
+  {
+    "from": "apps/web/src/shared/ui/ActionLink.tsx",
+    "to": "apps/web/src/components/ui/ActionLink.tsx",
+    "beforeSha256": "c1ee33405c5d5847f322ecb70cc7e6c8bbed0f124217105da50590bbab17cef6"
+  },
+  {
+    "from": "apps/web/src/shared/ui/feedback/MoaLoader.tsx",
+    "to": "apps/web/src/components/ui/feedback/MoaLoader.tsx",
+    "beforeSha256": "708f0810fba8de859e8967eccc1b239cc02fb571bafbf03cd3d0d937e084b984"
+  },
+  {
+    "from": "apps/web/src/shared/ui/feedback/status-notice.module.css",
+    "to": "apps/web/src/components/ui/feedback/status-notice.module.css",
+    "beforeSha256": "62d1dd73dfbcc7199810e073facedc6edd696c1443c9f38c0ce57961ebd4c390"
+  },
+  {
+    "from": "apps/web/src/shared/ui/feedback/StatusNotice.tsx",
+    "to": "apps/web/src/components/ui/feedback/StatusNotice.tsx",
+    "beforeSha256": "e98eaf4c93c7012d8c3fab2c758db8a4811a6848087e9b156c15d54fb33ac73c"
+  },
+  {
+    "from": "apps/web/src/shared/ui/Icon.tsx",
+    "to": "apps/web/src/components/ui/Icon.tsx",
+    "beforeSha256": "e29117ccd78b2f0439b70dce49373615b9f11eace43b14b067b3d2640ba6b6e7"
+  },
+  {
+    "from": "apps/web/src/shared/ui/setting-row.module.css",
+    "to": "apps/web/src/components/ui/setting-row.module.css",
+    "beforeSha256": "5dfa7b92b5f546e69ec0d5712c201ea4dd20a7c644fcf020d99e4f7f1c50fd46"
+  },
+  {
+    "from": "apps/web/src/shared/ui/SettingRow.tsx",
+    "to": "apps/web/src/components/ui/SettingRow.tsx",
+    "beforeSha256": "cde0ede6e43c565494e86cf37c00e1eca703c9bed9d88d6f01ed8adc05b0ed14"
+  },
+  {
+    "from": "apps/web/src/shared/ui/StatusLabel.tsx",
+    "to": "apps/web/src/components/ui/StatusLabel.tsx",
+    "beforeSha256": "615aa4a9f3393e3579c62922de83dfc428a51e9a131dce0b8755a09eb5a2ffd8"
+  },
+  {
+    "from": "packages/domain/src/index.test.ts",
+    "to": "packages/domain/tests/index.test.ts",
+    "beforeSha256": "46296dc02fd30f1cd50700a6b709fe39528d8ff17d6c91b993d613806091af5b"
+  },
+  {
+    "from": "packages/domain/src/local-record.test.ts",
+    "to": "packages/domain/tests/local-record.test.ts",
+    "beforeSha256": "5a033faf99076b09040707c757bbf46ea3a6cef9712280970c23b54aa5566035"
+  },
+  {
+    "from": "scripts/audit-ui.ps1",
+    "to": "tests/performance/audit-ui.ps1",
+    "beforeSha256": "21290f4d3161d088de034b78cbdd542de18ad8cf71294d4fde9efbc2fcd18fe4"
+  },
+  {
+    "from": "scripts/check-connection-navigation.mjs",
+    "to": "tests/browser/check-connection-navigation.mjs",
+    "beforeSha256": "c2a45d814188c5353a4abbb024891d39cb615f3b01c2f6ff9a95288e19b7cc86"
+  },
+  {
+    "from": "scripts/check-feature-boundary.mjs",
+    "to": "tests/architecture/check-feature-boundary.mjs",
+    "beforeSha256": "992b23205bdf53ca8629f431f4e109e2d548f57f3099372ede6ad6a210c89f93"
+  },
+  {
+    "from": "scripts/check-file-selection-dialog.mjs",
+    "to": "tests/browser/check-file-selection-dialog.mjs",
+    "beforeSha256": "9526ff38a4d7c370c3ed5ea936a431de54387262e4cd2d46068f53d16770e836"
+  },
+  {
+    "from": "scripts/check-folder-connection-ui.mjs",
+    "to": "tests/browser/check-folder-connection-ui.mjs",
+    "beforeSha256": "5f4c754bd1fd138ce19704f61ef55151a6102d0bcbc749bae63e0fc41dc99f31"
+  },
+  {
+    "from": "scripts/check-live-screens.mjs",
+    "to": "tests/browser/check-live-screens.mjs",
+    "beforeSha256": "cb6bfe34e42384dbf03eba2711ec75d7161b8fbcbef8cc2a6fa02e34bc8b2d85"
+  },
+  {
+    "from": "scripts/check-s0-module-graph.mjs",
+    "to": "tests/architecture/check-s0-module-graph.mjs",
+    "beforeSha256": "22c584986d0479010ae621942d40f64c36a5d113de0a62409b5258130e086572"
+  },
+  {
+    "from": "scripts/check-server-boundary.mjs",
+    "to": "tests/architecture/check-server-boundary.mjs",
+    "beforeSha256": "64942c7fa6a35b6c75515ddf9ca1e7e92d4aef9df2a2c3153d972b8020ba135b"
+  },
+  {
+    "from": "scripts/check-settings-folder-connection.mjs",
+    "to": "tests/browser/check-settings-folder-connection.mjs",
+    "beforeSha256": "c17e20d1d3bb81d67d3a9103bf5e5313571effb2596cf3db0bc5023b29692671"
+  },
+  {
+    "from": "scripts/check-source-file-preview.mjs",
+    "to": "tests/browser/check-source-file-preview.mjs",
+    "beforeSha256": "bac8638a88e7c5e25222447e00656967fdae619a5f0e18f49562eb1abb18b4a3"
+  },
+  {
+    "from": "scripts/check-source-folder-browser.mjs",
+    "to": "tests/browser/check-source-folder-browser.mjs",
+    "beforeSha256": "f812b567de9cfd85ae653c97b2dfa0b5e2216001f0ec0970a729bc32aef840c2"
+  },
+  {
+    "from": "scripts/check-source-folder-listing.mjs",
+    "to": "tests/browser/check-source-folder-listing.mjs",
+    "beforeSha256": "4400b0a368644800dd212c1c4b556b252e8728eb5fdbfac6525703a9efdd03db"
+  },
+  {
+    "from": "scripts/folder-browser-fixture.mjs",
+    "to": "tests/fixtures/folder-browser-fixture.mjs",
+    "beforeSha256": "d5172ab66acb023a4f6cdfd1c917f5f2aab5bcbd5a8246efbef3ad79c7311013"
+  },
+  {
+    "from": "scripts/measure-settings-performance.mjs",
+    "to": "tests/performance/measure-settings-performance.mjs",
+    "beforeSha256": "ccbb4631679b93c9a23d7d78231a6f1a2df019e72680f9b2c1455752f19d6fe4"
+  },
+  {
+    "from": "scripts/s0/account-connection-checks.mjs",
+    "to": "tests/s0/account-connection-checks.mjs",
+    "beforeSha256": "1b66f94b9d592e293b52c8202d2ed513bcd7ff0b8478108365c653c22678389e"
+  },
+  {
+    "from": "scripts/s0/browser-checks.mjs",
+    "to": "tests/s0/browser-checks.mjs",
+    "beforeSha256": "2ce83e4ee097238004afd79823124935f426c9ac38a378885d32a2c7fa8dfe8d"
+  },
+  {
+    "from": "scripts/s0/capture-final-prototype.mjs",
+    "to": "tests/s0/capture-final-prototype.mjs",
+    "beforeSha256": "78bcadfab151aa358f02a65899cfbcc9591544dabf7164270ef55760a5a74a3f"
+  },
+  {
+    "from": "scripts/s0/create-fixtures.mjs",
+    "to": "tests/s0/create-fixtures.mjs",
+    "beforeSha256": "15ccf87180bb76fc3e43ac0c74072d09393e3490c27b584c365ac63948b3997a"
+  },
+  {
+    "from": "scripts/s0/handle-store.mjs",
+    "to": "tests/s0/handle-store.mjs",
+    "beforeSha256": "bff83543e3701fb647d8d120fa0693263f164699cdc84cc2f1020c3d83c2d5af"
+  },
+  {
+    "from": "scripts/s0/inspect-source.mjs",
+    "to": "tests/s0/inspect-source.mjs",
+    "beforeSha256": "a9c835fc29cf023f34143a7128f4e5f99b3a45f990749264cb5ca079018a6e93"
+  },
+  {
+    "from": "scripts/s0/probe-connection.mjs",
+    "to": "tests/s0/probe-connection.mjs",
+    "beforeSha256": "a0b6f3c691d424986da6b1232d035dca1dc7a3a8713f26601a4b445e2092369d"
+  },
+  {
+    "from": "scripts/s0/probe-connection.test.mjs",
+    "to": "tests/s0/probe-connection.test.mjs",
+    "beforeSha256": "9f1e9a8a7ac183f7d0803221fcfcac96c435a8828d50066e90c4c08c6c799322"
+  },
+  {
+    "from": "scripts/s0/probe-server.mjs",
+    "to": "tests/s0/probe-server.mjs",
+    "beforeSha256": "87d08c2ddab5c94505f5b908b16dfb0cc6a8274e1f9e65160c6618f6943b0254"
+  },
+  {
+    "from": "scripts/s0/probe-ui-checks.mjs",
+    "to": "tests/s0/probe-ui-checks.mjs",
+    "beforeSha256": "539ee2c527dfbcca3020dbfb974bd3577be1153a1ae131db123a92d089624377"
+  },
+  {
+    "from": "scripts/s0/probe.html",
+    "to": "tests/s0/probe.html",
+    "beforeSha256": "b6168027fad18e707e1fbac9b36881e3e95746be3b6cd7862c47e4080e80ac80"
+  },
+  {
+    "from": "scripts/s0/probe.mjs",
+    "to": "tests/s0/probe.mjs",
+    "beforeSha256": "c469285d005b2aeb8355128eff519192d77b108ab94617517b6c7e757c741100"
+  },
+  {
+    "from": "scripts/s0/record-recovery.ts",
+    "to": "tests/s0/record-recovery.ts",
+    "beforeSha256": "5e705d125b3229e850a600e59d623b1831b564deb9e1a1717c2d2faddf898fe1"
+  },
+  {
+    "from": "scripts/s0/record-store.ts",
+    "to": "tests/s0/record-store.ts",
+    "beforeSha256": "22510f0762a0aa4c89edaed9b035757913fee6c942888455d31c3ec66565e354"
+  },
+  {
+    "from": "scripts/s0/recovery-checks.mjs",
+    "to": "tests/s0/recovery-checks.mjs",
+    "beforeSha256": "aeb6e4f3562072b34639f397f97dcfebd921dc186a595ed2163ed2ef9a100d66"
+  },
+  {
+    "from": "scripts/s0/run-browser-checks.mjs",
+    "to": "tests/s0/run-browser-checks.mjs",
+    "beforeSha256": "758feaca3d2c13dbae1e018509e01e2a63723cbe8ae6c0e911f91f93ce39b656"
+  },
+  {
+    "from": "scripts/s0/source-inventory.mjs",
+    "to": "tests/s0/source-inventory.mjs",
+    "beforeSha256": "7963b28c654601111ec0c8a3f808c50736366cb05332f5bcff51f07d67c46217"
+  },
+  {
+    "from": "scripts/s0/source-inventory.test.mjs",
+    "to": "tests/s0/source-inventory.test.mjs",
+    "beforeSha256": "299029d47c8a54d42344849b08c8066d43b74f5bf2ff31173fded888858f21ca"
+  },
+  {
+    "from": "scripts/s0/tsconfig.json",
+    "to": "tests/s0/tsconfig.json",
+    "beforeSha256": "20bfb22a8c400b4f2a5e20aa8acb5255fa4e404815752d9f1a2557646d7b37f6"
+  }
+]

@@ -1,0 +1,315 @@
+{
+  "at": "2026-10-28T23:38:54.001Z",
+  "base": "http://127.0.0.1:3010",
+  "checks": [
+    {
+      "name": "DIALOG-001 no automatic popup; labelled settings trigger",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 modal has name, safe title focus and native modal state",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 Tab remains inside modal",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 background cannot receive programmatic focus",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 backdrop click does not dismiss settings",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-002 Escape restores trigger focus",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-003 picker cancel keeps popup and error context",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-003 save failure keeps popup",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-003 successful connection closes popup and preserves files route",
+      "passed": true
+    },
+    {
+      "name": "SELECT-001 file extensions selectable; no directory checkbox",
+      "passed": true
+    },
+    {
+      "name": "SELECT-002 master checkbox is mixed",
+      "passed": true
+    },
+    {
+      "name": "SELECT-001 Space toggles a focused native checkbox",
+      "passed": true
+    },
+    {
+      "name": "SELECT-002 select all counts six displayed files, not two folders",
+      "passed": true
+    },
+    {
+      "name": "SELECT-003 clear selection resets master state",
+      "passed": true
+    },
+    {
+      "name": "SELECT-004 preview preserves selection and return focus",
+      "passed": true
+    },
+    {
+      "name": "SELECT-004 ten route roundtrips preserve selection",
+      "passed": true
+    },
+    {
+      "name": "selected/1440: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "selected/1920: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "selected/768: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "selected/390: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "dialog/1440: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "dialog/768: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "dialog/390: no overflow and semantic interactive nesting",
+      "passed": true
+    },
+    {
+      "name": "SELECT-004 changing folder clears prior selection",
+      "passed": true
+    },
+    {
+      "name": "SELECT-004 parent navigation clears child selection",
+      "passed": true
+    },
+    {
+      "name": "SELECT-005 failure retains selection but disables additions",
+      "passed": true
+    },
+    {
+      "name": "SELECT-005 clear remains available after failure",
+      "passed": true
+    },
+    {
+      "name": "SELECT-005 successful refresh prunes absent selected files",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-004 permission loss stays visible without forced popup",
+      "passed": true
+    },
+    {
+      "name": "SELECT-006 reconnect revalidates and preserves existing selection",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-003 old completion cannot close a reopened popup; replacement clears selection",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-003 late failure never reopens a dismissed popup",
+      "passed": true
+    },
+    {
+      "name": "DIALOG-005 reduced motion removes popup and selection transitions",
+      "passed": true
+    },
+    {
+      "name": "SELECT-002 100 dataset selects only bounded displayed files",
+      "passed": true
+    },
+    {
+      "name": "SELECT-002 1000 dataset selects only bounded displayed files",
+      "passed": true
+    },
+    {
+      "name": "SELECT-002 1001 dataset selects only bounded displayed files",
+      "passed": true
+    },
+    {
+      "name": "SELECT-006 failed disconnect still clears selections and retains retry dialog",
+      "passed": true
+    },
+    {
+      "name": "source sentinel untouched; product writes zero",
+      "passed": true,
+      "detail": {
+        "before": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793230726457,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "after": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793230726457,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "writes": 0
+      }
+    },
+    {
+      "name": "no external requests or console errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timing": [
+    {
+      "entries": 100,
+      "samplesMs": [
+        14.646999999999935,
+        26.08329999999978,
+        27.709299999999985
+      ],
+      "viewport": "390x1000",
+      "boundary": "CDP click + React commit + DOM polling; not INP; synthetic OPFS filenames, no body reading during selection"
+    },
+    {
+      "entries": 1000,
+      "samplesMs": [
+        164.96350000000075,
+        271.03900000000067,
+        278.2627000000002
+      ],
+      "viewport": "390x1000",
+      "boundary": "CDP click + React commit + DOM polling; not INP; synthetic OPFS filenames, no body reading during selection"
+    },
+    {
+      "entries": 1001,
+      "samplesMs": [
+        121.51859999999942,
+        293.96900000000005,
+        276.2605000000003
+      ],
+      "viewport": "390x1000",
+      "boundary": "CDP click + React commit + DOM polling; not INP; synthetic OPFS filenames, no body reading during selection"
+    }
+  ],
+  "visual": [
+    {
+      "label": "selected",
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "label": "selected",
+      "width": 1920,
+      "findings": []
+    },
+    {
+      "label": "selected",
+      "width": 768,
+      "findings": []
+    },
+    {
+      "label": "selected",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "dialog",
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "label": "dialog",
+      "width": 768,
+      "findings": []
+    },
+    {
+      "label": "dialog",
+      "width": 390,
+      "findings": []
+    }
+  ],
+  "consoleErrors": [],
+  "boundary": "Real UI/state/IDB/Web Locks/OPFS; injected picker/permission/failure; synthetic files only; no native picker or real login validation"
+}

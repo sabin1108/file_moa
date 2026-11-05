@@ -1,0 +1,34 @@
+.toolbar, .toolbar h2 { display: flex; align-items: center; gap: 10px; }
+.toolbar { justify-content: space-between; margin-bottom: 16px; }
+.toolbar h2 { font-size: 14px; font-weight: 600; }
+.toolbar h2 > span { color: var(--muted); font-weight: 400; }
+.search { display: flex; align-items: center; gap: 7px; width: 210px; padding: 0 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 5px; color: var(--muted); }
+.search input { width: 100%; min-width: 0; font: inherit; font-size: 14px; padding: 8px 0; color: var(--text); background: none; border: 0; }
+.search input::placeholder { color: var(--muted); opacity: 1; }
+.search input:focus-visible { outline: 2px solid var(--focus); }
+.bulkToolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--active); padding: 10px 14px; border-radius: 6px 6px 0 0; }
+.selectionCount { display: flex; align-items: center; gap: 9px; font-size: 14px; }
+.selectionCount strong { font-weight: 600; }
+.selectionCount > span:last-child { color: var(--muted); margin-left: 6px; }
+.bulkActions { display: flex; gap: 6px; }
+.tableViewport { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; text-align: left; background: var(--surface); font-size: 14px; }
+.table th { height: 39px; padding: 0 12px; font-size: 13px; font-weight: 400; color: var(--muted); }
+.table th > svg { margin-left: 8px; vertical-align: middle; }
+.table td { height: 47px; padding: 4px 12px; border-top: 1px solid var(--border); }
+.table .checkColumn { width: 38px; padding-left: 15px; padding-right: 0; }
+.checked, .unchecked { width: 17px; height: 17px; display: inline-flex; align-items: center; justify-content: center; border-radius: 3px; border: 1px solid var(--muted); vertical-align: middle; }
+.checked { background: var(--text); color: var(--ground); border-color: var(--text); }
+.selectedRow { background: var(--selection); }
+.fileIdentity { display: flex; align-items: center; gap: 9px; }
+.fileIdentity svg { color: var(--muted); }
+.table .size { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 13px; }
+.table .state { width: 120px; }
+.rowAction { width: 45px; }
+.rowAction > button { width: 28px; min-height: 28px; padding: 0; }
+.listFooter { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; font-size: 13px; color: var(--muted); }
+.listFooter button { font-size: 13px; }
+@media (max-width: 1000px) { .selectionCount > span:last-child { display: none; } .table .state { width: 90px; } }
+@media (max-width: 600px) { .toolbar { align-items: flex-start; flex-direction: column; gap: 12px; } .search { width: 100%; } .bulkToolbar { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px; } .bulkActions { width: 100%; } .bulkActions > button { flex: 1; } .table .state, .table .size { display: none; } .table td { padding: 5px 8px; height: 50px; } .fileIdentity { gap: 7px; } .fileIdentity > span { font-size: 13px; overflow-wrap: anywhere; } .table .checkColumn { padding-left: 10px; width: 31px; } .rowAction { width: 28px; } .listFooter { align-items: flex-start; font-size: 12px; gap: 6px; } .listFooter > span { padding-top: 8px; } }
+
+@media (min-width: 801px) { .toolbar { margin-bottom: 12px; } .table td { height: 44px; } }

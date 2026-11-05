@@ -1,0 +1,592 @@
+{
+  "at": "2026-11-03T00:10:46.549Z",
+  "checks": [
+    {
+      "name": "no selection disables direct actions",
+      "passed": true
+    },
+    {
+      "name": "generic plan entry removed",
+      "passed": true
+    },
+    {
+      "name": "direct copy selects copy without file I/O or permission request",
+      "passed": true
+    },
+    {
+      "name": "manual classification absent",
+      "passed": true
+    },
+    {
+      "name": "destination must be confirmed before plan",
+      "passed": true
+    },
+    {
+      "name": "direct path entry shares the folder picker",
+      "passed": true
+    },
+    {
+      "name": "destination selection uses compact button beside folder information",
+      "passed": true
+    },
+    {
+      "name": "destination contained at 1440",
+      "passed": true
+    },
+    {
+      "name": "wheel over heading scrolls folders only at 1440",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 365.625,
+          "y": 275.78125,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over creation scrolls folders only at 1440",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 715,
+          "y": 563.3359375,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over list scrolls folders only at 1440",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 715,
+          "y": 739.53125,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over backdrop scrolls folders only at 1440",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 3,
+          "y": 3,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "folder top edge never chains to page at 1440",
+      "passed": true
+    },
+    {
+      "name": "folder bottom edge never chains to page at 1440",
+      "passed": true
+    },
+    {
+      "name": "destination contained at 1920",
+      "passed": true
+    },
+    {
+      "name": "wheel over heading scrolls folders only at 1920",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 605.625,
+          "y": 275.78125,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over creation scrolls folders only at 1920",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 955,
+          "y": 563.3359375,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over list scrolls folders only at 1920",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 955,
+          "y": 739.53125,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over backdrop scrolls folders only at 1920",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 3,
+          "y": 3,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "folder top edge never chains to page at 1920",
+      "passed": true
+    },
+    {
+      "name": "folder bottom edge never chains to page at 1920",
+      "passed": true
+    },
+    {
+      "name": "destination contained at 768",
+      "passed": true
+    },
+    {
+      "name": "wheel over heading scrolls folders only at 768",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 102.625,
+          "y": 275.78125,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over creation scrolls folders only at 768",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 379,
+          "y": 563.3359375,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over list scrolls folders only at 768",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 379,
+          "y": 739.53125,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over backdrop scrolls folders only at 768",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 3,
+          "y": 3,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "folder top edge never chains to page at 768",
+      "passed": true
+    },
+    {
+      "name": "folder bottom edge never chains to page at 768",
+      "passed": true
+    },
+    {
+      "name": "destination contained at 390",
+      "passed": true
+    },
+    {
+      "name": "wheel over heading scrolls folders only at 390",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 94.625,
+          "y": 267.78125,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over creation scrolls folders only at 390",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 190,
+          "y": 571.7265625,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over list scrolls folders only at 390",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 190,
+          "y": 747.921875,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over backdrop scrolls folders only at 390",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 3,
+          "y": 3,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "folder top edge never chains to page at 390",
+      "passed": true
+    },
+    {
+      "name": "folder bottom edge never chains to page at 390",
+      "passed": true
+    },
+    {
+      "name": "short folder list allows modal wheel scrolling at 390x500",
+      "passed": true,
+      "detail": {
+        "windowY": 0,
+        "listHeight": 48,
+        "listClient": 48
+      }
+    },
+    {
+      "name": "expected result has file-specific source and destination regions",
+      "passed": true
+    },
+    {
+      "name": "expected-tree contained at 390",
+      "passed": true
+    },
+    {
+      "name": "expected-tree contained at 768",
+      "passed": true
+    },
+    {
+      "name": "expected-tree contained at 1440",
+      "passed": true
+    },
+    {
+      "name": "expected-tree contained at 1920",
+      "passed": true
+    },
+    {
+      "name": "inspection explains three actual checks and hides destination",
+      "passed": true
+    },
+    {
+      "name": "pending inspection never fabricates passed stages",
+      "passed": true
+    },
+    {
+      "name": "reduced motion stops inspection animation",
+      "passed": true
+    },
+    {
+      "name": "checking contained at 390",
+      "passed": true
+    },
+    {
+      "name": "completed checks and files agree with actual report",
+      "passed": true
+    },
+    {
+      "name": "hashes hidden by default behind explained technical information",
+      "passed": true
+    },
+    {
+      "name": "inspected-plan contained at 390",
+      "passed": true
+    },
+    {
+      "name": "inspected-plan contained at 768",
+      "passed": true
+    },
+    {
+      "name": "inspected-plan contained at 1440",
+      "passed": true
+    },
+    {
+      "name": "inspected-plan contained at 1920",
+      "passed": true
+    },
+    {
+      "name": "technical comparison values remain available",
+      "passed": true
+    },
+    {
+      "name": "keyboard focus remains inside modal 0",
+      "passed": true
+    },
+    {
+      "name": "keyboard focus remains inside modal 1",
+      "passed": true
+    },
+    {
+      "name": "keyboard focus remains inside modal 2",
+      "passed": true
+    },
+    {
+      "name": "keyboard focus remains inside modal 3",
+      "passed": true
+    },
+    {
+      "name": "keyboard focus remains inside modal 4",
+      "passed": true
+    },
+    {
+      "name": "keyboard focus remains inside modal 5",
+      "passed": true
+    },
+    {
+      "name": "keyboard focus remains inside modal 6",
+      "passed": true
+    },
+    {
+      "name": "keyboard focus remains inside modal 7",
+      "passed": true
+    },
+    {
+      "name": "keyboard focus remains inside modal 8",
+      "passed": true
+    },
+    {
+      "name": "keyboard focus remains inside modal 9",
+      "passed": true
+    },
+    {
+      "name": "rejected copy entry offers explicit plan recheck without writes",
+      "passed": true
+    },
+    {
+      "name": "recheck returns to destination and discards execution and approval",
+      "passed": true
+    },
+    {
+      "name": "close restores scroll styles and action focus",
+      "passed": true
+    },
+    {
+      "name": "direct move is clearly a preview and has no classify option",
+      "passed": true
+    },
+    {
+      "name": "clicking opened folder returns to previous parent list",
+      "passed": true
+    },
+    {
+      "name": "source and write boundaries preserved",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

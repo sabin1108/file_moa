@@ -1,0 +1,8 @@
+{
+  "at": "2026-10-28T12:32:17.844Z",
+  "productImplementationFiles": 94,
+  "byteIdenticalStylesheets": 29,
+  "unexpectedChanges": [],
+  "validationFunctionsUnchanged": true,
+  "boundary": "Imports and comments excluded; no claim about runtime module loading (validated separately)."
+}

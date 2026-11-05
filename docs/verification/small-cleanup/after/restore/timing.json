@@ -1,0 +1,9 @@
+{
+  "restore": {
+    "payloadBytes": 16777216,
+    "chunks": 256,
+    "maxChunkBytes": 65536,
+    "elapsedMs": 1431
+  },
+  "conditions": "one sample; real OPFS/Worker; synthetic granted permissions; CDP polling included; no OS dialog claim"
+}

@@ -1,0 +1,721 @@
+{
+  "checks": [
+    {
+      "name": "INSPECT-001 no body read or Worker before action",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-003 real Worker hashes equal independent Node SHA-256",
+      "passed": true,
+      "detail": [
+        "a675c95d2497c087925db1b1a87e958ccb53906f06eb76589f47bb8745486265",
+        "44e0e62af6567f44c49577c782ffe4f53fde138b4224453ce9d7efcfccfa93aa",
+        "ca0e5906c0b52c3402be65f1618ef5d5475f1bff0f0b3cde11f70e59b91960f3"
+      ]
+    },
+    {
+      "name": "INSPECT-006 honest result and no execute control",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 one Worker released after whole batch",
+      "passed": true
+    },
+    {
+      "name": "complete/1440: contained",
+      "passed": true
+    },
+    {
+      "name": "complete/1920: contained",
+      "passed": true
+    },
+    {
+      "name": "complete/768: contained",
+      "passed": true
+    },
+    {
+      "name": "complete/390: contained",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 last disclosure participates in modal focus wrap",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 reverse wrap reaches disclosure",
+      "passed": true
+    },
+    {
+      "name": "loading/390: contained",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 cancel immediately terminates Worker and keeps focus",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 edited destination removes old inspection",
+      "passed": true
+    },
+    {
+      "name": "read-error/390: contained",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 error retry finishes actual read",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-002 conflict created after plan is detected",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 Escape cancels and restores selection trigger",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 permission loss updates shared connection",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 repeated inspections release every Worker",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-003/004 100-empty exact hashes and count",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-003/004 64MiB exact hashes and count",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-004 limit rejected before Worker content read",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-007 source sentinel unchanged",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-007 no product writes or write permission",
+      "passed": true,
+      "detail": {
+        "before": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793361841319,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "after": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793361841319,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "writes": 0,
+        "modes": [
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read"
+        ],
+        "activeWorkers": 0
+      }
+    },
+    {
+      "name": "INSPECT-007 no uploads or external requests",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "INSPECT-005 no Worker left alive",
+      "passed": true
+    },
+    {
+      "name": "browser console clean",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timings": [
+    {
+      "name": "three-files",
+      "ms": 147.42320000000018
+    },
+    {
+      "name": "ten-inspections",
+      "samplesMs": [
+        101.29160000000047,
+        74.8726999999999,
+        47.560599999999795,
+        56.7466000000004,
+        63.34599999999955,
+        46.85120000000006,
+        43.52280000000064,
+        45.58550000000014,
+        47.03430000000026,
+        47.0627999999997
+      ],
+      "heapBefore": 7245548,
+      "heapAfter": 7019128,
+      "caveat": "main-thread JS heap without forced GC; excludes Worker/native memory"
+    },
+    {
+      "name": "100-empty",
+      "count": 100,
+      "bytes": 0,
+      "samplesMs": [
+        417.09210000000076,
+        246.84670000000006,
+        234.23450000000048
+      ]
+    },
+    {
+      "name": "64MiB",
+      "count": 4,
+      "bytes": 67108864,
+      "samplesMs": [
+        215.84619999999995,
+        232.0599999999995,
+        231.35059999999976
+      ]
+    }
+  ],
+  "visual": [
+    {
+      "name": "complete",
+      "width": 1440,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "hero-void",
+          "width": 1440,
+          "message": "28% of the first screen is one empty block (600×667px at 840,333).",
+          "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+        },
+        {
+          "level": "WARN",
+          "id": "unused-canvas",
+          "width": 1440,
+          "message": "The content stops 304px short of the right edge while it starts 16px from the sidebar.",
+          "fix": "Let the grid fill the canvas (columns in fr units), or centre a capped canvas with equal margins. A dead strip on one side reads as unfinished."
+        }
+      ]
+    },
+    {
+      "name": "complete",
+      "width": 1920,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "hero-void",
+          "width": 1920,
+          "message": "28% of the first screen is one empty block (800×667px at 1120,333).",
+          "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+        },
+        {
+          "level": "WARN",
+          "id": "unused-canvas",
+          "width": 1920,
+          "message": "The content stops 544px short of the right edge while it starts 16px from the sidebar.",
+          "fix": "Let the grid fill the canvas (columns in fr units), or centre a capped canvas with equal margins. A dead strip on one side reads as unfinished."
+        }
+      ]
+    },
+    {
+      "name": "complete",
+      "width": 768,
+      "findings": []
+    },
+    {
+      "name": "complete",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "name": "loading",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "name": "read-error",
+      "width": 390,
+      "findings": []
+    }
+  ],
+  "network": [
+    {
+      "url": "http://127.0.0.1:3010/files",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/3wlh37cjhtvad.css",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/1fja-8pol783i.css",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/0zm9j1-rymysm.css",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/03fdf722b2yl2.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/0j7q2fk-38x8h.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/31205ltp2za93.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/31d081oym0687.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-3-ry682tkyiqk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/1b7lz7z-3mpwk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/2ve5qor8yy2yw.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/2tpfco912gxkb.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/2lv0yb0a2fdap.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/3ngd8-hdwidk3.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/icon.svg?icon.3u_abr2-u06ic.svg",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/?_rsc=jeFEZtHY0XDxX0rT",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/files?_rsc=jeFEZtHY0XDxX0rT",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/settings?_rsc=jeFEZtHY0XDxX0rT",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/?_rsc=e0J2186U2JT_oQH2",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/files?_rsc=heEiuPNnld9ffxzN",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/settings?_rsc=LhnACh_i-EpBCXph",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/0rc_q9xr3f7nn.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    }
+  ],
+  "errors": []
+}

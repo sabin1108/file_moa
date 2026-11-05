@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-28T23:48:58.648Z",
+  "results": [
+    {
+      "name": "exact-name-conflict",
+      "status": 1,
+      "detected": true
+    },
+    {
+      "name": "abort-pending-read",
+      "status": 1,
+      "detected": true
+    }
+  ],
+  "restored": true
+}

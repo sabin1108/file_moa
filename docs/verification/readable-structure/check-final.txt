@@ -1,0 +1,69 @@
+pnpm.exe : $ pnpm typecheck && pnpm lint && pnpm test && pnpm test:boundaries && pnpm test:structure && pnpm build
+위치 C:\Users\sabin\AppData\Roaming\npm\pnpm.ps1:14 문자:3
++   & "$basedir/node_modules/pnpm/pnpm.exe"   $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ pnpm typechec...e && pnpm build:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+$ pnpm -r typecheck
+$ tsc --noEmit
+$ tsc --noEmit
+$ pnpm --filter @personal-ai/web lint
+$ eslint .
+$ vitest run
+
+ RUN  v5.0.5 E:/project/ai_folder_project
+
+
+ Test Files  11 passed (11)
+      Tests  121 passed (121)
+   Start at  21:43:29
+   Duration  1.25s (tests 86%, import 7%, transform 5%, worker 2%)
+
+$ node tests/architecture/check-server-boundary.mjs
+Server boundary: 21 checks passed (synthetic lint fixtures; no live authentication/DB claims).
+$ node tests/architecture/check-feature-boundary.mjs
+Structure: 25 web import fixtures, 6 domain import fixtures, 3 layout checks and actual domain imports passed (not authorization).
+$ pnpm --filter @personal-ai/web build
+$ next build
+▲ Next.js 16.4.3 (Turbopack)
+✓ Running next.config.ts took 25ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 408ms
+  Running TypeScript ...
+  Finished TypeScript in 1296ms ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/43) ...
+  Generating static pages using 11 workers (10/43) 
+  Generating static pages using 11 workers (21/43) 
+  Generating static pages using 11 workers (32/43) 
+✓ Generating static pages using 11 workers (43/43) in 688ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/health
+├ ○ /files
+├ ○ /icon.svg
+├ ○ /login
+├ ○ /preview
+├   /preview/[scene]
+│ ├ ● /preview/folder-connection
+│ ├ ● /preview/startup
+│ ├ ● /preview/content-loading
+│ └ ● [+25 more paths]
+├   /preview/screens/[screen]
+│ ├ ● /preview/screens/chat
+│ ├ ● /preview/screens/files
+│ ├ ● /preview/screens/settings
+│ └ ● [+2 more paths]
+├ ○ /settings
+└ ○ /welcome
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

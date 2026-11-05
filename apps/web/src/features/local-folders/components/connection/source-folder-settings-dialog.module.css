@@ -1,0 +1,19 @@
+.controls { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: var(--ui-space-3); padding: var(--ui-space-4) var(--ui-space-6) 0; }
+.status { color: var(--muted); }
+.compact { display: flex; align-items: center; gap: 8px; }
+.compact > button { min-width: 44px; min-height: 44px; padding: 8px; }
+.compact > .status { max-width: 220px; font-size: 13px; }
+/* 그림자는 별도의 조작면인 팝업에만 둔다. 목록 행에는 기존 평면 경계를 유지한다. */
+.dialog { width: min(640px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: var(--ui-space-6); overflow: auto; border: 0; border-radius: var(--ui-radius-control); background: var(--surface); color: var(--text); box-shadow: 0 6px 20px rgb(6 20 27 / 6%); opacity: 1; transform: translateY(0); transition: opacity 160ms ease-out, transform 160ms ease-out; }
+.dialog::backdrop { background: rgb(6 20 27 / 28%); }
+.header { display: flex; align-items: center; justify-content: space-between; gap: var(--ui-space-3); margin-bottom: var(--ui-space-4); }
+.header h2 { font-size: var(--ui-font-title); font-weight: 600; }
+.header h2:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+/* 시작 스타일 지원이 없으면 즉시 표시한다. 닫기·초점 복귀를 exit timer로 지연하지 않는다. */
+@starting-style { .dialog[open] { opacity: 0; transform: translateY(4px); } }
+@media (max-width: 550px) {
+  .controls { padding: var(--ui-space-4) var(--ui-space-4) 0; }
+  .dialog { padding: var(--ui-space-4); }
+  .header h2 { font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .dialog { transition: none; transform: none; } }

@@ -1,0 +1,602 @@
+{
+  "at": "2026-10-30T00:36:39.637Z",
+  "checks": [
+    {
+      "name": "REFRESH-UX-002/390/1 visible refresh status",
+      "passed": false
+    },
+    {
+      "name": "REFRESH-UX-002/390/1 unchanged rows and toolbar",
+      "passed": false,
+      "detail": {
+        "delta": 90.921875
+      }
+    },
+    {
+      "name": "REFRESH-UX-002/390/2 visible refresh status",
+      "passed": false
+    },
+    {
+      "name": "REFRESH-UX-002/390/2 unchanged rows and toolbar",
+      "passed": false,
+      "detail": {
+        "delta": 90.921875
+      }
+    },
+    {
+      "name": "REFRESH-UX-002/390/3 visible refresh status",
+      "passed": false
+    },
+    {
+      "name": "REFRESH-UX-002/390/3 unchanged rows and toolbar",
+      "passed": false,
+      "detail": {
+        "delta": 90.921875
+      }
+    },
+    {
+      "name": "REFRESH-UX-002/768/1 visible refresh status",
+      "passed": false
+    },
+    {
+      "name": "REFRESH-UX-002/768/1 unchanged rows and toolbar",
+      "passed": false,
+      "detail": {
+        "delta": 90.921875
+      }
+    },
+    {
+      "name": "REFRESH-UX-002/768/2 visible refresh status",
+      "passed": false
+    },
+    {
+      "name": "REFRESH-UX-002/768/2 unchanged rows and toolbar",
+      "passed": false,
+      "detail": {
+        "delta": 90.921875
+      }
+    },
+    {
+      "name": "REFRESH-UX-002/768/3 visible refresh status",
+      "passed": false
+    },
+    {
+      "name": "REFRESH-UX-002/768/3 unchanged rows and toolbar",
+      "passed": false,
+      "detail": {
+        "delta": 90.921875
+      }
+    },
+    {
+      "name": "REFRESH-UX-002/1440/1 visible refresh status",
+      "passed": false
+    },
+    {
+      "name": "REFRESH-UX-002/1440/1 unchanged rows and toolbar",
+      "passed": false,
+      "detail": {
+        "delta": 90.921875
+      }
+    },
+    {
+      "name": "REFRESH-UX-002/1440/2 visible refresh status",
+      "passed": false
+    },
+    {
+      "name": "REFRESH-UX-002/1440/2 unchanged rows and toolbar",
+      "passed": false,
+      "detail": {
+        "delta": 90.921875
+      }
+    },
+    {
+      "name": "REFRESH-UX-002/1440/3 visible refresh status",
+      "passed": false
+    },
+    {
+      "name": "REFRESH-UX-002/1440/3 unchanged rows and toolbar",
+      "passed": false,
+      "detail": {
+        "delta": 90.921875
+      }
+    },
+    {
+      "name": "REFRESH-UX-002/1920/1 visible refresh status",
+      "passed": false
+    },
+    {
+      "name": "REFRESH-UX-002/1920/1 unchanged rows and toolbar",
+      "passed": false,
+      "detail": {
+        "delta": 90.921875
+      }
+    },
+    {
+      "name": "REFRESH-UX-002/1920/2 visible refresh status",
+      "passed": false
+    },
+    {
+      "name": "REFRESH-UX-002/1920/2 unchanged rows and toolbar",
+      "passed": false,
+      "detail": {
+        "delta": 90.921875
+      }
+    },
+    {
+      "name": "REFRESH-UX-002/1920/3 visible refresh status",
+      "passed": false
+    },
+    {
+      "name": "REFRESH-UX-002/1920/3 unchanged rows and toolbar",
+      "passed": false,
+      "detail": {
+        "delta": 90.921875
+      }
+    },
+    {
+      "name": "PICK-UX-001 draft controls hidden while browsing",
+      "passed": false
+    },
+    {
+      "name": "PICK-UX-002 no redundant root/up buttons at root",
+      "passed": false
+    },
+    {
+      "name": "PICK-UX-003/390 named primary selection visible above folders",
+      "passed": false
+    },
+    {
+      "name": "PICK-UX-003/768 named primary selection visible above folders",
+      "passed": false
+    },
+    {
+      "name": "PICK-UX-003/1440 named primary selection visible above folders",
+      "passed": false
+    },
+    {
+      "name": "PICK-UX-003/1920 named primary selection visible above folders",
+      "passed": false
+    },
+    {
+      "name": "source unchanged and no product writes",
+      "passed": true,
+      "detail": {
+        "before": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793320598477,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "after": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793320598477,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "writes": 0
+      }
+    },
+    {
+      "name": "no console errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "refresh": [
+    {
+      "width": 390,
+      "run": 1,
+      "before": {
+        "rowX": 16,
+        "rowY": 258,
+        "headingY": 147,
+        "controlX": 282,
+        "controlY": 141,
+        "scrollY": 0
+      },
+      "during": {
+        "rowX": 16,
+        "rowY": 332,
+        "headingY": 147,
+        "controlX": 191.078125,
+        "controlY": 141,
+        "scrollY": 0
+      },
+      "after": {
+        "rowX": 16,
+        "rowY": 258,
+        "headingY": 147,
+        "controlX": 282,
+        "controlY": 141,
+        "scrollY": 0
+      },
+      "delta": 90.921875
+    },
+    {
+      "width": 390,
+      "run": 2,
+      "before": {
+        "rowX": 16,
+        "rowY": 258,
+        "headingY": 147,
+        "controlX": 282,
+        "controlY": 141,
+        "scrollY": 0
+      },
+      "during": {
+        "rowX": 16,
+        "rowY": 332,
+        "headingY": 147,
+        "controlX": 191.078125,
+        "controlY": 141,
+        "scrollY": 0
+      },
+      "after": {
+        "rowX": 16,
+        "rowY": 258,
+        "headingY": 147,
+        "controlX": 282,
+        "controlY": 141,
+        "scrollY": 0
+      },
+      "delta": 90.921875
+    },
+    {
+      "width": 390,
+      "run": 3,
+      "before": {
+        "rowX": 16,
+        "rowY": 258,
+        "headingY": 147,
+        "controlX": 282,
+        "controlY": 141,
+        "scrollY": 0
+      },
+      "during": {
+        "rowX": 16,
+        "rowY": 332,
+        "headingY": 147,
+        "controlX": 191.078125,
+        "controlY": 141,
+        "scrollY": 0
+      },
+      "after": {
+        "rowX": 16,
+        "rowY": 258,
+        "headingY": 147,
+        "controlX": 282,
+        "controlY": 141,
+        "scrollY": 0
+      },
+      "delta": 90.921875
+    },
+    {
+      "width": 768,
+      "run": 1,
+      "before": {
+        "rowX": 24,
+        "rowY": 275,
+        "headingY": 154.40625,
+        "controlX": 652,
+        "controlY": 150,
+        "scrollY": 0
+      },
+      "during": {
+        "rowX": 24,
+        "rowY": 349,
+        "headingY": 154.40625,
+        "controlX": 561.078125,
+        "controlY": 150,
+        "scrollY": 0
+      },
+      "after": {
+        "rowX": 24,
+        "rowY": 275,
+        "headingY": 154.40625,
+        "controlX": 652,
+        "controlY": 150,
+        "scrollY": 0
+      },
+      "delta": 90.921875
+    },
+    {
+      "width": 768,
+      "run": 2,
+      "before": {
+        "rowX": 24,
+        "rowY": 275,
+        "headingY": 154.40625,
+        "controlX": 652,
+        "controlY": 150,
+        "scrollY": 0
+      },
+      "during": {
+        "rowX": 24,
+        "rowY": 349,
+        "headingY": 154.40625,
+        "controlX": 561.078125,
+        "controlY": 150,
+        "scrollY": 0
+      },
+      "after": {
+        "rowX": 24,
+        "rowY": 275,
+        "headingY": 154.40625,
+        "controlX": 652,
+        "controlY": 150,
+        "scrollY": 0
+      },
+      "delta": 90.921875
+    },
+    {
+      "width": 768,
+      "run": 3,
+      "before": {
+        "rowX": 24,
+        "rowY": 275,
+        "headingY": 154.40625,
+        "controlX": 652,
+        "controlY": 150,
+        "scrollY": 0
+      },
+      "during": {
+        "rowX": 24,
+        "rowY": 349,
+        "headingY": 154.40625,
+        "controlX": 561.078125,
+        "controlY": 150,
+        "scrollY": 0
+      },
+      "after": {
+        "rowX": 24,
+        "rowY": 275,
+        "headingY": 154.40625,
+        "controlX": 652,
+        "controlY": 150,
+        "scrollY": 0
+      },
+      "delta": 90.921875
+    },
+    {
+      "width": 1440,
+      "run": 1,
+      "before": {
+        "rowX": 252,
+        "rowY": 214,
+        "headingY": 93.40625,
+        "controlX": 1316,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "during": {
+        "rowX": 252,
+        "rowY": 288,
+        "headingY": 93.40625,
+        "controlX": 1225.078125,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "after": {
+        "rowX": 252,
+        "rowY": 214,
+        "headingY": 93.40625,
+        "controlX": 1316,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "delta": 90.921875
+    },
+    {
+      "width": 1440,
+      "run": 2,
+      "before": {
+        "rowX": 252,
+        "rowY": 214,
+        "headingY": 93.40625,
+        "controlX": 1316,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "during": {
+        "rowX": 252,
+        "rowY": 288,
+        "headingY": 93.40625,
+        "controlX": 1225.078125,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "after": {
+        "rowX": 252,
+        "rowY": 214,
+        "headingY": 93.40625,
+        "controlX": 1316,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "delta": 90.921875
+    },
+    {
+      "width": 1440,
+      "run": 3,
+      "before": {
+        "rowX": 252,
+        "rowY": 214,
+        "headingY": 93.40625,
+        "controlX": 1316,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "during": {
+        "rowX": 252,
+        "rowY": 288,
+        "headingY": 93.40625,
+        "controlX": 1225.078125,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "after": {
+        "rowX": 252,
+        "rowY": 214,
+        "headingY": 93.40625,
+        "controlX": 1316,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "delta": 90.921875
+    },
+    {
+      "width": 1920,
+      "run": 1,
+      "before": {
+        "rowX": 252,
+        "rowY": 214,
+        "headingY": 93.40625,
+        "controlX": 1796,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "during": {
+        "rowX": 252,
+        "rowY": 288,
+        "headingY": 93.40625,
+        "controlX": 1705.078125,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "after": {
+        "rowX": 252,
+        "rowY": 214,
+        "headingY": 93.40625,
+        "controlX": 1796,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "delta": 90.921875
+    },
+    {
+      "width": 1920,
+      "run": 2,
+      "before": {
+        "rowX": 252,
+        "rowY": 214,
+        "headingY": 93.40625,
+        "controlX": 1796,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "during": {
+        "rowX": 252,
+        "rowY": 288,
+        "headingY": 93.40625,
+        "controlX": 1705.078125,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "after": {
+        "rowX": 252,
+        "rowY": 214,
+        "headingY": 93.40625,
+        "controlX": 1796,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "delta": 90.921875
+    },
+    {
+      "width": 1920,
+      "run": 3,
+      "before": {
+        "rowX": 252,
+        "rowY": 214,
+        "headingY": 93.40625,
+        "controlX": 1796,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "during": {
+        "rowX": 252,
+        "rowY": 288,
+        "headingY": 93.40625,
+        "controlX": 1705.078125,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "after": {
+        "rowX": 252,
+        "rowY": 214,
+        "headingY": 93.40625,
+        "controlX": 1796,
+        "controlY": 89,
+        "scrollY": 0
+      },
+      "delta": 90.921875
+    }
+  ],
+  "consoleErrors": []
+}

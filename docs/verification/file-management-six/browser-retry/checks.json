@@ -1,0 +1,93 @@
+{
+  "checks": [
+    {
+      "name": "app permission guide is visible without triggering a picker or permission request",
+      "passed": true
+    },
+    {
+      "name": "permission guide contained 390",
+      "passed": true
+    },
+    {
+      "name": "permission guide contained 1440",
+      "passed": true
+    },
+    {
+      "name": "empty connected vault is shown honestly inside settings",
+      "passed": true
+    },
+    {
+      "name": "nested archive Escape retains settings and restores its trigger",
+      "passed": true
+    },
+    {
+      "name": "move preview focuses cancel and has no source removal",
+      "passed": true
+    },
+    {
+      "name": "move review contained 390",
+      "passed": true
+    },
+    {
+      "name": "move review contained 768",
+      "passed": true
+    },
+    {
+      "name": "move review contained 1440",
+      "passed": true
+    },
+    {
+      "name": "move review contained 1920",
+      "passed": true
+    },
+    {
+      "name": "actual single-file move verifies destination and removes the source non-recursively",
+      "passed": true
+    },
+    {
+      "name": "recursive copy preserves source and empty descendants",
+      "passed": true
+    },
+    {
+      "name": "recursive move finishes and never uses recursive removal",
+      "passed": true
+    },
+    {
+      "name": "trash restores the exact prior bytes and keeps recovery payloads",
+      "passed": true
+    },
+    {
+      "name": "IME composition stays in draft without writing",
+      "passed": true
+    },
+    {
+      "name": "editor contained 390",
+      "passed": true
+    },
+    {
+      "name": "editor contained 768",
+      "passed": true
+    },
+    {
+      "name": "editor contained 1440",
+      "passed": true
+    },
+    {
+      "name": "editor contained 1920",
+      "passed": true
+    },
+    {
+      "name": "explicit edit saves actual bytes and refreshes preview",
+      "passed": true
+    },
+    {
+      "name": "refreshed preview shows saved content",
+      "passed": true
+    },
+    {
+      "name": "closing a dirty mobile editor offers continue or explicit discard",
+      "passed": false
+    }
+  ],
+  "errors": []
+}

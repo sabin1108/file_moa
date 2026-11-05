@@ -1,0 +1,158 @@
+{
+  "checks": [
+    {
+      "name": "copy execution stays blocked for conflict",
+      "passed": true
+    },
+    {
+      "name": "inspection has no writes",
+      "passed": true
+    },
+    {
+      "name": "new and existing files are compared honestly",
+      "passed": true
+    },
+    {
+      "name": "no overflow 390",
+      "passed": true
+    },
+    {
+      "name": "comparison labels use panel width 390",
+      "passed": true
+    },
+    {
+      "name": "no overflow 768",
+      "passed": true
+    },
+    {
+      "name": "comparison labels use panel width 768",
+      "passed": true
+    },
+    {
+      "name": "no overflow 1440",
+      "passed": true
+    },
+    {
+      "name": "comparison labels use panel width 1440",
+      "passed": true
+    },
+    {
+      "name": "no overflow 1920",
+      "passed": true
+    },
+    {
+      "name": "comparison labels use panel width 1920",
+      "passed": true
+    },
+    {
+      "name": "actual backup completed",
+      "passed": true
+    },
+    {
+      "name": "result identifies a verified backup without promising replacement",
+      "passed": true
+    },
+    {
+      "name": "source unchanged",
+      "passed": true
+    },
+    {
+      "name": "old destination unchanged",
+      "passed": true
+    },
+    {
+      "name": "vault contains the old destination bytes and paired verified journal",
+      "passed": true
+    },
+    {
+      "name": "final warning is separate and defaults to stop",
+      "passed": true
+    },
+    {
+      "name": "warning names location, bytes and undecided retention",
+      "passed": true
+    },
+    {
+      "name": "overwrite warning contained 390",
+      "passed": true
+    },
+    {
+      "name": "overwrite warning contained 768",
+      "passed": true
+    },
+    {
+      "name": "overwrite warning contained 1440",
+      "passed": true
+    },
+    {
+      "name": "overwrite warning contained 1920",
+      "passed": true
+    },
+    {
+      "name": "Tab remains in final modal",
+      "passed": true
+    },
+    {
+      "name": "dismissing warning does not replace files",
+      "passed": true
+    },
+    {
+      "name": "changed target rejected before any target writable",
+      "passed": true
+    },
+    {
+      "name": "failure offers no automatic retry",
+      "passed": true
+    },
+    {
+      "name": "actual overwrite completes and verifies",
+      "passed": true
+    },
+    {
+      "name": "actual target has source bytes",
+      "passed": true
+    },
+    {
+      "name": "source sentinel still unchanged",
+      "passed": true
+    },
+    {
+      "name": "backup preserved and paired overwrite records verified",
+      "passed": true
+    },
+    {
+      "name": "Escape waits for overwrite cancellation settlement",
+      "passed": true
+    },
+    {
+      "name": "cancelled target is uncertain and source intact",
+      "passed": true
+    },
+    {
+      "name": "16 MiB boundary overwrite completes",
+      "passed": true
+    },
+    {
+      "name": "16 MiB uses 256 fixed 64 KiB target writes",
+      "passed": true
+    },
+    {
+      "name": "16 MiB source and destination hashes match with source metadata unchanged",
+      "passed": true
+    },
+    {
+      "name": "close restores focus",
+      "passed": true
+    },
+    {
+      "name": "permission requests have active user gestures",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

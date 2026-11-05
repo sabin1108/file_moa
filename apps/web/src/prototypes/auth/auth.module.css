@@ -1,0 +1,31 @@
+.page { min-height: 100dvh; display: flex; flex-direction: column; }
+.header, .footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 24px 5vw; }
+.brand { display: inline-flex; gap: 10px; align-items: center; font-size: 24px; font-weight: 600; text-decoration: none; }
+.layout { width: 100%; max-width: 1120px; padding: 55px 32px 70px; margin: auto; display: grid; grid-template-columns: 1fr 420px; gap: 90px; align-items: center; }
+.identity { font-size: 14px; margin-bottom: 24px; color: var(--muted); }
+.introduction h1 { font-size: clamp(32px, 3vw, 43px); line-height: 1.5; letter-spacing: -1.6px; font-weight: 500; margin-bottom: 24px; }
+.introduction > p:last-of-type { line-height: 1.9; font-size: 16px; color: var(--muted); }
+.folderSketch { position: relative; height: 155px; max-width: 330px; margin-top: 50px; }
+.folderSketch span { display: block; position: absolute; width: 220px; height: 95px; padding: 18px; border: 1px solid var(--border); border-radius: 0 5px 5px 5px; background: var(--active); font-size: 13px; }
+.folderSketch span::before { content: ""; position: absolute; top: -10px; left: -1px; width: 75px; height: 10px; background: inherit; border: 1px solid var(--border); border-bottom: 0; border-radius: 4px 4px 0 0; }
+.folderSketch span:nth-child(2) { top: 28px; left: 35px; background: var(--ground); }
+.folderSketch span:nth-child(3) { top: 56px; left: 70px; background: var(--surface); }
+.formSide { min-width: 0; }
+.form { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 32px; display: grid; gap: 22px; }
+.form h2 { font-size: 24px; font-weight: 600; line-height: 1.5; }
+.form > p { font-size: 14px; color: var(--muted); line-height: 1.9; margin-top: -10px; }
+.providers { display: grid; gap: 11px; margin-top: 4px; }
+.providers a { min-height: 48px; font-size: 15px; }
+.providers a:first-child { border-color: var(--text); }
+.footnote { border-top: 1px solid var(--border); padding-top: 21px; }
+.footnote p { font-size: 12px; color: var(--muted); }
+.footnote a { font-size: 12px; padding-left: 0; margin-top: 7px; }
+.notice { margin-top: 16px; font-size: 11px; color: var(--muted); text-align: center; }
+.footer { font-size: 12px; color: var(--muted); }
+.footer a { font-size: 12px; }
+.dataNote { padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.dataNote h3 { font-size: 14px; font-weight: 600; margin-bottom: 9px; }
+.dataNote p { font-size: 13px; line-height: 1.9; color: var(--muted); }
+.start { width: 100%; min-height: 44px; }
+@media (max-width: 900px) { .layout { gap: 40px; grid-template-columns: 1fr 360px; } .form { padding: 27px; } .introduction h1 { font-size: 32px; } .folderSketch span { width: 160px; } }
+@media (max-width: 700px) { .layout { max-width: 480px; grid-template-columns: 1fr; padding: 22px 20px 35px; gap: 30px; } .introduction { display: none; } .header { padding: 20px; } .form { padding: 25px; } .footer { padding: 15px 20px; } .footer > span { display: none; } .footer a { margin: auto; } }

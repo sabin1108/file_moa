@@ -1,0 +1,98 @@
+{
+  "checks": [
+    {
+      "name": "copy execution stays blocked for conflict",
+      "passed": true
+    },
+    {
+      "name": "inspection has no writes",
+      "passed": true
+    },
+    {
+      "name": "new and existing files are compared honestly",
+      "passed": true
+    },
+    {
+      "name": "no overflow 390",
+      "passed": true
+    },
+    {
+      "name": "comparison labels use panel width 390",
+      "passed": true
+    },
+    {
+      "name": "no overflow 768",
+      "passed": true
+    },
+    {
+      "name": "comparison labels use panel width 768",
+      "passed": true
+    },
+    {
+      "name": "no overflow 1440",
+      "passed": true
+    },
+    {
+      "name": "comparison labels use panel width 1440",
+      "passed": true
+    },
+    {
+      "name": "no overflow 1920",
+      "passed": true
+    },
+    {
+      "name": "comparison labels use panel width 1920",
+      "passed": true
+    },
+    {
+      "name": "actual backup completed",
+      "passed": true
+    },
+    {
+      "name": "result identifies a verified backup without promising replacement",
+      "passed": true
+    },
+    {
+      "name": "source unchanged",
+      "passed": true
+    },
+    {
+      "name": "old destination unchanged",
+      "passed": true
+    },
+    {
+      "name": "vault contains the old destination bytes and paired verified journal",
+      "passed": true
+    },
+    {
+      "name": "Escape requests cancellation and retains the result dialog",
+      "passed": true
+    },
+    {
+      "name": "cancelled item is uncertain and cannot be retried without reinspection",
+      "passed": true
+    },
+    {
+      "name": "cancellation preserves old target",
+      "passed": true
+    },
+    {
+      "name": "write failure is displayed without success",
+      "passed": true
+    },
+    {
+      "name": "failed backup preserves source and target",
+      "passed": true
+    },
+    {
+      "name": "closing restores focus",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

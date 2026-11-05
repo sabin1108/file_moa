@@ -1,0 +1,146 @@
+{
+  "checks": [
+    {
+      "name": "app permission guide is visible without triggering a picker or permission request",
+      "passed": true
+    },
+    {
+      "name": "permission guide contained 390",
+      "passed": true
+    },
+    {
+      "name": "permission guide contained 1440",
+      "passed": true
+    },
+    {
+      "name": "empty connected vault is shown honestly inside settings",
+      "passed": true
+    },
+    {
+      "name": "nested archive Escape retains settings and restores its trigger",
+      "passed": true
+    },
+    {
+      "name": "copy execution stays blocked for conflict",
+      "passed": true
+    },
+    {
+      "name": "inspection has no writes",
+      "passed": true
+    },
+    {
+      "name": "new and existing files are compared honestly",
+      "passed": true
+    },
+    {
+      "name": "no overflow 390",
+      "passed": true
+    },
+    {
+      "name": "comparison labels use panel width 390",
+      "passed": true
+    },
+    {
+      "name": "no overflow 768",
+      "passed": true
+    },
+    {
+      "name": "comparison labels use panel width 768",
+      "passed": true
+    },
+    {
+      "name": "no overflow 1440",
+      "passed": true
+    },
+    {
+      "name": "comparison labels use panel width 1440",
+      "passed": true
+    },
+    {
+      "name": "no overflow 1920",
+      "passed": true
+    },
+    {
+      "name": "comparison labels use panel width 1920",
+      "passed": true
+    },
+    {
+      "name": "actual backup completed",
+      "passed": true
+    },
+    {
+      "name": "result identifies a verified backup without promising replacement",
+      "passed": true
+    },
+    {
+      "name": "source unchanged",
+      "passed": true
+    },
+    {
+      "name": "old destination unchanged",
+      "passed": true
+    },
+    {
+      "name": "vault contains the old destination bytes and paired verified journal",
+      "passed": true
+    },
+    {
+      "name": "list is real metadata with no payload reads",
+      "passed": true
+    },
+    {
+      "name": "expanded details show original location, stored time, bytes and recorded status",
+      "passed": true
+    },
+    {
+      "name": "explicit inspection verifies real bytes and paired journals",
+      "passed": true
+    },
+    {
+      "name": "vault is a direct child of the source root",
+      "passed": true
+    },
+    {
+      "name": "restore defaults to root and reuses creation while excluding the vault",
+      "passed": true
+    },
+    {
+      "name": "read-only preview suggests a distinct file and focuses cancel",
+      "passed": true
+    },
+    {
+      "name": "restore review contained 390",
+      "passed": true
+    },
+    {
+      "name": "restore review contained 768",
+      "passed": true
+    },
+    {
+      "name": "restore review contained 1440",
+      "passed": true
+    },
+    {
+      "name": "restore review contained 1920",
+      "passed": true
+    },
+    {
+      "name": "restore review resumes on F5 without writes or permission prompts",
+      "passed": true
+    },
+    {
+      "name": "restored completion is displayed without another restore",
+      "passed": true
+    },
+    {
+      "name": "execution-stage URL cannot replay a restore",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

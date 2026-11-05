@@ -1,0 +1,23 @@
+.location { overflow-wrap: anywhere; font-weight: 600; }
+.note { color: var(--muted); font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-block: 16px; }
+.empty { padding-block: 24px; color: var(--muted); }
+.list { list-style: none; margin: 0; padding: 0; }
+.list > li { border-top: 1px solid var(--border); padding-block: 16px; }
+.list dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 16px; margin-block: 12px; font-size: 13px; line-height: 1.7; }
+.list dt { color: var(--muted); }
+.list dd { margin: 0; overflow-wrap: anywhere; }
+.list summary { display: list-item; width: fit-content; min-height: 44px; padding-block: 12px; font-size: 13px; cursor: pointer; }
+.list summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.inspection { display: grid; justify-items: start; gap: 12px; margin-top: 12px; }
+.inspection > div { width: 100%; }
+.categories { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+.list > li:has(> .record) { padding-block: 0; }
+.record > summary { display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; }
+.record > summary::before { content: "›"; flex: none; }
+.record[open] > summary::before { transform: rotate(90deg); }
+.record > summary > strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.record > summary > time { flex: none; color: var(--muted); font-size: 12px; }
+.record > summary > span { flex: none; }
+.record[open] { padding-bottom: 12px; }
+@media (max-width: 550px) { .record > summary { gap: 8px; } .record > summary > time { display: none; } }

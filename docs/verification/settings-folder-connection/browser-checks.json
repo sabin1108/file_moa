@@ -1,0 +1,281 @@
+{
+  "at": "2026-10-26T06:57:37.727Z",
+  "base": "http://127.0.0.1:3001",
+  "boundary": "Real settings UI, IndexedDB, Web Locks and OPFS; injected picker/permission/failures; NOT native permission dialog, external source folder or real login verification",
+  "fixture": "Synthetic OPFS directories and one sentinel text file; deterministic names; no random seed; core regression set, no holdout",
+  "checks": [
+    {
+      "name": "initial disconnected; no permission request",
+      "passed": true
+    },
+    {
+      "name": "pending blocks repeat actions and has explanatory status",
+      "passed": true
+    },
+    {
+      "name": "pending operation survives tab changes",
+      "passed": true
+    },
+    {
+      "name": "connect saves real handle, read mode and activation",
+      "passed": true
+    },
+    {
+      "name": "cancel retains previous folder and shows attention",
+      "passed": true
+    },
+    {
+      "name": "denied selection retains previous connection",
+      "passed": true
+    },
+    {
+      "name": "storage failure preserves old name and stored handle",
+      "passed": true
+    },
+    {
+      "name": "replacement succeeds only after persistence",
+      "passed": true
+    },
+    {
+      "name": "10 tab round-trips retain Korean input and connection without reloading permission",
+      "passed": true
+    },
+    {
+      "name": "connected state survives tabs",
+      "passed": true
+    },
+    {
+      "name": "reload restores handle as needs-permission without automatic query/request",
+      "passed": true
+    },
+    {
+      "name": "reconnect denial keeps name and retry",
+      "passed": true
+    },
+    {
+      "name": "denied 1440: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "다시 연결",
+            "height": 40
+          },
+          {
+            "label": "연결 해제",
+            "height": 40
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 40
+          }
+        ]
+      }
+    },
+    {
+      "name": "denied 390: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "다시 연결",
+            "height": 44
+          },
+          {
+            "label": "연결 해제",
+            "height": 44
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "name": "keyboard reconnect has user activation and read mode",
+      "passed": true
+    },
+    {
+      "name": "failed removal stops memory but keeps retry and disables new selection",
+      "passed": true
+    },
+    {
+      "name": "remove-failed 390: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "폴더 연결",
+            "height": 44
+          },
+          {
+            "label": "연결 해제 다시 시도",
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "name": "removal retry deletes only stored reference and keeps original file",
+      "passed": true
+    },
+    {
+      "name": "connected 1440: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "연결 해제",
+            "height": 40
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 40
+          }
+        ]
+      }
+    },
+    {
+      "name": "connected 1920: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "연결 해제",
+            "height": 40
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 40
+          }
+        ]
+      }
+    },
+    {
+      "name": "connected 768: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "연결 해제",
+            "height": 40
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 40
+          }
+        ]
+      }
+    },
+    {
+      "name": "connected 390: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "연결 해제",
+            "height": 44
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "name": "repeated selection measurement (not native user wait)",
+      "passed": true,
+      "detail": {
+        "timing": [
+          11.800000000745058,
+          19.300000000745058,
+          12.300000000745058,
+          11.5,
+          14.400000002235174,
+          11.599999997764826,
+          37.80000000074506,
+          15.5,
+          10.899999998509884,
+          15.199999999254942
+        ],
+        "heapBefore": 6522792,
+        "heapAfter": 7207228,
+        "garbageCollectionForced": false
+      }
+    },
+    {
+      "name": "late result after route exit produces no exception",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "preload error does not show disconnected actions",
+      "passed": true
+    },
+    {
+      "name": "preload retry restores without permission request",
+      "passed": true
+    },
+    {
+      "name": "unsupported browser offers explanation without false connection",
+      "passed": true
+    },
+    {
+      "name": "unsupported 390: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": []
+      }
+    },
+    {
+      "name": "no external or mutating HTTP requests",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "no React hydration or console errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timing": [
+    11.800000000745058,
+    19.300000000745058,
+    12.300000000745058,
+    11.5,
+    14.400000002235174,
+    11.599999997764826,
+    37.80000000074506,
+    15.5,
+    10.899999998509884,
+    15.199999999254942
+  ],
+  "visualFindings": [
+    {
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "width": 1920,
+      "findings": []
+    },
+    {
+      "width": 768,
+      "findings": []
+    },
+    {
+      "width": 390,
+      "findings": []
+    }
+  ]
+}

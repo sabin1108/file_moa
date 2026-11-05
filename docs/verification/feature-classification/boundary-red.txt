@@ -1,0 +1,26 @@
+pnpm.exe : Warning: React version was set to "detect" in eslint-plugin-react settings, but the "react" package is not i
+nstalled. Assuming latest React version for linting.
+위치 C:\Users\sabin\AppData\Roaming\npm\pnpm.ps1:14 문자:3
++   & "$basedir/node_modules/pnpm/pnpm.exe"   $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Warning: React ...on for linting.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: feature cannot import prototype UI: []
+
+true !== false
+
+    at file:///E:/project/ai_folder_project/scripts/check-feature-boundary.mjs:36:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: true,
+  expected: false,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.22.1

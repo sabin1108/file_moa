@@ -1,0 +1,150 @@
+{
+  "checks": [
+    {
+      "name": "app permission guide is visible without triggering a picker or permission request",
+      "passed": true
+    },
+    {
+      "name": "permission guide contained 390",
+      "passed": true
+    },
+    {
+      "name": "permission guide contained 1440",
+      "passed": true
+    },
+    {
+      "name": "vault reading actions and connection management have separate named groups",
+      "passed": true
+    },
+    {
+      "name": "vault action groups contained 390",
+      "passed": true
+    },
+    {
+      "name": "vault action groups contained 1440",
+      "passed": true
+    },
+    {
+      "name": "empty connected vault is shown honestly inside settings",
+      "passed": true
+    },
+    {
+      "name": "nested archive Escape retains settings and restores its trigger",
+      "passed": true
+    },
+    {
+      "name": "permission recovery exposes one existing-vault connection action",
+      "passed": true
+    },
+    {
+      "name": "the single connection action reselects the existing vault without creating files",
+      "passed": true
+    },
+    {
+      "name": "A4 ratio and matching reading/editing page 390",
+      "passed": true,
+      "detail": {
+        "reading": {
+          "width": 358,
+          "height": 506.3125
+        },
+        "editing": {
+          "width": 358,
+          "height": 506.3125
+        }
+      }
+    },
+    {
+      "name": "A4 ratio and matching reading/editing page 768",
+      "passed": true,
+      "detail": {
+        "reading": {
+          "width": 300,
+          "height": 424.28125
+        },
+        "editing": {
+          "width": 300,
+          "height": 424.28125
+        }
+      }
+    },
+    {
+      "name": "A4 ratio and matching reading/editing page 1440",
+      "passed": true,
+      "detail": {
+        "reading": {
+          "width": 793.6875,
+          "height": 1122.515625
+        },
+        "editing": {
+          "width": 793.6875,
+          "height": 1122.515625
+        }
+      }
+    },
+    {
+      "name": "A4 ratio and matching reading/editing page 1920",
+      "passed": true,
+      "detail": {
+        "reading": {
+          "width": 793.6875,
+          "height": 1122.515625
+        },
+        "editing": {
+          "width": 793.6875,
+          "height": 1122.515625
+        }
+      }
+    },
+    {
+      "name": "A4 ratio and matching reading/editing page 2560",
+      "passed": true,
+      "detail": {
+        "reading": {
+          "width": 793.6875,
+          "height": 1122.515625
+        },
+        "editing": {
+          "width": 793.6875,
+          "height": 1122.515625
+        }
+      }
+    },
+    {
+      "name": "A4 ratio and matching reading/editing page 3840",
+      "passed": true,
+      "detail": {
+        "reading": {
+          "width": 793.6875,
+          "height": 1122.515625
+        },
+        "editing": {
+          "width": 793.6875,
+          "height": 1122.515625
+        }
+      }
+    },
+    {
+      "name": "unsaved warning and actions have a visible gap within the document width",
+      "passed": true
+    },
+    {
+      "name": "toast sits at the lower right without pushing the workspace down",
+      "passed": true
+    },
+    {
+      "name": "toast closes without changing folder listing",
+      "passed": true
+    },
+    {
+      "name": "toast still dismisses automatically after its lifetime",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

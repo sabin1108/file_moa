@@ -1,0 +1,119 @@
+{
+  "checks": [
+    {
+      "name": "missing history is empty",
+      "passed": true
+    },
+    {
+      "name": "empty read creates no directory and requests no permission",
+      "passed": true
+    },
+    {
+      "name": "Escape restores opener focus",
+      "passed": true
+    },
+    {
+      "name": "actual creation pair is grouped into one completed TXT",
+      "passed": true
+    },
+    {
+      "name": "dialog fits 390",
+      "passed": true
+    },
+    {
+      "name": "dialog fits 768",
+      "passed": true
+    },
+    {
+      "name": "dialog fits 1440",
+      "passed": true
+    },
+    {
+      "name": "dialog fits 1920",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 0: {\"tag\":\"BUTTON\",\"html\":\"<button type=\\\"button\\\" class=\\\"g8QydG_action g8QydG_ghost\\\" aria-label=\\\"작업 기록 닫기\\\">닫기</button>\",\"inModal\":true,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 1: {\"tag\":\"BUTTON\",\"html\":\"<button type=\\\"button\\\" class=\\\"g8QydG_action g8QydG_secondary\\\">기록 새로고침</button>\",\"inModal\":true,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 2: {\"tag\":\"SUMMARY\",\"html\":\"<summary>작업 식별 정보</summary>\",\"inModal\":true,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 3: {\"tag\":\"BODY\",\"html\":\"<body><div hidden=\\\"\\\"><!--$--><!--/$--></div><div class=\\\"Qavmna_system QlgK_W_theme\\\"><div class=\\\"QlgK_W_workspace\\\"><header class=\\\"QlgK_W_header\\\"><div class=\\\"QlgK\",\"inModal\":false,\"hasFocus\":false}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 4: {\"tag\":\"BUTTON\",\"html\":\"<button type=\\\"button\\\" class=\\\"g8QydG_action g8QydG_ghost\\\" aria-label=\\\"작업 기록 닫기\\\">닫기</button>\",\"inModal\":true,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 5: {\"tag\":\"BUTTON\",\"html\":\"<button type=\\\"button\\\" class=\\\"g8QydG_action g8QydG_secondary\\\">기록 새로고침</button>\",\"inModal\":true,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 6: {\"tag\":\"SUMMARY\",\"html\":\"<summary>작업 식별 정보</summary>\",\"inModal\":true,\"hasFocus\":true}",
+      "passed": true
+    },
+    {
+      "name": "keyboard cannot focus background controls 7: {\"tag\":\"BODY\",\"html\":\"<body><div hidden=\\\"\\\"><!--$--><!--/$--></div><div class=\\\"Qavmna_system QlgK_W_theme\\\"><div class=\\\"QlgK_W_workspace\\\"><header class=\\\"QlgK_W_header\\\"><div class=\\\"QlgK\",\"inModal\":false,\"hasFocus\":false}",
+      "passed": true
+    },
+    {
+      "name": "selected file survives history dialog",
+      "passed": true
+    },
+    {
+      "name": "pending is uncertain; foreign owner is excluded; markup is inert text",
+      "passed": true
+    },
+    {
+      "name": "corruption makes all shown outcomes uncertain",
+      "passed": true
+    },
+    {
+      "name": "permission denial clears prior rows",
+      "passed": true
+    },
+    {
+      "name": "cancel ignores late enumeration",
+      "passed": true
+    },
+    {
+      "name": "nested location shows its own empty history",
+      "passed": true
+    },
+    {
+      "name": "closed dialog stays closed after late response",
+      "passed": true
+    },
+    {
+      "name": "all history flows made no writes or permission requests",
+      "passed": true
+    },
+    {
+      "name": "source sentinel bytes and metadata unchanged",
+      "passed": true
+    },
+    {
+      "name": "original journal records unchanged",
+      "passed": true
+    },
+    {
+      "name": "no browser errors",
+      "passed": true
+    }
+  ],
+  "openToReadyMs": [
+    13.23940000000016,
+    42.953399999999874,
+    45.94599999999991,
+    47.77649999999994
+  ],
+  "consoleErrors": []
+}

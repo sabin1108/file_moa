@@ -1,0 +1,322 @@
+{
+  "at": "2026-10-30T12:04:04.750Z",
+  "checks": [
+    {
+      "name": "VIEW-001 tools hidden initially and filenames immediately visible",
+      "passed": true
+    },
+    {
+      "name": "files-first/393 file-first geometry",
+      "passed": true,
+      "detail": {
+        "first": 227.390625,
+        "visibleRows": 8,
+        "height": 852,
+        "overflow": false,
+        "mainLeft": 0,
+        "listLeft": 0
+      }
+    },
+    {
+      "name": "files-first/390 file-first geometry",
+      "passed": true,
+      "detail": {
+        "first": 227.390625,
+        "visibleRows": 8,
+        "height": 852,
+        "overflow": false,
+        "mainLeft": 0,
+        "listLeft": 0
+      }
+    },
+    {
+      "name": "files-first/768 file-first geometry",
+      "passed": true,
+      "detail": {
+        "first": 231.390625,
+        "visibleRows": 8,
+        "height": 1000,
+        "overflow": false,
+        "mainLeft": 0,
+        "listLeft": 0
+      }
+    },
+    {
+      "name": "files-first/1440 file-first geometry",
+      "passed": true,
+      "detail": {
+        "first": 231.390625,
+        "visibleRows": 8,
+        "height": 1000,
+        "overflow": false,
+        "mainLeft": 176,
+        "listLeft": 176
+      }
+    },
+    {
+      "name": "files-first/1920 file-first geometry",
+      "passed": true,
+      "detail": {
+        "first": 231.390625,
+        "visibleRows": 8,
+        "height": 1000,
+        "overflow": false,
+        "mainLeft": 176,
+        "listLeft": 176
+      }
+    },
+    {
+      "name": "VIEW-003 search click exposes input with focus and labelled scope",
+      "passed": true
+    },
+    {
+      "name": "NAV-001 preview creates one genuine browser entry",
+      "passed": true
+    },
+    {
+      "name": "NAV-003 URL and history contain opaque ID only with Next fields intact",
+      "passed": true,
+      "detail": {
+        "url": "http://127.0.0.1:3010/files",
+        "keys": [
+          "__NA",
+          "__PRIVATE_NEXTJS_INTERNALS_TREE",
+          "moaFileVisit"
+        ],
+        "marker": "99eb0d81-8bdd-44dc-be88-ddabe7e687d8",
+        "next": true,
+        "leakedName": false
+      }
+    },
+    {
+      "name": "NAV-002 back restores query, selection and focus",
+      "passed": true
+    },
+    {
+      "name": "NAV-001 forward reopens same document",
+      "passed": true
+    },
+    {
+      "name": "NAV-001 in-app return uses same back history; forward remains available",
+      "passed": true
+    },
+    {
+      "name": "VIEW-001 explicit cancellation clears selection and hides checkboxes",
+      "passed": true
+    },
+    {
+      "name": "VIEW-001 closing search clears filtering and hides explanations",
+      "passed": true
+    },
+    {
+      "name": "NAV-001 folder back preserves explicit selection cancellation",
+      "passed": true
+    },
+    {
+      "name": "NAV-001 nested folder and preview use ordered history",
+      "passed": true
+    },
+    {
+      "name": "NAV-002 late preview response cannot reopen after back",
+      "passed": true
+    },
+    {
+      "name": "VIEW-003 IME composition keeps full list",
+      "passed": true
+    },
+    {
+      "name": "VIEW-003 first Escape clears query, second closes and returns focus",
+      "passed": true
+    },
+    {
+      "name": "NAV-004 settings route back restores live file visit",
+      "passed": true
+    },
+    {
+      "name": "NAV-003 old connection history cannot resurrect file or body reads",
+      "passed": true
+    },
+    {
+      "name": "source unchanged and zero product writes",
+      "passed": true,
+      "detail": {
+        "before": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793361841035,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "after": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793361841035,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "writes": 0
+      }
+    },
+    {
+      "name": "no external requests or console errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timings": [
+    {
+      "name": "ten-preview-back-forward",
+      "ms": 764.5644000000002,
+      "boundary": "CDP history + OPFS reads + React; not field INP"
+    }
+  ],
+  "visual": [
+    {
+      "label": "files-first",
+      "width": 393,
+      "geometry": {
+        "first": 227.390625,
+        "visibleRows": 8,
+        "height": 852,
+        "overflow": false,
+        "mainLeft": 0,
+        "listLeft": 0
+      },
+      "findings": []
+    },
+    {
+      "label": "files-first",
+      "width": 390,
+      "geometry": {
+        "first": 227.390625,
+        "visibleRows": 8,
+        "height": 852,
+        "overflow": false,
+        "mainLeft": 0,
+        "listLeft": 0
+      },
+      "findings": []
+    },
+    {
+      "label": "files-first",
+      "width": 768,
+      "geometry": {
+        "first": 231.390625,
+        "visibleRows": 8,
+        "height": 1000,
+        "overflow": false,
+        "mainLeft": 0,
+        "listLeft": 0
+      },
+      "findings": []
+    },
+    {
+      "label": "files-first",
+      "width": 1440,
+      "geometry": {
+        "first": 231.390625,
+        "visibleRows": 8,
+        "height": 1000,
+        "overflow": false,
+        "mainLeft": 176,
+        "listLeft": 176
+      },
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "hero-void",
+          "width": 1440,
+          "message": "43% of the first screen is one empty block (840×733px at 600,267).",
+          "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+        }
+      ]
+    },
+    {
+      "label": "files-first",
+      "width": 1920,
+      "geometry": {
+        "first": 231.390625,
+        "visibleRows": 8,
+        "height": 1000,
+        "overflow": false,
+        "mainLeft": 176,
+        "listLeft": 176
+      },
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "hero-void",
+          "width": 1920,
+          "message": "49% of the first screen is one empty block (1280×733px at 640,267).",
+          "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "boundary": "Actual Chromium browser history traversal, real UI/stores/session/OPFS; synthetic picker/permission/CDP IME. Physical mouse driver and OS IME not verified."
+}

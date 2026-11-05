@@ -1,0 +1,160 @@
+
+ RUN  v5.0.5 E:/project/ai_folder_project
+
+ ❯ apps/web/src/features/local-folders/source-preview-controller.test.ts (10 tests | 10 failed) 627ms
+   ❯ preview UI lifetime with real session/reader (10)
+     × UI-001 does not read bodies on connection or listing, opens only explicitly 68ms
+     × UI-004 retains the same file on failed refresh and retry fetches a new File 59ms
+     × UI-004 removes old text when another file is requested, including failure 62ms
+     × UI-004 cancel ends pending immediately and discards late success 62ms
+     × UI-002/006 close clears text and blocks late errors without clearing listing 62ms
+     × UI-005 synchronizes preview permission loss with listing and reconnects explicitly 63ms
+     × UI-005 listing permission loss disables the open preview too 62ms
+     × UI-005 picker cancel/save failure preserve text, successful replacement clears it 63ms
+     × UI-005 disconnect failure, owner switch and stop clear body immediately 63ms
+     × UI-007 distinguishes encoding, limit and unsupported failures 64ms
+pnpm.exe : 
+위치 C:\Users\sabin\AppData\Roaming\npm\pnpm.ps1:14 문자:3
++   & "$basedir/node_modules/pnpm/pnpm.exe"   $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/web/src/features/local-folders/source-preview-controller.test.ts > preview UI lifetime with real session/re
+ader > UI-001 does not read bodies on connection or listing, opens only explicitly
+TypeError: Cannot read properties of undefined (reading 'getSnapshot')
+ ❯ apps/web/src/features/local-folders/source-preview-controller.test.ts:36:20
+     34|     const { preview, getFile } = await setup();
+     35|     expect(getFile).not.toHaveBeenCalled();
+     36|     expect(preview.getSnapshot().path).toBeNull();
+       |                    ^
+     37|     await preview.open(["a.md"]);
+     38|     expect(preview.getSnapshot()).toMatchObject({ phase: "ready", resu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-preview-controller.test.ts > preview UI lifetime with real session/re
+ader > UI-004 retains the same file on failed refresh and retry fetches a new File
+TypeError: Cannot read properties of undefined (reading 'open')
+ ❯ apps/web/src/features/local-folders/source-preview-controller.test.ts:42:19
+     40|   it("UI-004 retains the same file on failed refresh and retry fetches…
+     41|     const { preview, getFile } = await setup();
+     42|     await preview.open(["a.md"]);
+       |                   ^
+     43|     getFile.mockRejectedValueOnce(new DOMException("deleted", "NotFoun…
+     44|     await preview.refresh();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-preview-controller.test.ts > preview UI lifetime with real session/re
+ader > UI-004 removes old text when another file is requested, including failure
+TypeError: Cannot read properties of undefined (reading 'open')
+ ❯ apps/web/src/features/local-folders/source-preview-controller.test.ts:52:19
+     50|   it("UI-004 removes old text when another file is requested, includin…
+     51|     const { preview, getFile } = await setup();
+     52|     await preview.open(["a.md"]);
+       |                   ^
+     53|     const gate = deferred<File>(); getFile.mockReturnValueOnce(gate.pr…
+     54|     const pending = preview.open(["b.txt"]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-preview-controller.test.ts > preview UI lifetime with real session/re
+ader > UI-004 cancel ends pending immediately and discards late success
+TypeError: Cannot read properties of undefined (reading 'open')
+ ❯ apps/web/src/features/local-folders/source-preview-controller.test.ts:62:19
+     60|   it("UI-004 cancel ends pending immediately and discards late success…
+     61|     const { preview, getFile } = await setup();
+     62|     await preview.open(["a.md"]);
+       |                   ^
+     63|     const gate = deferred<File>(); getFile.mockReturnValueOnce(gate.pr…
+     64|     const pending = preview.refresh();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-preview-controller.test.ts > preview UI lifetime with real session/re
+ader > UI-002/006 close clears text and blocks late errors without clearing listing
+TypeError: Cannot read properties of undefined (reading 'open')
+ ❯ apps/web/src/features/local-folders/source-preview-controller.test.ts:75:29
+     73|     const list = controller.listing.getSnapshot().result;
+     74|     const gate = deferred<File>(); getFile.mockReturnValueOnce(gate.pr…
+     75|     const pending = preview.open(["a.md"]);
+       |                             ^
+     76|     await vi.waitFor(() => expect(getFile).toHaveBeenCalled());
+     77|     preview.close();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-preview-controller.test.ts > preview UI lifetime with real session/re
+ader > UI-005 synchronizes preview permission loss with listing and reconnects explicitly
+TypeError: Cannot read properties of undefined (reading 'open')
+ ❯ apps/web/src/features/local-folders/source-preview-controller.test.ts:85:19
+     83|   it("UI-005 synchronizes preview permission loss with listing and rec…
+     84|     const { preview, controller, root } = await setup();
+     85|     await preview.open(["a.md"]);
+       |                   ^
+     86|     root.queryPermission.mockResolvedValue("denied");
+     87|     await preview.refresh();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-preview-controller.test.ts > preview UI lifetime with real session/re
+ader > UI-005 listing permission loss disables the open preview too
+TypeError: Cannot read properties of undefined (reading 'open')
+ ❯ apps/web/src/features/local-folders/source-preview-controller.test.ts:99:19
+     97|   it("UI-005 listing permission loss disables the open preview too", a…
+     98|     const { preview, controller, root } = await setup();
+     99|     await preview.open(["a.md"]);
+       |                   ^
+    100|     root.queryPermission.mockResolvedValue("denied"); await controller…
+    101|     expect(preview.getSnapshot()).toMatchObject({ available: false, is…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-preview-controller.test.ts > preview UI lifetime with real session/re
+ader > UI-005 picker cancel/save failure preserve text, successful replacement clears it
+TypeError: Cannot read properties of undefined (reading 'open')
+ ❯ apps/web/src/features/local-folders/source-preview-controller.test.ts:105:19
+    103|   it("UI-005 picker cancel/save failure preserve text, successful repl…
+    104|     const { preview, controller, picker, repository } = await setup();
+    105|     await preview.open(["a.md"]);
+       |                   ^
+    106|     picker.mockRejectedValueOnce(new DOMException("cancel", "AbortErro…
+    107|     await controller.connect();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-preview-controller.test.ts > preview UI lifetime with real session/re
+ader > UI-005 disconnect failure, owner switch and stop clear body immediately
+TypeError: Cannot read properties of undefined (reading 'open')
+ ❯ apps/web/src/features/local-folders/source-preview-controller.test.ts:118:21
+    116|     for (const action of ["disconnect", "owner", "stop"]) {
+    117|       const { preview, controller, repository } = await setup();
+    118|       await preview.open(["a.md"]);
+       |                     ^
+    119|       if (action === "disconnect") { vi.mocked(repository.remove).mock…
+    120|       if (action === "owner") await controller.load({ userId: "B", wor…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-preview-controller.test.ts > preview UI lifetime with real session/re
+ader > UI-007 distinguishes encoding, limit and unsupported failures
+TypeError: Cannot read properties of undefined (reading 'open')
+ ❯ apps/web/src/features/local-folders/source-preview-controller.test.ts:128:19
+    126|     const { preview, getFile } = await setup();
+    127|     getFile.mockResolvedValueOnce(new File([new Uint8Array([0xff])], "…
+    128|     await preview.open(["a.md"]); expect(preview.getSnapshot().issue).…
+       |                   ^
+    129|     getFile.mockResolvedValueOnce(new File(["a".repeat(2097153)], "a.m…
+    130|     await preview.refresh(); expect(preview.getSnapshot().issue).toBe(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed (10)
+   Start at  09:21:01
+   Duration  820ms (tests 91%, transform 5%, import 4%, worker 1%)
+

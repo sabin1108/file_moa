@@ -1,0 +1,36 @@
+[
+  {
+    "profile": "desktop",
+    "version": "13.5.0",
+    "at": "2026-10-28T07:41:08.173Z",
+    "url": "http://127.0.0.1:3009/files",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "scores": {
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100
+    },
+    "lcpMs": 446.2133,
+    "tbtMs": 0,
+    "cls": 0,
+    "accessibilityFailures": [],
+    "boundary": "Unconnected initial files page; one run per preset. Not connected-selection latency, field INP, or full accessibility certification."
+  },
+  {
+    "profile": "mobile",
+    "version": "13.5.0",
+    "at": "2026-10-28T07:43:55.499Z",
+    "url": "http://127.0.0.1:3009/files",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "scores": {
+      "performance": 99,
+      "accessibility": 100,
+      "best-practices": 100
+    },
+    "lcpMs": 1955.6947,
+    "tbtMs": 41,
+    "cls": 0,
+    "accessibilityFailures": [],
+    "boundary": "Unconnected initial files page; one run per preset. Not connected-selection latency, field INP, or full accessibility certification."
+  }
+]

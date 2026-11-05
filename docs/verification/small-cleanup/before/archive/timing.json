@@ -1,0 +1,13 @@
+{
+  "metadataList": {
+    "operations": 1,
+    "items": 1,
+    "payloadReads": 0,
+    "elapsedMs": 86
+  },
+  "detail": {
+    "payloadBytes": 36,
+    "elapsedMs": 290
+  },
+  "conditions": "one sample; real OPFS/Worker; CDP polling included; no OS permission UI"
+}

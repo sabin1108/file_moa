@@ -1,0 +1,15 @@
+node_modules/
+.next/
+coverage/
+*.tsbuildinfo
+.env*
+!.env.example
+.omx/
+.taste-skill/
+.fallow/
+.agents/
+.doc/
+
+test-results/
+playwright-report/
+

@@ -1,0 +1,2547 @@
+{
+  "checks": [
+    {
+      "name": "contained 390",
+      "passed": true
+    },
+    {
+      "name": "contained 768",
+      "passed": true
+    },
+    {
+      "name": "contained 1440",
+      "passed": true
+    },
+    {
+      "name": "contained 1920",
+      "passed": true
+    },
+    {
+      "name": "Escape restores destination trigger",
+      "passed": true
+    },
+    {
+      "name": "no source writes",
+      "passed": true
+    },
+    {
+      "name": "no browser errors",
+      "passed": true
+    }
+  ],
+  "samples": [
+    {
+      "label": "목적지 선택",
+      "frames": [
+        {
+          "t": 5.899999991059303,
+          "top": 107.234375,
+          "listTop": 776.765625,
+          "opacity": 0.45,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 21.799999997019768,
+          "top": 94.234375,
+          "listTop": 693.16796875,
+          "opacity": 0.45,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 37.29999999701977,
+          "top": 94.234375,
+          "listTop": 692.0228271484375,
+          "opacity": 0.531865,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 53.8999999910593,
+          "top": 94.234375,
+          "listTop": 690.954345703125,
+          "opacity": 0.607925,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 70.5,
+          "top": 94.234375,
+          "listTop": 689.9617309570312,
+          "opacity": 0.678768,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 86.79999999701977,
+          "top": 94.234375,
+          "listTop": 689.0523681640625,
+          "opacity": 0.744017,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 104.3999999910593,
+          "top": 94.234375,
+          "listTop": 688.2210693359375,
+          "opacity": 0.80417,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 121,
+          "top": 94.234375,
+          "listTop": 687.4866943359375,
+          "opacity": 0.858005,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 138.29999999701977,
+          "top": 94.234375,
+          "listTop": 686.8530883789062,
+          "opacity": 0.905438,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 153.70000000298023,
+          "top": 94.234375,
+          "listTop": 686.3428955078125,
+          "opacity": 0.945104,
+          "inputAlive": true,
+          "animations": 4
+        },
+        {
+          "t": 170.09999999403954,
+          "top": 94.234375,
+          "listTop": 685.9814453125,
+          "opacity": 0.97557,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 188.09999999403954,
+          "top": 94.234375,
+          "listTop": 685.8035888671875,
+          "opacity": 0.994777,
+          "inputAlive": true,
+          "animations": 1
+        },
+        {
+          "t": 204,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 220.29999999701977,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 237.09999999403954,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 253.59999999403954,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 270,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 288.09999999403954,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 303.20000000298023,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 320.3999999910593,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 337.29999999701977,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 353.20000000298023,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "하위 자료 목적지 폴더 열기",
+      "frames": [
+        {
+          "t": 15.199999988079071,
+          "top": 118.03125,
+          "listTop": 739.5625,
+          "opacity": 0.45,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 32,
+          "top": 118.03125,
+          "listTop": 738.9666748046875,
+          "opacity": 0.531931,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 48.19999998807907,
+          "top": 118.03125,
+          "listTop": 738.416748046875,
+          "opacity": 0.607547,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 65.79999999701977,
+          "top": 118.03125,
+          "listTop": 737.8983154296875,
+          "opacity": 0.678825,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 82.8999999910593,
+          "top": 118.03125,
+          "listTop": 737.423828125,
+          "opacity": 0.74407,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 98.8999999910593,
+          "top": 118.03125,
+          "listTop": 736.986328125,
+          "opacity": 0.804218,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 115,
+          "top": 118.03125,
+          "listTop": 736.5926513671875,
+          "opacity": 0.858352,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 131.79999999701977,
+          "top": 118.03125,
+          "listTop": 736.25,
+          "opacity": 0.905475,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 149.79999999701977,
+          "top": 118.03125,
+          "listTop": 735.9615478515625,
+          "opacity": 0.945133,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 164.8999999910593,
+          "top": 118.03125,
+          "listTop": 735.7410888671875,
+          "opacity": 0.97544,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 182.8999999910593,
+          "top": 118.03125,
+          "listTop": 735.6009521484375,
+          "opacity": 0.994711,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 198.69999998807907,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 215.19999998807907,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 231.3999999910593,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 248.79999999701977,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 265.09999999403954,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 287.69999998807907,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 298.69999998807907,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 314.69999998807907,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 331.69999998807907,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 347.79999999701977,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 365.79999999701977,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "상위 폴더",
+      "frames": [
+        {
+          "t": 14.800000011920929,
+          "top": 94.234375,
+          "listTop": 689.765625,
+          "opacity": 0.45,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 30.900000005960464,
+          "top": 94.234375,
+          "listTop": 689.1680908203125,
+          "opacity": 0.532157,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 47.900000005960464,
+          "top": 94.234375,
+          "listTop": 688.6151123046875,
+          "opacity": 0.608198,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 65.90000000596046,
+          "top": 94.234375,
+          "listTop": 688.10302734375,
+          "opacity": 0.678612,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 81.5,
+          "top": 94.234375,
+          "listTop": 687.6256103515625,
+          "opacity": 0.744251,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 98.20000000298023,
+          "top": 94.234375,
+          "listTop": 687.1907958984375,
+          "opacity": 0.80404,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 114.90000000596046,
+          "top": 94.234375,
+          "listTop": 686.7969360351562,
+          "opacity": 0.858194,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 130.90000000596046,
+          "top": 94.234375,
+          "listTop": 686.4521484375,
+          "opacity": 0.9056,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 148.70000000298023,
+          "top": 94.234375,
+          "listTop": 686.1654663085938,
+          "opacity": 0.945023,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 165.80000001192093,
+          "top": 94.234375,
+          "listTop": 685.9437255859375,
+          "opacity": 0.975512,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 181.6000000089407,
+          "top": 94.234375,
+          "listTop": 685.8038330078125,
+          "opacity": 0.994748,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 198.1000000089407,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 214,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 231.90000000596046,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 248.1000000089407,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 264.80000001192093,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 281.1000000089407,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 297.80000001192093,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 314.80000001192093,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 331.1000000089407,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 348,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 364.90000000596046,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "하위 자료 목적지 폴더 열기",
+      "frames": [
+        {
+          "t": 15.600000008940697,
+          "top": 118.03125,
+          "listTop": 739.5625,
+          "opacity": 0.45,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 31.400000005960464,
+          "top": 118.03125,
+          "listTop": 738.966796875,
+          "opacity": 0.531912,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 49.400000005960464,
+          "top": 118.03125,
+          "listTop": 738.4136352539062,
+          "opacity": 0.607969,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 64.70000000298023,
+          "top": 118.03125,
+          "listTop": 737.8984375,
+          "opacity": 0.678808,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 81.6000000089407,
+          "top": 118.03125,
+          "listTop": 737.4239501953125,
+          "opacity": 0.744055,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 98.30000001192093,
+          "top": 118.03125,
+          "listTop": 736.9864501953125,
+          "opacity": 0.804204,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 115.20000000298023,
+          "top": 118.03125,
+          "listTop": 736.5927734375,
+          "opacity": 0.85834,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 131.20000000298023,
+          "top": 118.03125,
+          "listTop": 736.2481689453125,
+          "opacity": 0.905726,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 149.20000000298023,
+          "top": 118.03125,
+          "listTop": 735.9615478515625,
+          "opacity": 0.945125,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 164.20000000298023,
+          "top": 118.03125,
+          "listTop": 735.7411499023438,
+          "opacity": 0.975434,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 181.5,
+          "top": 118.03125,
+          "listTop": 735.6009521484375,
+          "opacity": 0.994708,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 197.6000000089407,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 215,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 231.70000000298023,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 248.1000000089407,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 264.6000000089407,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 281.70000000298023,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 298.40000000596046,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 315,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 331.6000000089407,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 348.1000000089407,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 364.70000000298023,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "상위 폴더",
+      "frames": [
+        {
+          "t": 14.799999997019768,
+          "top": 94.234375,
+          "listTop": 689.765625,
+          "opacity": 0.45,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 31.599999994039536,
+          "top": 94.234375,
+          "listTop": 689.168212890625,
+          "opacity": 0.532138,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 47.79999999701977,
+          "top": 94.234375,
+          "listTop": 688.615234375,
+          "opacity": 0.60818,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 64.79999999701977,
+          "top": 94.234375,
+          "listTop": 688.1031494140625,
+          "opacity": 0.678596,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 82.40000000596046,
+          "top": 94.234375,
+          "listTop": 687.625732421875,
+          "opacity": 0.744236,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 97.90000000596046,
+          "top": 94.234375,
+          "listTop": 687.19091796875,
+          "opacity": 0.804026,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 114.70000000298023,
+          "top": 94.234375,
+          "listTop": 686.7969970703125,
+          "opacity": 0.858182,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 131.20000000298023,
+          "top": 94.234375,
+          "listTop": 686.4522705078125,
+          "opacity": 0.90559,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 147.59999999403954,
+          "top": 94.234375,
+          "listTop": 686.16552734375,
+          "opacity": 0.945015,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 164.09999999403954,
+          "top": 94.234375,
+          "listTop": 685.9437255859375,
+          "opacity": 0.975506,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 180.90000000596046,
+          "top": 94.234375,
+          "listTop": 685.804443359375,
+          "opacity": 0.994669,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 198,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 214.90000000596046,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 230.90000000596046,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 247.40000000596046,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 264.59999999403954,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 280.70000000298023,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 298,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 314.70000000298023,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 330.70000000298023,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 348.09999999403954,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 366.79999999701977,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "하위 자료 목적지 폴더 열기",
+      "frames": [
+        {
+          "t": 11,
+          "top": 118.03125,
+          "listTop": 739.5625,
+          "opacity": 0.45,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 26.399999991059303,
+          "top": 118.03125,
+          "listTop": 738.9669189453125,
+          "opacity": 0.531893,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 43.8999999910593,
+          "top": 118.03125,
+          "listTop": 738.4169921875,
+          "opacity": 0.607512,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 59.8999999910593,
+          "top": 118.03125,
+          "listTop": 737.9014892578125,
+          "opacity": 0.678383,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 77.09999999403954,
+          "top": 118.03125,
+          "listTop": 737.4212646484375,
+          "opacity": 0.744417,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 93.59999999403954,
+          "top": 118.03125,
+          "listTop": 736.986572265625,
+          "opacity": 0.804191,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 110.09999999403954,
+          "top": 118.03125,
+          "listTop": 736.5950927734375,
+          "opacity": 0.858023,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 126.59999999403954,
+          "top": 118.03125,
+          "listTop": 736.2501220703125,
+          "opacity": 0.905454,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 142.8999999910593,
+          "top": 118.03125,
+          "listTop": 735.961669921875,
+          "opacity": 0.945116,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 160,
+          "top": 118.03125,
+          "listTop": 735.7412109375,
+          "opacity": 0.975428,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 176.59999999403954,
+          "top": 118.03125,
+          "listTop": 735.6010131835938,
+          "opacity": 0.994705,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 193.69999998807907,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 209.19999998807907,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 226.3999999910593,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 242.3999999910593,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 259.79999999701977,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 276.09999999403954,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 293.3999999910593,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 309.3999999910593,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 326.79999999701977,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 343.09999999403954,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 359.09999999403954,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "상위 폴더",
+      "frames": [
+        {
+          "t": 16.200000002980232,
+          "top": 94.234375,
+          "listTop": 689.765625,
+          "opacity": 0.45,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 33,
+          "top": 94.234375,
+          "listTop": 689.1683959960938,
+          "opacity": 0.53212,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 49,
+          "top": 94.234375,
+          "listTop": 688.6185302734375,
+          "opacity": 0.607723,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 66.40000000596046,
+          "top": 94.234375,
+          "listTop": 688.103271484375,
+          "opacity": 0.678579,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 82.70000000298023,
+          "top": 94.234375,
+          "listTop": 687.6258544921875,
+          "opacity": 0.744221,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 99.20000000298023,
+          "top": 94.234375,
+          "listTop": 687.1884765625,
+          "opacity": 0.804355,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 115.70000000298023,
+          "top": 94.234375,
+          "listTop": 686.797119140625,
+          "opacity": 0.85817,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 132.70000000298023,
+          "top": 94.234375,
+          "listTop": 686.4542236328125,
+          "opacity": 0.905318,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 149,
+          "top": 94.234375,
+          "listTop": 686.1655883789062,
+          "opacity": 0.945006,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 165.90000000596046,
+          "top": 94.234375,
+          "listTop": 685.94384765625,
+          "opacity": 0.9755,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 181.70000000298023,
+          "top": 94.234375,
+          "listTop": 685.8038330078125,
+          "opacity": 0.994742,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 199.1000000089407,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 217.20000000298023,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 232.70000000298023,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 248.70000000298023,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 265.80000001192093,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 282.30000001192093,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 299.1000000089407,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 315.90000000596046,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 332.30000001192093,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 348.40000000596046,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 365.90000000596046,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "하위 자료 목적지 폴더 열기",
+      "frames": [
+        {
+          "t": 15.200000002980232,
+          "top": 118.03125,
+          "listTop": 739.5625,
+          "opacity": 0.45,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 31.599999994039536,
+          "top": 118.03125,
+          "listTop": 738.963623046875,
+          "opacity": 0.532346,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 48,
+          "top": 118.03125,
+          "listTop": 738.4138793945312,
+          "opacity": 0.607934,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 65.8999999910593,
+          "top": 118.03125,
+          "listTop": 737.898681640625,
+          "opacity": 0.678776,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 81.70000000298023,
+          "top": 118.03125,
+          "listTop": 737.4241333007812,
+          "opacity": 0.744025,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 97.70000000298023,
+          "top": 118.03125,
+          "listTop": 736.9866943359375,
+          "opacity": 0.804177,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 115.09999999403954,
+          "top": 118.03125,
+          "listTop": 736.5951538085938,
+          "opacity": 0.858011,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 132.5,
+          "top": 118.03125,
+          "listTop": 736.248291015625,
+          "opacity": 0.905705,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 148.29999999701977,
+          "top": 118.03125,
+          "listTop": 735.961669921875,
+          "opacity": 0.945108,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 164.79999999701977,
+          "top": 118.03125,
+          "listTop": 735.7412109375,
+          "opacity": 0.975421,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 181.3999999910593,
+          "top": 118.03125,
+          "listTop": 735.60107421875,
+          "opacity": 0.994702,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 198.20000000298023,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 215.3999999910593,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 231.29999999701977,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 247.8999999910593,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 264.79999999701977,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 281.8999999910593,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 297.70000000298023,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 314.8999999910593,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 331.79999999701977,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 347.70000000298023,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 364.8999999910593,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "상위 폴더",
+      "frames": [
+        {
+          "t": 15,
+          "top": 94.234375,
+          "listTop": 689.765625,
+          "opacity": 0.45,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 31.399999991059303,
+          "top": 94.234375,
+          "listTop": 689.1685180664062,
+          "opacity": 0.532101,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 48.599999994039536,
+          "top": 94.234375,
+          "listTop": 688.61865234375,
+          "opacity": 0.607705,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 64.19999998807907,
+          "top": 94.234375,
+          "listTop": 688.1033325195312,
+          "opacity": 0.678563,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 81.5,
+          "top": 94.234375,
+          "listTop": 687.6259765625,
+          "opacity": 0.744206,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 98.29999999701977,
+          "top": 94.234375,
+          "listTop": 687.1885986328125,
+          "opacity": 0.804342,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 114.69999998807907,
+          "top": 94.234375,
+          "listTop": 686.7949829101562,
+          "opacity": 0.858462,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 131.29999999701977,
+          "top": 94.234375,
+          "listTop": 686.452392578125,
+          "opacity": 0.905569,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 148.69999998807907,
+          "top": 94.234375,
+          "listTop": 686.1640625,
+          "opacity": 0.94521,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 165.79999999701977,
+          "top": 94.234375,
+          "listTop": 685.94384765625,
+          "opacity": 0.975494,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 181.69999998807907,
+          "top": 94.234375,
+          "listTop": 685.8038940429688,
+          "opacity": 0.994739,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 198.29999999701977,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 214.19999998807907,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 231.29999999701977,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 248.5,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 265.09999999403954,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 281.59999999403954,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 298.09999999403954,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 315,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 332,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 348.5,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 365,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "하위 자료 목적지 폴더 열기",
+      "frames": [
+        {
+          "t": 15.100000008940697,
+          "top": 118.03125,
+          "listTop": 739.5625,
+          "opacity": 0.45,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 32,
+          "top": 118.03125,
+          "listTop": 738.9637451171875,
+          "opacity": 0.532327,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 47.900000005960464,
+          "top": 118.03125,
+          "listTop": 738.4140625,
+          "opacity": 0.607916,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 64.5,
+          "top": 118.03125,
+          "listTop": 737.8988037109375,
+          "opacity": 0.678759,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 81.29999999701977,
+          "top": 118.03125,
+          "listTop": 737.4242553710938,
+          "opacity": 0.74401,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 97.90000000596046,
+          "top": 118.03125,
+          "listTop": 736.9867553710938,
+          "opacity": 0.804163,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 114.5,
+          "top": 118.03125,
+          "listTop": 736.593017578125,
+          "opacity": 0.858304,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 131.29999999701977,
+          "top": 118.03125,
+          "listTop": 736.250244140625,
+          "opacity": 0.905433,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 148.1000000089407,
+          "top": 118.03125,
+          "listTop": 735.9617919921875,
+          "opacity": 0.945099,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 164.40000000596046,
+          "top": 118.03125,
+          "listTop": 735.740234375,
+          "opacity": 0.975567,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 181.6000000089407,
+          "top": 118.03125,
+          "listTop": 735.60107421875,
+          "opacity": 0.994699,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 199.20000000298023,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 215.29999999701977,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 230.6000000089407,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 248.1000000089407,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 264.6000000089407,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 281.1000000089407,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 297.20000000298023,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 314.79999999701977,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 331.40000000596046,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 347.90000000596046,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 364.40000000596046,
+          "top": 118.03125,
+          "listTop": 735.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "상위 폴더",
+      "frames": [
+        {
+          "t": 14.299999997019768,
+          "top": 94.234375,
+          "listTop": 689.765625,
+          "opacity": 0.45,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 30.599999994039536,
+          "top": 94.234375,
+          "listTop": 689.168701171875,
+          "opacity": 0.532082,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 47.599999994039536,
+          "top": 94.234375,
+          "listTop": 688.6156005859375,
+          "opacity": 0.608127,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 64.70000000298023,
+          "top": 94.234375,
+          "listTop": 688.1034545898438,
+          "opacity": 0.678547,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 81.09999999403954,
+          "top": 94.234375,
+          "listTop": 687.6260986328125,
+          "opacity": 0.744191,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 97.79999999701977,
+          "top": 94.234375,
+          "listTop": 687.191162109375,
+          "opacity": 0.803985,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 115,
+          "top": 94.234375,
+          "listTop": 686.7973022460938,
+          "opacity": 0.858145,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 130.59999999403954,
+          "top": 94.234375,
+          "listTop": 686.4525146484375,
+          "opacity": 0.905559,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 147.59999999403954,
+          "top": 94.234375,
+          "listTop": 686.1641845703125,
+          "opacity": 0.945201,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 164.5,
+          "top": 94.234375,
+          "listTop": 685.94384765625,
+          "opacity": 0.975488,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 181.70000000298023,
+          "top": 94.234375,
+          "listTop": 685.803955078125,
+          "opacity": 0.994736,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 199.5,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 214.70000000298023,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 231.5,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 248,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 264,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 281,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 297.59999999403954,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 313.90000000596046,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 331.29999999701977,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 347.90000000596046,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 363.90000000596046,
+          "top": 94.234375,
+          "listTop": 685.765625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "복사 전 검사",
+      "frames": [
+        {
+          "t": 6.700000002980232,
+          "top": 141.0625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 18.80000001192093,
+          "top": 141.5625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 37.30000001192093,
+          "top": 142,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 54.5,
+          "top": 142.421875,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 72.40000000596046,
+          "top": 142.8125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 85.80000001192093,
+          "top": 143.171875,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 102.70000000298023,
+          "top": 143.484375,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 119.70000000298023,
+          "top": 143.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 137.1000000089407,
+          "top": 144,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 152.20000000298023,
+          "top": 144.1875,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 170.20000000298023,
+          "top": 144.296875,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 186.20000000298023,
+          "top": 68.03125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 203,
+          "top": 68.03125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 218.90000000596046,
+          "top": 68.03125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 236.20000000298023,
+          "top": 68.03125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 252.6000000089407,
+          "top": 68.03125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 268.90000000596046,
+          "top": 68.03125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 286.70000000298023,
+          "top": 68.03125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 302.80000001192093,
+          "top": 68.03125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 319.5,
+          "top": 68.03125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 336.1000000089407,
+          "top": 68.03125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 352.6000000089407,
+          "top": 68.03125,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "목적지 선택",
+      "frames": [
+        {
+          "t": 2.4000000059604645,
+          "top": 143.234375,
+          "listTop": 740.765625,
+          "opacity": 0.45,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 18.5,
+          "top": 130.234375,
+          "listTop": 657.1671752929688,
+          "opacity": 0.45,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 35.79999999701977,
+          "top": 130.234375,
+          "listTop": 656.021240234375,
+          "opacity": 0.531978,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 51.70000000298023,
+          "top": 130.234375,
+          "listTop": 654.958984375,
+          "opacity": 0.607591,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 68.59999999403954,
+          "top": 130.234375,
+          "listTop": 653.966064453125,
+          "opacity": 0.678457,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 86.70000000298023,
+          "top": 130.234375,
+          "listTop": 653.0511474609375,
+          "opacity": 0.744108,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 101.70000000298023,
+          "top": 130.234375,
+          "listTop": 652.2246704101562,
+          "opacity": 0.80391,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 119,
+          "top": 130.234375,
+          "listTop": 651.4857177734375,
+          "opacity": 0.858078,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 135.40000000596046,
+          "top": 130.234375,
+          "listTop": 650.852294921875,
+          "opacity": 0.905501,
+          "inputAlive": true,
+          "animations": 5
+        },
+        {
+          "t": 151.70000000298023,
+          "top": 130.234375,
+          "listTop": 650.3449096679688,
+          "opacity": 0.944943,
+          "inputAlive": true,
+          "animations": 4
+        },
+        {
+          "t": 168.29999999701977,
+          "top": 130.234375,
+          "listTop": 649.9827270507812,
+          "opacity": 0.975455,
+          "inputAlive": true,
+          "animations": 2
+        },
+        {
+          "t": 184.79999999701977,
+          "top": 130.234375,
+          "listTop": 649.8040771484375,
+          "opacity": 0.994719,
+          "inputAlive": true,
+          "animations": 1
+        },
+        {
+          "t": 201.5,
+          "top": 130.234375,
+          "listTop": 649.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 218.90000000596046,
+          "top": 130.234375,
+          "listTop": 649.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 235.20000000298023,
+          "top": 130.234375,
+          "listTop": 649.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 252.20000000298023,
+          "top": 130.234375,
+          "listTop": 649.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 268.59999999403954,
+          "top": 130.234375,
+          "listTop": 649.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 285.5,
+          "top": 130.234375,
+          "listTop": 649.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 301.70000000298023,
+          "top": 130.234375,
+          "listTop": 649.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 317.90000000596046,
+          "top": 130.234375,
+          "listTop": 649.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 335.20000000298023,
+          "top": 130.234375,
+          "listTop": 649.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        },
+        {
+          "t": 351.40000000596046,
+          "top": 130.234375,
+          "listTop": 649.765625,
+          "opacity": 1,
+          "inputAlive": true,
+          "animations": 0
+        }
+      ]
+    },
+    {
+      "label": "하위 자료 목적지 폴더 열기",
+      "frames": [
+        {
+          "t": 15.399999991059303,
+          "top": 154.03125,
+          "listTop": 703.5625,
+          "opacity": 0.45,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 32.20000000298023,
+          "top": 154.03125,
+          "listTop": 702.9658203125,
+          "opacity": 0.532044,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 48.20000000298023,
+          "top": 154.03125,
+          "listTop": 702.4127197265625,
+          "opacity": 0.608092,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 66.59999999403954,
+          "top": 154.03125,
+          "listTop": 701.9005737304688,
+          "opacity": 0.678514,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 82.09999999403954,
+          "top": 154.03125,
+          "listTop": 701.4231567382812,
+          "opacity": 0.74416,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 98.20000000298023,
+          "top": 154.03125,
+          "listTop": 700.98828125,
+          "opacity": 0.803958,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 115.79999999701977,
+          "top": 154.03125,
+          "listTop": 700.5921630859375,
+          "opacity": 0.858426,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 131.8999999910593,
+          "top": 154.03125,
+          "listTop": 700.24951171875,
+          "opacity": 0.905538,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 149.3999999910593,
+          "top": 154.03125,
+          "listTop": 699.961181640625,
+          "opacity": 0.945184,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 166.70000000298023,
+          "top": 154.03125,
+          "listTop": 699.7408447265625,
+          "opacity": 0.975476,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 182.09999999403954,
+          "top": 154.03125,
+          "listTop": 699.600830078125,
+          "opacity": 0.99473,
+          "inputAlive": false,
+          "animations": 1
+        },
+        {
+          "t": 199.09999999403954,
+          "top": 154.03125,
+          "listTop": 699.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 214.8999999910593,
+          "top": 154.03125,
+          "listTop": 699.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 232.29999999701977,
+          "top": 154.03125,
+          "listTop": 699.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 248.5,
+          "top": 154.03125,
+          "listTop": 699.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 266.59999999403954,
+          "top": 154.03125,
+          "listTop": 699.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 281.70000000298023,
+          "top": 154.03125,
+          "listTop": 699.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 298.29999999701977,
+          "top": 154.03125,
+          "listTop": 699.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 314.8999999910593,
+          "top": 154.03125,
+          "listTop": 699.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 332.20000000298023,
+          "top": 154.03125,
+          "listTop": 699.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 349.09999999403954,
+          "top": 154.03125,
+          "listTop": 699.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        },
+        {
+          "t": 365.5,
+          "top": 154.03125,
+          "listTop": 699.5625,
+          "opacity": 1,
+          "inputAlive": false,
+          "animations": 0
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

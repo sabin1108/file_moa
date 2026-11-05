@@ -1,0 +1,145 @@
+{
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0",
+  "storage": "OPFS in disposable browser profile; not a user-picked folder",
+  "checks": [
+    {
+      "name": "real OPFS UTF-8 save and reopen",
+      "passed": true
+    },
+    {
+      "name": "new revision preserves previous content",
+      "passed": true
+    },
+    {
+      "name": "stale writer cannot replace newer revision",
+      "passed": true
+    },
+    {
+      "name": "orphan markdown does not publish a revision",
+      "passed": true
+    },
+    {
+      "name": "competing saves serialize and reject stale parent",
+      "passed": true
+    },
+    {
+      "name": "body corruption is rejected",
+      "passed": true
+    },
+    {
+      "name": "exclusive writable rejects second writer",
+      "passed": true
+    },
+    {
+      "name": "injected permission failure preserves published revision",
+      "passed": true
+    },
+    {
+      "name": "injected quota failure preserves published revision",
+      "passed": true
+    },
+    {
+      "name": "injected metadata failure preserves published revision",
+      "passed": true
+    },
+    {
+      "name": "IndexedDB structured-clone handle restoration",
+      "passed": true
+    },
+    {
+      "name": "failed metadata close is surfaced; previous version remains recoverable",
+      "passed": true
+    }
+  ],
+  "recovery": [
+    {
+      "name": "preview identifies incomplete metadata and orphan body without source mutation",
+      "passed": true
+    },
+    {
+      "name": "recovery copies only verified history and can continue in new directory",
+      "passed": true
+    },
+    {
+      "name": "changed source invalidates approved preview before destination creation",
+      "passed": true
+    },
+    {
+      "name": "overlapping destination is rejected",
+      "passed": true
+    },
+    {
+      "name": "destination write failure never alters source or returns success",
+      "passed": true
+    },
+    {
+      "name": "nonempty malformed metadata is never silently skipped",
+      "passed": true
+    },
+    {
+      "name": "body corruption and missing parent refuse recovery",
+      "passed": true
+    },
+    {
+      "name": "branched valid revisions cannot be guessed into one history",
+      "passed": true
+    },
+    {
+      "name": "source change during copy refuses successful activation",
+      "passed": true
+    },
+    {
+      "name": "empty or all-incomplete history cannot be reported as recovered",
+      "passed": true
+    }
+  ],
+  "accountConnections": {
+    "boundary": "real IndexedDB/OPFS/Web Locks, synthetic owners; no actual login or native permission prompts",
+    "checks": [
+      {
+        "name": "real IndexedDB clones and separates account/workspace/kind handles",
+        "passed": true
+      },
+      {
+        "name": "a new repository instance restores references without auto-connecting a session",
+        "passed": true
+      },
+      {
+        "name": "disconnect deletes only one reference and leaves the folder itself intact",
+        "passed": true
+      },
+      {
+        "name": "a pending save cannot resurrect a reference after a following disconnect",
+        "passed": true
+      }
+    ]
+  },
+  "reloadRead": true,
+  "twoTabs": [
+    "saved",
+    "stale-revision"
+  ],
+  "probeUi": {
+    "boundary": "OPFS and probe handlers; picker and permissions injected, not native dialogs",
+    "checks": [
+      {
+        "name": "source cancellation and failed scan retain the previous usable source connection",
+        "passed": true
+      },
+      {
+        "name": "target cancellation preserves saved connection; explicit restore requests read only",
+        "passed": true
+      },
+      {
+        "name": "injected permission denial preserves connection and allows explicit retry",
+        "passed": true
+      },
+      {
+        "name": "interrupted save, preview, separate recovery, and reopen work through the probe controls",
+        "passed": true
+      }
+    ]
+  },
+  "probeReload": true,
+  "verifiedAt": "2026-10-25T11:39:59.720Z"
+}

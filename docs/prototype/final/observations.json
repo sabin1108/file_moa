@@ -1,0 +1,510 @@
+{
+  "capturedAt": "2026-10-25T06:48:29.355Z",
+  "sceneCount": 27,
+  "observations": [
+    {
+      "route": "/",
+      "width": 1440,
+      "file": "chat-1440.png",
+      "heading": "리액트 렌더링, 다시 이해하기",
+      "overflow": false
+    },
+    {
+      "route": "/files",
+      "width": 1440,
+      "file": "files-1440.png",
+      "heading": "내 폴더",
+      "overflow": false
+    },
+    {
+      "route": "/login",
+      "width": 1440,
+      "file": "login-1440.png",
+      "heading": "흩어진 기록을 모아,다음 생각으로.",
+      "overflow": false
+    },
+    {
+      "route": "/welcome",
+      "width": 1440,
+      "file": "welcome-1440.png",
+      "heading": "흩어진 기록을 모아,다음 생각으로.",
+      "overflow": false
+    },
+    {
+      "route": "/settings",
+      "width": 1440,
+      "file": "settings-1440.png",
+      "heading": "설정",
+      "overflow": false
+    },
+    {
+      "route": "/preview",
+      "width": 1440,
+      "file": "preview-1440.png",
+      "heading": "화면 둘러보기",
+      "overflow": false
+    },
+    {
+      "route": "/preview/startup",
+      "width": 1440,
+      "file": "preview-startup-1440.png",
+      "heading": "접속과 준비",
+      "overflow": false
+    },
+    {
+      "route": "/preview/content-loading",
+      "width": 1440,
+      "file": "preview-content-loading-1440.png",
+      "heading": "자료 불러오기와 전환",
+      "overflow": false
+    },
+    {
+      "route": "/preview/answer-progress",
+      "width": 1440,
+      "file": "preview-answer-progress-1440.png",
+      "heading": "답변을 기다리는 동안",
+      "overflow": false
+    },
+    {
+      "route": "/preview/action-feedback",
+      "width": 1440,
+      "file": "preview-action-feedback-1440.png",
+      "heading": "변경 결과 확인",
+      "overflow": false
+    },
+    {
+      "route": "/preview/session-recovery",
+      "width": 1440,
+      "file": "preview-session-recovery-1440.png",
+      "heading": "작성하던 내용 이어가기",
+      "overflow": false
+    },
+    {
+      "route": "/preview/file-issues",
+      "width": 1440,
+      "file": "preview-file-issues-1440.png",
+      "heading": "사용할 수 없는 자료 확인",
+      "overflow": false
+    },
+    {
+      "route": "/preview/connect",
+      "width": 1440,
+      "file": "preview-connect-1440.png",
+      "heading": "폴더 연결",
+      "overflow": false
+    },
+    {
+      "route": "/preview/connected",
+      "width": 1440,
+      "file": "preview-connected-1440.png",
+      "heading": "폴더를 연결했어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/permission",
+      "width": 1440,
+      "file": "preview-permission-1440.png",
+      "heading": "폴더에 다시 접근하려면",
+      "overflow": false
+    },
+    {
+      "route": "/preview/document",
+      "width": 1440,
+      "file": "preview-document-1440.png",
+      "heading": "리액트 성능 향상.md",
+      "overflow": false
+    },
+    {
+      "route": "/preview/transfer",
+      "width": 1440,
+      "file": "preview-transfer-1440.png",
+      "heading": "대화에 사용할 자료",
+      "overflow": false
+    },
+    {
+      "route": "/preview/indexing",
+      "width": 1440,
+      "file": "preview-indexing-1440.png",
+      "heading": "자료 준비",
+      "overflow": false
+    },
+    {
+      "route": "/preview/destination",
+      "width": 1440,
+      "file": "preview-destination-1440.png",
+      "heading": "이동할 폴더 선택",
+      "overflow": false
+    },
+    {
+      "route": "/preview/conflict",
+      "width": 1440,
+      "file": "preview-conflict-1440.png",
+      "heading": "같은 이름의 파일이 있어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/move-progress",
+      "width": 1440,
+      "file": "preview-move-progress-1440.png",
+      "heading": "파일 이동 중",
+      "overflow": false
+    },
+    {
+      "route": "/preview/move-result",
+      "width": 1440,
+      "file": "preview-move-result-1440.png",
+      "heading": "이동 완료",
+      "overflow": false
+    },
+    {
+      "route": "/preview/move-skipped",
+      "width": 1440,
+      "file": "preview-move-skipped-1440.png",
+      "heading": "선택한 파일은 남겨 두었어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/move-partial",
+      "width": 1440,
+      "file": "preview-move-partial-1440.png",
+      "heading": "일부 파일을 옮기지 못했어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/copy-result",
+      "width": 1440,
+      "file": "preview-copy-result-1440.png",
+      "heading": "복사 완료",
+      "overflow": false
+    },
+    {
+      "route": "/preview/search",
+      "width": 1440,
+      "file": "preview-search-1440.png",
+      "heading": "대화 찾기",
+      "overflow": false
+    },
+    {
+      "route": "/preview/empty",
+      "width": 1440,
+      "file": "preview-empty-1440.png",
+      "heading": "아직 연결한 폴더가 없어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/error",
+      "width": 1440,
+      "file": "preview-error-1440.png",
+      "heading": "연결이 잠시 끊겼어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/login-error",
+      "width": 1440,
+      "file": "preview-login-error-1440.png",
+      "heading": "로그인을 마치지 못했어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/export",
+      "width": 1440,
+      "file": "preview-export-1440.png",
+      "heading": "내 자료 내보내기",
+      "overflow": false
+    },
+    {
+      "route": "/preview/export-ready",
+      "width": 1440,
+      "file": "preview-export-ready-1440.png",
+      "heading": "내보내기 준비 완료",
+      "overflow": false
+    },
+    {
+      "route": "/preview/delete-confirm",
+      "width": 1440,
+      "file": "preview-delete-confirm-1440.png",
+      "heading": "계정 삭제",
+      "overflow": false
+    },
+    {
+      "route": "/preview/deleted",
+      "width": 1440,
+      "file": "preview-deleted-1440.png",
+      "heading": "삭제 요청 접수",
+      "overflow": false
+    },
+    {
+      "route": "/",
+      "width": 390,
+      "file": "chat-390.png",
+      "heading": "리액트 렌더링, 다시 이해하기",
+      "overflow": false
+    },
+    {
+      "route": "/files",
+      "width": 390,
+      "file": "files-390.png",
+      "heading": "내 폴더",
+      "overflow": false
+    },
+    {
+      "route": "/login",
+      "width": 390,
+      "file": "login-390.png",
+      "heading": "흩어진 기록을 모아,다음 생각으로.",
+      "overflow": false
+    },
+    {
+      "route": "/welcome",
+      "width": 390,
+      "file": "welcome-390.png",
+      "heading": "흩어진 기록을 모아,다음 생각으로.",
+      "overflow": false
+    },
+    {
+      "route": "/settings",
+      "width": 390,
+      "file": "settings-390.png",
+      "heading": "설정",
+      "overflow": false
+    },
+    {
+      "route": "/preview",
+      "width": 390,
+      "file": "preview-390.png",
+      "heading": "화면 둘러보기",
+      "overflow": false
+    },
+    {
+      "route": "/preview/startup",
+      "width": 390,
+      "file": "preview-startup-390.png",
+      "heading": "접속과 준비",
+      "overflow": false
+    },
+    {
+      "route": "/preview/content-loading",
+      "width": 390,
+      "file": "preview-content-loading-390.png",
+      "heading": "자료 불러오기와 전환",
+      "overflow": false
+    },
+    {
+      "route": "/preview/answer-progress",
+      "width": 390,
+      "file": "preview-answer-progress-390.png",
+      "heading": "답변을 기다리는 동안",
+      "overflow": false
+    },
+    {
+      "route": "/preview/action-feedback",
+      "width": 390,
+      "file": "preview-action-feedback-390.png",
+      "heading": "변경 결과 확인",
+      "overflow": false
+    },
+    {
+      "route": "/preview/session-recovery",
+      "width": 390,
+      "file": "preview-session-recovery-390.png",
+      "heading": "작성하던 내용 이어가기",
+      "overflow": false
+    },
+    {
+      "route": "/preview/file-issues",
+      "width": 390,
+      "file": "preview-file-issues-390.png",
+      "heading": "사용할 수 없는 자료 확인",
+      "overflow": false
+    },
+    {
+      "route": "/preview/connect",
+      "width": 390,
+      "file": "preview-connect-390.png",
+      "heading": "폴더 연결",
+      "overflow": false
+    },
+    {
+      "route": "/preview/connected",
+      "width": 390,
+      "file": "preview-connected-390.png",
+      "heading": "폴더를 연결했어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/permission",
+      "width": 390,
+      "file": "preview-permission-390.png",
+      "heading": "폴더에 다시 접근하려면",
+      "overflow": false
+    },
+    {
+      "route": "/preview/document",
+      "width": 390,
+      "file": "preview-document-390.png",
+      "heading": "리액트 성능 향상.md",
+      "overflow": false
+    },
+    {
+      "route": "/preview/transfer",
+      "width": 390,
+      "file": "preview-transfer-390.png",
+      "heading": "대화에 사용할 자료",
+      "overflow": false
+    },
+    {
+      "route": "/preview/indexing",
+      "width": 390,
+      "file": "preview-indexing-390.png",
+      "heading": "자료 준비",
+      "overflow": false
+    },
+    {
+      "route": "/preview/destination",
+      "width": 390,
+      "file": "preview-destination-390.png",
+      "heading": "이동할 폴더 선택",
+      "overflow": false
+    },
+    {
+      "route": "/preview/conflict",
+      "width": 390,
+      "file": "preview-conflict-390.png",
+      "heading": "같은 이름의 파일이 있어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/move-progress",
+      "width": 390,
+      "file": "preview-move-progress-390.png",
+      "heading": "파일 이동 중",
+      "overflow": false
+    },
+    {
+      "route": "/preview/move-result",
+      "width": 390,
+      "file": "preview-move-result-390.png",
+      "heading": "이동 완료",
+      "overflow": false
+    },
+    {
+      "route": "/preview/move-skipped",
+      "width": 390,
+      "file": "preview-move-skipped-390.png",
+      "heading": "선택한 파일은 남겨 두었어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/move-partial",
+      "width": 390,
+      "file": "preview-move-partial-390.png",
+      "heading": "일부 파일을 옮기지 못했어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/copy-result",
+      "width": 390,
+      "file": "preview-copy-result-390.png",
+      "heading": "복사 완료",
+      "overflow": false
+    },
+    {
+      "route": "/preview/search",
+      "width": 390,
+      "file": "preview-search-390.png",
+      "heading": "대화 찾기",
+      "overflow": false
+    },
+    {
+      "route": "/preview/empty",
+      "width": 390,
+      "file": "preview-empty-390.png",
+      "heading": "아직 연결한 폴더가 없어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/error",
+      "width": 390,
+      "file": "preview-error-390.png",
+      "heading": "연결이 잠시 끊겼어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/login-error",
+      "width": 390,
+      "file": "preview-login-error-390.png",
+      "heading": "로그인을 마치지 못했어요",
+      "overflow": false
+    },
+    {
+      "route": "/preview/export",
+      "width": 390,
+      "file": "preview-export-390.png",
+      "heading": "내 자료 내보내기",
+      "overflow": false
+    },
+    {
+      "route": "/preview/export-ready",
+      "width": 390,
+      "file": "preview-export-ready-390.png",
+      "heading": "내보내기 준비 완료",
+      "overflow": false
+    },
+    {
+      "route": "/preview/delete-confirm",
+      "width": 390,
+      "file": "preview-delete-confirm-390.png",
+      "heading": "계정 삭제",
+      "overflow": false
+    },
+    {
+      "route": "/preview/deleted",
+      "width": 390,
+      "file": "preview-deleted-390.png",
+      "heading": "삭제 요청 접수",
+      "overflow": false
+    },
+    {
+      "route": "/",
+      "width": 768,
+      "file": "chat-768.png",
+      "heading": "리액트 렌더링, 다시 이해하기",
+      "overflow": false
+    },
+    {
+      "route": "/files",
+      "width": 768,
+      "file": "files-768.png",
+      "heading": "내 폴더",
+      "overflow": false
+    },
+    {
+      "route": "/settings",
+      "width": 768,
+      "file": "settings-768.png",
+      "heading": "설정",
+      "overflow": false
+    },
+    {
+      "route": "/",
+      "width": 1920,
+      "file": "chat-1920.png",
+      "heading": "리액트 렌더링, 다시 이해하기",
+      "overflow": false
+    },
+    {
+      "route": "/files",
+      "width": 1920,
+      "file": "files-1920.png",
+      "heading": "내 폴더",
+      "overflow": false
+    },
+    {
+      "route": "/settings",
+      "width": 1920,
+      "file": "settings-1920.png",
+      "heading": "설정",
+      "overflow": false
+    }
+  ]
+}

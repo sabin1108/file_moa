@@ -1,0 +1,307 @@
+{
+  "checks": [
+    {
+      "name": "real direct children: folder first, unsupported extension retained",
+      "passed": true
+    },
+    {
+      "name": "real child navigation and Korean filename",
+      "passed": true
+    },
+    {
+      "name": "missing child reports NotFoundError",
+      "passed": true
+    },
+    {
+      "name": "path traversal rejected",
+      "passed": true
+    },
+    {
+      "name": "pre-cancellation rejected",
+      "passed": true
+    },
+    {
+      "name": "second real folder is empty without borrowing A entries",
+      "passed": true
+    },
+    {
+      "name": "disconnect blocks further enumeration",
+      "passed": true
+    },
+    {
+      "name": "all source paths, hashes, sizes and mtimes unchanged",
+      "passed": true
+    }
+  ],
+  "sourceFiles": 3,
+  "before": [
+    {
+      "path": "/자료 A",
+      "kind": "directory"
+    },
+    {
+      "path": "/자료 A/노트.md",
+      "kind": "file",
+      "size": 29,
+      "mtime": 1793078605125,
+      "hash": [
+        0,
+        8,
+        128,
+        211,
+        10,
+        190,
+        50,
+        134,
+        80,
+        154,
+        84,
+        62,
+        182,
+        93,
+        33,
+        204,
+        162,
+        64,
+        200,
+        133,
+        132,
+        153,
+        43,
+        128,
+        51,
+        221,
+        79,
+        163,
+        58,
+        199,
+        91,
+        130
+      ]
+    },
+    {
+      "path": "/자료 A/이미지.bin",
+      "kind": "file",
+      "size": 32,
+      "mtime": 1793078605127,
+      "hash": [
+        23,
+        9,
+        175,
+        147,
+        164,
+        62,
+        76,
+        118,
+        147,
+        203,
+        124,
+        143,
+        237,
+        168,
+        229,
+        83,
+        198,
+        254,
+        151,
+        10,
+        203,
+        39,
+        82,
+        162,
+        206,
+        31,
+        193,
+        144,
+        143,
+        69,
+        243,
+        5
+      ]
+    },
+    {
+      "path": "/자료 A/하위 자료",
+      "kind": "directory"
+    },
+    {
+      "path": "/자료 A/하위 자료/공백 포함.txt",
+      "kind": "file",
+      "size": 23,
+      "mtime": 1793078605129,
+      "hash": [
+        10,
+        44,
+        140,
+        184,
+        243,
+        190,
+        139,
+        64,
+        137,
+        78,
+        36,
+        227,
+        21,
+        231,
+        199,
+        53,
+        20,
+        63,
+        197,
+        126,
+        193,
+        185,
+        2,
+        52,
+        163,
+        97,
+        200,
+        49,
+        140,
+        200,
+        238,
+        36
+      ]
+    },
+    {
+      "path": "/자료 B",
+      "kind": "directory"
+    }
+  ],
+  "after": [
+    {
+      "path": "/자료 A",
+      "kind": "directory"
+    },
+    {
+      "path": "/자료 A/노트.md",
+      "kind": "file",
+      "size": 29,
+      "mtime": 1793078605125,
+      "hash": [
+        0,
+        8,
+        128,
+        211,
+        10,
+        190,
+        50,
+        134,
+        80,
+        154,
+        84,
+        62,
+        182,
+        93,
+        33,
+        204,
+        162,
+        64,
+        200,
+        133,
+        132,
+        153,
+        43,
+        128,
+        51,
+        221,
+        79,
+        163,
+        58,
+        199,
+        91,
+        130
+      ]
+    },
+    {
+      "path": "/자료 A/이미지.bin",
+      "kind": "file",
+      "size": 32,
+      "mtime": 1793078605127,
+      "hash": [
+        23,
+        9,
+        175,
+        147,
+        164,
+        62,
+        76,
+        118,
+        147,
+        203,
+        124,
+        143,
+        237,
+        168,
+        229,
+        83,
+        198,
+        254,
+        151,
+        10,
+        203,
+        39,
+        82,
+        162,
+        206,
+        31,
+        193,
+        144,
+        143,
+        69,
+        243,
+        5
+      ]
+    },
+    {
+      "path": "/자료 A/하위 자료",
+      "kind": "directory"
+    },
+    {
+      "path": "/자료 A/하위 자료/공백 포함.txt",
+      "kind": "file",
+      "size": 23,
+      "mtime": 1793078605129,
+      "hash": [
+        10,
+        44,
+        140,
+        184,
+        243,
+        190,
+        139,
+        64,
+        137,
+        78,
+        36,
+        227,
+        21,
+        231,
+        199,
+        53,
+        20,
+        63,
+        197,
+        126,
+        193,
+        185,
+        2,
+        52,
+        163,
+        97,
+        200,
+        49,
+        140,
+        200,
+        238,
+        36
+      ]
+    },
+    {
+      "path": "/자료 B",
+      "kind": "directory"
+    }
+  ],
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+  "verifiedAt": "2026-10-27T05:23:25.139Z"
+}

@@ -1,0 +1,1083 @@
+{
+ "url": "http://127.0.0.1:3010/files",
+ "at": "2026-10-31T04:14:48.912Z",
+ "allow": [],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 1,
+   "filled": [
+    0.98
+   ],
+   "motion": {
+    "elements": 0,
+    "css": 0,
+    "transitions": 0,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 900,
+     "screens": 1,
+     "words": 51,
+     "img": 0,
+     "video": 0,
+     "canvas": 0,
+     "svg": 5,
+     "sections": 1,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "내 파일",
+     "words": 2,
+     "chars": 4,
+     "lines": 1,
+     "size": 28,
+     "vw": 1.9,
+     "font": "Malgun Gothic",
+     "weight": 700,
+     "tracking": 0,
+     "leading": 1.6,
+     "top": 56,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "내 파일",
+     "words": 2,
+     "lines": 1,
+     "size": 28,
+     "font": "Malgun Gothic"
+    },
+    "headings": [],
+    "headingSummary": {
+     "count": 0,
+     "maxLines": 0,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Malgun Gothic",
+       "share": 1,
+       "mono": false
+      }
+     ],
+     "familyCount": 1,
+     "sizes": [
+      12,
+      13,
+      14,
+      16,
+      18,
+      25
+     ],
+     "sizeCount": 6,
+     "notLoaded": [],
+     "body": null,
+     "measureChars": null,
+     "max": {
+      "size": 25,
+      "vw": 1.7,
+      "font": "Malgun Gothic",
+      "text": "‹"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0.13,
+     "centerShare": 0,
+     "smallText": 1
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#06141b",
+     "bodyBgHsl": {
+      "h": 200,
+      "s": 0.64,
+      "l": 0.06
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#ffffff",
+       "top": 0,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      },
+      {
+       "color": "#f8f9fa",
+       "top": 56,
+       "hsl": {
+        "h": 210,
+        "s": 0.17,
+        "l": 0.98
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#5f6368",
+       "share": 0.75
+      },
+      {
+       "color": "#202124",
+       "share": 0.25
+      }
+     ],
+     "button": {
+      "bg": "#f8f9fa",
+      "hsl": {
+       "h": 210,
+       "s": 0.17,
+       "l": 0.98
+      },
+      "fg": "#5f6368"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 3,
+     "inHero": 3,
+     "radius": 4,
+     "height": 44,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "내 폴더",
+      "내 파일"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 5,
+     "hairlineSamples": [
+      "header.QlgK_W_header 1440px",
+      "aside.QlgK_W_sidebar 176px",
+      "div.QlgK_W_current 420px",
+      "details.bLVZda_creation 387px",
+      "footer.QlgK_W_footer 1440px"
+     ],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 0,
+     "boxRadius": 0,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 0,
+     "fixed": false,
+     "height": 56,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": []
+   },
+   "layout": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "pageH": 900,
+    "margins": {
+     "left": 16,
+     "right": 718
+    },
+    "sections": [],
+    "gaps": [
+     {
+      "top": 456,
+      "height": 416
+     }
+    ],
+    "h1s": [],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 224,
+      "n": 1
+     },
+     {
+      "x": 620,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 2,
+    "bodySize": 14,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0.43,
+    "voidBox": {
+     "x": 600,
+     "y": 240,
+     "w": 840,
+     "h": 660
+    }
+   },
+   "app": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "dark": true,
+    "ground": "#06141b",
+    "sidebar": {
+     "w": 176,
+     "tag": "aside",
+     "links": 5,
+     "share": 0.12
+    },
+    "topbar": {
+     "h": 56
+    },
+    "canvas": {
+     "left": 0,
+     "right": 545
+    },
+    "hero": {
+     "text": "내 파일",
+     "words": 2,
+     "chars": 4,
+     "lines": 1,
+     "size": 28,
+     "vw": 1.9,
+     "font": "Malgun Gothic",
+     "weight": 700,
+     "tracking": 0,
+     "leading": 1.6,
+     "top": 56,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 2,
+     "firstScreen": 2,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 3,
+     "radii": [
+      [
+       0,
+       3
+      ]
+     ],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 0,
+     "tabularShare": null,
+     "kpiMax": null
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.13,
+     "tiny": 0,
+     "tinySamples": [],
+     "sizes": [
+      12,
+      13,
+      14,
+      16,
+      18,
+      28
+     ]
+    },
+    "title": {
+     "text": "내 파일",
+     "size": 28,
+     "top": 56
+    },
+    "colourShare": 0
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 768,
+   "height": 1024,
+   "load": "load",
+   "screens": 1,
+   "filled": [
+    0.95
+   ],
+   "motion": {
+    "elements": 0,
+    "css": 0,
+    "transitions": 0,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "page": {
+     "height": 1024,
+     "screens": 1,
+     "words": 42,
+     "img": 0,
+     "video": 0,
+     "canvas": 0,
+     "svg": 5,
+     "sections": 1,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "내 파일",
+     "words": 2,
+     "chars": 4,
+     "lines": 1,
+     "size": 28,
+     "vw": 3.6,
+     "font": "Malgun Gothic",
+     "weight": 700,
+     "tracking": 0,
+     "leading": 1.6,
+     "top": 56,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "내 파일",
+     "words": 2,
+     "lines": 1,
+     "size": 28,
+     "font": "Malgun Gothic"
+    },
+    "headings": [],
+    "headingSummary": {
+     "count": 0,
+     "maxLines": 0,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Malgun Gothic",
+       "share": 1,
+       "mono": false
+      }
+     ],
+     "familyCount": 1,
+     "sizes": [
+      12,
+      13,
+      14,
+      16,
+      25
+     ],
+     "sizeCount": 5,
+     "notLoaded": [],
+     "body": null,
+     "measureChars": null,
+     "max": {
+      "size": 25,
+      "vw": 3.3,
+      "font": "Malgun Gothic",
+      "text": "‹"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0.15,
+     "centerShare": 0,
+     "smallText": 1
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#06141b",
+     "bodyBgHsl": {
+      "h": 200,
+      "s": 0.64,
+      "l": 0.06
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#ffffff",
+       "top": 0,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      },
+      {
+       "color": "#f8f9fa",
+       "top": 56,
+       "hsl": {
+        "h": 210,
+        "s": 0.17,
+        "l": 0.98
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#5f6368",
+       "share": 0.76
+      },
+      {
+       "color": "#202124",
+       "share": 0.24
+      }
+     ],
+     "button": {
+      "bg": "#f8f9fa",
+      "hsl": {
+       "h": 210,
+       "s": 0.17,
+       "l": 0.98
+      },
+      "fg": "#5f6368"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 1,
+     "inHero": 1,
+     "radius": 4,
+     "height": 44,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": []
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 4,
+     "hairlineSamples": [
+      "header.QlgK_W_header 768px",
+      "div.QlgK_W_current 420px",
+      "details.bLVZda_creation 387px",
+      "footer.QlgK_W_footer 768px"
+     ],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 0,
+     "boxRadius": 0,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 0,
+     "fixed": false,
+     "height": 56,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": []
+   },
+   "layout": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "pageH": 1024,
+    "margins": {
+     "left": 16,
+     "right": 49
+    },
+    "sections": [],
+    "gaps": [
+     {
+      "top": 456,
+      "height": 540
+     }
+    ],
+    "h1s": [],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 48,
+      "n": 1
+     },
+     {
+      "x": 444,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 2,
+    "bodySize": 14,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "dark": true,
+    "ground": "#06141b",
+    "sidebar": null,
+    "topbar": {
+     "h": 56
+    },
+    "canvas": {
+     "left": 0,
+     "right": 49
+    },
+    "hero": {
+     "text": "내 파일",
+     "words": 2,
+     "chars": 4,
+     "lines": 1,
+     "size": 28,
+     "vw": 3.6,
+     "font": "Malgun Gothic",
+     "weight": 700,
+     "tracking": 0,
+     "leading": 1.6,
+     "top": 56,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 1,
+     "firstScreen": 1,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 1,
+     "radii": [
+      [
+       0,
+       1
+      ]
+     ],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 0,
+     "tabularShare": null,
+     "kpiMax": null
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.13,
+     "tiny": 0,
+     "tinySamples": [],
+     "sizes": [
+      12,
+      13,
+      14,
+      16,
+      18,
+      28
+     ]
+    },
+    "title": {
+     "text": "내 파일",
+     "size": 28,
+     "top": 56
+    },
+    "colourShare": 0
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 1,
+   "filled": [
+    0.89
+   ],
+   "motion": {
+    "elements": 0,
+    "css": 0,
+    "transitions": 0,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "page": {
+     "height": 844,
+     "screens": 1,
+     "words": 34,
+     "img": 0,
+     "video": 0,
+     "canvas": 0,
+     "svg": 5,
+     "sections": 1,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "내 파일",
+     "words": 2,
+     "chars": 4,
+     "lines": 1,
+     "size": 28,
+     "vw": 7.2,
+     "font": "Malgun Gothic",
+     "weight": 700,
+     "tracking": 0,
+     "leading": 1.6,
+     "top": 56,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "내 파일",
+     "words": 2,
+     "lines": 1,
+     "size": 28,
+     "font": "Malgun Gothic"
+    },
+    "headings": [],
+    "headingSummary": {
+     "count": 0,
+     "maxLines": 0,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Malgun Gothic",
+       "share": 1,
+       "mono": false
+      }
+     ],
+     "familyCount": 1,
+     "sizes": [
+      12,
+      13,
+      14,
+      16
+     ],
+     "sizeCount": 4,
+     "notLoaded": [],
+     "body": null,
+     "measureChars": null,
+     "max": {
+      "size": 16,
+      "vw": 4.1,
+      "font": "Malgun Gothic",
+      "text": "폴더 목록"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0,
+     "smallText": 1
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#06141b",
+     "bodyBgHsl": {
+      "h": 200,
+      "s": 0.64,
+      "l": 0.06
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#ffffff",
+       "top": 0,
+       "hsl": {
+        "h": 0,
+        "s": 0,
+        "l": 1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#5f6368",
+       "share": 0.77
+      },
+      {
+       "color": "#202124",
+       "share": 0.23
+      }
+     ],
+     "button": {
+      "bg": "#f8f9fa",
+      "hsl": {
+       "h": 210,
+       "s": 0.17,
+       "l": 0.98
+      },
+      "fg": "#5f6368"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 1,
+     "inHero": 1,
+     "radius": 4,
+     "height": 44,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": []
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 3,
+     "hairlineSamples": [
+      "header.QlgK_W_header 390px",
+      "details.bLVZda_creation 358px",
+      "footer.QlgK_W_footer 390px"
+     ],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 0,
+     "boxRadius": 0,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 0,
+     "fixed": false,
+     "height": 56,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": []
+   },
+   "layout": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "pageH": 844,
+    "margins": {
+     "left": 16,
+     "right": 16
+    },
+    "sections": [],
+    "gaps": [
+     {
+      "top": 452,
+      "height": 352
+     }
+    ],
+    "h1s": [],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 48,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 1,
+    "bodySize": 14,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "dark": true,
+    "ground": "#06141b",
+    "sidebar": null,
+    "topbar": {
+     "h": 56
+    },
+    "canvas": {
+     "left": 0,
+     "right": 16
+    },
+    "hero": {
+     "text": "내 파일",
+     "words": 2,
+     "chars": 4,
+     "lines": 1,
+     "size": 28,
+     "vw": 7.2,
+     "font": "Malgun Gothic",
+     "weight": 700,
+     "tracking": 0,
+     "leading": 1.6,
+     "top": 56,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 0,
+     "firstScreen": 0,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 0,
+     "radii": [],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 0,
+     "tabularShare": null,
+     "kpiMax": null
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.13,
+     "tiny": 0,
+     "tinySamples": [],
+     "sizes": [
+      12,
+      13,
+      14,
+      16,
+      18,
+      28
+     ]
+    },
+    "title": {
+     "text": "내 파일",
+     "size": 28,
+     "top": 56
+    },
+    "colourShare": 0.001
+   },
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "WARN",
+   "id": "blank-gap",
+   "width": 1440,
+   "message": "A 416px stretch at 456px holds nothing.",
+   "fix": "Check that it is a deliberate rest (once per page at most); otherwise close it to the normal section gap.",
+   "alsoAt": [
+    768
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "hero-void",
+   "width": 1440,
+   "message": "43% of the first screen is one empty block (840×660px at 600,240).",
+   "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+  },
+  {
+   "level": "WARN",
+   "id": "unused-canvas",
+   "width": 1440,
+   "message": "The content stops 545px short of the right edge while it starts 0px from the sidebar.",
+   "fix": "Let the grid fill the canvas (columns in fr units), or centre a capped canvas with equal margins. A dead strip on one side reads as unfinished."
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "E:\\project\\ai_folder_project\\docs\\verification\\folder-followup-20261031\\inspect\\desktop-fold.jpg",
+   "pages": [
+    "E:\\project\\ai_folder_project\\docs\\verification\\folder-followup-20261031\\inspect\\desktop-page-01.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "tablet",
+   "width": 768,
+   "fold": "E:\\project\\ai_folder_project\\docs\\verification\\folder-followup-20261031\\inspect\\tablet-fold.jpg",
+   "pages": [
+    "E:\\project\\ai_folder_project\\docs\\verification\\folder-followup-20261031\\inspect\\tablet-page-01.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "E:\\project\\ai_folder_project\\docs\\verification\\folder-followup-20261031\\inspect\\mobile-fold.jpg",
+   "pages": [
+    "E:\\project\\ai_folder_project\\docs\\verification\\folder-followup-20261031\\inspect\\mobile-page-01.jpg"
+   ],
+   "film": []
+  }
+ ]
+}

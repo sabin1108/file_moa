@@ -1,0 +1,68 @@
+{
+  "checks": [
+    {
+      "name": "vault requires source connection",
+      "passed": true
+    },
+    {
+      "name": "source location refused with zero writes",
+      "passed": true
+    },
+    {
+      "name": "vault created outside source",
+      "passed": true
+    },
+    {
+      "name": "no overflow 390",
+      "passed": true
+    },
+    {
+      "name": "no overflow 768",
+      "passed": true
+    },
+    {
+      "name": "no overflow 1440",
+      "passed": true
+    },
+    {
+      "name": "no overflow 1920",
+      "passed": true
+    },
+    {
+      "name": "disconnect preserves vault identity",
+      "passed": true
+    },
+    {
+      "name": "normal folder is not adopted",
+      "passed": true
+    },
+    {
+      "name": "source sentinel unchanged",
+      "passed": true
+    },
+    {
+      "name": "reload waits for explicit reconnect without permission request",
+      "passed": true
+    },
+    {
+      "name": "explicit vault permission requested with user activation",
+      "passed": true
+    },
+    {
+      "name": "Escape closes and restores focus",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timings": [
+    {
+      "operation": "create-and-verify",
+      "elapsedMs": 47
+    }
+  ],
+  "errors": []
+}

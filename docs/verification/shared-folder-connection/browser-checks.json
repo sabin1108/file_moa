@@ -1,0 +1,398 @@
+{
+  "at": "2026-10-27T00:29:43.228Z",
+  "base": "http://127.0.0.1:3001",
+  "boundary": "Real settings UI, IndexedDB, Web Locks and OPFS; injected picker/permission/failures; NOT native permission dialog, external source folder or real login verification",
+  "fixture": "Synthetic OPFS directories and one sentinel text file; deterministic names; no random seed; core regression set, no holdout",
+  "checks": [
+    {
+      "name": "initial disconnected; no permission request",
+      "passed": true
+    },
+    {
+      "name": "pending blocks repeat actions and has explanatory status",
+      "passed": true
+    },
+    {
+      "name": "one pending selection opens only one picker",
+      "passed": true
+    },
+    {
+      "name": "pending selection survives route change and blocks duplicate actions in files",
+      "passed": true
+    },
+    {
+      "name": "connect saves real handle, read mode and activation",
+      "passed": true
+    },
+    {
+      "name": "files shares connection without permission request or storage reload",
+      "passed": true
+    },
+    {
+      "name": "settings return retains the same connection",
+      "passed": true
+    },
+    {
+      "name": "cancel retains previous folder and shows attention",
+      "passed": true
+    },
+    {
+      "name": "denied selection retains previous connection",
+      "passed": true
+    },
+    {
+      "name": "storage failure preserves old name and stored handle",
+      "passed": true
+    },
+    {
+      "name": "storage error and prior connection are shared with files",
+      "passed": true
+    },
+    {
+      "name": "replacement succeeds only after persistence",
+      "passed": true
+    },
+    {
+      "name": "settings has no simulated profile inputs or tabs",
+      "passed": true
+    },
+    {
+      "name": "reload restores handle as needs-permission without automatic query/request",
+      "passed": true
+    },
+    {
+      "name": "reconnect denial keeps name and retry",
+      "passed": true
+    },
+    {
+      "name": "denied 1440: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "다시 연결",
+            "height": 40
+          },
+          {
+            "label": "연결 해제",
+            "height": 40
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 40
+          }
+        ]
+      }
+    },
+    {
+      "name": "denied 390: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "다시 연결",
+            "height": 44
+          },
+          {
+            "label": "연결 해제",
+            "height": 44
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "name": "keyboard reconnect has user activation and read mode",
+      "passed": true
+    },
+    {
+      "name": "failed removal stops memory but keeps retry and disables new selection",
+      "passed": true
+    },
+    {
+      "name": "disconnect failure follows navigation and still blocks reselection",
+      "passed": true
+    },
+    {
+      "name": "remove-failed 390: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "폴더 연결",
+            "height": 44
+          },
+          {
+            "label": "연결 해제 다시 시도",
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "name": "removal retry deletes only stored reference and keeps original file",
+      "passed": true
+    },
+    {
+      "name": "files reflects removal retried from settings",
+      "passed": true
+    },
+    {
+      "name": "connected 1440: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "연결 해제",
+            "height": 40
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 40
+          }
+        ]
+      }
+    },
+    {
+      "name": "connected 1920: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "연결 해제",
+            "height": 40
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 40
+          }
+        ]
+      }
+    },
+    {
+      "name": "connected 768: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "연결 해제",
+            "height": 40
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 40
+          }
+        ]
+      }
+    },
+    {
+      "name": "connected 390: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": [
+          {
+            "label": "연결 해제",
+            "height": 44
+          },
+          {
+            "label": "다른 폴더 선택",
+            "height": 44
+          }
+        ]
+      }
+    },
+    {
+      "name": "route roundtrip 1: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 2: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 3: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 4: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 5: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 6: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 7: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 8: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 9: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrip 10: connection retained through chat",
+      "passed": true
+    },
+    {
+      "name": "route roundtrips do not reload handles or ask permission",
+      "passed": true
+    },
+    {
+      "name": "shared route journey measurement",
+      "passed": true,
+      "detail": {
+        "routeTimes": [
+          29.402600000000348,
+          46.9380000000001,
+          41.177200000000084,
+          35.04459999999972,
+          37.052200000000084,
+          36.035899999999856,
+          30.53729999999996,
+          35.645300000000134,
+          28.412199999999757,
+          35.06370000000015
+        ],
+        "routeHeapBefore": 7452900,
+        "routeHeapAfter": 7485372,
+        "garbageCollectionForced": false,
+        "note": "Ten files-chat-settings-files loops; wall time includes automation and route polling; no native picker wait."
+      }
+    },
+    {
+      "name": "browser back preserves connection",
+      "passed": true
+    },
+    {
+      "name": "browser forward preserves connection",
+      "passed": true
+    },
+    {
+      "name": "repeated selection measurement (not native user wait)",
+      "passed": true,
+      "detail": {
+        "timing": [
+          17.5,
+          11.099999994039536,
+          10.200000002980232,
+          10.099999994039536,
+          7.899999991059303,
+          13.199999988079071,
+          10.400000005960464,
+          11.700000002980232,
+          14.700000002980232,
+          12.5
+        ],
+        "heapBefore": 7736332,
+        "heapAfter": 8316104,
+        "garbageCollectionForced": false
+      }
+    },
+    {
+      "name": "leaving workspace stops late selection and preview does not read handles",
+      "passed": true
+    },
+    {
+      "name": "return from preview starts a new lifecycle needing explicit permission",
+      "passed": true
+    },
+    {
+      "name": "preload error does not show disconnected actions",
+      "passed": true
+    },
+    {
+      "name": "preload failure is shared in files with retry",
+      "passed": true
+    },
+    {
+      "name": "preload retry restores without permission request",
+      "passed": true
+    },
+    {
+      "name": "unsupported browser offers explanation without false connection",
+      "passed": true
+    },
+    {
+      "name": "unsupported 390: layout and button size",
+      "passed": true,
+      "detail": {
+        "overflow": false,
+        "buttons": []
+      }
+    },
+    {
+      "name": "no external or mutating HTTP requests",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "no React hydration or console errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timing": [
+    17.5,
+    11.099999994039536,
+    10.200000002980232,
+    10.099999994039536,
+    7.899999991059303,
+    13.199999988079071,
+    10.400000005960464,
+    11.700000002980232,
+    14.700000002980232,
+    12.5
+  ],
+  "visualFindings": [
+    {
+      "width": 1440,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "hero-void",
+          "width": 1440,
+          "message": "33% of the first screen is one empty block (1440×333px at 0,600).",
+          "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "hero-void",
+          "width": 1920,
+          "message": "35% of the first screen is one empty block (1680×400px at 240,600).",
+          "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "findings": []
+    },
+    {
+      "width": 390,
+      "findings": []
+    }
+  ]
+}

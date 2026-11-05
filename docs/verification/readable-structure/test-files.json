@@ -1,0 +1,13 @@
+[
+  "apps/web/tests/local-folders/services/connection-session.test.ts",
+  "apps/web/tests/local-folders/services/source-file-preview.test.ts",
+  "apps/web/tests/local-folders/services/source-folder-listing.test.ts",
+  "apps/web/tests/local-folders/store/source-connection-controller.test.ts",
+  "apps/web/tests/local-folders/store/source-listing-controller.test.ts",
+  "apps/web/tests/local-folders/store/source-preview-controller.test.ts",
+  "apps/web/tests/local-folders/store/source-selection.test.ts",
+  "packages/domain/tests/index.test.ts",
+  "packages/domain/tests/local-record.test.ts",
+  "tests/s0/probe-connection.test.mjs",
+  "tests/s0/source-inventory.test.mjs"
+]

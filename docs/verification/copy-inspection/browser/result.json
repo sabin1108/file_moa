@@ -1,0 +1,707 @@
+{
+  "checks": [
+    {
+      "name": "INSPECT-001 no body read or Worker before action",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-003 real Worker hashes equal independent Node SHA-256",
+      "passed": true,
+      "detail": [
+        "a675c95d2497c087925db1b1a87e958ccb53906f06eb76589f47bb8745486265",
+        "44e0e62af6567f44c49577c782ffe4f53fde138b4224453ce9d7efcfccfa93aa",
+        "ca0e5906c0b52c3402be65f1618ef5d5475f1bff0f0b3cde11f70e59b91960f3"
+      ]
+    },
+    {
+      "name": "INSPECT-006 honest result and no execute control",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 one Worker released after whole batch",
+      "passed": true
+    },
+    {
+      "name": "complete/1440: contained",
+      "passed": true
+    },
+    {
+      "name": "complete/1920: contained",
+      "passed": true
+    },
+    {
+      "name": "complete/768: contained",
+      "passed": true
+    },
+    {
+      "name": "complete/390: contained",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 last disclosure participates in modal focus wrap",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 reverse wrap reaches disclosure",
+      "passed": true
+    },
+    {
+      "name": "loading/390: contained",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 cancel immediately terminates Worker and keeps focus",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 edited destination removes old inspection",
+      "passed": true
+    },
+    {
+      "name": "read-error/390: contained",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 error retry finishes actual read",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-002 conflict created after plan is detected",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 Escape cancels and restores selection trigger",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 permission loss updates shared connection",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-005 repeated inspections release every Worker",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-003/004 100-empty exact hashes and count",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-003/004 64MiB exact hashes and count",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-004 limit rejected before Worker content read",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-007 source sentinel unchanged",
+      "passed": true
+    },
+    {
+      "name": "INSPECT-007 no product writes or write permission",
+      "passed": true,
+      "detail": {
+        "before": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793322988840,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "after": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793322988840,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "writes": 0,
+        "modes": [
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read"
+        ],
+        "activeWorkers": 0
+      }
+    },
+    {
+      "name": "INSPECT-007 no uploads or external requests",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "INSPECT-005 no Worker left alive",
+      "passed": true
+    },
+    {
+      "name": "browser console clean",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timings": [
+    {
+      "name": "three-files",
+      "ms": 57.10680000000002
+    },
+    {
+      "name": "ten-inspections",
+      "samplesMs": [
+        45.8735999999999,
+        47.37039999999979,
+        46.50829999999996,
+        46.929999999999836,
+        45.04269999999997,
+        46.477200000000266,
+        47.436699999999746,
+        95.71500000000015,
+        78.85290000000032,
+        45.037700000000314
+      ],
+      "heapBefore": 6780216,
+      "heapAfter": 6615132,
+      "caveat": "main-thread JS heap without forced GC; excludes Worker/native memory"
+    },
+    {
+      "name": "100-empty",
+      "count": 100,
+      "bytes": 0,
+      "samplesMs": [
+        377.4866999999999,
+        281.5136000000002,
+        279.8535999999999
+      ]
+    },
+    {
+      "name": "64MiB",
+      "count": 4,
+      "bytes": 67108864,
+      "samplesMs": [
+        250.3133000000007,
+        264.08789999999954,
+        250.7556000000004
+      ]
+    }
+  ],
+  "visual": [
+    {
+      "name": "complete",
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "name": "complete",
+      "width": 1920,
+      "findings": []
+    },
+    {
+      "name": "complete",
+      "width": 768,
+      "findings": []
+    },
+    {
+      "name": "complete",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "name": "loading",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "name": "read-error",
+      "width": 390,
+      "findings": []
+    }
+  ],
+  "network": [
+    {
+      "url": "http://127.0.0.1:3010/files",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/3wlh37cjhtvad.css",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/0hauajxd153ks.css",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/2yjiuessqyj0m.css",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/03fdf722b2yl2.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/0j7q2fk-38x8h.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/31205ltp2za93.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/31d081oym0687.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-3-ry682tkyiqk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/1b7lz7z-3mpwk.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/2ve5qor8yy2yw.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/31pj-gwrhkemz.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/2lv0yb0a2fdap.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/45758na4x9sj_.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/?_rsc=jeFEZtHY0XDxX0rT",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/files?_rsc=jeFEZtHY0XDxX0rT",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/settings?_rsc=jeFEZtHY0XDxX0rT",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/preview?_rsc=jeFEZtHY0XDxX0rT",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/icon.svg?icon.3u_abr2-u06ic.svg",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/files?_rsc=heEiuPNnld9ffxzN",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/preview?_rsc=qJOVr5aabRWq3DXH",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/?_rsc=e0J2186U2JT_oQH2",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/settings?_rsc=LhnACh_i-EpBCXph",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/0rc_q9xr3f7nn.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/02n9o4eg60h1q.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/0n6ergpfnvuxc.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:3010/_next/static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+      "method": "GET"
+    }
+  ],
+  "errors": []
+}

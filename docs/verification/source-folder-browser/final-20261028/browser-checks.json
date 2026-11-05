@@ -1,0 +1,371 @@
+{
+  "at": "2026-10-27T23:51:08.198Z",
+  "base": "http://127.0.0.1:3002",
+  "boundary": "Real UI/controller/session/IDB/Web Locks/OPFS; synthetic OS picker, permission and failures; no personal files or real login",
+  "checks": [
+    {
+      "name": "settings connects without listing or body reads",
+      "passed": true
+    },
+    {
+      "name": "eight real direct children, unsupported extension included",
+      "passed": true
+    },
+    {
+      "name": "first listing once; no automatic permission request",
+      "passed": true
+    },
+    {
+      "name": "root name is not repeated in a redundant breadcrumb",
+      "passed": true
+    },
+    {
+      "name": "connected/1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "connected/1440: list aligns with content without browser default indent",
+      "passed": true,
+      "detail": {
+        "offset": 0,
+        "padding": "0px",
+        "margin": "0px"
+      }
+    },
+    {
+      "name": "connected/1920: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "connected/1920: list aligns with content without browser default indent",
+      "passed": true,
+      "detail": {
+        "offset": 0,
+        "padding": "0px",
+        "margin": "0px"
+      }
+    },
+    {
+      "name": "connected/768: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "connected/768: list aligns with content without browser default indent",
+      "passed": true,
+      "detail": {
+        "offset": 0,
+        "padding": "0px",
+        "margin": "0px"
+      }
+    },
+    {
+      "name": "connected/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "connected/390: list aligns with content without browser default indent",
+      "passed": true,
+      "detail": {
+        "offset": 0,
+        "padding": "0px",
+        "margin": "0px"
+      }
+    },
+    {
+      "name": "keyboard enters child and moves lost focus to heading",
+      "passed": true
+    },
+    {
+      "name": "child only has its own document",
+      "passed": true
+    },
+    {
+      "name": "child breadcrumb preserves parent navigation and has no default indent",
+      "passed": true
+    },
+    {
+      "name": "child/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "ten route roundtrips preserve path without relisting",
+      "passed": true
+    },
+    {
+      "name": "empty folder only after a successful read",
+      "passed": true
+    },
+    {
+      "name": "empty/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "refresh error keeps prior rows and marks stale",
+      "passed": true
+    },
+    {
+      "name": "read-error/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "refresh keeps existing list DOM",
+      "passed": true
+    },
+    {
+      "name": "refreshing/1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "cancel immediately releases loading UI",
+      "passed": true
+    },
+    {
+      "name": "permission loss retains stale data and opens reconnect",
+      "passed": true
+    },
+    {
+      "name": "permission/390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "reconnect is read-only and user activated",
+      "passed": true
+    },
+    {
+      "name": "picker cancellation preserves original rows",
+      "passed": true
+    },
+    {
+      "name": "failed replacement save preserves A",
+      "passed": true
+    },
+    {
+      "name": "replacement B contains no A entries",
+      "passed": true
+    },
+    {
+      "name": "100 entries run1: bounded rows",
+      "passed": true
+    },
+    {
+      "name": "100 entries run2: bounded rows",
+      "passed": true
+    },
+    {
+      "name": "100 entries run3: bounded rows",
+      "passed": true
+    },
+    {
+      "name": "1000 entries run1: bounded rows",
+      "passed": true
+    },
+    {
+      "name": "1000 entries run2: bounded rows",
+      "passed": true
+    },
+    {
+      "name": "1000 entries run3: bounded rows",
+      "passed": true
+    },
+    {
+      "name": "1001 entries run1: bounded rows",
+      "passed": true
+    },
+    {
+      "name": "overflow run1: explicit partial list",
+      "passed": true
+    },
+    {
+      "name": "1001 entries run2: bounded rows",
+      "passed": true
+    },
+    {
+      "name": "overflow run2: explicit partial list",
+      "passed": true
+    },
+    {
+      "name": "1001 entries run3: bounded rows",
+      "passed": true
+    },
+    {
+      "name": "overflow run3: explicit partial list",
+      "passed": true
+    },
+    {
+      "name": "source sentinel hash/path/mtime/size unchanged; product performs no writes/body reads",
+      "passed": true,
+      "detail": {
+        "before": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793145063551,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "after": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793145063551,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "writes": 0,
+        "reads": 0
+      }
+    },
+    {
+      "name": "disconnect failure immediately clears prior listing",
+      "passed": true
+    },
+    {
+      "name": "late held result cannot reappear after disconnect",
+      "passed": true
+    },
+    {
+      "name": "no external requests or browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timing": [
+    {
+      "entries": 100,
+      "samplesMs": [
+        63.14090000000033,
+        81.98939999999993,
+        69.10569999999962
+      ],
+      "boundary": "CDP click+enumeration+React update+poll; no OS picker wait; not field INP"
+    },
+    {
+      "entries": 1000,
+      "samplesMs": [
+        150.59429999999975,
+        126.13969999999972,
+        98.91700000000037
+      ],
+      "boundary": "CDP click+enumeration+React update+poll; no OS picker wait; not field INP"
+    },
+    {
+      "entries": 1001,
+      "samplesMs": [
+        86.4372000000003,
+        118.21239999999943,
+        88.44370000000072
+      ],
+      "boundary": "CDP click+enumeration+React update+poll; no OS picker wait; not field INP"
+    }
+  ],
+  "visual": [
+    {
+      "label": "connected",
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "label": "connected",
+      "width": 1920,
+      "findings": []
+    },
+    {
+      "label": "connected",
+      "width": 768,
+      "findings": []
+    },
+    {
+      "label": "connected",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "child",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "empty",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "read-error",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "refreshing",
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "label": "permission",
+      "width": 390,
+      "findings": []
+    }
+  ],
+  "consoleErrors": []
+}

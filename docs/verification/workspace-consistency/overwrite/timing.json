@@ -1,0 +1,9 @@
+{
+  "operation": "one-target-overwrite-with-backup-revalidation",
+  "elapsedMs": 1307,
+  "boundary16MiB": {
+    "elapsedMs": 2219,
+    "chunks": 256,
+    "chunkBytes": 65536
+  }
+}

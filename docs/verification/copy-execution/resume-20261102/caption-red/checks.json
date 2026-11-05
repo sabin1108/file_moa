@@ -1,0 +1,22 @@
+[
+  {
+    "name": "inspection has zero writes",
+    "passed": true
+  },
+  {
+    "name": "review identifies the unapplied plan before execution",
+    "passed": true
+  },
+  {
+    "name": "copy completes in actual OPFS",
+    "passed": true,
+    "detail": {
+      "state": "completed",
+      "text": "복사를 완료했어요.읽기 안내.md복사 확인할 일.txt복사 확인목적지의 작업 기록에서 이 결과를 다시 볼 수 있어요."
+    }
+  },
+  {
+    "name": "completed copy separates reviewed plan from execution result",
+    "passed": false
+  }
+]

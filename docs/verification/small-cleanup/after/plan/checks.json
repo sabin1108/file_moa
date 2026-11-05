@@ -1,0 +1,8 @@
+{
+  "at": "2026-11-05T00:10:29.077Z",
+  "base": "http://127.0.0.1:3041",
+  "checks": [],
+  "timing": [],
+  "visual": [],
+  "boundary": "Real UI/store/session/IDB/Web Locks/OPFS; synthetic picker/permission and composition; no native OS IME/picker, real disk or login validation"
+}

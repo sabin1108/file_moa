@@ -1,0 +1,146 @@
+
+ RUN  v5.0.5 E:/project/ai_folder_project
+
+ ❯ apps/web/src/features/local-folders/state/source-selection.test.ts (9 tests | 9 failed) 8ms
+   ❯ current-folder file selection (9)
+     × SELECT-001 toggles files of any extension, never folders or unknown names 4ms
+     × SELECT-002/003 selects only displayed files, then clears without I/O 1ms
+     × SELECT-004 preserves selection through reader unmount/remount 0ms
+     × SELECT-004 clears immediately on a different path, even when navigation fails 0ms
+     × SELECT-005 prunes deleted files and files that became directories on successful refresh 0ms
+     × SELECT-005 preserves stale selection on failure and blocks additions, but permits clearing 0ms
+     × SELECT-005 blocks changes during refresh and keeps selection after cancellation 0ms
+     × SELECT-005/006 preserves selection across permission loss and revalidates on reconnect refresh 0ms
+     × SELECT-006 retains selection for cancelled replacement but reset clears connection-scoped data 0ms
+pnpm.exe : 
+위치 C:\Users\sabin\AppData\Roaming\npm\pnpm.ps1:14 문자:3
++   & "$basedir/node_modules/pnpm/pnpm.exe"   $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-selection.test.ts > current-folder file selection > SELECT-001 
+toggles files of any extension, never folders or unknown names
+TypeError: controller.toggleSelection is not a function
+ ❯ apps/web/src/features/local-folders/state/source-selection.test.ts:19:16
+     17|   it("SELECT-001 toggles files of any extension, never folders or unkn…
+     18|     const { controller, read } = await setup();
+     19|     controller.toggleSelection("a.md"); controller.toggleSelection("b.…
+       |                ^
+     20|     controller.toggleSelection("child"); controller.toggleSelection("a…
+     21|     expect(controller.getSnapshot().selectedNames).toEqual(["a.md", "b…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-selection.test.ts > current-folder file selection > SELECT-002/
+003 selects only displayed files, then clears without I/O
+TypeError: controller.selectAll is not a function
+ ❯ apps/web/src/features/local-folders/state/source-selection.test.ts:30:16
+     28|     read.mockResolvedValueOnce({ ...result(), truncated: true });
+     29|     await controller.refresh();
+     30|     controller.selectAll(); controller.selectAll();
+       |                ^
+     31|     expect(controller.getSnapshot().selectedNames).toEqual(["a.md", "b…
+     32|     controller.clearSelection();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-selection.test.ts > current-folder file selection > SELECT-004 
+preserves selection through reader unmount/remount
+TypeError: controller.toggleSelection is not a function
+ ❯ apps/web/src/features/local-folders/state/source-selection.test.ts:38:16
+     36|   it("SELECT-004 preserves selection through reader unmount/remount", …
+     37|     const { controller } = await setup();
+     38|     controller.toggleSelection("a.md");
+       |                ^
+     39|     const leave = controller.activate(); leave(); controller.activate(…
+     40|     expect(controller.getSnapshot().selectedNames).toEqual(["a.md"]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-selection.test.ts > current-folder file selection > SELECT-004 
+clears immediately on a different path, even when navigation fails
+TypeError: controller.selectAll is not a function
+ ❯ apps/web/src/features/local-folders/state/source-selection.test.ts:44:16
+     42|   it("SELECT-004 clears immediately on a different path, even when nav…
+     43|     const { controller, read } = await setup();
+     44|     controller.selectAll();
+       |                ^
+     45|     read.mockRejectedValueOnce(new Error("missing"));
+     46|     const task = controller.open(["child"]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-selection.test.ts > current-folder file selection > SELECT-005 
+prunes deleted files and files that became directories on successful refresh
+TypeError: controller.selectAll is not a function
+ ❯ apps/web/src/features/local-folders/state/source-selection.test.ts:53:16
+     51|   it("SELECT-005 prunes deleted files and files that became directorie…
+     52|     const { controller, read } = await setup();
+     53|     controller.selectAll();
+       |                ^
+     54|     read.mockResolvedValueOnce({ ...result([], ["b.pdf", "new.txt"]), …
+     55|     await controller.refresh();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-selection.test.ts > current-folder file selection > SELECT-005 
+preserves stale selection on failure and blocks additions, but permits clearing
+TypeError: controller.toggleSelection is not a function
+ ❯ apps/web/src/features/local-folders/state/source-selection.test.ts:60:16
+     58|   it("SELECT-005 preserves stale selection on failure and blocks addit…
+     59|     const { controller, read } = await setup();
+     60|     controller.toggleSelection("a.md"); read.mockRejectedValueOnce(new…
+       |                ^
+     61|     await controller.refresh(); controller.toggleSelection("b.pdf"); c…
+     62|     expect(controller.getSnapshot().selectedNames).toEqual(["a.md"]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-selection.test.ts > current-folder file selection > SELECT-005 
+blocks changes during refresh and keeps selection after cancellation
+TypeError: controller.toggleSelection is not a function
+ ❯ apps/web/src/features/local-folders/state/source-selection.test.ts:67:16
+     65|   it("SELECT-005 blocks changes during refresh and keeps selection aft…
+     66|     const { controller, read } = await setup();
+     67|     controller.toggleSelection("a.md");
+       |                ^
+     68|     let finish!: (value: FolderListing) => void;
+     69|     read.mockReturnValueOnce(new Promise(resolve => { finish = resolve…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-selection.test.ts > current-folder file selection > SELECT-005/
+006 preserves selection across permission loss and revalidates on reconnect refresh
+TypeError: controller.toggleSelection is not a function
+ ❯ apps/web/src/features/local-folders/state/source-selection.test.ts:77:16
+     75|   it("SELECT-005/006 preserves selection across permission loss and re…
+     76|     const { controller } = await setup();
+     77|     controller.toggleSelection("a.md"); controller.permissionLost(); c…
+       |                ^
+     78|     expect(controller.getSnapshot().selectedNames).toEqual(["a.md"]);
+     79|     controller.resume(true); await controller.refresh();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-selection.test.ts > current-folder file selection > SELECT-006 
+retains selection for cancelled replacement but reset clears connection-scoped data
+TypeError: controller.toggleSelection is not a function
+ ❯ apps/web/src/features/local-folders/state/source-selection.test.ts:84:16
+     82|   it("SELECT-006 retains selection for cancelled replacement but reset…
+     83|     const { controller } = await setup();
+     84|     controller.toggleSelection("a.md"); controller.suspend(); controll…
+       |                ^
+     85|     expect(controller.getSnapshot().selectedNames).toEqual(["a.md"]);
+     86|     controller.toggleSelection("b.pdf"); expect(controller.getSnapshot…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  9 failed (9)
+   Start at  16:21:05
+   Duration  185ms (transform 40%, import 39%, tests 14%, worker 7%)
+

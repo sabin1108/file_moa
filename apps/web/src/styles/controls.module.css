@@ -1,0 +1,8 @@
+.action { display: inline-flex; align-items: center; justify-content: center; gap: var(--ui-space-2, 7px); min-height: var(--ui-control-height, 34px); padding: 4px var(--ui-control-x, 9px); font: inherit; font-size: 14px; line-height: 1.4; border: 1px solid transparent; border-radius: var(--ui-radius-control, 5px); text-decoration: none; white-space: nowrap; color: var(--text); }
+.primary { background: var(--text); color: var(--ground); }
+.secondary { background: var(--surface); border-color: var(--border); }
+.ghost { background: transparent; }
+.action:hover { filter: brightness(.96); }
+.primary:hover { color: var(--ground); }
+.status, .statusEmphasis { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; white-space: nowrap; color: var(--muted); }
+.statusEmphasis { color: var(--text); background: var(--active); padding: 3px 8px; border-radius: 4px; }

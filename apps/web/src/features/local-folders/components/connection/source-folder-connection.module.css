@@ -1,0 +1,32 @@
+.connection h3 { overflow-wrap: anywhere; }
+.controls { display: flex; flex-direction: column; align-items: flex-end; gap: var(--ui-space-2); }
+.actions { display: flex; flex-wrap: wrap; gap: var(--ui-space-2); }
+.settings { display: grid; gap: var(--ui-space-4); }
+.settings:focus-visible { outline: 2px solid var(--focus); outline-offset: var(--ui-space-1); }
+.scope { color: var(--muted); font-size: var(--ui-font-body); line-height: 1.7; }
+@media (max-width: 620px) {
+  .controls { align-items: flex-start; }
+}
+.vault {
+  border-top: 1px solid var(--border);
+  padding-top: var(--ui-space-4);
+  margin-top: var(--ui-space-4);
+  overflow-wrap: anywhere;
+}
+
+.vault h3 { font-size: 16px; margin: 0 0 var(--ui-space-2); }
+.vault p { font-size: var(--ui-font-body); line-height: 1.7; margin: var(--ui-space-2) 0; }
+.vaultActions { display: flex; flex-wrap: wrap; gap: var(--ui-space-2); }
+.vaultSummary { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--ui-space-3); padding-block: var(--ui-space-3); }
+.vaultSummary > p { flex: 1; min-width: min(100%, 220px); margin: 0; }
+.vaultManagement { min-width: 0; margin: var(--ui-space-4) 0 0; padding: var(--ui-space-4) 0 0; border: 0; border-top: 1px solid var(--border); }
+.vaultManagement legend { padding: 0 var(--ui-space-3) 0 0; font-size: 14px; font-weight: 600; }
+.vaultManagement > p { margin-bottom: 0; color: var(--muted); font-size: 13px; }
+.vaultCreation { margin-top: var(--ui-space-4); padding: var(--ui-space-3); border: 1px solid var(--border); background: var(--panel); }
+.vault h3:focus, .recoveryError:focus { outline: 2px solid var(--focus); outline-offset: var(--ui-space-1); }
+.recoveryError { margin-top: var(--ui-space-4); scroll-margin-block: var(--ui-space-4); }
+.finish { display: flex; justify-content: flex-end; border-top: 1px solid var(--border); padding-top: var(--ui-space-4); }
+.permissionGuide { display: flex; align-items: flex-start; gap: var(--ui-space-3); padding: var(--ui-space-4); border: 1px solid var(--border); background: var(--panel); border-radius: var(--ui-radius-control); }
+.permissionGuide > svg { flex: none; margin-top: 2px; }
+.permissionGuide strong { font-size: var(--ui-font-body); }
+.permissionGuide p { margin: var(--ui-space-1) 0 0; font-size: var(--ui-font-body); line-height: 1.7; }

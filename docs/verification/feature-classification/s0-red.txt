@@ -1,0 +1,27 @@
+pnpm.exe : node:internal/modules/run_main:107
+위치 C:\Users\sabin\AppData\Roaming\npm\pnpm.ps1:14 문자:3
++   & "$basedir/node_modules/pnpm/pnpm.exe"   $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (node:internal/modules/run_main:107:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Missing probe module: http://127.0.0.1:9410/source-file-preview
+
+404 !== 200
+
+    at visit (file:///E:/project/ai_folder_project/scripts/check-s0-module-graph.mjs:13:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async visit (file:///E:/project/ai_folder_project/scripts/check-s0-module-graph.mjs:21:5)
+    at async file:///E:/project/ai_folder_project/scripts/check-s0-module-graph.mjs:25:98 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 404,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.22.1

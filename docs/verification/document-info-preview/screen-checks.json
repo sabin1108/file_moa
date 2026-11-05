@@ -1,0 +1,311 @@
+{
+  "at": "2026-10-27T00:07:22.293Z",
+  "checks": [
+    {
+      "name": "page 1440: initially body visible, metadata hidden",
+      "passed": true
+    },
+    {
+      "name": "page 1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "page 1440: header does not repeat folder metadata",
+      "passed": true
+    },
+    {
+      "name": "page 1440: Enter reveals metadata and retains button focus",
+      "passed": true
+    },
+    {
+      "name": "page 1440: open does not replace body or overflow",
+      "passed": true
+    },
+    {
+      "name": "page 1440: Space collapses metadata",
+      "passed": true
+    },
+    {
+      "name": "page 1440: ten toggles preserve body node and content",
+      "passed": true
+    },
+    {
+      "name": "page 1440: no browser exception",
+      "passed": true
+    },
+    {
+      "name": "page 1920: initially body visible, metadata hidden",
+      "passed": true
+    },
+    {
+      "name": "page 1920: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "page 1920: header does not repeat folder metadata",
+      "passed": true
+    },
+    {
+      "name": "page 1920: Enter reveals metadata and retains button focus",
+      "passed": true
+    },
+    {
+      "name": "page 1920: open does not replace body or overflow",
+      "passed": true
+    },
+    {
+      "name": "page 1920: Space collapses metadata",
+      "passed": true
+    },
+    {
+      "name": "page 1920: ten toggles preserve body node and content",
+      "passed": true
+    },
+    {
+      "name": "page 1920: no browser exception",
+      "passed": true
+    },
+    {
+      "name": "page 768: initially body visible, metadata hidden",
+      "passed": true
+    },
+    {
+      "name": "page 768: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "page 768: header does not repeat folder metadata",
+      "passed": true
+    },
+    {
+      "name": "page 768: Enter reveals metadata and retains button focus",
+      "passed": true
+    },
+    {
+      "name": "page 768: open does not replace body or overflow",
+      "passed": true
+    },
+    {
+      "name": "page 768: Space collapses metadata",
+      "passed": true
+    },
+    {
+      "name": "page 768: ten toggles preserve body node and content",
+      "passed": true
+    },
+    {
+      "name": "page 768: no browser exception",
+      "passed": true
+    },
+    {
+      "name": "page 390: initially body visible, metadata hidden",
+      "passed": true
+    },
+    {
+      "name": "page 390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "page 390: header does not repeat folder metadata",
+      "passed": true
+    },
+    {
+      "name": "page 390: Enter reveals metadata and retains button focus",
+      "passed": true
+    },
+    {
+      "name": "page 390: open does not replace body or overflow",
+      "passed": true
+    },
+    {
+      "name": "page 390: Space collapses metadata",
+      "passed": true
+    },
+    {
+      "name": "page 390: ten toggles preserve body node and content",
+      "passed": true
+    },
+    {
+      "name": "page 390: no browser exception",
+      "passed": true
+    },
+    {
+      "name": "dialog 1440: initially body visible, metadata hidden",
+      "passed": true
+    },
+    {
+      "name": "dialog 1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "dialog 1440: header does not repeat folder metadata",
+      "passed": true
+    },
+    {
+      "name": "dialog 1440: Enter reveals metadata and retains button focus",
+      "passed": true
+    },
+    {
+      "name": "dialog 1440: open does not replace body or overflow",
+      "passed": true
+    },
+    {
+      "name": "dialog 1440: Space collapses metadata",
+      "passed": true
+    },
+    {
+      "name": "dialog 1440: ten toggles preserve body node and content",
+      "passed": true
+    },
+    {
+      "name": "dialog 1440: Escape closes and restores opener focus",
+      "passed": true
+    },
+    {
+      "name": "dialog 1440: reopening starts collapsed",
+      "passed": true
+    },
+    {
+      "name": "dialog 1440: no browser exception",
+      "passed": true
+    },
+    {
+      "name": "dialog 1920: initially body visible, metadata hidden",
+      "passed": true
+    },
+    {
+      "name": "dialog 1920: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "dialog 1920: header does not repeat folder metadata",
+      "passed": true
+    },
+    {
+      "name": "dialog 1920: Enter reveals metadata and retains button focus",
+      "passed": true
+    },
+    {
+      "name": "dialog 1920: open does not replace body or overflow",
+      "passed": true
+    },
+    {
+      "name": "dialog 1920: Space collapses metadata",
+      "passed": true
+    },
+    {
+      "name": "dialog 1920: ten toggles preserve body node and content",
+      "passed": true
+    },
+    {
+      "name": "dialog 1920: Escape closes and restores opener focus",
+      "passed": true
+    },
+    {
+      "name": "dialog 1920: reopening starts collapsed",
+      "passed": true
+    },
+    {
+      "name": "dialog 1920: no browser exception",
+      "passed": true
+    },
+    {
+      "name": "dialog 768: initially body visible, metadata hidden",
+      "passed": true
+    },
+    {
+      "name": "dialog 768: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "dialog 768: header does not repeat folder metadata",
+      "passed": true
+    },
+    {
+      "name": "dialog 768: Enter reveals metadata and retains button focus",
+      "passed": true
+    },
+    {
+      "name": "dialog 768: open does not replace body or overflow",
+      "passed": true
+    },
+    {
+      "name": "dialog 768: Space collapses metadata",
+      "passed": true
+    },
+    {
+      "name": "dialog 768: ten toggles preserve body node and content",
+      "passed": true
+    },
+    {
+      "name": "dialog 768: Escape closes and restores opener focus",
+      "passed": true
+    },
+    {
+      "name": "dialog 768: reopening starts collapsed",
+      "passed": true
+    },
+    {
+      "name": "dialog 768: no browser exception",
+      "passed": true
+    },
+    {
+      "name": "dialog 390: initially body visible, metadata hidden",
+      "passed": true
+    },
+    {
+      "name": "dialog 390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "dialog 390: header does not repeat folder metadata",
+      "passed": true
+    },
+    {
+      "name": "dialog 390: Enter reveals metadata and retains button focus",
+      "passed": true
+    },
+    {
+      "name": "dialog 390: open does not replace body or overflow",
+      "passed": true
+    },
+    {
+      "name": "dialog 390: Space collapses metadata",
+      "passed": true
+    },
+    {
+      "name": "dialog 390: ten toggles preserve body node and content",
+      "passed": true
+    },
+    {
+      "name": "dialog 390: Escape closes and restores opener focus",
+      "passed": true
+    },
+    {
+      "name": "dialog 390: reopening starts collapsed",
+      "passed": true
+    },
+    {
+      "name": "dialog 390: no browser exception",
+      "passed": true
+    }
+  ],
+  "visualFindings": [
+    {
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "width": 1920,
+      "findings": []
+    },
+    {
+      "width": 768,
+      "findings": []
+    },
+    {
+      "width": 390,
+      "findings": []
+    }
+  ]
+}

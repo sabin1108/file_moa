@@ -1,0 +1,438 @@
+{
+  "at": "2026-10-30T01:13:41.385Z",
+  "base": "http://127.0.0.1:3010",
+  "checks": [
+    {
+      "name": "PLAN-001 no selection disables review",
+      "passed": true
+    },
+    {
+      "name": "PLAN-007 named native modal with title focus",
+      "passed": true
+    },
+    {
+      "name": "PLAN-007 every Tab stays in modal",
+      "passed": true,
+      "detail": [
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "SELECT",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "INPUT",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "SELECT",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "INPUT",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "SELECT",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "name": "PLAN-002 invalid path is explained",
+      "passed": true
+    },
+    {
+      "name": "invalid/390: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "PLAN-002 synthetic composition Enter does not submit",
+      "passed": true
+    },
+    {
+      "name": "PLAN-003 move contains real source/destination and no conflicts",
+      "passed": true
+    },
+    {
+      "name": "move/1440: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "move/1920: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "move/768: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "move/390: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "PLAN-002 editing input discards old result immediately",
+      "passed": true
+    },
+    {
+      "name": "PLAN-003 copy explicitly preserves original",
+      "passed": true
+    },
+    {
+      "name": "PLAN-004 same paths and exact conflicts flagged",
+      "passed": true
+    },
+    {
+      "name": "conflict/390: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "PLAN-003 all extension categories are proposed without creation",
+      "passed": true
+    },
+    {
+      "name": "classify/1440: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "classify/390: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "PLAN-007 Escape preserves selection and restores review trigger",
+      "passed": true
+    },
+    {
+      "name": "loading/390: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "PLAN-007 cancel discards late result",
+      "passed": true
+    },
+    {
+      "name": "PLAN-007 removed cancel control restores focus inside modal",
+      "passed": true
+    },
+    {
+      "name": "PLAN-008 read error retains destination",
+      "passed": true
+    },
+    {
+      "name": "read-error/390: no page/modal overflow or invalid nesting",
+      "passed": true
+    },
+    {
+      "name": "PLAN-008 permission loss closes plan and updates shared connection",
+      "passed": true
+    },
+    {
+      "name": "holdout: classification parent file and nested filename conflicts",
+      "passed": true
+    },
+    {
+      "name": "holdout: long filename remains contained in plan",
+      "passed": true
+    },
+    {
+      "name": "100 selected produces 100 real plan rows",
+      "passed": true
+    },
+    {
+      "name": "1000 selected produces 1000 real plan rows",
+      "passed": true
+    },
+    {
+      "name": "reduced-motion plan has no forced animation",
+      "passed": true
+    },
+    {
+      "name": "PLAN-006 original unchanged, no product writes/body reads, read-only permission",
+      "passed": true,
+      "detail": {
+        "before": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793322814418,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "after": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793322814418,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "writes": 0,
+        "bodies": 0,
+        "modes": [
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read",
+          "read"
+        ]
+      }
+    },
+    {
+      "name": "no external requests or browser errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timing": [
+    {
+      "name": "ten-open-close-heap",
+      "before": 6811960,
+      "after": 7626380,
+      "boundary": "JS heap without forced GC; not proof of leak absence"
+    },
+    {
+      "count": 100,
+      "samplesMs": [
+        110.50340000000051,
+        67.02610000000004,
+        63.39760000000024
+      ],
+      "viewport": "390x1000",
+      "boundary": "CDP click + source/destination enumeration + React render + polling, not field INP"
+    },
+    {
+      "count": 1000,
+      "samplesMs": [
+        258.73160000000007,
+        382.72389999999996,
+        276.67239999999947
+      ],
+      "viewport": "390x1000",
+      "boundary": "CDP click + source/destination enumeration + React render + polling, not field INP"
+    }
+  ],
+  "visual": [
+    {
+      "label": "invalid",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "move",
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "label": "move",
+      "width": 1920,
+      "findings": []
+    },
+    {
+      "label": "move",
+      "width": 768,
+      "findings": []
+    },
+    {
+      "label": "move",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "conflict",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "classify",
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "label": "classify",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "loading",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "read-error",
+      "width": 390,
+      "findings": []
+    }
+  ],
+  "consoleErrors": [],
+  "boundary": "Real UI/store/session/IDB/Web Locks/OPFS; synthetic picker/permission and composition; no native OS IME/picker, real disk or login validation"
+}

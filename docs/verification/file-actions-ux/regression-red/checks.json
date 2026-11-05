@@ -1,0 +1,459 @@
+{
+  "at": "2026-11-02T05:13:54.204Z",
+  "checks": [
+    {
+      "name": "no selection disables direct actions",
+      "passed": true
+    },
+    {
+      "name": "generic plan entry removed",
+      "passed": true
+    },
+    {
+      "name": "direct copy selects copy without file I/O or permission request",
+      "passed": true
+    },
+    {
+      "name": "manual classification absent",
+      "passed": true
+    },
+    {
+      "name": "destination must be confirmed before plan",
+      "passed": true
+    },
+    {
+      "name": "direct path entry shares the folder picker",
+      "passed": true
+    },
+    {
+      "name": "destination selection uses compact button beside folder information",
+      "passed": true
+    },
+    {
+      "name": "destination contained at 1440",
+      "passed": true
+    },
+    {
+      "name": "wheel over heading scrolls folders only at 1440",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 365.625,
+          "y": 282.015625,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over creation scrolls folders only at 1440",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 715,
+          "y": 577.5703125,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over list scrolls folders only at 1440",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 715,
+          "y": 733.765625,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over backdrop scrolls folders only at 1440",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 3,
+          "y": 3,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "folder top edge never chains to page at 1440",
+      "passed": true
+    },
+    {
+      "name": "folder bottom edge never chains to page at 1440",
+      "passed": true
+    },
+    {
+      "name": "destination contained at 1920",
+      "passed": true
+    },
+    {
+      "name": "wheel over heading scrolls folders only at 1920",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 605.625,
+          "y": 282.015625,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over creation scrolls folders only at 1920",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 955,
+          "y": 577.5703125,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over list scrolls folders only at 1920",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 955,
+          "y": 733.765625,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over backdrop scrolls folders only at 1920",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 3,
+          "y": 3,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "folder top edge never chains to page at 1920",
+      "passed": true
+    },
+    {
+      "name": "folder bottom edge never chains to page at 1920",
+      "passed": true
+    },
+    {
+      "name": "destination contained at 768",
+      "passed": true
+    },
+    {
+      "name": "wheel over heading scrolls folders only at 768",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 102.625,
+          "y": 282.015625,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over creation scrolls folders only at 768",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 379,
+          "y": 577.5703125,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over list scrolls folders only at 768",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 379,
+          "y": 733.765625,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over backdrop scrolls folders only at 768",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 3,
+          "y": 3,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "folder top edge never chains to page at 768",
+      "passed": true
+    },
+    {
+      "name": "folder bottom edge never chains to page at 768",
+      "passed": true
+    },
+    {
+      "name": "destination contained at 390",
+      "passed": true
+    },
+    {
+      "name": "wheel over heading scrolls folders only at 390",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 94.625,
+          "y": 270.8125,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over creation scrolls folders only at 390",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 190,
+          "y": 588.7578125,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over list scrolls folders only at 390",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 190,
+          "y": 744.953125,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "wheel over backdrop scrolls folders only at 390",
+      "passed": true,
+      "detail": {
+        "before": {
+          "x": 3,
+          "y": 3,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "top": 140,
+          "windowY": 0,
+          "background": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "folder top edge never chains to page at 390",
+      "passed": true
+    },
+    {
+      "name": "folder bottom edge never chains to page at 390",
+      "passed": true
+    },
+    {
+      "name": "short folder list allows modal wheel scrolling at 390x500",
+      "passed": false,
+      "detail": {
+        "windowY": 0,
+        "listHeight": 48,
+        "listClient": 48
+      }
+    }
+  ],
+  "errors": []
+}

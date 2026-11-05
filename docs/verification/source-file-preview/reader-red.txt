@@ -1,0 +1,202 @@
+
+ RUN  v5.0.5 E:/project/ai_folder_project
+
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts (13 tests | 13 failed) 15ms
+   ❯ source file preview reader/session (13)
+     × PREVIEW-001/004/008 reads exact text and metadata without writes or permission requests 5ms
+     × PREVIEW-001 snapshots nested paths before the first await 1ms
+     × PREVIEW-001 rejects invalid paths and unsupported extensions before I/O 1ms
+     × PREVIEW-003/004 accepts empty, uppercase and BOM, preserves whitespace 1ms
+     × PREVIEW-003 accepts exactly 2MiB and rejects one more byte before body read 3ms
+     × PREVIEW-004 rejects malformed UTF-8 instead of replacing bytes 0ms
+     × PREVIEW-002 rejects before and after read and marks reconnection without auto request 0ms
+     × PREVIEW-005 propagates missing/type/read errors without empty success 0ms
+     × PREVIEW-006 cancels before I/O and discards a held body 1ms
+     × PREVIEW-006 new request/owner/disconnect/replacement block old results 1ms
+     × PREVIEW-006 old permission error cannot revoke a replacement 0ms
+     × PREVIEW-007 listing and preview can finish independently 0ms
+     × PREVIEW-002 rejects disconnected and restored handles without file I/O 0ms
+pnpm.exe : 
+위치 C:\Users\sabin\AppData\Roaming\npm\pnpm.ps1:14 문자:3
++   & "$basedir/node_modules/pnpm/pnpm.exe"   $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/web/src/features/local-folders/source-file-preview.test.ts > source file preview reader/session > PREVIEW-0
+01/004/008 reads exact text and metadata without writes or permission requests
+TypeError: session.readSourceFile is not a function
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts:40:34
+     38|   it("PREVIEW-001/004/008 reads exact text and metadata without writes…
+     39|     const { session, root, repository } = await setup();
+     40|     const result = await session.readSourceFile(["노트.md"]);
+       |                                  ^
+     41|     expect(result).toEqual({ path: ["노트.md"], text: "한글\r\n  원문", size…
+     42|     expect(root.getFileHandle).toHaveBeenCalledWith("노트.md", { create:…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/13]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-file-preview.test.ts > source file preview reader/session > PREVIEW-0
+01 snapshots nested paths before the first await
+TypeError: session.readSourceFile is not a function
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts:57:29
+     55|     root.queryPermission.mockReturnValueOnce(gate.promise);
+     56|     const path = ["하위", "노트.md"];
+     57|     const pending = session.readSourceFile(path);
+       |                             ^
+     58|     path[0] = "다른 곳";
+     59|     gate.resolve("granted");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/13]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-file-preview.test.ts > source file preview reader/session > PREVIEW-0
+01 rejects invalid paths and unsupported extensions before I/O
+TypeError: session.readSourceFile is not a function
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts:66:28
+     64|     const { session, root } = await setup();
+     65|     for (const path of [[], ["..", "a.md"], ["a/b.txt"], ["a\\b.md"], …
+     66|       await expect(session.readSourceFile(path)).rejects.toThrow();
+       |                            ^
+     67|     }
+     68|     expect(root.queryPermission).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/13]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-file-preview.test.ts > source file preview reader/session > PREVIEW-0
+03/004 accepts empty, uppercase and BOM, preserves whitespace
+TypeError: session.readSourceFile is not a function
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts:74:27
+     72|     const { session, getFile } = await setup();
+     73|     getFile.mockResolvedValueOnce(new File([], "EMPTY.TXT"));
+     74|     expect((await session.readSourceFile(["EMPTY.TXT"])).text).toBe(""…
+       |                           ^
+     75|     getFile.mockResolvedValueOnce(new File([new Uint8Array([239, 187, …
+     76|     expect((await session.readSourceFile(["A.MD"])).text).toBe("  본문\r…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/13]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-file-preview.test.ts > source file preview reader/session > PREVIEW-0
+03 accepts exactly 2MiB and rejects one more byte before body read
+TypeError: session.readSourceFile is not a function
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts:81:27
+     79|     const { session, getFile } = await setup();
+     80|     getFile.mockResolvedValueOnce(new File(["a".repeat(DOCUMENT_LIMITS…
+     81|     expect((await session.readSourceFile(["a.txt"])).text.length).toBe…
+       |                           ^
+     82|     const tooLarge = new File(["a".repeat(DOCUMENT_LIMITS.fileBytes + …
+     83|     const read = vi.spyOn(tooLarge, "arrayBuffer");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/13]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-file-preview.test.ts > source file preview reader/session > PREVIEW-0
+04 rejects malformed UTF-8 instead of replacing bytes
+TypeError: session.readSourceFile is not a function
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts:91:26
+     89|     const { session, getFile } = await setup();
+     90|     getFile.mockResolvedValueOnce(new File([new Uint8Array([0xc3, 0x28…
+     91|     await expect(session.readSourceFile(["a.md"])).rejects.toThrow("in…
+       |                          ^
+     92|   });
+     93|   it("PREVIEW-002 rejects before and after read and marks reconnection…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/13]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-file-preview.test.ts > source file preview reader/session > PREVIEW-0
+02 rejects before and after read and marks reconnection without auto request
+TypeError: session.readSourceFile is not a function
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts:98:28
+     96|       if (afterRead) root.queryPermission.mockResolvedValueOnce("grant…
+     97|       root.queryPermission.mockResolvedValueOnce("denied");
+     98|       await expect(session.readSourceFile(["a.txt"])).rejects.toMatchO…
+       |                            ^
+     99|       expect(session.state("source")).toBe("needs-permission");
+    100|       expect(getFile).toHaveBeenCalledTimes(afterRead ? 1 : 0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/13]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-file-preview.test.ts > source file preview reader/session > PREVIEW-0
+05 propagates missing/type/read errors without empty success
+TypeError: session.readSourceFile is not a function
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts:108:28
+    106|     for (const name of ["NotFoundError", "TypeMismatchError", "NotRead…
+    107|       getFile.mockRejectedValueOnce(new DOMException("synthetic", name…
+    108|       await expect(session.readSourceFile(["a.txt"])).rejects.toMatchO…
+       |                            ^
+    109|       expect(session.state("source")).toBe("connected");
+    110|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/13]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-file-preview.test.ts > source file preview reader/session > PREVIEW-0
+06 cancels before I/O and discards a held body
+TypeError: session.readSourceFile is not a function
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts:115:26
+    113|     const { session, root, file } = await setup();
+    114|     const signal = new AbortController(); signal.abort();
+    115|     await expect(session.readSourceFile(["a.txt"], signal.signal)).rej…
+       |                          ^
+    116|     expect(root.getFileHandle).not.toHaveBeenCalled();
+    117|     const body = deferred<ArrayBuffer>(); vi.spyOn(file, "arrayBuffer"…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/13]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-file-preview.test.ts > source file preview reader/session > PREVIEW-0
+06 new request/owner/disconnect/replacement block old results
+TypeError: session.readSourceFile is not a function
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts:127:27
+    125|       const { session, getFile, file } = await setup();
+    126|       const gate = deferred<File>(); getFile.mockReturnValueOnce(gate.…
+    127|       const old = session.readSourceFile(["a.txt"]);
+       |                           ^
+    128|       await vi.waitFor(() => expect(getFile).toHaveBeenCalled());
+    129|       if (action === "request") await session.readSourceFile(["b.txt"]…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/13]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-file-preview.test.ts > source file preview reader/session > PREVIEW-0
+06 old permission error cannot revoke a replacement
+TypeError: session.readSourceFile is not a function
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts:140:25
+    138|     const { session, getFile } = await setup();
+    139|     const gate = deferred<File>(); getFile.mockReturnValueOnce(gate.pr…
+    140|     const old = session.readSourceFile(["a.txt"]);
+       |                         ^
+
+ Test Files  1 failed (1)
+      Tests  13 failed (13)
+   Start at  09:20:11
+   Duration  168ms (tests 37%, import 34%, transform 19%, worker 10%)
+
+    141|     await vi.waitFor(() => expect(getFile).toHaveBeenCalled());
+    142|     await session.select("source", async () => handle(fixture().root));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/13]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-file-preview.test.ts > source file preview reader/session > PREVIEW-0
+07 listing and preview can finish independently
+TypeError: session.readSourceFile is not a function
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts:150:29
+    148|     const { session, getFile, file } = await setup();
+    149|     const gate = deferred<File>(); getFile.mockReturnValueOnce(gate.pr…
+    150|     const pending = session.readSourceFile(["a.txt"]);
+       |                             ^
+    151|     await vi.waitFor(() => expect(getFile).toHaveBeenCalled());
+    152|     expect((await session.listSourceFolder([])).entries).toHaveLength(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/13]⎯
+
+ FAIL  apps/web/src/features/local-folders/source-file-preview.test.ts > source file preview reader/session > PREVIEW-0
+02 rejects disconnected and restored handles without file I/O
+TypeError: session.readSourceFile is not a function
+ ❯ apps/web/src/features/local-folders/source-file-preview.test.ts:159:26
+    157|     const { session, root } = await setup();
+    158|     await session.disconnect("source");
+    159|     await expect(session.readSourceFile(["a.txt"])).rejects.toThrow("s…
+       |                          ^
+    160|     expect(root.getFileHandle).not.toHaveBeenCalled();
+    161|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/13]⎯
+

@@ -1,0 +1,118 @@
+[
+  {
+    "name": "review identifies the unapplied plan before execution",
+    "passed": true
+  },
+  {
+    "name": "inspection has zero writes",
+    "passed": true
+  },
+  {
+    "name": "inspection step hides destination inputs",
+    "passed": true
+  },
+  {
+    "name": "copy completes in actual OPFS",
+    "passed": true,
+    "detail": {
+      "state": "completed",
+      "text": "복사를 완료했어요.읽기 안내.md복사 확인할 일.txt복사 확인목적지의 작업 기록에서 이 결과를 다시 볼 수 있어요."
+    }
+  },
+  {
+    "name": "result step hides inspection and shows confirmation",
+    "passed": true
+  },
+  {
+    "name": "completed copy separates reviewed plan from execution result",
+    "passed": true
+  },
+  {
+    "name": "permission requested from user gesture",
+    "passed": true
+  },
+  {
+    "name": "source sentinel unchanged",
+    "passed": true
+  },
+  {
+    "name": "destination bytes and journal",
+    "passed": true,
+    "detail": {
+      "equal": true,
+      "count": 6
+    }
+  },
+  {
+    "name": "copy result contained 390",
+    "passed": true
+  },
+  {
+    "name": "completed plan is collapsed and confirmation visible 390",
+    "passed": true
+  },
+  {
+    "name": "copy result contained 768",
+    "passed": true
+  },
+  {
+    "name": "completed plan is collapsed and confirmation visible 768",
+    "passed": true
+  },
+  {
+    "name": "copy result contained 1440",
+    "passed": true
+  },
+  {
+    "name": "completed plan is collapsed and confirmation visible 1440",
+    "passed": true
+  },
+  {
+    "name": "copy result contained 1920",
+    "passed": true
+  },
+  {
+    "name": "completed plan is collapsed and confirmation visible 1920",
+    "passed": true
+  },
+  {
+    "name": "confirmation closes modal and focuses destination listing",
+    "passed": true
+  },
+  {
+    "name": "copy history displayed",
+    "passed": true
+  },
+  {
+    "name": "copy history details start collapsed",
+    "passed": true
+  },
+  {
+    "name": "history survives reload and explicit reconnect",
+    "passed": true
+  },
+  {
+    "name": "current copy content matches after reconnect",
+    "passed": true
+  },
+  {
+    "name": "reconnect/read does not write",
+    "passed": true
+  },
+  {
+    "name": "4 x 16MiB maximum byte batch completes",
+    "passed": true,
+    "detail": {
+      "elapsedMs": 1313.094
+    }
+  },
+  {
+    "name": "maximum byte batch preserves source and copies expected content",
+    "passed": true
+  },
+  {
+    "name": "no browser exceptions",
+    "passed": true,
+    "detail": []
+  }
+]

@@ -1,0 +1,109 @@
+{
+  "checks": [
+    {
+      "name": "checkbox plus textual state",
+      "passed": true
+    },
+    {
+      "name": "selection 1440 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "selection 390 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "cancel clears all and closes selection controls",
+      "passed": true
+    },
+    {
+      "name": "visited parent column displays current path in words",
+      "passed": true
+    },
+    {
+      "name": "desktop preview preserves visible listing",
+      "passed": true
+    },
+    {
+      "name": "preview 1440 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "preview 1920 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "preview 768 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "preview 390 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "mobile preview is native modal bottom sheet",
+      "passed": true
+    },
+    {
+      "name": "no journal picker control",
+      "passed": true
+    },
+    {
+      "name": "actual OPFS folder exists",
+      "passed": true
+    },
+    {
+      "name": "durable journal has pending and ready for same operation",
+      "passed": true
+    },
+    {
+      "name": "no extra native folder picker and no journal at root",
+      "passed": true
+    },
+    {
+      "name": "write permission requested in active user gesture",
+      "passed": true
+    },
+    {
+      "name": "new-folder 390 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "new-folder 1440 no overflow / valid structure",
+      "passed": true
+    },
+    {
+      "name": "collision preserved folder",
+      "passed": true
+    },
+    {
+      "name": "permission denial did not create requested folder",
+      "passed": true
+    },
+    {
+      "name": "created folder becomes explicit destination",
+      "passed": true
+    },
+    {
+      "name": "new destination plan is valid",
+      "passed": true
+    },
+    {
+      "name": "source sentinel unchanged",
+      "passed": true
+    },
+    {
+      "name": "list form uses its own current location without records connection",
+      "passed": true
+    },
+    {
+      "name": "IME composing Enter does not submit creation",
+      "passed": true
+    },
+    {
+      "name": "keyboard reaches creation submit",
+      "passed": true
+    }
+  ],
+  "error": "Error: Timeout expected => document.querySelector('[data-listing-phase] form [role=status]')?.textContent.includes(expected): ‹\n›\n검증 자료 A\n모아\n\n연결 폴더\n\n검증 자료 A\n대화\n내 파일\n설정\n내 파일\n검증 자료 A\n\n8개 항목\n\n검색\n선택 취소\n표시된 파일 전체 선택\n\n1개 선택\n\n선택 해제\n변경 계획 검토\n＋ 새로 만들기\n\n생성 위치: 검증 자료 A\n\n항목 종류\n폴더\n텍스트 문서 (.txt)\n마크다운 문서 (.md)\n이름\n\n생성할 파일: 새 텍스트.txt\n\n작업 기록은 현재 위치의 .moa-history에 자동 보관합니다.\n\n만들기\n빈 폴더\n폴더\n하위 자료\n폴더\n공백 있는 이름.txt\nTXT\n긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 .md\nMD\n읽기 안내.md\n선택됨\nMD\n지원하지 않는 사진.pdf\nPDF\n할 일.txt\nTXT\n회의 메모.md\nMD\n\n이동·복사·분류 계획을 검토합니다. 원본 파일에는 적용하지 않습니다.\n\n파일 미리보기\n\n목록에서 MD 또는 TXT 파일을 열어 보세요.\n\n검증 자료 A · 8개 항목 · 1개 선택"
+}

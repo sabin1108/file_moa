@@ -1,0 +1,50 @@
+{
+  "at": "2026-11-04T12:20:16.893Z",
+  "label": "after",
+  "base": "http://127.0.0.1:3039",
+  "sourceSha256": "cb1942c02e94a2a390c37f93714c42c009f346f4dd47e350ae06dbd3c0ba17d6",
+  "staticBytes": 1226870,
+  "browser": "Chrome/156.0.8078.80",
+  "conditions": "production; Windows; 1440x900; no CPU/network throttling; HTTP cache disabled; same browser profile with new tab per run; 1.2s observation after load; no auth/model/API; three runs per route; LCP/CLS from PerformanceObserver, not Lighthouse; no field INP/TBT measurement",
+  "samples": [
+    {
+      "route": "/files",
+      "run": 1,
+      "lcp": 132,
+      "cls": 0,
+      "longTasks": [],
+      "transferBytes": 300777,
+      "jsBytes": 268552,
+      "requests": 24,
+      "loadMs": 95.69999998807907,
+      "heapBytes": 5411336,
+      "errors": []
+    },
+    {
+      "route": "/files",
+      "run": 2,
+      "lcp": 136,
+      "cls": 0,
+      "longTasks": [],
+      "transferBytes": 300114,
+      "jsBytes": 268552,
+      "requests": 23,
+      "loadMs": 91.2999999821186,
+      "heapBytes": 5480932,
+      "errors": []
+    },
+    {
+      "route": "/files",
+      "run": 3,
+      "lcp": 128,
+      "cls": 0,
+      "longTasks": [],
+      "transferBytes": 300114,
+      "jsBytes": 268552,
+      "requests": 23,
+      "loadMs": 82.59999999403954,
+      "heapBytes": 5476312,
+      "errors": []
+    }
+  ]
+}

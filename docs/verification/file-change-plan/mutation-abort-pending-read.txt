@@ -1,0 +1,35 @@
+
+ RUN  v5.0.5 E:/project/ai_folder_project
+
+ ❯ apps/web/tests/local-folders/store/source-plan-controller.test.ts (9 tests | 1 failed) 14ms
+   ❯ source plan lifetime (9)
+     × PLAN-007 cancel and input changes abort and discard late results 4ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  08:48:58
+   Duration  177ms (transform 38%, import 34%, tests 22%, worker 6%)
+
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/web/tests/local-folders/store/source-plan-controller.test.ts > source plan lifetime > PLAN-007 cancel and input changes abort and discard late results
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ apps/web/tests/local-folders/store/source-plan-controller.test.ts:67:45
+     65|       if (action === "operation") plan.setOperation("copy");
+     66|       if (action === "close") plan.close();
+     67|       expect(read.mock.calls[0][1].aborted).toBe(true);
+       |                                             ^
+     68|       finish(folder()); await pending;
+     69|       expect(plan.getSnapshot().result).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

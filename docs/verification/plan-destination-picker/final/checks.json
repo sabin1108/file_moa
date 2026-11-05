@@ -1,0 +1,323 @@
+{
+  "at": "2026-10-29T10:41:38.559Z",
+  "checks": [
+    {
+      "name": "DEST-001 directory choices exclude files; title receives focus",
+      "passed": true
+    },
+    {
+      "name": "DEST-003 draft editing and generation disabled while browsing",
+      "passed": true
+    },
+    {
+      "name": "DEST-003 Tab and Shift+Tab remain inside plan while picker is expanded",
+      "passed": true
+    },
+    {
+      "name": "destination/390 no overflow or broken ARIA targets",
+      "passed": true
+    },
+    {
+      "name": "destination/768 no overflow or broken ARIA targets",
+      "passed": true
+    },
+    {
+      "name": "destination/1440 no overflow or broken ARIA targets",
+      "passed": true
+    },
+    {
+      "name": "destination/1920 no overflow or broken ARIA targets",
+      "passed": true
+    },
+    {
+      "name": "DEST-001 child location and empty-subfolder state are real",
+      "passed": true
+    },
+    {
+      "name": "DEST-002 choice fills relative input and returns focus",
+      "passed": true
+    },
+    {
+      "name": "DEST-002 generated plan uses chosen actual relative destination",
+      "passed": true
+    },
+    {
+      "name": "DEST-001 reopening starts at selected path",
+      "passed": true
+    },
+    {
+      "name": "DEST-003 Escape cancels only picker and keeps previous input",
+      "passed": true
+    },
+    {
+      "name": "DEST-002 choosing root produces empty relative path",
+      "passed": true
+    },
+    {
+      "name": "WARN-001 same-path conflict meaningful text/icon/border contrast",
+      "passed": true,
+      "detail": {
+        "label": "WARN-001 same-path conflict",
+        "colors": {
+          "text": "rgb(113, 63, 18)",
+          "bg": "rgb(255, 241, 204)",
+          "border": "rgb(181, 105, 0)",
+          "icon": "rgb(113, 63, 18)",
+          "width": "4px"
+        },
+        "text": 7.723772709712315,
+        "border": 3.752179320899624,
+        "icon": 7.723772709712315
+      }
+    },
+    {
+      "name": "conflict-warning/390 no overflow or broken ARIA targets",
+      "passed": true
+    },
+    {
+      "name": "DEST-001 invalid input starts at root without silently rewriting draft",
+      "passed": true
+    },
+    {
+      "name": "DEST-004 missing destination cannot be selected",
+      "passed": true
+    },
+    {
+      "name": "WARN-001 read error meaningful text/icon/border contrast",
+      "passed": true,
+      "detail": {
+        "label": "WARN-001 read error",
+        "colors": {
+          "text": "rgb(163, 50, 50)",
+          "bg": "rgb(252, 240, 238)",
+          "border": "rgb(163, 50, 50)",
+          "icon": "rgb(163, 50, 50)",
+          "width": "4px"
+        },
+        "text": 6.156917451380197,
+        "border": 6.156917451380197,
+        "icon": 6.156917451380197
+      }
+    },
+    {
+      "name": "missing-folder/390 no overflow or broken ARIA targets",
+      "passed": true
+    },
+    {
+      "name": "DEST-004 retry recovers real folder listing",
+      "passed": true
+    },
+    {
+      "name": "DEST-004 partial listing warns without claiming no children globally",
+      "passed": true
+    },
+    {
+      "name": "WARN-001 partial listing meaningful text/icon/border contrast",
+      "passed": true,
+      "detail": {
+        "label": "WARN-001 partial listing",
+        "colors": {
+          "text": "rgb(113, 63, 18)",
+          "bg": "rgb(255, 241, 204)",
+          "border": "rgb(181, 105, 0)",
+          "icon": "rgb(113, 63, 18)",
+          "width": "4px"
+        },
+        "text": 7.723772709712315,
+        "border": 3.752179320899624,
+        "icon": 7.723772709712315
+      }
+    },
+    {
+      "name": "partial-warning/390 no overflow or broken ARIA targets",
+      "passed": true
+    },
+    {
+      "name": "DEST-004 loading destination cannot be chosen",
+      "passed": true
+    },
+    {
+      "name": "DEST-005 late cancelled read cannot reopen picker or alter destination",
+      "passed": true
+    },
+    {
+      "name": "DEST-003 picker did not alter browser history, source folder or selection",
+      "passed": true
+    },
+    {
+      "name": "DEST-005 permission loss closes entire plan and exposes reconnect status",
+      "passed": true
+    },
+    {
+      "name": "source unchanged; zero product writes and body reads",
+      "passed": true,
+      "detail": {
+        "before": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793270495409,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "after": {
+          "name": "읽기 안내.md",
+          "size": 52,
+          "mtime": 1793270495409,
+          "hash": [
+            166,
+            117,
+            201,
+            93,
+            36,
+            151,
+            192,
+            135,
+            146,
+            93,
+            177,
+            177,
+            168,
+            126,
+            149,
+            140,
+            203,
+            83,
+            144,
+            111,
+            6,
+            235,
+            118,
+            88,
+            159,
+            71,
+            187,
+            135,
+            69,
+            72,
+            98,
+            101
+          ]
+        },
+        "writes": 0,
+        "reads": 0
+      }
+    },
+    {
+      "name": "no external requests or console errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "visual": [
+    {
+      "label": "destination",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "destination",
+      "width": 768,
+      "findings": []
+    },
+    {
+      "label": "destination",
+      "width": 1440,
+      "findings": []
+    },
+    {
+      "label": "destination",
+      "width": 1920,
+      "findings": []
+    },
+    {
+      "label": "conflict-warning",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "missing-folder",
+      "width": 390,
+      "findings": []
+    },
+    {
+      "label": "partial-warning",
+      "width": 390,
+      "findings": []
+    }
+  ],
+  "contrasts": [
+    {
+      "label": "WARN-001 same-path conflict",
+      "colors": {
+        "text": "rgb(113, 63, 18)",
+        "bg": "rgb(255, 241, 204)",
+        "border": "rgb(181, 105, 0)",
+        "icon": "rgb(113, 63, 18)",
+        "width": "4px"
+      },
+      "text": 7.723772709712315,
+      "border": 3.752179320899624,
+      "icon": 7.723772709712315
+    },
+    {
+      "label": "WARN-001 read error",
+      "colors": {
+        "text": "rgb(163, 50, 50)",
+        "bg": "rgb(252, 240, 238)",
+        "border": "rgb(163, 50, 50)",
+        "icon": "rgb(163, 50, 50)",
+        "width": "4px"
+      },
+      "text": 6.156917451380197,
+      "border": 6.156917451380197,
+      "icon": 6.156917451380197
+    },
+    {
+      "label": "WARN-001 partial listing",
+      "colors": {
+        "text": "rgb(113, 63, 18)",
+        "bg": "rgb(255, 241, 204)",
+        "border": "rgb(181, 105, 0)",
+        "icon": "rgb(113, 63, 18)",
+        "width": "4px"
+      },
+      "text": 7.723772709712315,
+      "border": 3.752179320899624,
+      "icon": 7.723772709712315
+    }
+  ],
+  "consoleErrors": [],
+  "boundary": "Real UI/store/session/OPFS, synthetic picker/permissions/errors; native OS folder dialog not exercised"
+}

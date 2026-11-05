@@ -1,0 +1,64 @@
+{
+  "at": "2026-11-04T01:43:32.839Z",
+  "base": "http://127.0.0.1:3020",
+  "checks": [
+    {
+      "name": "cancel stays on settings",
+      "passed": true
+    },
+    {
+      "name": "save failure stays on settings",
+      "passed": true
+    },
+    {
+      "name": "source connect stays on settings and focuses vault",
+      "passed": true
+    },
+    {
+      "name": "successful connect opens files with real listing",
+      "passed": true
+    },
+    {
+      "name": "opening files does not read bodies or write sources",
+      "passed": true
+    },
+    {
+      "name": "revisiting settings does not redirect from existing connected state",
+      "passed": true
+    },
+    {
+      "name": "cancel with old connection does not navigate",
+      "passed": true
+    },
+    {
+      "name": "late completion never opens files after leaving initiating component",
+      "passed": true
+    },
+    {
+      "name": "stored handle restore does not auto-navigate",
+      "passed": true
+    },
+    {
+      "name": "reconnect permission denial stays on settings",
+      "passed": true
+    },
+    {
+      "name": "explicit reconnect success opens files",
+      "passed": true
+    },
+    {
+      "name": "connect within files does not push another history entry",
+      "passed": true
+    },
+    {
+      "name": "narrow screen has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "browser has no console errors",
+      "passed": true
+    }
+  ],
+  "consoleErrors": [],
+  "boundary": "Real route/controller/IDB/OPFS; synthetic picker and permissions; no personal files"
+}

@@ -1,0 +1,24 @@
+﻿{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "architecture",
+  "input": "E:\\project\\ai_folder_project\\docs\\diagrams\\local-files.architecture.json",
+  "output": "E:\\project\\ai_folder_project\\docs\\diagrams\\local-files.html",
+  "specification": {
+    "sha256": "de952f3924c7a57bdfb0ccb8596dd821991e74556b37ba1033c060709153a2ec",
+    "bytes": 4429
+  },
+  "artifact": {
+    "sha256": "09f95e3a6b8347ff82171020239c03a543024ea0c22558ff860ab9baf447e898",
+    "bytes": 715672
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

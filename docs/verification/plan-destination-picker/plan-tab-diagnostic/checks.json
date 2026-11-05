@@ -1,0 +1,84 @@
+{
+  "at": "2026-10-29T10:39:23.955Z",
+  "base": "http://127.0.0.1:3010",
+  "checks": [
+    {
+      "name": "PLAN-001 no selection disables review",
+      "passed": true
+    },
+    {
+      "name": "PLAN-007 named native modal with title focus",
+      "passed": true
+    },
+    {
+      "name": "PLAN-007 Tab stays in modal",
+      "passed": false,
+      "detail": [
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "SELECT",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "INPUT",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BODY",
+          "inside": false
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "SELECT",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "INPUT",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": true,
+          "tag": "BUTTON",
+          "inside": true
+        },
+        {
+          "focused": false,
+          "tag": "BODY",
+          "inside": false
+        }
+      ]
+    }
+  ],
+  "timing": [],
+  "visual": [],
+  "consoleErrors": [],
+  "boundary": "Real UI/store/session/IDB/Web Locks/OPFS; synthetic picker/permission and composition; no native OS IME/picker, real disk or login validation"
+}

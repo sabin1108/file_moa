@@ -1,0 +1,167 @@
+
+ RUN  v5.0.5 E:/project/ai_folder_project
+
+ ❯ apps/web/src/features/local-folders/state/source-connection-controller.test.ts (11 tests | 7 failed) 68ms
+   ❯ settings source connection state (11)
+     × calls picker before the first await and blocks double activation 4ms
+     × does not publish the selected name before saving succeeds 52ms
+     × preserves the old connection on cancellation and does not claim a definite cause 1ms
+     × shows storage failure while retaining prior connection and allows another selection 1ms
+     × calls restored handle permission immediately, keeps denial and allows retry 1ms
+     × ignores a late picker after leaving the settings lifecycle 1ms
+     × ignores late success and failure after owner changes or effect restarts 1ms
+pnpm.exe : 
+위치 C:\Users\sabin\AppData\Roaming\npm\pnpm.ps1:14 문자:3
++   & "$basedir/node_modules/pnpm/pnpm.exe"   $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-connection-controller.test.ts > settings source connection stat
+e > calls picker before the first await and blocks double activation
+AssertionError: expected undefined to be false // Object.is equality
+
+- Expected:
+false
+
++ Received:
+undefined
+
+ ❯ apps/web/src/features/local-folders/state/source-connection-controller.test.ts:70:40
+     68|
+     69|     expect(picker).toHaveBeenCalledExactlyOnceWith({ mode: "read" });
+     70|     expect(await controller.connect()).toBe(false);
+       |                                        ^
+     71|
+     72|     expect(picker).toHaveBeenCalledTimes(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-connection-controller.test.ts > settings source connection stat
+e > does not publish the selected name before saving succeeds
+AssertionError: expected undefined to be true // Object.is equality
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ apps/web/src/features/local-folders/state/source-connection-controller.test.ts:89:27
+     87|     expect(controller.getSnapshot().view).toEqual({ status: "disconnec…
+     88|     waiting.resolve();
+     89|     expect(await pending).toBe(true);
+       |                           ^
+     90|
+     91|     expect(controller.getSnapshot().view?.folderName).toBe("자료");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-connection-controller.test.ts > settings source connection stat
+e > preserves the old connection on cancellation and does not claim a definite cause
+AssertionError: expected undefined to be false // Object.is equality
+
+- Expected:
+false
+
++ Received:
+undefined
+
+ ❯ apps/web/src/features/local-folders/state/source-connection-controller.test.ts:101:40
+     99|     // 실행: 다음 폴더 선택만 취소된 것처럼 응답한다.
+    100|     picker.mockRejectedValueOnce(new DOMException("private path", "Abo…
+    101|     expect(await controller.connect()).toBe(false);
+       |                                        ^
+    102|     // 확인: 이전 연결 유지 + 안내 표시 + 원시 오류의 개인 경로 미노출.
+    103|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-connection-controller.test.ts > settings source connection stat
+e > shows storage failure while retaining prior connection and allows another selection
+AssertionError: expected undefined to be false // Object.is equality
+
+- Expected:
+false
+
++ Received:
+undefined
+
+ ❯ apps/web/src/features/local-folders/state/source-connection-controller.test.ts:113:40
+    111|     await controller.connect();
+    112|     vi.mocked(repo.write).mockRejectedValueOnce(new DOMException("priv…
+    113|     expect(await controller.connect()).toBe(false);
+       |                                        ^
+    114|
+    115|     expect(controller.getSnapshot()).toMatchObject({ notice: { state: …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-connection-controller.test.ts > settings source connection stat
+e > calls restored handle permission immediately, keeps denial and allows retry
+AssertionError: expected undefined to be false // Object.is equality
+
+- Expected:
+false
+
++ Received:
+undefined
+
+ ❯ apps/web/src/features/local-folders/state/source-connection-controller.test.ts:130:27
+    128|
+    129|     expect(saved.requestPermission).toHaveBeenCalledExactlyOnceWith({ …
+    130|     expect(await pending).toBe(false);
+       |                           ^
+    131|
+    132|     expect(controller.getSnapshot()).toMatchObject({ notice: { state: …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-connection-controller.test.ts > settings source connection stat
+e > ignores a late picker after leaving the settings lifecycle
+AssertionError: expected undefined to be false // Object.is equality
+
+- Expected:
+false
+
++ Received:
+undefined
+
+ ❯ apps/web/src/features/local-folders/state/source-connection-controller.test.ts:180:27
+    178|     controller.stop();
+    179|     waiting.resolve(folder());
+    180|     expect(await pending).toBe(false);
+       |                           ^
+    181|
+    182|     expect(controller.getSnapshot()).toMatchObject({ phase: "loading",…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  apps/web/src/features/local-folders/state/source-connection-controller.test.ts > settings source connection stat
+e > ignores late success and failure after owner changes or effect restarts
+AssertionError: expected undefined to be false // Object.is equality
+
+- Expected:
+false
+
++ Received:
+undefined
+
+ ❯ apps/web/src/features/local-folders/state/source-connection-controller.test.ts:195:27
+    193|     await controller.load({ ...owner, userId: "test-b" });
+    194|     waiting.reject(new Error("old error"));
+    195|     expect(await pending).toBe(false);
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 4 passed (11)
+   Start at  15:01:27
+   Duration  268ms (tests 49%, transform 27%, import 21%, worker 3%)
+
+       |                           ^
+    196|
+    197|     expect(controller.getSnapshot()).toMatchObject({ phase: "ready", n…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
