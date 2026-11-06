@@ -1,5 +1,7 @@
 # 인증 DB 준비와 실행 경계
 
+2026-11-06 최신 후속: [두 기존 계정의 명시 연결](../../../docs/specs/auth-account-connection.md)은 User/Account/Workspace owner를 이전하지 않는다. `20261106010000_login_connection`은 연결/멤버 테이블, 제한된 변경 함수, 연결된 Workspace SELECT 정책과 비밀번호 변경 시 양쪽 세션 만료 trigger를 추가한다. runtime은 관계를 직접 변경할 수 없다. 앱 배포 전에 별도 migration 접속으로 적용해야 하며 실제 적용/검증 상태는 [최신 기록](../../../docs/verification/auth-entry-and-account-connection/README.md)을 따른다. 생성 Prisma Client와 관리자 접속값은 계속 Git에서 제외한다.
+
 2026-11-06 최신 UI: 이메일 가입·로그인·확인·재설정·계정 화면과 Server Actions까지 연결했다. [쿠키와 독립 브라우저의 실DB 검증](../../../docs/verification/auth-ui/README.md)을 아래 DB/API 준비 기록과 구분한다. 본인 Gmail 수신은 사용자 확인 완료이고 공개 발신 도메인·소셜·브라우저 owner 전환은 후속이다.
 
 2026-11-05 사용자 진행 지시로 실제 Supabase에 제한된 runtime 역할과 5개 테이블을 적용했다. 관리자 migration 접속과 runtime 접속을 로컬 환경 파일에서 분리했고 실제 역할 로그인·TLS·RLS를 검증했다. 2026-11-06 이메일 인증 API와 Resend 전송 코드를 연결했다. 최초 수신자 제한(403) 후 사용자가 확인한 Resend 가입 본인 주소로 테스트 메일 두 통의 접수를 확인했다. 메일함 수신 확인·공개 발신 도메인과 로그인 화면·소셜·브라우저 owner 교체는 후속이다.

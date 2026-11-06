@@ -21,11 +21,14 @@ export async function getAuthenticatedWorkspace(headers: Headers) {
       skipDuplicates: true,
     });
 
+    const membership = await transaction.loginConnectionMember.findUnique({ where: { userId }, include: { connection: { include: { members: true } } } });
+    const selectedOwner = membership?.connection.primaryOwnerUserId ?? userId;
+    if (membership && !membership.connection.members.some(member => member.userId === selectedOwner)) throw new Error("Workspace access unavailable.");
     const workspace = await transaction.workspace.findUniqueOrThrow({
-      where: { ownerUserId: userId },
+      where: { ownerUserId: selectedOwner },
       select: { id: true, ownerUserId: true },
     });
 
-    return { userId, workspaceId: workspace.id };
+    return { userId: workspace.ownerUserId, workspaceId: workspace.id, sessionUserId: userId };
   });
 }

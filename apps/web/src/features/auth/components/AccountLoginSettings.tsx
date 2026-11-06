@@ -37,6 +37,6 @@ export function AccountLoginSettings({ account, action, notice }: { account: Acc
       </SettingRow></form>)}
     </div>
     {!account.hasPassword && usableConnected < 2 && connected > 0 && <p className={styles.help}>마지막으로 사용할 수 있는 로그인 수단은 해제할 수 없습니다. 다른 소셜 계정을 먼저 연결해 주세요.</p>}
-    <p className={styles.help}>기존의 다른 모아 계정과 자동으로 합쳐지지 않습니다.</p>
+    <p className={styles.help}>로그인 수단은 현재 로그인한 계정에서 관리합니다. 다른 모아 계정과 자동으로 연결되지 않습니다.</p>
   </section>;
 }

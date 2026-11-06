@@ -170,7 +170,7 @@ erDiagram
 | AUTHDB-002 | 다른 User에 같은 provider/account 쌍을 동시 연결 | 한 소유 관계만 허용하고 충돌을 안전하게 처리. |
 | AUTHDB-003 | 같은 이메일 또는 다른 이메일만 제시 | 소유권 확인 없는 자동 병합 금지. |
 | AUTHDB-004 | 로그인 전 세션·verification 조회 | 사용자 문맥이 없어도 인증 절차에 필요한 서버 조회 작동. |
-| AUTHDB-005 | A의 세션에서 B의 Workspace CRUD 요청 | 서버 권한 검사와 runtime 역할의 DB 정책 각각에서 차단. |
+| AUTHDB-005 | 연결되지 않은 A의 세션에서 B의 Workspace CRUD 요청 | 서버 권한 검사와 runtime 역할의 DB 정책 각각에서 차단. 명시적으로 두 소유를 증명한 연결은 SELECT만 허용하며 [별도 연결 계약](auth-account-connection.md)을 따른다. |
 | AUTHDB-006 | 문맥 미설정·A/B 교대·트랜잭션 rollback·풀 재사용 | 업무 접근 기본 차단, 이전 사용자 문맥 누출 없음. |
 | AUTHDB-007 | 같은 User의 기본 Workspace 초기화 동시 요청/중간 실패 | 기본 공간 최대 하나, 재시도 가능, 개발 소유자 대체 없음. |
 | AUTHDB-008 | 만료된/이미 소비한 인증·연결 요청 | 라이브러리별 토큰 계약에 맞춰 거부. |

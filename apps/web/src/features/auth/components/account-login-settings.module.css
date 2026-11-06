@@ -5,3 +5,18 @@
 .method { display: flex; align-items: center; gap: 16px; }
 .method > span { color: var(--muted); font-size: 13px; }
 .help { margin-top: 16px; color: var(--muted); font-size: 13px; line-height: 1.75; }
+.connection { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.connection h3 { font-size: 16px; font-weight: 600; }
+.connection > p { margin-block: 8px 20px; font-size: 14px; line-height: 1.8; color: var(--muted); }
+.connectionFields { display: grid; gap: 16px; padding: 0; margin: 0; border: 0; min-width: 0; }
+.workspaceChoices { margin: 0; padding: 0; border: 0; display: grid; gap: 8px; min-width: 0; }
+.workspaceChoices legend { margin-bottom: 8px; font-size: 14px; font-weight: 500; }
+.workspaceChoices label { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 12px; border: 1px solid var(--control-border, var(--border)); border-radius: var(--ui-radius-control); font-size: 14px; cursor: pointer; }
+.workspaceChoices label:has(:checked) { border-color: var(--text); }
+.workspaceChoices label > span { min-width: 0; display: grid; gap: 4px; overflow-wrap: anywhere; }
+.workspaceChoices strong { font-weight: 500; }
+.workspaceChoices span > span { color: var(--muted); font-size: 13px; }
+.confirm { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.8; }
+.confirm input { margin-top: 5px; flex-shrink: 0; }
+.connectionFields .help { margin: 0; }
+.disconnect { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }

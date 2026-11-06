@@ -10,6 +10,6 @@ import { checkAuthSessionAction } from "../actions/auth";
 
 // 시안·로그인·가입은 이 layout 밖에 둔다. URL에는 (workspace)가 포함되지 않는다.
 export default async function WorkspaceLayout({ children }: { children: ReactNode }) {
-  const { sessionExpiresAt, ...owner } = await requireWorkspace();
-  return <SessionBoundary key={owner.userId} userId={owner.userId} initialExpiresAt={sessionExpiresAt} checkSessionAction={checkAuthSessionAction}><SourceFolderProvider key={`${owner.userId}:${owner.workspaceId}`} owner={owner}>{children}</SourceFolderProvider></SessionBoundary>;
+  const { sessionExpiresAt, sessionUserId, ...owner } = await requireWorkspace();
+  return <SessionBoundary key={sessionUserId} userId={sessionUserId} initialExpiresAt={sessionExpiresAt} checkSessionAction={checkAuthSessionAction}><SourceFolderProvider key={`${owner.userId}:${owner.workspaceId}`} owner={owner}>{children}</SourceFolderProvider></SessionBoundary>;
 }

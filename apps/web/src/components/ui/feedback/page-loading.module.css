@@ -1,0 +1,7 @@
+.page, .compact { display: flex; align-items: center; justify-content: center; gap: 12px; background: var(--ground, #f9fafb); color: var(--muted, #52616b); font-size: 14px; line-height: 1.7; }
+.page { min-height: 100dvh; padding: 24px; flex-direction: column; }
+.compact { min-height: 44px; background: transparent; }
+.page p, .compact p { margin: 0; }
+.navigation { position: fixed; inset: 16px auto auto 50%; transform: translateX(-50%); z-index: 1100; max-width: calc(100vw - 32px); padding: 4px 16px; background: var(--surface, #f8faf8); color: var(--text, #253745); border: 1px solid var(--border, #d2dad6); border-radius: var(--ui-radius-control, 6px); animation: appear 160ms ease-out; }
+@keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .navigation { animation: none; } }

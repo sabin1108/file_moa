@@ -11,6 +11,7 @@ import { beginSocialSignIn } from "../../server/auth-social";
 import { getAuthenticatedSession } from "../../server/authenticated-session";
 import { manageSocialAccount } from "../../server/auth-account";
 import { reportAuthenticationFailure } from "../../server/auth-diagnostics";
+import { connectExistingAccount, selectConnectedWorkspace, disconnectAccountConnection } from "../../server/auth-account-connection";
 
 async function applyAuthCookies(response?: Response) {
   const returnedCookies = response?.headers.get("set-cookie");
@@ -56,6 +57,18 @@ export async function socialAccountAction(_previous: AuthFormState, data: FormDa
   if (result.url) redirect(result.url);
   return result.state;
 }
+
+async function changeAccountConnection(data: FormData, operation: typeof connectExistingAccount) {
+  let state: AuthFormState;
+  try { state = await operation(data, new Headers(await headers())); }
+  catch (error) { reportAuthenticationFailure("form", error); return { status: "error" as const, message: "계정을 연결하지 못했습니다. 잠시 후 다시 시도해 주세요." }; }
+  if (state.status === "success") redirect("/login?connection=updated");
+  return state;
+}
+
+export async function connectExistingAccountAction(_previous: AuthFormState, data: FormData) { return changeAccountConnection(data, connectExistingAccount); }
+export async function selectConnectedWorkspaceAction(_previous: AuthFormState, data: FormData) { return changeAccountConnection(data, selectConnectedWorkspace); }
+export async function disconnectAccountConnectionAction(_previous: AuthFormState, data: FormData) { return changeAccountConnection(data, disconnectAccountConnection); }
 
 export async function checkAuthSessionAction(): Promise<{ available: boolean; session: AuthSessionSnapshot }> {
   const requestHeaders = await headers();

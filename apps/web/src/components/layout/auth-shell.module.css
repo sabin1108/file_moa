@@ -14,15 +14,21 @@
 .form { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 32px; display: grid; gap: 22px; }
 .form h1, .form h2 { font-size: 24px; font-weight: 600; line-height: 1.5; }
 .form > p { font-size: 14px; color: var(--muted); line-height: 1.9; margin-top: -10px; }
-.providers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.socialButton { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; min-width: 0; min-height: 76px; border: 1px solid var(--border); border-radius: var(--ui-radius-control, 5px); padding: 10px 4px; background: var(--surface); color: var(--text); font: inherit; font-size: 13px; cursor: pointer; }
-.socialButton:hover { background: var(--active); border-color: var(--control-border, var(--border)); }
-.socialButton img { width: 40px; height: 40px; object-fit: contain; }
+.providers { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.socialButton { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; min-width: 0; min-height: 52px; border: 1px solid #747775; border-radius: 6px; padding: 5px 10px; background: #fff; color: #1f1f1f; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: filter 160ms ease; }
+.socialButton[data-provider="naver"] { background: #03a94d; border-color: #03a94d; color: #fff; }
+.socialButton[data-provider="kakao"] { background: #fee500; border-color: #fee500; color: rgb(0 0 0 / 85%); border-radius: 12px; }
+.socialButton:hover { filter: brightness(.96); }
+.socialButton img { justify-self: center; width: 40px; height: 40px; object-fit: contain; }
+.socialButton[data-provider="google"] img { width: 20px; height: 20px; }
+.socialButton span { text-align: center; }
 .socialHint { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.7; text-align: center; }
 .socialSection { display: grid; gap: 12px; padding-block: 16px; border-top: 1px solid var(--border); }
 .socialSection > p:first-child { margin: 0; color: var(--muted); font-size: 13px; }
+.divider { display: flex; align-items: center; gap: 14px; margin-block: 8px; color: var(--muted); font-size: 13px; }
+.divider::before, .divider::after { content: ""; height: 1px; flex: 1; background: var(--border); }
 .providers > p, .providers > div { grid-column: 1 / -1; }
-.socialButton:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+.socialButton:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 .socialButton:disabled { opacity: .65; cursor: wait; }
 .providers a { min-height: 48px; font-size: 15px; }
 .providers a:first-child { border-color: var(--text); }
@@ -55,6 +61,7 @@
 .submit:disabled { cursor: wait; opacity: .75; }
 .links { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; border-top: 1px solid var(--border); padding-top: 12px; }
 .links a { white-space: normal; min-height: 44px; padding-inline: 0; }
+.links > span { align-self: center; color: var(--muted); font-size: 14px; }
 .form .help { font-size: 13px; color: var(--muted); line-height: 1.8; margin: 0; }
 .account { display: grid; grid-template-columns: auto 1fr; gap: 12px; font-size: 14px; }
 .account dt { color: var(--muted); }
@@ -62,5 +69,9 @@
 .live .form { gap: 16px; }
 .live .form > nav:not(.links) { margin-block: 0; }
 .live .layout { padding-block: 32px; }
+.live .layout { max-width: 504px; display: block; padding: 24px 32px 56px; margin-block: 0; flex: 1; }
+.live .introduction { display: none; }
+.live .form { border: 0; background: transparent; padding: 16px 0; gap: 22px; }
+.live .layout:has(.signupForm) { padding-top: 24px; }
 @media (max-width: 900px) { .layout { gap: 40px; grid-template-columns: 1fr 360px; } .form { padding: 27px; } .tagline { font-size: 32px; } .folderSketch span { width: 160px; } }
 @media (max-width: 700px) { .layout { max-width: 480px; grid-template-columns: 1fr; padding: 22px 20px 35px; gap: 30px; } .introduction { display: none; } .header { padding: 20px; } .form { padding: 25px; } .footer { padding: 15px 20px; } .footer > span { display: none; } .footer a { margin: auto; } }

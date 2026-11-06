@@ -2,12 +2,13 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { MoaMark } from "../ui/Icon";
 import { ActionLink } from "../ui/ActionLink";
+import { NavigationProgress } from "../ui/feedback/NavigationProgress";
 import styles from "./auth-shell.module.css";
 
 export function AuthShell({ children, preview = false }: { children: ReactNode; preview?: boolean }) {
   return <main className={[styles.page, !preview && styles.live, "reading-surface"].filter(Boolean).join(" ")}>
     <header className={styles.header}>
-      <Link href={preview ? "/preview/screens/chat" : "/"} className={styles.brand}><MoaMark size={28} />모아.</Link>
+      <Link href={preview ? "/preview/screens/chat" : "/"} className={styles.brand}><MoaMark size={28} />모아.<NavigationProgress /></Link>
       <ActionLink href={preview ? "/preview" : "/"}>{preview ? "화면 둘러보기" : "모아 홈"}</ActionLink>
     </header>
     <div className={styles.layout}>

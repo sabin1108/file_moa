@@ -12,3 +12,7 @@ export type AccountLoginSettings = {
   name: string; email: string; hasPassword: boolean;
   providers: { id: import("./social-auth").SocialProvider; connected: boolean; available: boolean }[];
 };
+export type WorkspaceConnection = {
+  primaryOwnerUserId: string;
+  members: { ownerUserId: string; name: string; email: string }[];
+};

@@ -7,6 +7,7 @@ import { announceAuthSessionChange, authSessionSource, AUTH_SCOPE_REVOKED, AUTH_
 import { sessionScope } from "../lib/session-scope";
 import type { CheckAuthSessionAction } from "../../../shared/auth-contract";
 import { clearSignupDraft } from "../lib/signup-flow";
+import { PageLoading } from "../../../components/ui/feedback/PageLoading";
 
 export function SessionBoundary({ userId, initialExpiresAt, children, checkSessionAction }: { userId: string; initialExpiresAt: string; children: ReactNode; checkSessionAction: CheckAuthSessionAction }) {
   const router = useRouter();
@@ -98,7 +99,7 @@ export function SessionBoundary({ userId, initialExpiresAt, children, checkSessi
   }, [router, userId, initialExpiresAt, checkSessionAction]);
 
   return <>
-    {checking && <StatusNotice state="pending" title="로그인 상태를 확인하고 있어요." />}
+    {(checking || !active && !failed) && <PageLoading message={checking ? "로그인 상태를 확인하고 있어요." : "로그인 화면으로 이동하고 있어요."} />}
     {failed && <StatusNotice state="error" title="로그인 상태를 확인하지 못했습니다." detail="연결을 확인한 뒤 화면을 새로고침해 주세요." />}
     {active && <div inert={checking} aria-hidden={checking || undefined} style={checking ? { visibility: "hidden" } : undefined}>{children}</div>}
   </>;

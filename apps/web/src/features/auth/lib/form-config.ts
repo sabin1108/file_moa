@@ -30,7 +30,7 @@ const newPassword: Field = { name: "password", label: "비밀번호", type: "pas
 const confirm: Field = { ...newPassword, name: "passwordConfirm", label: "비밀번호 확인" };
 
 export const authForms: Record<AuthOperation, { title: string; description: string; submit: string; fields: readonly Field[] }> = {
-  login: { title: "모아 로그인", description: "이메일과 비밀번호로 나의 계정에 로그인하세요.", submit: "로그인", fields: [{ ...email, autoComplete: "username" }, { ...newPassword, minLength: 1, autoComplete: "current-password" }] },
+  login: { title: "모아 로그인", description: "사용할 로그인 방법을 선택해 주세요.", submit: "로그인", fields: [{ ...email, autoComplete: "username" }, { ...newPassword, minLength: 1, autoComplete: "current-password" }] },
   signup: { title: "모아 계정 만들기", description: "계정 정보를 입력하고 이메일 주소를 확인하세요.", submit: "가입하고 인증 메일 받기", fields: [{ name: "name", label: "표시 이름", type: "text", autoComplete: "nickname", maxLength: 40 }, email, newPassword, confirm] },
   resend: { title: "이메일을 확인해 주세요", description: "메일의 확인 링크를 열면 가입 절차를 이어갈 수 있어요.", submit: "인증 메일 다시 요청", fields: [email] },
   "request-reset": { title: "비밀번호 찾기", description: "가입한 이메일로 비밀번호 재설정 링크를 요청하세요.", submit: "재설정 메일 요청", fields: [email] },

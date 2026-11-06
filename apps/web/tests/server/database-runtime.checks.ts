@@ -91,7 +91,7 @@ describe("real PrismaPg and Better Auth adapter", () => {
 
     const owner = await getAuthenticatedWorkspace(headers);
 
-    expect(owner).toEqual({ userId: userA, workspaceId: expect.any(String) });
+    expect(owner).toEqual({ userId: userA, workspaceId: expect.any(String), sessionUserId: userA });
     expect(await getAuthenticatedWorkspace(sessionHeaders(tokenA))).toEqual(owner);
     expect(await database.workspace.findMany()).toEqual([]);
   });

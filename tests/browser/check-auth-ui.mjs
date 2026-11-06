@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { randomUUID } from "node:crypto";
+import { createHmac, randomUUID } from "node:crypto";
 import { cpSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, unlinkSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { createRequire } from "node:module";
@@ -19,8 +19,11 @@ assert.equal(runtimeURL.pathname, "/moa_auth_test");
 assert.match(process.env.MOA_TEST_DATABASE_RUN ?? "", /^[a-f0-9-]{36}$/);
 assert.ok(process.env.MOA_TEST_TLS_CERT?.startsWith(cache));
 const requireWeb = createRequire(join(web, "package.json"));
+const { Pool } = requireWeb("pg");
+const fixtureSecret = "fixture-browser-" + randomUUID();
+const fixtureDatabase = new Pool({ connectionString: runtimeURL.toString(), ssl: { ca: readFileSync(process.env.MOA_TEST_TLS_CERT, "utf8"), rejectUnauthorized: true }, max: 1 });
 const next = requireWeb.resolve("next/dist/bin/next");
-const out = join(root, "docs/verification/auth-social-settings/browser");
+const out = join(root, "docs/verification/auth-entry-and-account-connection/browser");
 mkdirSync(out, { recursive: true });
 mkdirSync(cache, { recursive: true });
 const app = mkdtempSync(join(cache, "moa-auth-browser-"));
@@ -63,25 +66,38 @@ await new Promise(accept => portReservation.close(accept));
 const base = `http://127.0.0.1:${port}`;
 
 function check(name, passed) { checks.push({ name, passed }); assert.ok(passed, name); console.log(`PASS UI ${name}`); }
-async function wait(predicate, timeout = 15_000) {
+async function wait(predicate, timeout = 15_000, argument) {
   const deadline = Date.now() + timeout;
-  while (Date.now() < deadline) { if (await page.eval(predicate)) return; await sleep(80); }
+  while (Date.now() < deadline) { if (await page.eval(predicate, argument)) return; await sleep(80); }
   throw new Error("Authentication UI did not reach the expected state");
 }
 async function input(name, value) {
+  await wait(name => {
+    const field = document.querySelector(`[name="${name}"]`);
+    return field && field.getBoundingClientRect().width > 0 && !field.disabled && !field.closest('[inert], [hidden]') && !document.querySelector('[role="status"][aria-busy="true"]');
+  }, 15_000, name);
   await page.eval(name => document.querySelector(`[name="${name}"]`).focus(), name);
+  await wait(name => document.activeElement === document.querySelector(`[name="${name}"]`), 15_000, name);
   await page.send("Input.dispatchKeyEvent", { type: "keyDown", key: "a", code: "KeyA", modifiers: 2, windowsVirtualKeyCode: 65 });
   await page.send("Input.dispatchKeyEvent", { type: "keyUp", key: "a", code: "KeyA", modifiers: 2, windowsVirtualKeyCode: 65 });
   await page.send("Input.insertText", { text: value });
+  assert.ok(await page.eval(({ name, value }) => document.querySelector(`[name="${name}"]`).value === value, { name, value }), "Fixture typing must reach the visible field");
 }
-async function submit() {
-  const point = await page.eval(() => {
-    const button = document.querySelector('form[data-auth-form] button[type="submit"]');
-    button.scrollIntoView({ block: "center" });
+async function submit(selector = 'form[data-auth-form]') {
+  await wait(selector => {
+    const button = document.querySelector(selector + ' button[type="submit"]');
+    return button && !button.disabled && button.getBoundingClientRect().width > 0 && !document.querySelector('[role="status"][aria-busy="true"]');
+  }, 15_000, selector);
+  await page.eval(selector => document.querySelector(selector + ' button[type="submit"]').scrollIntoView({ block: "center", behavior: "instant" }), selector);
+  await page.eval(() => new Promise(requestAnimationFrame));
+  const point = await page.eval(selector => {
+    const button = document.querySelector(selector + ' button[type="submit"]');
     const rect = button.getBoundingClientRect();
-    return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
-  });
-  for (const type of ["mousePressed", "mouseReleased"]) await page.send("Input.dispatchMouseEvent", { type, ...point, button: "left", clickCount: 1 });
+    const x = rect.x + rect.width / 2, y = rect.y + rect.height / 2;
+    return { x, y, hit: button.contains(document.elementFromPoint(x, y)) };
+  }, selector);
+  assert.ok(point.hit, `Submit button must be visible and reachable: ${selector} (${point.x},${point.y})`);
+  for (const type of ["mousePressed", "mouseReleased"]) await page.send("Input.dispatchMouseEvent", { type, x: point.x, y: point.y, button: "left", clickCount: 1 });
 }
 async function link(subject) {
   for (let count = 0; count < 100; count++) {
@@ -104,7 +120,7 @@ try {
   writeFileSync(preload, `const fetchOriginal=globalThis.fetch;globalThis.fetch=(url,options)=>{const target=url instanceof Request?url.url:String(url);if(target!=='https://api.resend.com/emails')return fetchOriginal(url,options);return fetchOriginal(url instanceof Request?new Request(process.env.MOA_MAIL_CAPTURE_URL,url):process.env.MOA_MAIL_CAPTURE_URL,options);};`);
   server = spawn(process.execPath, [next, "start", app, "--hostname", "127.0.0.1", "--port", String(port)], {
     cwd: app, windowsHide: true, stdio: ["ignore", "pipe", "pipe"],
-    env: { ...process.env, NODE_ENV: "production", NODE_OPTIONS: `--require=${JSON.stringify(preload)}`, DATABASE_URL: runtimeURL.toString(), BETTER_AUTH_URL: base, BETTER_AUTH_SECRET: "fixture-browser-" + randomUUID(), RESEND_API_KEY: "fixture-resend-key", EMAIL_FROM: "Moa <sender@example.invalid>", MOA_MAIL_CAPTURE_URL: mailURL, GOOGLE_CLIENT_ID: "fixture-google", GOOGLE_CLIENT_SECRET: "fixture-google-secret", NAVER_CLIENT_ID: "fixture-naver", NAVER_CLIENT_SECRET: "fixture-naver-secret", KAKAO_CLIENT_ID: "fixture-kakao", KAKAO_CLIENT_SECRET: "fixture-kakao-secret" },
+    env: { ...process.env, NODE_ENV: "production", NODE_OPTIONS: `--require=${JSON.stringify(preload)}`, DATABASE_URL: runtimeURL.toString(), BETTER_AUTH_URL: base, BETTER_AUTH_SECRET: fixtureSecret, RESEND_API_KEY: "fixture-resend-key", EMAIL_FROM: "Moa <sender@example.invalid>", MOA_MAIL_CAPTURE_URL: mailURL, GOOGLE_CLIENT_ID: "fixture-google", GOOGLE_CLIENT_SECRET: "fixture-google-secret", NAVER_CLIENT_ID: "fixture-naver", NAVER_CLIENT_SECRET: "fixture-naver-secret", KAKAO_CLIENT_ID: "fixture-kakao", KAKAO_CLIENT_SECRET: "fixture-kakao-secret" },
   });
   server.stdout.on("data", chunk => { logs += chunk; });
   server.stderr.on("data", chunk => { logs += chunk; });
@@ -122,10 +138,10 @@ try {
 
   for (const width of [390, 768, 1440, 1920]) {
     await page.setViewport({ width, height: 900 });
-    for (const route of ["/login", "/welcome", "/welcome?step=verification", "/forgot-password", "/reset-password", "/verify-email", "/social-signup"]) {
+    for (const route of ["/login", "/welcome", "/welcome?step=name", "/welcome?step=verification", "/forgot-password", "/reset-password", "/verify-email", "/social-signup"]) {
       await page.goto(base + route, { settleMs: 180 });
       check(`${route} fits ${width}px and has one main heading`, await page.eval(() => document.documentElement.scrollWidth <= innerWidth && document.querySelectorAll("h1").length === 1));
-      await page.screenshot({ path: join(out, `${route.split("?")[0].slice(1)}-${route.includes("?") ? "waiting-" : ""}${width}.png`), format: "png" });
+      await page.screenshot({ path: join(out, `${route.split("?")[0].slice(1)}-${new URL(route, base).searchParams.get("step") ?? "entry"}-${width}.png`), format: "png" });
     }
   }
 
@@ -134,6 +150,33 @@ try {
     check(`anonymous ${route} redirects to login`, await page.eval(() => location.pathname === "/login"));
   }
   check("all three official social buttons have loaded images", await page.eval(() => [...document.querySelectorAll('button[name="provider"] img')].length === 3 && [...document.querySelectorAll('button[name="provider"] img')].every(image => image.complete && image.naturalWidth > 0)));
+  check("social methods occupy three full-width rows before email login", await page.eval(() => {
+    const buttons = [...document.querySelectorAll('button[name="provider"]')].map(button => button.getBoundingClientRect());
+    return buttons.every((rect, index) => rect.height >= 44 && rect.width >= 260 && (!index || rect.top >= buttons[index - 1].bottom))
+      && buttons[2].bottom < document.querySelector('form[data-auth-form]').getBoundingClientRect().top;
+  }));
+  const navigationResponses = [];
+  await page.send("Network.enable");
+  const stopNavigation = page.browser.on(page.sessionId, "Fetch.requestPaused", event => navigationResponses.push(event));
+  await page.send("Fetch.enable", { patterns: [{ urlPattern: base + "/welcome*", resourceType: "Fetch", requestStage: "Response" }] });
+  await page.goto(base + "/login", { settleMs: 220 });
+  await wait(() => !!document.querySelector('a[href="/welcome"]'));
+  const navigationPoint = await page.eval(() => { const rect = document.querySelector('a[href="/welcome"]').getBoundingClientRect(); return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 }; });
+  await page.send("Input.dispatchMouseEvent", { type: "mouseMoved", ...navigationPoint });
+  await page.eval(() => { window.fixtureLoginForm = document.querySelector('form[data-auth-form]'); document.querySelector('a[href="/welcome"]').click(); });
+  for (let count = 0; count < 100 && !navigationResponses.length; count++) await sleep(30);
+  await wait(() => document.body.textContent.includes("페이지를 이동하고 있어요."));
+  check("a held page navigation shows the shared loading feedback", navigationResponses.length > 0);
+  check("pending navigation keeps the previous form visible", await page.eval(() => window.fixtureLoginForm === document.querySelector('form[data-auth-form]') && window.fixtureLoginForm.getBoundingClientRect().width > 0));
+  check("navigation feedback stays at the viewport top while the link is hovered", await page.eval(() => { const rect = document.querySelector('[role="status"][aria-busy="true"]').getBoundingClientRect(); return rect.top <= 24 && Math.abs(rect.left + rect.width / 2 - innerWidth / 2) < 2; }));
+  for (const event of navigationResponses) await page.send("Fetch.continueResponse", { requestId: event.requestId });
+  await page.send("Fetch.disable"); stopNavigation();
+  await wait(() => location.pathname === "/welcome");
+  await page.goto(base + "/welcome", { settleMs: 180 });
+  check("signup first offers social methods or a separate email form", await page.eval(() => document.querySelectorAll('button[name="provider"]').length === 3 && !!document.querySelector('a[href="/welcome?step=name"]') && !document.querySelector('[name="name"]')));
+  await page.eval(() => document.querySelector('a[href="/welcome?step=name"]').click());
+  await wait(() => !!document.querySelector('[name="name"]'));
+  check("email choice opens the reusable progressive Stepper without duplicate social rows", await page.eval(() => !!document.querySelector('[aria-current="step"]') && !document.querySelector('button[name="provider"]')));
 
   await page.goto(base + "/welcome?step=complete", { settleMs: 180 });
   const signupTop = await page.eval(() => document.querySelector("h1").getBoundingClientRect().top);
@@ -176,6 +219,7 @@ try {
   const previousPage = page;
   page = await browser.newPage({ width: 1440, height: 900 });
   await page.goto(base + "/welcome", { settleMs: 180 });
+  await page.eval(() => document.querySelector('a[href="/welcome?step=password"]').click());
   await wait(() => location.search === "?step=password" && !!document.querySelector('[name="password"]'));
   check("a new tab restores only identity and progress", await page.eval(() => document.querySelector('[name="email"]').value === "browser-flow@example.invalid" && document.querySelector('[name="password"]').value === ""));
   await previousPage.close();
@@ -225,11 +269,22 @@ try {
   check("pending background revalidation never hides or remounts the authenticated form", await page.eval(() => !document.body.textContent.includes("로그인 상태를 확인하고 있어요") && window.fixtureAccountForm === document.querySelector('form[data-auth-form]') && !document.querySelector('[inert]')));
   for (const event of held) await page.send("Fetch.continueResponse", { requestId: event.requestId });
   await page.send("Fetch.disable"); stopNetwork(); stopPaused();
+  const blocked = [];
+  const stopBlocked = page.browser.on(page.sessionId, "Fetch.requestPaused", event => blocked.push(event));
+  await page.send("Fetch.enable", { patterns: [{ urlPattern: base + "/account", resourceType: "Fetch", requestStage: "Response" }] });
+  await page.eval(() => window.dispatchEvent(new Event("moa-auth-session-changed")));
+  for (let count = 0; count < 100 && !blocked.length; count++) await sleep(30);
+  check("blocking session changes show the shared loader instead of an empty screen", await page.eval(() => !!document.querySelector('[role="status"][aria-busy="true"]') && document.body.textContent.includes("로그인 상태를 확인하고 있어요.")));
+  for (const event of blocked) await page.send("Fetch.continueResponse", { requestId: event.requestId });
+  await page.send("Fetch.disable"); stopBlocked();
+  await wait(() => !!document.querySelector('form[data-auth-form]'));
 
   for (const width of [390, 1440, 1920]) {
     await page.setViewport({ width, height: 900 });
     for (const tab of ["account", "folders", "editor"]) {
       await page.goto(base + "/settings?tab=" + tab, { settleMs: 220 });
+      await wait(() => !!document.querySelector('[class*="settingsPanel"]') && document.querySelector("h1")?.getBoundingClientRect().width > 0);
+      await page.eval(async () => { await Promise.all(document.getAnimations().filter(animation => animation.effect?.getTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))); });
       check(`settings ${tab} fits ${width}px`, await page.eval(() => document.documentElement.scrollWidth <= innerWidth && document.querySelectorAll("h1").length === 1));
       check(`settings ${tab} has real account entry and no obsolete login notice`, await page.eval(() => !!document.querySelector('a[href="/account"]') && !document.body.textContent.includes("실제 로그인은 아직 연결되지 않았습니다")));
       if (tab === "account") check("social account settings show three real provider actions", await page.eval(() => document.querySelectorAll('[aria-label="소셜 로그인 연결 관리"] button').length === 3));
@@ -238,10 +293,34 @@ try {
       const appMetrics = await page.eval(appProbe);
       const findings = [...judge(metrics, { width }), ...judgeLayout(arrangement, { width })].filter(finding => !APP_SKIP.has(finding.id) && finding.id !== "no-title" && finding.id !== "small-title").concat(judgeApp(appMetrics, metrics, { width }));
       designChecks.push({ tab, width, findings });
+      if (findings.some(finding => finding.level === "FAIL")) {
+        writeFileSync(join(out, "design-checks.json"), JSON.stringify({ checks: designChecks }, null, 2));
+        await page.screenshot({ path: join(out, `settings-failed-${tab}-${width}.png`), format: "png" });
+        console.log(JSON.stringify(findings.filter(finding => finding.level === "FAIL")));
+      }
       check(`taste app inspection ${tab} at ${width}px has no failure`, !findings.some(finding => finding.level === "FAIL"));
       await page.screenshot({ path: join(out, `settings-${tab}-${width}.png`), format: "png" });
     }
   }
+  await page.goto(base + "/settings?tab=account", { settleMs: 220 });
+  await page.eval(async () => {
+    window.fixtureSettingsIndicator = document.querySelector('[class*="settingsIndicator"]');
+    document.querySelector('[aria-label="설정 분류"] a[href="/settings?tab=editor"]').click();
+    for (let frame = 0; frame < 60; frame++) {
+      await new Promise(requestAnimationFrame);
+      window.fixtureSettingsMotion = { x: new DOMMatrixReadOnly(getComputedStyle(window.fixtureSettingsIndicator).transform).m41, end: window.fixtureSettingsIndicator.getBoundingClientRect().width * 2 };
+      if (window.fixtureSettingsMotion.x > 0 && window.fixtureSettingsMotion.x < window.fixtureSettingsMotion.end) break;
+    }
+  });
+  await wait(() => location.search === "?tab=editor");
+  check("settings switches retain one indicator with a real transform transition", await page.eval(() => window.fixtureSettingsIndicator === document.querySelector('[class*="settingsIndicator"]') && parseFloat(getComputedStyle(window.fixtureSettingsIndicator).transitionDuration) > 0 && !!document.querySelector('[aria-current="page"][href="/settings?tab=editor"]')));
+  check("the settings underline passes through an intermediate position", await page.eval(() => window.fixtureSettingsMotion.x > 0 && window.fixtureSettingsMotion.x < window.fixtureSettingsMotion.end));
+  await page.eval(() => history.back());
+  await wait(() => location.search === "?tab=account");
+  check("settings browser history restores the active navigation", await page.eval(() => !!document.querySelector('[aria-label="설정 분류"] [aria-current="page"][href="/settings?tab=account"]')));
+  await page.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
+  check("settings respects reduced motion", await page.eval(() => getComputedStyle(document.querySelector('[class*="settingsIndicator"]')).transitionDuration === "0s" && getComputedStyle(document.querySelector('[class*="settingsSection"]')).animationName === "none"));
+  await page.send("Emulation.setEmulatedMedia", { features: [] });
   await page.goto(base + "/settings?tab=folders", { settleMs: 220 });
   await page.eval(async () => { const root = await navigator.storage.getDirectory(); const folder = await root.getDirectoryHandle("fixture-notes", { create: true }); window.showDirectoryPicker = async () => folder; });
   await page.eval(() => { [...document.querySelectorAll("button")].find(button => button.textContent.trim() === "폴더 연결").click(); });
@@ -292,6 +371,68 @@ try {
   await input("password", "new-fixture-browser-password"); await submit(); await wait(() => location.pathname === "/");
   check("the new password signs in through the real Server Action", true);
 
+  const socialUserId = "browser-social-" + randomUUID();
+  const socialToken = randomUUID();
+  await fixtureDatabase.query('INSERT INTO moa_auth."user" (id,name,email,"emailVerified","updatedAt") VALUES ($1,$2,$3,false,now())', [socialUserId, "소셜 사용자", "browser-social@example.invalid"]);
+  await fixtureDatabase.query('INSERT INTO moa_auth.account (id,"userId","accountId","providerId","updatedAt") VALUES ($1,$1,$1,$2,now())', [socialUserId, "google"]);
+  await fixtureDatabase.query('INSERT INTO moa_auth.session (id,token,"userId","expiresAt","updatedAt") VALUES ($1,$2,$3,now()+interval \'1 hour\',now())', [randomUUID(), socialToken, socialUserId]);
+  const socialSignature = createHmac("sha256", fixtureSecret).update(socialToken).digest("base64");
+  await page.goto("about:blank", { settleMs: 0 });
+  // This independent connection journey uses another synthetic proxy IP; production limits stay enabled.
+  await page.send("Network.enable");
+  await page.send("Network.setExtraHTTPHeaders", { headers: { "x-vercel-forwarded-for": "192.0.2.240" } });
+  await page.send("Network.setCookie", { name: "better-auth.session_token", value: encodeURIComponent(`${socialToken}.${socialSignature}`), url: base, path: "/", httpOnly: true, sameSite: "Lax" });
+  await page.goto(base + "/settings?tab=folders", { settleMs: 220 });
+  await wait(() => [...document.querySelectorAll("button")].some(button => button.textContent.trim() === "폴더 연결"));
+  await page.eval(async () => { const root = await navigator.storage.getDirectory(); const folder = await root.getDirectoryHandle("fixture-social-notes", { create: true }); window.showDirectoryPicker = async () => folder; [...document.querySelectorAll("button")].find(button => button.textContent.trim() === "폴더 연결").click(); });
+  await wait(() => document.body.textContent.includes("fixture-social-notes"));
+  await page.goto(base + "/settings?tab=account", { settleMs: 220 });
+  await wait(() => !!document.querySelector('[name="primary"]'));
+  check("social-only settings offer native ownership proof and a workspace choice", await page.eval(() => document.querySelectorAll('form[aria-label="기존 계정과 작업 공간 연결"] [name="primary"]').length === 2 && !!document.querySelector('[name="confirm"]')));
+  await input("email", "browser-flow@example.invalid"); await input("password", "wrong-connection-password");
+  await page.eval(() => { document.querySelector('[name="primary"][value="existing"]').click(); document.querySelector('[name="confirm"]').click(); });
+  await submit('form[aria-label="기존 계정과 작업 공간 연결"]');
+  await wait(() => !!document.querySelector('form[aria-label="기존 계정과 작업 공간 연결"] [role="alert"]'));
+  check("a rejected native proof keeps the account form and email visible without revoking the social session", await page.eval(() => location.pathname === "/settings" && document.querySelector('[name="email"]').value === "browser-flow@example.invalid" && !document.querySelector('[role="status"][aria-busy="true"]')));
+  await input("password", "new-fixture-browser-password");
+  await page.eval(() => { document.querySelector('[name="primary"][value="existing"]').click(); document.querySelector('[name="confirm"]').checked = true; });
+  await page.screenshot({ path: join(out, "existing-account-review-1440.png"), format: "png" });
+  await submit('form[aria-label="기존 계정과 작업 공간 연결"]');
+  await wait(() => location.pathname === "/login" && !!document.querySelector('form[data-auth-form]'));
+  check("confirmed existing-account connection clears sessions and requires a new login", await page.eval(() => !!document.querySelector('[name="password"]')));
+  await input("email", "browser-flow@example.invalid"); await input("password", "new-fixture-browser-password");
+  await submit(); await wait(() => location.pathname === "/");
+  await page.goto(base + "/settings?tab=folders", { settleMs: 220 });
+  await wait(() => document.body.textContent.includes("fixture-notes"));
+  check("linking restores the selected original workspace's existing local folder handle", await page.eval(() => !document.body.textContent.includes("fixture-social-notes")));
+  await page.goto(base + "/settings?tab=account", { settleMs: 220 });
+  check("both original workspace choices remain available after linking", await page.eval(() => document.querySelectorAll('[name="ownerUserId"]').length === 2 && !document.querySelector('[name="password"]')));
+  await page.screenshot({ path: join(out, "connected-workspaces-1440.png"), format: "png" });
+  await page.setViewport({ width: 390, height: 900 });
+  check("connected workspace selection fits a narrow screen", await page.eval(() => document.documentElement.scrollWidth <= innerWidth));
+  await page.screenshot({ path: join(out, "connected-workspaces-390.png"), format: "png" });
+  await page.eval(id => document.querySelector(`[name="ownerUserId"][value="${id}"]`).click(), socialUserId);
+  await submit('form[aria-label="기존 계정과 작업 공간 연결"]');
+  await wait(() => location.pathname === "/login" && !!document.querySelector('form[data-auth-form]'));
+  await input("email", "browser-flow@example.invalid"); await input("password", "new-fixture-browser-password");
+  await submit(); await wait(() => location.pathname === "/");
+  await page.goto(base + "/settings?tab=folders", { settleMs: 220 });
+  await wait(() => document.body.textContent.includes("fixture-social-notes"));
+  check("a native login can reopen the social workspace without changing its original local storage key", await page.eval(() => !document.body.textContent.includes("fixture-notes") && !document.body.textContent.includes("로그인 상태를 확인하고 있어요")));
+  await page.goto(base + "/preview", { settleMs: 300 });
+  await sleep(300);
+  check("preview validates the signed-in identity independently of the selected peer workspace", await page.eval(() => location.pathname === "/preview" && !document.body.textContent.includes("로그인 화면으로 이동하고 있어요")));
+  await page.goto(base + "/settings?tab=account", { settleMs: 220 });
+  await wait(() => !!document.querySelector('form[aria-label="기존 계정 연결 해제"]'));
+  await page.eval(() => document.querySelector('form[aria-label="기존 계정 연결 해제"] [name="confirm"]').click());
+  await submit('form[aria-label="기존 계정 연결 해제"]');
+  await wait(() => location.pathname === "/login" && !!document.querySelector('form[data-auth-form]'));
+  await input("email", "browser-flow@example.invalid"); await input("password", "new-fixture-browser-password");
+  await submit(); await wait(() => location.pathname === "/");
+  await page.goto(base + "/settings?tab=folders", { settleMs: 220 });
+  await wait(() => document.body.textContent.includes("fixture-notes"));
+  check("disconnecting restores the native account's own original folder without moving or deleting either workspace", await page.eval(() => !document.body.textContent.includes("fixture-social-notes")));
+
   await page.goto(base + "/account", { settleMs: 180 });
   await wait(() => !!document.querySelector('form[data-auth-form] button[type="submit"]'));
   await submit(); await wait(() => location.pathname === "/login");
@@ -309,10 +450,16 @@ try {
   writeFileSync(join(out, "checks.json"), JSON.stringify({ at: new Date().toISOString(), buildId: readFileSync(join(app, ".next/BUILD_ID"), "utf8").trim(), fixture: "disposable PostgreSQL with strict TLS; private Next build copy; synthetic Resend capture; isolated Chromium", checks }, null, 2));
   console.log(`Authentication UI: ${checks.length} browser checks passed.`);
 } catch (error) {
+  if (page) {
+    await page.screenshot({ path: join(out, "failed.png"), format: "png", fullPage: true }).catch(() => {});
+    const state = await page.eval(() => ({ path: location.pathname, alerts: [...document.querySelectorAll('[role="alert"]')].map(node => node.textContent), forms: [...document.querySelectorAll('form')].map(form => ({ label: form.getAttribute("aria-label"), busy: form.getAttribute("aria-busy"), fields: [...form.elements].filter(field => !field.name?.startsWith("$ACTION")).map(field => ({ name: field.name, type: field.type, checked: field.checked, disabled: field.disabled, valid: field.validity?.valid })) })) })).catch(() => ({}));
+    writeFileSync(join(out, "failure-state.json"), JSON.stringify(state, null, 2));
+  }
   writeFileSync(join(out, "checks.json"), JSON.stringify({ checks, failed: true }, null, 2));
   console.error(logs.slice(-6000));
   throw error;
 } finally {
+  await fixtureDatabase.end();
   if (browser) await browser.close();
   if (server && server.exitCode === null) { server.kill(); await new Promise(accept => server.once("exit", accept)); }
   await new Promise(accept => mailServer.close(accept));

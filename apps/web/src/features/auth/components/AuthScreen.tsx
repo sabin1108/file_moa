@@ -15,6 +15,7 @@ import { AuthInput } from "./AuthInput";
 import { clearSignupDraft } from "../lib/signup-flow";
 import { SocialProviders } from "./SocialProviders";
 import type { SocialProvider } from "../../../shared/social-auth";
+import { PageLoading } from "../../../components/ui/feedback/PageLoading";
 
 const initialState: AuthFormState = { status: "idle" };
 
@@ -62,6 +63,10 @@ function AuthFormScreen({ operation, action: submitAction, initialToken = "", ac
     <h1 id="auth-title">{config.title}</h1>
     <p>{config.description}</p>
     {notice && <StatusNotice state="attention" title={notice} role="status" />}
+    {operation === "login" && socialAction && !!providers?.length && <>
+      <SocialProviders providers={providers} action={socialAction} />
+      <div className={styles.divider}><span>또는 이메일로 로그인</span></div>
+    </>}
     {progress && <WorkflowStepper {...progress} />}
     {account && <>
       <dl className={styles.account}><dt>표시 이름</dt><dd>{account.name}</dd><dt>이메일</dt><dd>{account.email}</dd></dl>
@@ -85,7 +90,8 @@ function AuthFormScreen({ operation, action: submitAction, initialToken = "", ac
         <button type="submit" className={actionClasses("primary", styles.submit)} disabled={pending}>{pending ? "처리 중…" : config.submit}</button>
       </fieldset>
     </form>}
-    {(operation === "login" || operation === "resend") && socialAction && !!providers?.length && <section className={styles.socialSection} aria-label="소셜 계정으로 계속하기"><p>소셜 계정으로 계속하기</p><SocialProviders providers={providers} action={socialAction} /></section>}
+    {pending && <PageLoading compact message={operation === "login" ? "로그인하고 작업 공간으로 이동하고 있어요." : "요청을 처리하고 있어요."} />}
+    {operation === "resend" && socialAction && !!providers?.length && <section className={styles.socialSection} aria-label="소셜 계정으로 계속하기"><p>소셜 계정으로 계속하기</p><SocialProviders providers={providers} action={socialAction} /></section>}
     {operation !== "signout" && <nav className={styles.links} aria-label="계정 메뉴">
       {operation === "login" ? <><ActionLink href="/welcome">계정 만들기</ActionLink><ActionLink href="/forgot-password">비밀번호 찾기</ActionLink></> : <ActionLink href="/login">로그인으로</ActionLink>}
     </nav>}

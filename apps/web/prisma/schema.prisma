@@ -20,6 +20,8 @@ model User {
   sessions      Session[]
   accounts      Account[]
   workspace     Workspace?
+  loginConnectionMember LoginConnectionMember?
+  primaryLoginConnections LoginConnection[]
 
   @@unique([email])
   @@map("user")
@@ -98,5 +100,30 @@ model RateLimit {
 
   @@index([lastRequest])
   @@map("rate_limit")
+  @@schema("moa_auth")
+}
+
+// Authentication identities and their original workspace owners remain intact.
+model LoginConnection {
+  id                 String @id @default(uuid())
+  primaryOwnerUserId String
+  createdAt          DateTime @default(now())
+  primaryOwner       User @relation(fields: [primaryOwnerUserId], references: [id], onDelete: Restrict)
+  members            LoginConnectionMember[]
+
+  @@map("login_connection")
+  @@schema("moa_auth")
+}
+
+model LoginConnectionMember {
+  userId       String @id
+  connectionId String
+  slot         Int
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  connection   LoginConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  @@index([connectionId])
+  @@unique([connectionId, slot])
+  @@map("login_connection_member")
   @@schema("moa_auth")
 }

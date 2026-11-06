@@ -13,6 +13,10 @@ function subscribe(listener: () => void) {
 }
 const noSubscription = () => () => {};
 
+export function useSavedSignupDraft() {
+  return parseSignupDraft(useSyncExternalStore(subscribe, read, () => ""));
+}
+
 export function useSignupFlow() {
   const search = useSearchParams();
   const restored = useSyncExternalStore(noSubscription, () => true, () => false);

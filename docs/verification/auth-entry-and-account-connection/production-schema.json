@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-06T07:40:36.285Z",
+  "migration": "20261106010000_login_connection",
+  "checksum": "73565a2e05ab614dd170db65cac9cd94447b5445505fc6879dec56c640f3e266",
+  "applied": true,
+  "runtimeMappingReadOnly": true,
+  "workspaceRlsForced": true,
+  "metadataOnly": true,
+  "userAccountsModified": false
+}

@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Icon, MoaMark } from "../ui/Icon";
 import { ActionLink } from "../ui/ActionLink";
+import { NavigationProgress } from "../ui/feedback/NavigationProgress";
 import sidebar from "../../styles/sidebar.module.css";
 import ui from "../../styles/workspace-ui.module.css";
 import styles from "../../styles/workspace-layout.module.css";
@@ -28,6 +29,7 @@ function Navigation({ active, mobile = false }: { active?: Section; mobile?: boo
     >
       <Icon name={item.icon} size={18} />
       <span>{item.label}</span>
+      <NavigationProgress />
     </Link>
   ));
 }
@@ -45,13 +47,14 @@ export function WorkspaceShell({ title, active, children }: {
         <Link href="/" className={sidebar.brand} aria-label="모아 대화">
           <MoaMark size={32} />
           <span>모아<span className={sidebar.brandDot}>.</span></span>
+          <NavigationProgress />
         </Link>
         <nav className={sidebar.navigation} aria-label="주 메뉴">
           <Navigation active={active} />
         </nav>
         <div className={sidebar.sidebarFooter}>
-          <Link href="/account" className={sidebar.accountEntry}><Icon name="person" /><span>나의 계정</span></Link>
-          <Link href="/settings" aria-label="설정" title="설정" aria-current={active === "settings" ? "page" : undefined}><Icon name="settings" size={20} /></Link>
+          <Link href="/account" className={sidebar.accountEntry}><Icon name="person" /><span>나의 계정</span><NavigationProgress /></Link>
+          <Link href="/settings" aria-label="설정" title="설정" aria-current={active === "settings" ? "page" : undefined}><Icon name="settings" size={20} /><NavigationProgress /></Link>
         </div>
       </aside>
       <main id="workspace-content" className={`${ui.main} ${styles.main}`}>

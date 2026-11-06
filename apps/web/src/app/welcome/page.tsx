@@ -5,12 +5,17 @@ import { signupAction, resendAction, checkAuthSessionAction, socialSigninAction 
 import { requireGuest } from "../../server/session-guards";
 import { socialProviderConfiguration } from "../../server/social-providers";
 import { socialProviders } from "../../shared/social-auth";
+import { SignupMethods } from "../../features/auth/components/SignupMethods";
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   await requireGuest();
-  const operation = signupOperation((await searchParams).step);
+  const step = (await searchParams).step;
+  const operation = signupOperation(step);
   const configured = socialProviderConfiguration();
+  const providers = socialProviders.filter(provider => configured[provider]);
 
-  return <AuthShell><GuestSessionObserver checkSessionAction={checkAuthSessionAction} /><AuthScreen key={operation} operation={operation} action={operation === "signup" ? signupAction : resendAction} providers={socialProviders.filter(provider => configured[provider])} socialAction={socialSigninAction} /></AuthShell>;
+  return <AuthShell><GuestSessionObserver checkSessionAction={checkAuthSessionAction} />{step === undefined
+    ? <SignupMethods providers={providers} action={socialSigninAction} />
+    : <AuthScreen key={operation} operation={operation} action={operation === "signup" ? signupAction : resendAction} providers={providers} socialAction={socialSigninAction} />}</AuthShell>;
 }
 import { GuestSessionObserver } from "../../features/auth/components/GuestSessionObserver";
