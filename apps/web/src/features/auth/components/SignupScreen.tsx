@@ -12,8 +12,10 @@ import { useAuthDraft } from "../hooks/useAuthDraft";
 import { authForms, authProgress } from "../lib/form-config";
 import { AuthInput } from "./AuthInput";
 import styles from "../../../components/layout/auth-shell.module.css";
+import { SocialProviders } from "./SocialProviders";
+import type { SocialProvider } from "../../../shared/social-auth";
 
-export function SignupScreen({ action }: { action: AuthFormAction }) {
+export function SignupScreen({ action, providers, socialAction }: { action: AuthFormAction; providers?: readonly SocialProvider[]; socialAction?: AuthFormAction }) {
   const flow = useSignupFlow();
   const router = useRouter();
   const { update } = useAuthDraft();
@@ -35,6 +37,7 @@ export function SignupScreen({ action }: { action: AuthFormAction }) {
   return <section className={`${styles.form} ${styles.signupForm}`} aria-labelledby="auth-title">
     <h1 id="auth-title">모아 계정 만들기</h1>
     <p>이름부터 차례로 작성하세요. 입력한 내용은 한 장에 이어집니다.</p>
+    {socialAction && !!providers?.length && <section className={styles.socialSection} aria-label="이메일 입력 없이 소셜 계정으로 가입"><p>소셜 계정으로 바로 시작</p><SocialProviders providers={providers} action={socialAction} /><p className={styles.socialHint}>또는 아래에서 이메일로 가입하세요.</p></section>}
     <WorkflowStepper {...progress} />
     {state.message && <StatusNotice state={success ? "success" : "error"} title={state.message} role={success ? "status" : "alert"} />}
     {success ? <ActionLink href="/welcome?step=verification" variant="primary">이메일 확인 안내로</ActionLink> : <form data-auth-form action={formAction} className={styles.fields} aria-busy={pending}

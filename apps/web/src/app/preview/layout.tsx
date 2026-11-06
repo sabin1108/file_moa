@@ -13,7 +13,7 @@ import { checkAuthSessionAction } from "../actions/auth";
 export default async function PreviewLayout({ children }: { children: ReactNode }) {
   const owner = await requireWorkspace();
   return (
-    <SessionBoundary userId={owner.userId} checkSessionAction={checkAuthSessionAction}>
+    <SessionBoundary userId={owner.userId} initialExpiresAt={owner.sessionExpiresAt} checkSessionAction={checkAuthSessionAction}>
       <aside className={`${ui.system} ${styles.previewNotice}`} aria-label="시안 안내">
         <p><strong>시안 보관함</strong> · 합성 데이터로 화면을 검토합니다. 실제 계정·파일·작업 결과가 아닙니다.</p>
         <Link href="/settings">실제 폴더 연결로 돌아가기</Link>

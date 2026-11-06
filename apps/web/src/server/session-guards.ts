@@ -2,14 +2,14 @@ import "server-only";
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getAuth } from "./auth";
+import { getAuthenticatedSession } from "./authenticated-session";
 import { getAuthenticatedWorkspace } from "./workspace";
 import { reportAuthenticationFailure } from "./auth-diagnostics";
 
 async function readGuardSession() {
   const requestHeaders = await headers();
   try {
-    const session = await getAuth().api.getSession({ headers: requestHeaders, query: { disableCookieCache: true, disableRefresh: true } });
+    const session = await getAuthenticatedSession(requestHeaders);
     return { requestHeaders, session };
   } catch (error) {
     reportAuthenticationFailure("protocol", error);
@@ -20,22 +20,22 @@ async function readGuardSession() {
 export async function requireGuest() {
   const { session } = await readGuardSession();
 
-  if (session?.user.emailVerified) redirect("/");
+  if (session) redirect("/");
 }
 
 export async function requireAccountSession() {
   const { session } = await readGuardSession();
-  if (!session?.user.emailVerified) redirect("/login");
+  if (!session) redirect("/login");
   return session;
 }
 
 export async function requireWorkspace() {
   const { requestHeaders, session } = await readGuardSession();
 
-  if (!session?.user.emailVerified) redirect("/login");
+  if (!session) redirect("/login");
 
   try {
-    return await getAuthenticatedWorkspace(requestHeaders);
+    return { ...await getAuthenticatedWorkspace(requestHeaders), sessionExpiresAt: session.session.expiresAt.toISOString() };
   } catch (error) {
     reportAuthenticationFailure("protocol", error);
     throw new Error("작업 공간을 확인하지 못했습니다.");

@@ -8,24 +8,28 @@ import { sessionScope } from "../lib/session-scope";
 import type { CheckAuthSessionAction } from "../../../shared/auth-contract";
 import { clearSignupDraft } from "../lib/signup-flow";
 
-export function SessionBoundary({ userId, children, checkSessionAction }: { userId: string; children: ReactNode; checkSessionAction: CheckAuthSessionAction }) {
+export function SessionBoundary({ userId, initialExpiresAt, children, checkSessionAction }: { userId: string; initialExpiresAt: string; children: ReactNode; checkSessionAction: CheckAuthSessionAction }) {
   const router = useRouter();
-  const [active, setActive] = useState(false);
-  const [checking, setChecking] = useState(true);
+  // The server guard already verified this identity and expiry before rendering the boundary.
+  const [active, setActive] = useState(true);
+  const [checking, setChecking] = useState(false);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     let sequence = 0;
     let announced = false;
+    let pending = false;
+    let lastSignal: string | undefined;
     let expiry: ReturnType<typeof setTimeout> | undefined;
     const revoke = () => {
       window.dispatchEvent(new Event(AUTH_SCOPE_REVOKED));
       setActive(false);
     };
-    const check = async (hide = true) => {
+    const check = async (hide = false, force = false) => {
+      if (pending && !force) return;
+      pending = true;
       const current = ++sequence;
       if (hide) setChecking(true);
-      setFailed(false);
       try {
         const result = await checkSessionAction();
         if (!result.available) throw new Error("session-check-unavailable");
@@ -38,24 +42,34 @@ export function SessionBoundary({ userId, children, checkSessionAction }: { user
           return;
         }
         setActive(true);
+        setFailed(false);
         clearSignupDraft();
-        if (!announced) { announced = true; announceAuthSessionChange(false); }
+        if (!announced) { announced = true; announceAuthSessionChange(false, userId); }
         clearTimeout(expiry);
-        expiry = setTimeout(() => { revoke(); void check(); }, Math.min(until - Date.now(), 2_147_000_000));
+        expiry = setTimeout(() => { revoke(); void check(true, true); }, Math.min(until - Date.now(), 2_147_000_000));
       } catch {
         if (current !== sequence) return;
         revoke();
         setFailed(true);
       } finally {
-        if (current === sequence) setChecking(false);
+        if (current === sequence) { pending = false; setChecking(false); }
       }
     };
-    const changed = () => { revoke(); void check(); };
-    const visible = () => { if (document.visibilityState === "visible") void check(); };
-    const storage = (event: StorageEvent) => { if (event.key === AUTH_SESSION_STORAGE_KEY) changed(); };
-    const hidden = () => { ++sequence; revoke(); setChecking(true); };
+    const changed = () => { revoke(); void check(true, true); };
+    const visible = () => { if (document.visibilityState === "visible") void check(false); };
+    const signal = (value: { id?: string; userId?: string; source?: string }) => {
+      if (value.source === authSessionSource() || value.id && value.id === lastSignal) return;
+      lastSignal = value.id;
+      if (value.userId === userId) void check(false);
+      else changed();
+    };
+    const storage = (event: StorageEvent) => {
+      if (event.key !== AUTH_SESSION_STORAGE_KEY) return;
+      try { signal(JSON.parse(event.newValue ?? "null") ?? {}); } catch { changed(); }
+    };
+    const hidden = () => { ++sequence; pending = false; revoke(); setChecking(true); };
     const channel = typeof BroadcastChannel === "undefined" ? undefined : new BroadcastChannel(AUTH_SESSION_CHANGED);
-    if (channel) channel.onmessage = event => { if (event.data?.type === "changed" && event.data.source !== authSessionSource()) changed(); };
+    if (channel) channel.onmessage = event => { if (event.data?.type === "changed") signal(event.data); };
     window.addEventListener(AUTH_SESSION_CHANGED, changed);
     window.addEventListener("storage", storage);
     window.addEventListener("focus", visible);
@@ -63,7 +77,11 @@ export function SessionBoundary({ userId, children, checkSessionAction }: { user
     window.addEventListener("pagehide", hidden);
     document.addEventListener("visibilitychange", visible);
     const timer = setInterval(() => { if (document.visibilityState === "visible") void check(false); }, 30_000);
-    void check();
+    const initialUntil = Date.parse(initialExpiresAt);
+    if (Number.isFinite(initialUntil) && initialUntil > Date.now()) {
+      expiry = setTimeout(() => { revoke(); void check(true, true); }, Math.min(initialUntil - Date.now(), 2_147_000_000));
+      void check(false);
+    } else { revoke(); void check(true, true); }
     return () => {
       ++sequence;
       clearTimeout(expiry);
@@ -77,7 +95,7 @@ export function SessionBoundary({ userId, children, checkSessionAction }: { user
       document.removeEventListener("visibilitychange", visible);
       window.dispatchEvent(new Event(AUTH_SCOPE_REVOKED));
     };
-  }, [router, userId, checkSessionAction]);
+  }, [router, userId, initialExpiresAt, checkSessionAction]);
 
   return <>
     {checking && <StatusNotice state="pending" title="로그인 상태를 확인하고 있어요." />}

@@ -14,9 +14,14 @@
 .form { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 32px; display: grid; gap: 22px; }
 .form h1, .form h2 { font-size: 24px; font-weight: 600; line-height: 1.5; }
 .form > p { font-size: 14px; color: var(--muted); line-height: 1.9; margin-top: -10px; }
-.providers { display: grid; gap: 11px; margin-top: 4px; }
-.socialButton { display: flex; justify-content: center; align-items: center; width: 100%; min-height: 48px; border: 0; padding: 0; background: transparent; cursor: pointer; }
-.socialButton img { width: 240px; height: 48px; max-width: 100%; object-fit: contain; }
+.providers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.socialButton { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; min-width: 0; min-height: 76px; border: 1px solid var(--border); border-radius: var(--ui-radius-control, 5px); padding: 10px 4px; background: var(--surface); color: var(--text); font: inherit; font-size: 13px; cursor: pointer; }
+.socialButton:hover { background: var(--active); border-color: var(--control-border, var(--border)); }
+.socialButton img { width: 40px; height: 40px; object-fit: contain; }
+.socialHint { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.7; text-align: center; }
+.socialSection { display: grid; gap: 12px; padding-block: 16px; border-top: 1px solid var(--border); }
+.socialSection > p:first-child { margin: 0; color: var(--muted); font-size: 13px; }
+.providers > p, .providers > div { grid-column: 1 / -1; }
 .socialButton:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
 .socialButton:disabled { opacity: .65; cursor: wait; }
 .providers a { min-height: 48px; font-size: 15px; }

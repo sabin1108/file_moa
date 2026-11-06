@@ -3,11 +3,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 
 const handler = vi.hoisted(() => vi.fn());
+const session = vi.hoisted(() => vi.fn());
+vi.mock("../../src/server/authenticated-session", () => ({ getAuthenticatedSession: session }));
 vi.mock("../../src/server/auth", () => ({ getAuth: () => ({ handler, options: { baseURL: "https://app.example.invalid" } }) }));
 
 import { GET, POST } from "../../src/app/api/auth/[...all]/route";
 
-beforeEach(() => { handler.mockReset(); });
+beforeEach(() => { handler.mockReset(); session.mockReset(); session.mockResolvedValue(null); });
 
 describe("public authentication protocol boundary", () => {
   it("preserves a verification redirect even when its empty body has a JSON content type", async () => {
@@ -35,11 +37,29 @@ describe("public authentication protocol boundary", () => {
     expect(response.headers.get("referrer-policy")).toBe("no-referrer");
   });
 
-  it.each(["/delete-user", "/change-email", "/link-social", "/callback/attacker"])("does not expose an unimplemented endpoint (%s)", async path => {
+  it.each(["/delete-user", "/change-email", "/unlink-account", "/callback/attacker"])("does not expose an unimplemented endpoint (%s)", async path => {
     const response = await POST(new Request(`https://app.example.invalid/api/auth${path}`, { method: "POST" }));
 
     expect(response.status).toBe(404);
     expect(handler).not.toHaveBeenCalled();
+  });
+
+  it("does not link a provider without an authenticated recent session", async () => {
+    const request = () => new Request("https://app.example.invalid/api/auth/link-social", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ provider: "naver" }) });
+    expect((await POST(request())).status).toBe(401);
+    session.mockResolvedValue({ session: { createdAt: new Date(0) } });
+    expect((await POST(request())).status).toBe(403);
+    expect(handler).not.toHaveBeenCalled();
+  });
+
+  it("fixes explicit link destinations and rejects arbitrary callback or idToken payloads", async () => {
+    session.mockResolvedValue({ session: { createdAt: new Date() } });
+    handler.mockResolvedValue(Response.json({ url: "https://nid.naver.com/" }));
+    const start = (body: unknown) => POST(new Request("https://app.example.invalid/api/auth/link-social", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }));
+    expect((await start({ provider: "naver", idToken: "fixture" })).status).toBe(400);
+    expect((await start({ provider: "naver", callbackURL: "https://evil.example.invalid" })).status).toBe(400);
+    expect((await start({ provider: "naver" })).status).toBe(200);
+    expect(await handler.mock.calls[0][0].json()).toEqual({ provider: "naver", disableRedirect: true, callbackURL: "https://app.example.invalid/settings?tab=account", errorCallbackURL: "https://app.example.invalid/settings?tab=account" });
   });
 
   it.each([{}, { provider: "attacker" }, { provider: "google", callbackURL: "https://attacker.example.invalid" }, { provider: "google", idToken: { token: "private-token" } }])("rejects an unapproved social payload before delegation", async body => {

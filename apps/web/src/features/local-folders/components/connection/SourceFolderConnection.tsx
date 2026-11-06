@@ -37,6 +37,7 @@ export function SourceFolderConnection({ view, disabled = false, onConnect, onRe
         <div className={styles.actions}>
           {view.status === "disconnected" && <button type="button" disabled={disabled} className={actionClasses("primary")} onClick={onConnect}>폴더 연결</button>}
           {view.status === "needs-permission" && <button type="button" disabled={disabled} className={actionClasses("primary")} onClick={onReconnect}>다시 연결</button>}
+          {view.status !== "disconnected" && <button type="button" disabled={disabled} className={actionClasses("secondary")} onClick={onConnect}>다른 폴더 선택</button>}
           {view.status !== "disconnected" && <button type="button" disabled={disabled} className={actionClasses("secondary")} onClick={onDisconnect}>연결 해제</button>}
         </div>
       </div>

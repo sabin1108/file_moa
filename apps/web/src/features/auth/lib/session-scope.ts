@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const response = z.object({
-  user: z.object({ id: z.string().min(1).max(128), emailVerified: z.literal(true) }),
+  user: z.object({ id: z.string().min(1).max(128), emailVerified: z.boolean() }),
   session: z.object({ userId: z.string(), expiresAt: z.string() }),
 });
 

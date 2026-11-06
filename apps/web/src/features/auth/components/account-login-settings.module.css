@@ -1,0 +1,7 @@
+.account { min-width: 0; --ui-font-body: 15px; --ui-font-meta: 13px; }
+.identity { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.identity strong { font-size: 18px; font-weight: 600; }
+.identity p { margin-top: 4px; font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
+.method { display: flex; align-items: center; gap: 16px; }
+.method > span { color: var(--muted); font-size: 13px; }
+.help { margin-top: 16px; color: var(--muted); font-size: 13px; line-height: 1.75; }

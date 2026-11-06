@@ -1,15 +1,12 @@
 import "server-only";
 
-import { getAuth } from "./auth";
+import { getAuthenticatedSession } from "./authenticated-session";
 import { getDatabase } from "./database/client";
 
 export async function getAuthenticatedWorkspace(headers: Headers) {
-  const session = await getAuth().api.getSession({
-    headers,
-    query: { disableCookieCache: true, disableRefresh: true },
-  });
+  const session = await getAuthenticatedSession(headers);
 
-  if (!session || !session.user.emailVerified) {
+  if (!session) {
     throw new Error("Authentication required.");
   }
 

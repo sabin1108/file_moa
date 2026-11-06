@@ -6,6 +6,8 @@ import { createServer } from "node:http";
 import { createRequire } from "node:module";
 import { join, resolve, sep } from "node:path";
 import { Browser, sleep } from "../../.agents/skills/design-taste-frontend/scripts/lib/cdp.mjs";
+import { probe, layout, app as appProbe } from "../../.agents/skills/design-taste-frontend/scripts/lib/probe.mjs";
+import { judge, judgeLayout, judgeApp, APP_SKIP } from "../../.agents/skills/design-taste-frontend/scripts/lib/rules.mjs";
 
 const root = process.cwd();
 const web = join(root, "apps/web");
@@ -18,12 +20,13 @@ assert.match(process.env.MOA_TEST_DATABASE_RUN ?? "", /^[a-f0-9-]{36}$/);
 assert.ok(process.env.MOA_TEST_TLS_CERT?.startsWith(cache));
 const requireWeb = createRequire(join(web, "package.json"));
 const next = requireWeb.resolve("next/dist/bin/next");
-const out = join(root, "docs/verification/auth-access-and-signup/browser");
+const out = join(root, "docs/verification/auth-social-settings/browser");
 mkdirSync(out, { recursive: true });
 mkdirSync(cache, { recursive: true });
 const app = mkdtempSync(join(cache, "moa-auth-browser-"));
 const mails = [];
 const checks = [];
+const designChecks = [];
 let server;
 let browser;
 let page;
@@ -170,10 +173,12 @@ try {
   await page.send("Page.reload");
   await wait(() => document.querySelector('[name="email"]')?.value === "browser-flow@example.invalid");
   check("reload keeps identity inputs but never passwords", await page.eval(() => document.querySelector('[name="name"]').value === "가상 사용자" && document.querySelector('[name="password"]').value === ""));
+  const previousPage = page;
   page = await browser.newPage({ width: 1440, height: 900 });
   await page.goto(base + "/welcome", { settleMs: 180 });
   await wait(() => location.search === "?step=password" && !!document.querySelector('[name="password"]'));
   check("a new tab restores only identity and progress", await page.eval(() => document.querySelector('[name="email"]').value === "browser-flow@example.invalid" && document.querySelector('[name="password"]').value === ""));
+  await previousPage.close();
   await input("password", "fixture-browser-password"); await input("passwordConfirm", "different-fixture-password");
   await submit(); await wait(() => !!document.querySelector('[name="passwordConfirm"][aria-invalid="true"]'));
   check("server password mismatch uses the common form error state", await page.eval(() => document.body.textContent.includes("비밀번호가 일치하지 않습니다")));
@@ -204,6 +209,69 @@ try {
   await page.goto(base + "/account", { settleMs: 180 });
   await wait(() => !!document.querySelector('form[data-auth-form] button[type="submit"]'));
   check("account refresh revalidates the cookie on the server", await page.eval(() => document.body.textContent.includes("browser-flow@example.invalid")));
+  await sleep(500);
+  const held = [];
+  const focusRequests = new Set();
+  await page.send("Network.enable");
+  const stopNetwork = page.browser.on(page.sessionId, "Network.requestWillBeSent", event => { if (event.request.url === base + "/account" && event.request.method === "POST") focusRequests.add(event.requestId); });
+  const stopPaused = page.browser.on(page.sessionId, "Fetch.requestPaused", event => { held.push(event); });
+  await page.send("Fetch.enable", { patterns: [{ urlPattern: base + "/account", resourceType: "Fetch", requestStage: "Response" }] });
+  await page.eval(() => {
+    window.fixtureAccountForm = document.querySelector('form[data-auth-form]');
+    for (let index = 0; index < 8; index++) { window.dispatchEvent(new Event("focus")); document.dispatchEvent(new Event("visibilitychange")); }
+  });
+  for (let count = 0; count < 100 && !held.length; count++) await sleep(30);
+  check("focus and visibility bursts share one in-flight session check", held.length === 1 && focusRequests.size === 1);
+  check("pending background revalidation never hides or remounts the authenticated form", await page.eval(() => !document.body.textContent.includes("로그인 상태를 확인하고 있어요") && window.fixtureAccountForm === document.querySelector('form[data-auth-form]') && !document.querySelector('[inert]')));
+  for (const event of held) await page.send("Fetch.continueResponse", { requestId: event.requestId });
+  await page.send("Fetch.disable"); stopNetwork(); stopPaused();
+
+  for (const width of [390, 1440, 1920]) {
+    await page.setViewport({ width, height: 900 });
+    for (const tab of ["account", "folders", "editor"]) {
+      await page.goto(base + "/settings?tab=" + tab, { settleMs: 220 });
+      check(`settings ${tab} fits ${width}px`, await page.eval(() => document.documentElement.scrollWidth <= innerWidth && document.querySelectorAll("h1").length === 1));
+      check(`settings ${tab} has real account entry and no obsolete login notice`, await page.eval(() => !!document.querySelector('a[href="/account"]') && !document.body.textContent.includes("실제 로그인은 아직 연결되지 않았습니다")));
+      if (tab === "account") check("social account settings show three real provider actions", await page.eval(() => document.querySelectorAll('[aria-label="소셜 로그인 연결 관리"] button').length === 3));
+      const metrics = await page.eval(probe);
+      const arrangement = await page.eval(layout);
+      const appMetrics = await page.eval(appProbe);
+      const findings = [...judge(metrics, { width }), ...judgeLayout(arrangement, { width })].filter(finding => !APP_SKIP.has(finding.id) && finding.id !== "no-title" && finding.id !== "small-title").concat(judgeApp(appMetrics, metrics, { width }));
+      designChecks.push({ tab, width, findings });
+      check(`taste app inspection ${tab} at ${width}px has no failure`, !findings.some(finding => finding.level === "FAIL"));
+      await page.screenshot({ path: join(out, `settings-${tab}-${width}.png`), format: "png" });
+    }
+  }
+  await page.goto(base + "/settings?tab=folders", { settleMs: 220 });
+  await page.eval(async () => { const root = await navigator.storage.getDirectory(); const folder = await root.getDirectoryHandle("fixture-notes", { create: true }); window.showDirectoryPicker = async () => folder; });
+  await page.eval(() => { [...document.querySelectorAll("button")].find(button => button.textContent.trim() === "폴더 연결").click(); });
+  await wait(() => document.body.textContent.includes("fixture-notes"));
+  check("the shared folder settings still connect a synthetic local folder", await page.eval(() => !![...document.querySelectorAll("button")].find(button => button.textContent.trim() === "다른 폴더 선택")));
+  await page.screenshot({ path: join(out, "settings-folders-connected-1920.png"), format: "png" });
+  writeFileSync(join(out, "design-checks.json"), JSON.stringify({ tool: "design-taste-frontend app probe/rules in the authenticated fixture", checks: designChecks }, null, 2));
+
+  await page.send("Network.enable");
+  await page.send("Network.setCacheDisabled", { cacheDisabled: true });
+  await page.send("Page.addScriptToEvaluateOnNewDocument", { source: `window.moaLab={lcp:null,cls:0};new PerformanceObserver(list=>{for(const e of list.getEntries())window.moaLab.lcp=e.startTime;}).observe({type:'largest-contentful-paint',buffered:true});new PerformanceObserver(list=>{for(const e of list.getEntries())if(!e.hadRecentInput)window.moaLab.cls+=e.value;}).observe({type:'layout-shift',buffered:true});` });
+  const performanceSamples = [];
+  for (const width of [390, 1440]) {
+    await page.setViewport({ width, height: 900 });
+    for (const route of ["/", "/files", "/settings?tab=account", "/settings?tab=folders", "/settings?tab=editor", "/account"]) {
+      for (let run = 1; run <= 3; run++) {
+        await page.goto(base + route, { settleMs: 350 });
+        const sample = await page.eval(() => {
+          const navigation = performance.getEntriesByType("navigation")[0];
+          const resources = [...performance.getEntriesByType("navigation"), ...performance.getEntriesByType("resource")];
+          return { ...window.moaLab, loadMs: navigation.loadEventEnd, transferBytes: resources.reduce((sum, entry) => sum + entry.transferSize, 0), requests: resources.length, observedPath: location.pathname, checkingVisible: document.body.textContent.includes("로그인 상태를 확인하고 있어요") };
+        });
+        performanceSamples.push({ width, route, run, ...sample });
+      }
+    }
+  }
+  writeFileSync(join(out, "performance-authenticated.json"), JSON.stringify({ at: new Date().toISOString(), buildId: readFileSync(join(app, ".next/BUILD_ID"), "utf8").trim(), conditions: "Windows isolated Chromium; production build; disposable local SQL with verified TLS; authenticated synthetic account and empty OPFS folder; HTTP cache disabled; 350ms post-load observation; no CPU/network throttling; three samples per route and width; lab LCP/CLS, no field INP or real-disk claim", samples: performanceSamples }, null, 2));
+  check("36 authenticated route samples show the requested workspace and no blocking session notice", performanceSamples.length === 36 && performanceSamples.every(sample => !sample.checkingVisible && sample.observedPath === new URL(sample.route, base).pathname));
+  await page.goto(base + "/account", { settleMs: 180 });
+  await wait(() => !!document.querySelector('form[data-auth-form] button[type="submit"]'));
   check("authentication inputs never persist secret tokens or passwords", await page.eval(() => !Object.values(sessionStorage).join(" ").match(/fixture-browser-password|session_token|"token"/)));
   await submit(); await wait(() => location.pathname === "/login");
   await page.goto(base + "/account", { settleMs: 180 });

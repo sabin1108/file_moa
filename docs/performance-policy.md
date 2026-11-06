@@ -1,5 +1,7 @@
 # 사이트 전체 성능 측정 정책
 
+최신 인증/설정 후속: [인증된6경로×2폭×3회와 운영 실행 지역](verification/auth-social-settings/performance.md). 창 복귀의 blocking UI를 제거한 상호작용 검증, 로컬 초기 paint, 운영 공개 세션 조회를 구분한다.
+
 최신 단일 보관함 연결·A4 지면·우측 하단 알림: [2026-11-04 같은 source36표본](verification/document-a4-vault-actions/performance.md). 연결된 지면의 위치/비율 검증과 초기 로딩 측정을 분리했다.
 
 최신 보관함·문서·공통 계획 일관성: [2026-11-04 전체36표본과 files 추가3표본](verification/workspace-consistency/performance.md). 같은 source의 원자료·첫 files 지연 이상치·미확정 원인을 보존하고 표시 통합의 비용을 구분했다.

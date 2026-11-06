@@ -13,7 +13,7 @@ export default async function Page() {
   const available = socialProviders.filter(provider => configuration[provider]);
   return <AuthShell><GuestSessionObserver checkSessionAction={checkAuthSessionAction} /><section className={styles.form} aria-labelledby="social-title">
     <h1 id="social-title">소셜 계정으로 새로 가입</h1>
-    <p>기존 계정이 있다면 원래 로그인 수단을 이용하세요. 같은 이메일이라는 이유로 계정을 합치지 않습니다.</p>
+    <p>이메일과 비밀번호를 새로 입력하지 않고 시작할 수 있습니다.</p>
     {available.length ? <SocialProviders providers={available} action={socialSigninAction} intent="signup" /> : <p>소셜 로그인 연결을 준비하고 있습니다. 이메일로 가입할 수 있어요.</p>}
     <nav className={styles.links} aria-label="계정 메뉴"><ActionLink href="/login">기존 계정으로 로그인</ActionLink><ActionLink href="/welcome">이메일로 새로 가입</ActionLink></nav>
   </section></AuthShell>;

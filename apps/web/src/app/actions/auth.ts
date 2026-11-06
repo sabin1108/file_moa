@@ -8,7 +8,9 @@ import type { AuthFormState, AuthOperation, AuthSessionSnapshot } from "../../sh
 import { submitAuthForm } from "../../server/auth-forms";
 import { requireGuest } from "../../server/session-guards";
 import { beginSocialSignIn } from "../../server/auth-social";
-import { getAuth } from "../../server/auth";
+import { getAuthenticatedSession } from "../../server/authenticated-session";
+import { manageSocialAccount } from "../../server/auth-account";
+import { reportAuthenticationFailure } from "../../server/auth-diagnostics";
 
 async function applyAuthCookies(response?: Response) {
   const returnedCookies = response?.headers.get("set-cookie");
@@ -46,10 +48,19 @@ export async function socialSigninAction(_previous: AuthFormState, data: FormDat
   return result.state;
 }
 
+export async function socialAccountAction(_previous: AuthFormState, data: FormData) {
+  let result: Awaited<ReturnType<typeof manageSocialAccount>>;
+  try { result = await manageSocialAccount(data, new Headers(await headers())); }
+  catch (error) { reportAuthenticationFailure("form", error); return { status: "error" as const, message: "로그인 수단을 변경하지 못했습니다. 다시 시도해 주세요." }; }
+  await applyAuthCookies(result.response);
+  if (result.url) redirect(result.url);
+  return result.state;
+}
+
 export async function checkAuthSessionAction(): Promise<{ available: boolean; session: AuthSessionSnapshot }> {
   const requestHeaders = await headers();
   try {
-    const value = await getAuth().api.getSession({ headers: requestHeaders, query: { disableCookieCache: true, disableRefresh: true } });
+    const value = await getAuthenticatedSession(requestHeaders);
     return { available: true, session: value ? { user: { id: value.user.id, emailVerified: value.user.emailVerified }, session: { userId: value.session.userId, expiresAt: value.session.expiresAt.toISOString() } } : null };
   } catch {
     return { available: false, session: null };

@@ -7,3 +7,5 @@
 - `kakao.svg`: https://developers.kakao.com/tool/images/resource/preview/login-complete-ko.svg. [공식 리소스](https://developers.kakao.com/tool/resource/login), [디자인 가이드](https://developers.kakao.com/docs/ko/kakaologin/design-guide).
 
 확인일: 2026-11-06. Google·네이버·카카오의 상표 및 자산 권리는 각 제공자에게 있다.
+
+후속 소셜 선택 행은 버튼 전체 이미지 대신 아이콘과 실제 텍스트를 사용한다. `google-icon.png`는 같은 공식 ZIP의 Light / Show text No / Square @4x, `naver-icon.png`는 같은 ZIP의 `NAVER_login_Light_KR_green_icon_H48.png`를 변경 없이 사용한다. `kakao-icon.svg`는 위 공식 SVG의 말풍선 심볼 path를 유지하고 정비례로 확대해 공식 노란 바탕에 배치했다. 로고 모양과 색상은 재작성하지 않았다.

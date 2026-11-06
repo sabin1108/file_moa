@@ -1,7 +1,11 @@
 .connection h3 { overflow-wrap: anywhere; }
 .controls { display: flex; flex-direction: column; align-items: flex-end; gap: var(--ui-space-2); }
 .actions { display: flex; flex-wrap: wrap; gap: var(--ui-space-2); }
-.settings { display: grid; gap: var(--ui-space-4); }
+.settings { display: grid; gap: var(--ui-space-4); --ui-font-body: 15px; --ui-font-meta: 13px; }
+.connection > div { border-bottom: 0; padding-block: 0; }
+.connection h3 { font-size: 17px; font-weight: 600; }
+.connection .controls { gap: 10px; }
+.connection .actions { justify-content: flex-end; }
 .settings:focus-visible { outline: 2px solid var(--focus); outline-offset: var(--ui-space-1); }
 .scope { color: var(--muted); font-size: var(--ui-font-body); line-height: 1.7; }
 @media (max-width: 620px) {
@@ -19,7 +23,7 @@
 .vaultActions { display: flex; flex-wrap: wrap; gap: var(--ui-space-2); }
 .vaultSummary { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--ui-space-3); padding-block: var(--ui-space-3); }
 .vaultSummary > p { flex: 1; min-width: min(100%, 220px); margin: 0; }
-.vaultManagement { min-width: 0; margin: var(--ui-space-4) 0 0; padding: var(--ui-space-4) 0 0; border: 0; border-top: 1px solid var(--border); }
+.vaultManagement { min-width: 0; margin: var(--ui-space-4) 0 0; padding: var(--ui-space-3) 0 0; border: 0; }
 .vaultManagement legend { padding: 0 var(--ui-space-3) 0 0; font-size: 14px; font-weight: 600; }
 .vaultManagement > p { margin-bottom: 0; color: var(--muted); font-size: 13px; }
 .vaultCreation { margin-top: var(--ui-space-4); padding: var(--ui-space-3); border: 1px solid var(--border); background: var(--panel); }

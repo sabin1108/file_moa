@@ -8,3 +8,7 @@ export type AuthFormState = {
 export type AuthFormAction = (previous: AuthFormState, data: FormData) => Promise<AuthFormState>;
 export type AuthSessionSnapshot = { user: { id: string; emailVerified: boolean }; session: { userId: string; expiresAt: string } } | null;
 export type CheckAuthSessionAction = () => Promise<{ available: boolean; session: AuthSessionSnapshot }>;
+export type AccountLoginSettings = {
+  name: string; email: string; hasPassword: boolean;
+  providers: { id: import("./social-auth").SocialProvider; connected: boolean; available: boolean }[];
+};

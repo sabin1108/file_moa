@@ -8,6 +8,7 @@ import { getDatabase } from "./database/client";
 import { socialProviderConfiguration } from "./social-providers";
 import { reportAuthenticationFailure } from "./auth-diagnostics";
 import { createAuthRateLimiter } from "./auth-rate-limit";
+import { socialProviders } from "../shared/social-auth";
 
 function createAuth() {
   const secret = process.env.BETTER_AUTH_SECRET;
@@ -49,6 +50,8 @@ function createAuth() {
       resetPasswordTokenExpiresIn: 1_800,
       revokeSessionsOnPasswordReset: true,
       sendResetPassword: async ({ user, url }) => {
+        const credential = await getDatabase().account.findFirst({ where: { userId: user.id, providerId: "credential", accountId: user.id, password: { not: null } }, select: { id: true } });
+        if (!credential) return;
         await sendAuthenticationEmail({
           to: user.email,
           subject: "모아 비밀번호 재설정",
@@ -61,7 +64,8 @@ function createAuth() {
       sendOnSignIn: false,
       autoSignInAfterVerification: false,
       expiresIn: 3_600,
-      sendVerificationEmail: async ({ user, token }) => {
+      sendVerificationEmail: async ({ user, token }, request) => {
+        if (request && /^\/api\/auth\/callback\/(google|naver|kakao)$/.test(new URL(request.url).pathname)) return;
         const url = new URL("/verify-email", origin.origin);
         url.searchParams.set("token", token);
         await sendAuthenticationEmail({
@@ -73,14 +77,19 @@ function createAuth() {
     },
     account: {
       encryptOAuthTokens: true,
-      accountLinking: { enabled: false, disableImplicitLinking: true },
+      accountLinking: { enabled: true, disableImplicitLinking: true, allowDifferentEmails: true, trustedProviders: [...socialProviders] },
     },
     session: { cookieCache: { enabled: false } },
     verification: { storeIdentifier: "hashed" },
     databaseHooks: {
       account: {
         // ID tokens are consumed during the callback; this app has no later use for them.
-        create: { before: async account => ({ data: { ...account, idToken: null } }) },
+        create: { before: async account => {
+          if (account.providerId === "credential" && await getDatabase().account.findFirst({
+            where: { userId: account.userId, providerId: { in: [...socialProviders] } }, select: { id: true },
+          })) throw new Error("A social account requires explicit credential linking.");
+          return { data: { ...account, idToken: null } };
+        } },
         update: { before: async account => ({ data: { ...account, idToken: null } }) },
       },
       session: {
@@ -95,6 +104,7 @@ function createAuth() {
         "/sign-in/email": { window: 60, max: 5 },
         "/sign-up/email": { window: 60, max: 5 },
         "/sign-in/social": { window: 60, max: 10 },
+        "/link-social": { window: 60, max: 5 },
         "/send-verification-email": { window: 60, max: 3 },
         "/request-password-reset": { window: 60, max: 3 },
       },

@@ -14,7 +14,7 @@ export function GuestSessionObserver({ checkSessionAction }: { checkSessionActio
       const current = ++sequence;
       try {
         const result = await checkSessionAction();
-        if (current === sequence && result.available && result.session?.user.emailVerified) {
+        if (current === sequence && result.available && result.session) {
           clearSignupDraft();
           router.replace("/");
           router.refresh();

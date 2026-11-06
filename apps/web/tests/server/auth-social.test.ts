@@ -8,9 +8,9 @@ import { socialProviderConfiguration } from "../../src/server/social-providers";
 
 beforeEach(() => { protocol.mockReset(); });
 describe("social authentication trust boundary", () => {
-  it("enables only fully configured providers and requires verified email without implicit signup", () => {
+  it("uses provider identity without forcing email/password registration or app email verification", () => {
     const config = socialProviderConfiguration({ GOOGLE_CLIENT_ID: "fixture-id", GOOGLE_CLIENT_SECRET: "fixture-secret", NAVER_CLIENT_ID: "incomplete" });
-    expect(config).toMatchObject({ google: { clientId: "fixture-id", clientSecret: "fixture-secret", requireEmailVerification: true, disableImplicitSignUp: true } });
+    expect(config).toMatchObject({ google: { clientId: "fixture-id", clientSecret: "fixture-secret", requireEmailVerification: false, disableImplicitSignUp: true } });
     expect(config.naver).toBeUndefined();
     expect(config.kakao).toBeUndefined();
   });

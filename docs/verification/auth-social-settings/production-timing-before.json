@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-06T05:40:29.325Z",
+  "commit": "812c93e",
+  "route": "/api/auth/get-session",
+  "conditions": "Node fetch; no cookie; one sequential process; three samples; first request not assumed warm; response consumed; no field INP or signed-in journey claim",
+  "databaseRegion": "ap-southeast-2",
+  "samples": [
+    {
+      "elapsedMs": 3839,
+      "regions": [
+        "icn1",
+        "iad1"
+      ]
+    },
+    {
+      "elapsedMs": 529,
+      "regions": [
+        "icn1",
+        "iad1"
+      ]
+    },
+    {
+      "elapsedMs": 527,
+      "regions": [
+        "icn1",
+        "iad1"
+      ]
+    }
+  ]
+}

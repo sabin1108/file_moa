@@ -18,8 +18,8 @@ const navigation = [
   { id: "settings", href: "/settings", label: "설정", icon: "settings" },
 ] as const;
 
-function Navigation({ active }: { active?: Section }) {
-  return navigation.map(item => (
+function Navigation({ active, mobile = false }: { active?: Section; mobile?: boolean }) {
+  return navigation.filter(item => mobile || item.id !== "settings").map(item => (
     <Link
       key={item.id}
       href={item.href}
@@ -49,15 +49,18 @@ export function WorkspaceShell({ title, active, children }: {
         <nav className={sidebar.navigation} aria-label="주 메뉴">
           <Navigation active={active} />
         </nav>
-        <div className={styles.sidebarNote}>실제 로그인은 아직 연결되지 않았습니다.</div>
+        <div className={sidebar.sidebarFooter}>
+          <Link href="/account" className={sidebar.accountEntry}><Icon name="person" /><span>나의 계정</span></Link>
+          <Link href="/settings" aria-label="설정" title="설정" aria-current={active === "settings" ? "page" : undefined}><Icon name="settings" size={20} /></Link>
+        </div>
       </aside>
       <main id="workspace-content" className={`${ui.main} ${styles.main}`}>
         <header className={ui.topbar}>
           <h1>{title}</h1>
-          <ActionLink href="/preview">시안 보관함</ActionLink>
+          <nav aria-label="계정 메뉴"><ActionLink href="/preview">시안 보관함</ActionLink><ActionLink href="/account"><Icon name="person" />계정</ActionLink></nav>
         </header>
         <nav className={styles.mobileNav} aria-label="모바일 주 메뉴">
-          <Navigation active={active} />
+          <Navigation active={active} mobile />
         </nav>
         {children}
       </main>

@@ -4,11 +4,13 @@ import { z } from "zod";
 import { getAuth } from "./auth";
 import { socialProviders } from "../shared/social-auth";
 import { reportAuthenticationFailure } from "./auth-diagnostics";
+import { getAuthenticatedSession } from "./authenticated-session";
 
 const postPaths = new Set([
   "/sign-up/email", "/sign-in/email", "/sign-out", "/send-verification-email",
   "/request-password-reset", "/reset-password",
   "/sign-in/social",
+  "/link-social",
 ]);
 
 export async function handleAuthRequest(request: Request) {
@@ -21,16 +23,23 @@ export async function handleAuthRequest(request: Request) {
   }
 
   try {
-    if (path === "/sign-in/social") {
-      const input = z.object({ provider: z.enum(socialProviders), intent: z.enum(["signin", "signup"]).default("signin") }).strict().safeParse(await request.clone().json().catch(() => null));
+    if (path === "/sign-in/social" || path === "/link-social") {
+      const linking = path === "/link-social";
+      if (linking) {
+        const session = await getAuthenticatedSession(request.headers);
+        if (!session) return Response.json({ code: "UNAUTHORIZED" }, { status: 401, headers: { "cache-control": "no-store" } });
+        if (Date.now() - session.session.createdAt.getTime() > 86_400_000) return Response.json({ code: "SESSION_NOT_FRESH" }, { status: 403, headers: { "cache-control": "no-store" } });
+      }
+      const schema = linking ? z.object({ provider: z.enum(socialProviders) }).strict() : z.object({ provider: z.enum(socialProviders), intent: z.enum(["signin", "signup"]).default("signin") }).strict();
+      const input = schema.safeParse(await request.clone().json().catch(() => null));
       if (!input.success) return Response.json({ code: "INVALID_SOCIAL_REQUEST" }, { status: 400, headers: { "cache-control": "no-store" } });
       const origin = new URL(String(getAuth().options.baseURL)).origin;
       const headers = new Headers(request.headers);
       headers.delete("content-length");
       headers.set("content-type", "application/json");
       request = new Request(request.url, { method: "POST", headers, body: JSON.stringify({
-        provider: input.data.provider, requestSignUp: input.data.intent === "signup", disableRedirect: true,
-        callbackURL: `${origin}/`, newUserCallbackURL: `${origin}/`, errorCallbackURL: `${origin}/login`,
+        provider: input.data.provider, ...linking ? {} : { requestSignUp: "intent" in input.data && input.data.intent === "signup", newUserCallbackURL: `${origin}/` }, disableRedirect: true,
+        callbackURL: linking ? `${origin}/settings?tab=account` : `${origin}/`, errorCallbackURL: linking ? `${origin}/settings?tab=account` : `${origin}/login`,
       }) });
     }
     const response = await getAuth().handler(request);

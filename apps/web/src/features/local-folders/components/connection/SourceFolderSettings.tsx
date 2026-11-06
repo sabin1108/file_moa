@@ -93,18 +93,6 @@ export function SourceFolderSettings({ onConnected }: { onConnected?: () => void
         onDisconnect={disconnect}
       />
     )}
-    {state.view && state.view.status !== "disconnected" && (
-      <div>
-        <button
-          type="button"
-          className={actionClasses("secondary")}
-          disabled={!!state.pending}
-          onClick={() => { void connectAndContinue(connect); }}
-        >
-          다른 폴더 선택
-        </button>
-      </div>
-    )}
     {state.pending && <StatusNotice state="pending" title={pendingTitles[state.pending]} />}
     {state.notice && state.notice.state !== "success" && <StatusNotice {...state.notice} action={retryAction} />}
     <RecoveryVaultSettings titleRef={vaultTitle} />

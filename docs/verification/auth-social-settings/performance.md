@@ -1,0 +1,30 @@
+# 인증 확인·설정 화면 성능
+
+로컬 초기 paint와 운영 네트워크 응답을 별도 측정한다. 아래 수치는 서로 다른 조건이며 로그인 여정 전체나 실사용 INP를 뜻하지 않는다.
+
+## 인증된 production fixture
+
+Windows 격리 Chromium, production build, 폐기형 PostgreSQL의 검증 TLS, 합성 계정과 빈 OPFS 폴더. HTTP cache 비활성화, CPU/네트워크 제한 없음. 경로별3회, load 이후350ms 관찰. 원자료는 [36표본](browser/performance-authenticated.json)이다. 폴더/파일 경로의 작은 CLS는 저장된 로컬 연결 상태를 복원하면서 발생했다. 다른 빌드의 비로그인 화면과 같은 조건의 회귀 비교로 취급하지 않는다.
+
+| 폭 | 경로 | LCP 중앙값 ms | CLS 최대 | 전송 중앙값 KiB | 요청 중앙값 |
+| ---: | --- | ---: | ---: | ---: | ---: |
+| 390 | / | 52 | 0 | 244 | 23 |
+| 390 | /files | 60 | 0.0082 | 283 | 21 |
+| 390 | 계정 설정 | 48 | 0 | 266 | 27 |
+| 390 | 폴더 설정 | 52 | 0.0354 | 266 | 27 |
+| 390 | 편집 설정 | 52 | 0 | 265 | 27 |
+| 390 | /account | 44 | 0 | 210 | 18 |
+| 1440 | / | 48 | 0 | 244 | 23 |
+| 1440 | /files | 56 | 0.0016 | 283 | 21 |
+| 1440 | 계정 설정 | 56 | 0 | 266 | 27 |
+| 1440 | 폴더 설정 | 52 | 0.0193 | 266 | 27 |
+| 1440 | 편집 설정 | 56 | 0 | 265 | 27 |
+| 1440 | /account | 40 | 0 | 210 | 18 |
+
+추가 상호작용 검사는 브라우저에서 세션 재검증 응답을 실제 보류한 채 focus/visibility16개 이벤트를 발생시켰다. 요청1개, 기존 폼의 DOM 동일성 유지, inert/로그인 확인 문구 없음으로 통과했다. 로그아웃·계정 변경·만료에는 별도의 차단 경로를 유지한다. 초기 서버 검증은 없애지 않았고 요청 간 세션 캐시를 추가하지 않았다.
+
+## 운영 실행 지역
+
+변경 전 공개 `/api/auth/get-session`을 쿠키 없이 순서대로3회 조회한 값은3839/529/527ms다. 첫 요청은 warm으로 가정하지 않는다. 응답은 icn1 edge→iad1 function, 실제 DB pooler 주소의 지역은 ap-southeast-2였다. [원자료](production-timing-before.json).
+
+Vercel function 실행을 syd1로 지정해 DB 연결 지점과 가깝게 둔다. 이 설정은 정적 자산/CDN을 옮기는 설정이 아니다. 새 배포 후 실행 지역과 같은 요청을 확인하며 측정 전 개선율은 주장하지 않는다. [Vercel 지역](https://vercel.com/docs/regions), [project regions 설정](https://vercel.com/docs/project-configuration/vercel-json#regions).
