@@ -12,14 +12,14 @@ import { FolderConnectionSession } from "../services/connection-session";
 import { IndexedDbHandleRepository } from "../services/handle-repository";
 import { SourceConnectionController } from "../store/source-connection-controller";
 import { RecoveryConnectionController } from "../store/recovery-connection-controller";
+import { AUTH_SCOPE_REVOKED } from "../../../shared/auth-session-events";
 
 type PickerWindow = Window & { showDirectoryPicker?: (options: { mode: "read" | "readwrite" }) => Promise<FolderHandle> };
 
 /** React와 외부 상태의 연결점. Provider 수명 동안 controller를 유지하고 effect에서 브라우저 I/O를 시작한다. */
 export function useSourceFolderConnection(owner: ConnectionOwner) {
-  // TEMPORARY(local-folder-dev): 개발 DB를 제품 계정 저장소와 섞지 않는다.
-  // 배포 전 인증된 소유자와 제품 DB로 교체한다. 개발 핸들은 자동 이관하지 않는다.
-  const [session] = useState(() => new FolderConnectionSession(new IndexedDbHandleRepository("moa-settings-development-v1")));
+  // Development handles remain in their original database; do not import them into an account.
+  const [session] = useState(() => new FolderConnectionSession(new IndexedDbHandleRepository("moa-source-connections-v1")));
   const [picker] = useState(() => (options: { mode: "read" | "readwrite" }) => {
       const picker = (window as PickerWindow).showDirectoryPicker;
       if (!picker) return Promise.reject(new Error("directory-picker-unavailable"));
@@ -43,20 +43,22 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
   }, [recovery]);
 
   useEffect(() => {
-    // TEMPORARY(local-folder-dev): 고정 개발 소유자가 원격 서비스에서 사용되지 않게 한다.
-    // 이 제한만 삭제하면 안 된다. 실제 세션 연결을 검증한 뒤 함께 교체한다.
-    if (!["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname)) {
-      controller.unavailable("현재는 localhost의 개발 검증용 연결입니다. 실제 로그인 연동 후 서비스에서 사용할 수 있습니다.");
-    } else if (!window.isSecureContext || typeof (window as PickerWindow).showDirectoryPicker !== "function" || !window.indexedDB || !navigator.locks) {
-      controller.unavailable("폴더 선택·기기 저장소를 지원하는 데스크톱 Chrome 또는 Edge에서 localhost 주소로 열어 주세요.");
+    if (!window.isSecureContext || typeof (window as PickerWindow).showDirectoryPicker !== "function" || !window.indexedDB || !navigator.locks) {
+      controller.unavailable("폴더 선택·기기 저장소를 지원하는 데스크톱 Chrome 또는 Edge에서 보안 연결로 열어 주세요.");
     } else {
       void controller.load(owner);
     }
-    return () => {
+    const revoke = () => {
       recovery.stop();
       controller.stop();
+      void session.switchOwner(null);
     };
-  }, [controller, recovery, owner]);
+    window.addEventListener(AUTH_SCOPE_REVOKED, revoke);
+    return () => {
+      window.removeEventListener(AUTH_SCOPE_REVOKED, revoke);
+      revoke();
+    };
+  }, [controller, recovery, session, owner]);
 
   return { state, recovery, recoveryState, recoveryView: session.view("recovery"), listing: controller.listing, preview: controller.preview, plan: controller.plan, navigation: controller.navigation,
     recoveryKey: session.recoveryVersion(), readRecoveryArchive: session.readRecoveryArchiveList, inspectRecoveryArchive: session.inspectRecoveryArchiveDetail,

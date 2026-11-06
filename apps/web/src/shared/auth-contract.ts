@@ -6,3 +6,5 @@ export type AuthFormState = {
   fieldErrors?: Partial<Record<AuthFieldName, string>>;
 };
 export type AuthFormAction = (previous: AuthFormState, data: FormData) => Promise<AuthFormState>;
+export type AuthSessionSnapshot = { user: { id: string; emailVerified: boolean }; session: { userId: string; expiresAt: string } } | null;
+export type CheckAuthSessionAction = () => Promise<{ available: boolean; session: AuthSessionSnapshot }>;

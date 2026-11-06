@@ -1,9 +1,12 @@
 import { AuthShell } from "../../components/layout/AuthShell";
 import { AuthScreen } from "../../features/auth/components/AuthScreen";
-import { resetAction } from "../actions/auth";
+import { resetAction, checkAuthSessionAction } from "../actions/auth";
+import { requireGuest } from "../../server/session-guards";
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  await requireGuest();
   const token = (await searchParams).token;
 
-  return <AuthShell><AuthScreen operation="reset" action={resetAction} initialToken={typeof token === "string" && token.length <= 4096 ? token : ""} /></AuthShell>;
+  return <AuthShell><GuestSessionObserver checkSessionAction={checkAuthSessionAction} /><AuthScreen operation="reset" action={resetAction} initialToken={typeof token === "string" && token.length <= 4096 ? token : ""} /></AuthShell>;
 }
+import { GuestSessionObserver } from "../../features/auth/components/GuestSessionObserver";

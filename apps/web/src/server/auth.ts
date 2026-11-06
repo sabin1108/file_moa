@@ -5,6 +5,9 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { after } from "next/server";
 import { authenticationMailConfig, sendAuthenticationEmail } from "./auth-mail";
 import { getDatabase } from "./database/client";
+import { socialProviderConfiguration } from "./social-providers";
+import { reportAuthenticationFailure } from "./auth-diagnostics";
+import { createAuthRateLimiter } from "./auth-rate-limit";
 
 function createAuth() {
   const secret = process.env.BETTER_AUTH_SECRET;
@@ -35,6 +38,8 @@ function createAuth() {
     secret,
     baseURL: origin.origin,
     trustedOrigins: [origin.origin],
+    onAPIError: { errorURL: `${origin.origin}/login` },
+    socialProviders: socialProviderConfiguration(),
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true,
@@ -79,11 +84,12 @@ function createAuth() {
     },
     rateLimit: {
       enabled: true,
-      // shortcut: counters are per process; use shared storage before a multi-instance public release.
-      storage: "memory",
+      storage: "database",
+      customStorage: createAuthRateLimiter(getDatabase, secret),
       customRules: {
         "/sign-in/email": { window: 60, max: 5 },
         "/sign-up/email": { window: 60, max: 5 },
+        "/sign-in/social": { window: 60, max: 10 },
         "/send-verification-email": { window: 60, max: 3 },
         "/request-password-reset": { window: 60, max: 3 },
       },
@@ -98,7 +104,7 @@ function createAuth() {
         },
       },
     },
-    logger: { disabled: true },
+    logger: { level: "error", log: (level, ...values) => { if (level === "error") reportAuthenticationFailure("library", values); } },
   });
 }
 

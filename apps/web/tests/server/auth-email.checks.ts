@@ -246,7 +246,7 @@ describe("email authentication through the real route and PostgreSQL", () => {
       expect(response.status).toBe(200);
       expect((await database.user.findUniqueOrThrow({ where: { email: failedEmail } })).emailVerified).toBe(false);
       expect(await database.session.count({ where: { user: { email: failedEmail } } })).toBe(0);
-      expect(log).toHaveBeenCalledWith("Authentication email delivery failed.");
+      expect(log).toHaveBeenCalledWith("Authentication email delivery failed.", { providerStatus: null });
       expect(JSON.stringify(log.mock.calls)).not.toContain("fixture-secret-and-token");
     } finally {
       vi.stubGlobal("fetch", previousFetch);

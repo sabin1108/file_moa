@@ -9,6 +9,7 @@ vi.mock("../../src/server/database/client", () => ({ getDatabase: vi.fn() }));
 import { getDatabase } from "../../src/server/database/client";
 import { getAuth } from "../../src/server/auth";
 import { getAuthenticatedWorkspace } from "../../src/server/workspace";
+import { createAuthRateLimiter } from "../../src/server/auth-rate-limit";
 
 const secret = "fixture-auth-secret-" + randomUUID();
 const userA = "runtime-a";
@@ -65,6 +66,16 @@ afterAll(async () => {
 });
 
 describe("real PrismaPg and Better Auth adapter", () => {
+  it("shares an atomic authentication limit across independent app instances without storing IP text", async () => {
+    const key = `192.0.2.30:/fixture/${randomUUID()}`;
+    const stores = [createAuthRateLimiter(() => database, secret), createAuthRateLimiter(() => secondDatabase, secret)];
+    const results = await Promise.all(Array.from({ length: 12 }, (_, index) => stores[index % 2].consume(key, { max: 5, window: 60 })));
+    expect(results.filter(result => result.allowed)).toHaveLength(5);
+    expect(results.filter(result => !result.allowed).every(result => result.retryAfter && result.retryAfter > 0 && result.retryAfter <= 60)).toBe(true);
+    expect(await database.rateLimit.findUnique({ where: { key } })).toBeNull();
+    const hashedKey = createHmac("sha256", secret).update("moa-rate-limit-v1\0").update(key).digest("hex");
+    expect((await database.rateLimit.findUniqueOrThrow({ where: { key: hashedKey } })).count).toBe(5);
+  });
   it("AUTHDB-004 resolves a signed session without a workspace user context", async () => {
     expect(await database.workspace.findMany()).toEqual([]);
 

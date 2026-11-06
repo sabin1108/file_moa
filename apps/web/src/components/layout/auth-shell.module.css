@@ -15,6 +15,10 @@
 .form h1, .form h2 { font-size: 24px; font-weight: 600; line-height: 1.5; }
 .form > p { font-size: 14px; color: var(--muted); line-height: 1.9; margin-top: -10px; }
 .providers { display: grid; gap: 11px; margin-top: 4px; }
+.socialButton { display: flex; justify-content: center; align-items: center; width: 100%; min-height: 48px; border: 0; padding: 0; background: transparent; cursor: pointer; }
+.socialButton img { width: 240px; height: 48px; max-width: 100%; object-fit: contain; }
+.socialButton:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+.socialButton:disabled { opacity: .65; cursor: wait; }
 .providers a { min-height: 48px; font-size: 15px; }
 .providers a:first-child { border-color: var(--text); }
 .footnote { border-top: 1px solid var(--border); padding-top: 21px; }

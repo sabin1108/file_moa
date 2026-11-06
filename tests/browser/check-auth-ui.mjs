@@ -18,7 +18,7 @@ assert.match(process.env.MOA_TEST_DATABASE_RUN ?? "", /^[a-f0-9-]{36}$/);
 assert.ok(process.env.MOA_TEST_TLS_CERT?.startsWith(cache));
 const requireWeb = createRequire(join(web, "package.json"));
 const next = requireWeb.resolve("next/dist/bin/next");
-const out = join(root, "docs/verification/auth-ui/browser");
+const out = join(root, "docs/verification/auth-access-and-signup/browser");
 mkdirSync(out, { recursive: true });
 mkdirSync(cache, { recursive: true });
 const app = mkdtempSync(join(cache, "moa-auth-browser-"));
@@ -73,7 +73,7 @@ async function input(name, value) {
 }
 async function submit() {
   const point = await page.eval(() => {
-    const button = document.querySelector('button[type="submit"]');
+    const button = document.querySelector('form[data-auth-form] button[type="submit"]');
     button.scrollIntoView({ block: "center" });
     const rect = button.getBoundingClientRect();
     return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
@@ -93,6 +93,7 @@ try {
   // A copied build and disposable CA keep strict production TLS intact; no app env is copied.
   cpSync(join(web, ".next"), join(app, ".next"), { recursive: true, filter: source => !source.includes(join(".next", "cache")) && !source.includes(join(".next", "node_modules")) });
   copyRuntimeLinks(join(web, ".next/node_modules"), join(app, ".next/node_modules"));
+  cpSync(join(web, "public"), join(app, "public"), { recursive: true });
   mkdirSync(join(app, "prisma/certs"), { recursive: true });
   cpSync(process.env.MOA_TEST_TLS_CERT, join(app, "prisma/certs/supabase-prod-ca-2021.crt"));
   writeFileSync(join(app, "package.json"), JSON.stringify({ private: true }));
@@ -100,7 +101,7 @@ try {
   writeFileSync(preload, `const fetchOriginal=globalThis.fetch;globalThis.fetch=(url,options)=>{const target=url instanceof Request?url.url:String(url);if(target!=='https://api.resend.com/emails')return fetchOriginal(url,options);return fetchOriginal(url instanceof Request?new Request(process.env.MOA_MAIL_CAPTURE_URL,url):process.env.MOA_MAIL_CAPTURE_URL,options);};`);
   server = spawn(process.execPath, [next, "start", app, "--hostname", "127.0.0.1", "--port", String(port)], {
     cwd: app, windowsHide: true, stdio: ["ignore", "pipe", "pipe"],
-    env: { ...process.env, NODE_ENV: "production", NODE_OPTIONS: `--require=${JSON.stringify(preload)}`, DATABASE_URL: runtimeURL.toString(), BETTER_AUTH_URL: base, BETTER_AUTH_SECRET: "fixture-browser-" + randomUUID(), RESEND_API_KEY: "fixture-resend-key", EMAIL_FROM: "Moa <sender@example.invalid>", MOA_MAIL_CAPTURE_URL: mailURL },
+    env: { ...process.env, NODE_ENV: "production", NODE_OPTIONS: `--require=${JSON.stringify(preload)}`, DATABASE_URL: runtimeURL.toString(), BETTER_AUTH_URL: base, BETTER_AUTH_SECRET: "fixture-browser-" + randomUUID(), RESEND_API_KEY: "fixture-resend-key", EMAIL_FROM: "Moa <sender@example.invalid>", MOA_MAIL_CAPTURE_URL: mailURL, GOOGLE_CLIENT_ID: "fixture-google", GOOGLE_CLIENT_SECRET: "fixture-google-secret", NAVER_CLIENT_ID: "fixture-naver", NAVER_CLIENT_SECRET: "fixture-naver-secret", KAKAO_CLIENT_ID: "fixture-kakao", KAKAO_CLIENT_SECRET: "fixture-kakao-secret" },
   });
   server.stdout.on("data", chunk => { logs += chunk; });
   server.stderr.on("data", chunk => { logs += chunk; });
@@ -118,19 +119,45 @@ try {
 
   for (const width of [390, 768, 1440, 1920]) {
     await page.setViewport({ width, height: 900 });
-    for (const route of ["/login", "/welcome", "/welcome?step=verification", "/forgot-password", "/reset-password", "/verify-email"]) {
+    for (const route of ["/login", "/welcome", "/welcome?step=verification", "/forgot-password", "/reset-password", "/verify-email", "/social-signup"]) {
       await page.goto(base + route, { settleMs: 180 });
       check(`${route} fits ${width}px and has one main heading`, await page.eval(() => document.documentElement.scrollWidth <= innerWidth && document.querySelectorAll("h1").length === 1));
       await page.screenshot({ path: join(out, `${route.split("?")[0].slice(1)}-${route.includes("?") ? "waiting-" : ""}${width}.png`), format: "png" });
     }
   }
 
+  for (const route of ["/", "/files", "/settings", "/account", "/preview"]) {
+    await page.goto(base + route, { settleMs: 180 });
+    check(`anonymous ${route} redirects to login`, await page.eval(() => location.pathname === "/login"));
+  }
+  check("all three official social buttons have loaded images", await page.eval(() => [...document.querySelectorAll('button[name="provider"] img')].length === 3 && [...document.querySelectorAll('button[name="provider"] img')].every(image => image.complete && image.naturalWidth > 0)));
+
   await page.goto(base + "/welcome?step=complete", { settleMs: 180 });
-  check("forged completion URL returns to signup details", await page.eval(() => document.querySelector('[aria-current="step"]').textContent.includes("가입 정보")));
-  await input("name", "가상 사용자"); await input("email", "browser-flow@example.invalid"); await input("password", "fixture-browser-password");
+  check("forged completion URL returns to the name field", await page.eval(() => document.querySelector('[aria-current="step"]').textContent.includes("이름") && !document.querySelector('[name="email"]')));
+  await input("name", "가상 사용자");
+  check("signup IME Enter does not advance", await page.eval(() => !document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", isComposing: true, bubbles: true, cancelable: true })) && !document.querySelector('[name="email"]')));
+  await page.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13 });
+  await page.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13 });
+  await wait(() => !!document.querySelector('[name="email"]'));
+  check("name Enter reveals email below the retained name", await page.eval(() => document.querySelector('[name="name"]').value === "가상 사용자" && !document.querySelector('[name="password"]')));
+  await input("email", "browser-flow@example.invalid");
+  await page.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 });
+  await page.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 });
+  await wait(() => !!document.querySelector('[name="password"]'));
+  check("valid email blur reveals password and confirmation on the same form", await page.eval(() => !!document.querySelector('[name="passwordConfirm"]') && document.querySelectorAll('form[data-auth-form]').length === 1));
+  await page.eval(() => history.back());
+  await wait(() => location.search === "?step=email" && !document.querySelector('[name="password"]'));
+  await page.eval(() => history.forward());
+  await wait(() => location.search === "?step=password" && !!document.querySelector('[name="password"]'));
+  check("browser back and forward restore input progress", true);
+  await input("password", "fixture-browser-password");
   await page.send("Page.reload");
   await wait(() => document.querySelector('[name="email"]')?.value === "browser-flow@example.invalid");
   check("reload keeps identity inputs but never passwords", await page.eval(() => document.querySelector('[name="name"]').value === "가상 사용자" && document.querySelector('[name="password"]').value === ""));
+  page = await browser.newPage({ width: 1440, height: 900 });
+  await page.goto(base + "/welcome", { settleMs: 180 });
+  await wait(() => location.search === "?step=password" && !!document.querySelector('[name="password"]'));
+  check("a new tab restores only identity and progress", await page.eval(() => document.querySelector('[name="email"]').value === "browser-flow@example.invalid" && document.querySelector('[name="password"]').value === ""));
   await input("password", "fixture-browser-password"); await input("passwordConfirm", "different-fixture-password");
   await submit(); await wait(() => !!document.querySelector('[name="passwordConfirm"][aria-invalid="true"]'));
   check("server password mismatch uses the common form error state", await page.eval(() => document.body.textContent.includes("비밀번호가 일치하지 않습니다")));
@@ -139,20 +166,26 @@ try {
   check("successful signup advances the shared Stepper", await page.eval(() => document.querySelector('[aria-current="step"]').textContent.includes("이메일 확인")));
   await page.send("Page.reload"); await wait(() => !!document.querySelector('[aria-current="step"]'));
   check("verification step survives refresh without resubmitting signup", await page.eval(() => document.querySelector('[aria-current="step"]').textContent.includes("이메일 확인")));
+  check("mail waiting has a login link and removes the completed input draft", await page.eval(() => !!document.querySelector('nav a[href="/login"]') && !localStorage.getItem("moa-signup-draft-v1")));
   await page.eval(() => { history.back(); });
-  await wait(() => document.querySelector('[aria-current="step"]')?.textContent.includes("가입 정보"));
-  check("browser back restores the previous step and identity draft", await page.eval(() => document.querySelector('[name="email"]').value === "browser-flow@example.invalid"));
+  await wait(() => document.querySelector('[aria-current="step"]')?.textContent.includes("이름"));
+  check("completed signup does not retain the persistent identity draft", await page.eval(() => document.querySelector('[name="name"]').value === ""));
   await page.eval(() => { history.forward(); });
   await wait(() => document.querySelector('[aria-current="step"]')?.textContent.includes("이메일 확인"));
 
   await page.goto(await link("이메일 주소 확인"), { settleMs: 200 });
   check("verification token is removed from the URL", await page.eval(() => !location.search.includes("token=")));
-  await submit(); await wait(() => document.querySelector('[aria-current="step"]')?.textContent.includes("로그인 준비"));
-  check("only verified server success reaches the completed signup step", await page.eval(() => document.querySelector('[aria-current="step"]').textContent.includes("로그인 준비")));
+  await submit(); await wait(() => document.querySelector('[aria-current="step"]')?.textContent.includes("완료"));
+  check("verified success reaches completion with a login button", await page.eval(() => document.querySelector('[aria-current="step"]').textContent.includes("완료") && !!document.querySelector('a[href="/login"]')));
   await page.goto(base + "/login", { settleMs: 180 });
-  await input("password", "fixture-browser-password"); await submit(); await wait(() => location.pathname === "/account");
-  check("Server Action forwards the HttpOnly cookie and loads the real account", await page.eval(() => document.body.textContent.includes("browser-flow@example.invalid") && !document.cookie.includes("session_token")));
+  await input("password", "fixture-browser-password"); await submit(); await wait(() => location.pathname === "/");
+  check("Server Action forwards the HttpOnly cookie and opens the workspace", await page.eval(() => !document.cookie.includes("session_token")));
+  for (const route of ["/login", "/welcome", "/forgot-password", "/reset-password", "/social-signup"]) {
+    await page.goto(base + route, { settleMs: 180 });
+    check(`authenticated ${route} redirects to workspace`, await page.eval(() => location.pathname === "/"));
+  }
   await page.goto(base + "/account", { settleMs: 180 });
+  await wait(() => !!document.querySelector('form[data-auth-form] button[type="submit"]'));
   check("account refresh revalidates the cookie on the server", await page.eval(() => document.body.textContent.includes("browser-flow@example.invalid")));
   check("authentication inputs never persist secret tokens or passwords", await page.eval(() => !Object.values(sessionStorage).join(" ").match(/fixture-browser-password|session_token|"token"/)));
   await submit(); await wait(() => location.pathname === "/login");
@@ -171,8 +204,12 @@ try {
   await input("email", "browser-flow@example.invalid");
   await input("password", "fixture-browser-password"); await submit(); await wait(() => !!document.querySelector('[role="alert"]'));
   check("the old password is rejected", await page.eval(() => location.pathname === "/login"));
-  await input("password", "new-fixture-browser-password"); await submit(); await wait(() => location.pathname === "/account");
+  await input("password", "new-fixture-browser-password"); await submit(); await wait(() => location.pathname === "/");
   check("the new password signs in through the real Server Action", true);
+
+  await page.goto(base + "/account", { settleMs: 180 });
+  await wait(() => !!document.querySelector('form[data-auth-form] button[type="submit"]'));
+  await submit(); await wait(() => location.pathname === "/login");
 
   await page.goto(base + "/login", { settleMs: 180 });
   await page.eval(() => { document.querySelector('[name="email"]').focus(); });

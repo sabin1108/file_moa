@@ -1,14 +1,11 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { AuthShell } from "../../components/layout/AuthShell";
 import { AuthScreen } from "../../features/auth/components/AuthScreen";
-import { getAuth } from "../../server/auth";
-import { signoutAction } from "../actions/auth";
+import { requireAccountSession } from "../../server/session-guards";
+import { signoutAction, checkAuthSessionAction } from "../actions/auth";
+import { SessionBoundary } from "../../features/auth/components/SessionBoundary";
 
 export default async function Page() {
-  const requestHeaders = await headers();
-  const session = await getAuth().api.getSession({ headers: requestHeaders, query: { disableCookieCache: true, disableRefresh: true } });
-  if (!session || !session.user.emailVerified) redirect("/login");
+  const session = await requireAccountSession();
 
-  return <AuthShell><AuthScreen operation="signout" action={signoutAction} account={{ name: session.user.name, email: session.user.email }} /></AuthShell>;
+  return <SessionBoundary userId={session.user.id} checkSessionAction={checkAuthSessionAction}><AuthShell><AuthScreen operation="signout" action={signoutAction} account={{ name: session.user.name, email: session.user.email }} /></AuthShell></SessionBoundary>;
 }

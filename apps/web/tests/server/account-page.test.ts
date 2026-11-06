@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+vi.mock("server-only", () => ({}));
 
 const calls = vi.hoisted(() => ({ headers: vi.fn(), auth: vi.fn(), session: vi.fn(), redirect: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: calls.headers }));
@@ -29,7 +30,7 @@ describe("account request boundary", () => {
     calls.headers.mockResolvedValue(new Headers());
     calls.auth.mockImplementation(() => { throw new Error("fixture-configuration-error"); });
 
-    await expect(AccountPage()).rejects.toThrow("fixture-configuration-error");
+    await expect(AccountPage()).rejects.toThrow("로그인 상태를 확인하지 못했습니다.");
     expect(calls.auth).toHaveBeenCalledOnce();
   });
 

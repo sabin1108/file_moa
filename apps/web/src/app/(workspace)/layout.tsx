@@ -4,8 +4,12 @@
  */
 import type { ReactNode } from "react";
 import { SourceFolderProvider } from "../../features/local-folders/providers/SourceFolderProvider";
+import { SessionBoundary } from "../../features/auth/components/SessionBoundary";
+import { requireWorkspace } from "../../server/session-guards";
+import { checkAuthSessionAction } from "../actions/auth";
 
 // 시안·로그인·가입은 이 layout 밖에 둔다. URL에는 (workspace)가 포함되지 않는다.
-export default function WorkspaceLayout({ children }: { children: ReactNode }) {
-  return <SourceFolderProvider>{children}</SourceFolderProvider>;
+export default async function WorkspaceLayout({ children }: { children: ReactNode }) {
+  const owner = await requireWorkspace();
+  return <SessionBoundary key={owner.userId} userId={owner.userId} checkSessionAction={checkAuthSessionAction}><SourceFolderProvider key={`${owner.userId}:${owner.workspaceId}`} owner={owner}>{children}</SourceFolderProvider></SessionBoundary>;
 }

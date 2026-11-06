@@ -164,7 +164,7 @@ try {
   await test("Prisma deploy applies and records the migration exactly once", () => {
     prismaCommand(["migrate", "deploy"], localUrl);
     prismaCommand(["migrate", "deploy"], localUrl);
-    assert.equal(sql('SELECT count(*) FROM moa_app._prisma_migrations WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL'), "1");
+    assert.equal(sql('SELECT count(*) FROM moa_app._prisma_migrations WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL'), "2");
   });
 
   await test("the migrated database has no model drift", () => {

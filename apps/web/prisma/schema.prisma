@@ -89,3 +89,14 @@ model Workspace {
   @@map("workspace")
   @@schema("moa_app")
 }
+
+model RateLimit {
+  id          String @id
+  key         String @unique
+  count       Int
+  lastRequest BigInt
+
+  @@index([lastRequest])
+  @@map("rate_limit")
+  @@schema("moa_auth")
+}

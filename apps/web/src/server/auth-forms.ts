@@ -4,6 +4,7 @@ import { z } from "zod";
 import type { AuthFieldName, AuthFormState, AuthOperation } from "../shared/auth-contract";
 import { getAuth } from "./auth";
 import { handleAuthRequest } from "./auth-handler";
+import { reportAuthenticationFailure } from "./auth-diagnostics";
 
 const email = z.string().trim().max(254).pipe(z.email("올바른 이메일 주소를 입력해 주세요.")).transform(value => value.toLowerCase());
 const password = z.string().min(12, "비밀번호는 12자 이상 입력해 주세요.").max(128, "비밀번호는 128자 이하로 입력해 주세요.");
@@ -33,6 +34,8 @@ const successMessages: Record<AuthOperation, string> = {
 };
 
 const errorMessages: Record<string, string> = {
+  INVALID_ORIGIN: "정식 서비스 주소에서 다시 시도해 주세요. 열린 화면을 새로고침해 주세요.",
+  INVALID_CALLBACK_URL: "정식 서비스 주소에서 다시 시도해 주세요.",
   INVALID_EMAIL_OR_PASSWORD: "이메일 또는 비밀번호를 확인해 주세요.",
   EMAIL_NOT_VERIFIED: "먼저 이메일 확인을 마쳐 주세요. 가입 안내에서 인증 메일을 다시 요청할 수 있습니다.",
   INVALID_TOKEN: "유효하지 않거나 이미 사용한 링크입니다. 새 메일을 요청해 주세요.",
@@ -83,6 +86,7 @@ export async function submitAuthForm(operation: AuthOperation, formData: FormDat
 
     if (!response.ok) {
       const error = z.object({ code: z.string().optional() }).safeParse(await response.clone().json());
+      if (response.status >= 500 || error.success && ["INVALID_ORIGIN", "FAILED_TO_CREATE_USER"].includes(error.data.code ?? "")) reportAuthenticationFailure("form", error.success ? error.data : undefined);
       const message = response.status === 429 ? "요청이 많습니다. 잠시 기다린 뒤 다시 시도해 주세요."
         : error.success ? errorMessages[error.data.code ?? ""] : undefined;
 
@@ -90,7 +94,8 @@ export async function submitAuthForm(operation: AuthOperation, formData: FormDat
     }
 
     return { response, state: { status: "success", message: successMessages[operation] } };
-  } catch {
+  } catch (error) {
+    reportAuthenticationFailure("form", error);
     return { state: { status: "error", message: "요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요." } };
   }
 }

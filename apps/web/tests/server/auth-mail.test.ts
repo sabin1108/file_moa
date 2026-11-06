@@ -48,7 +48,8 @@ describe("authentication email transport", () => {
     vi.stubGlobal("fetch", fetch);
 
     await expect(sendAuthenticationEmail(message)).rejects.toThrow("Authentication email delivery failed.");
-    expect(log).toHaveBeenCalledWith("Authentication email delivery failed.");
+    expect(log).toHaveBeenCalledWith("Authentication email delivery failed.", { providerStatus: failure === "rejected" ? 403 : failure === "invalid-response" ? 200 : null });
+    expect(JSON.stringify(log.mock.calls)).not.toMatch(/fixture-resend-secret|fixture-token/);
   });
 
   it.each(["", "not-an-email", "Moa <sender@example.invalid>\r\nBcc: other@example.invalid"])("rejects an invalid sender before network access (%#)", async sender => {

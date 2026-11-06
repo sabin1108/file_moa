@@ -8,17 +8,13 @@
 
 import { createContext, useContext, type ReactNode } from "react";
 import { useSourceFolderConnection } from "../hooks/use-source-folder-connection";
-
-// TEMPORARY(local-folder-dev): 로그인 전 localhost 검증용 소유자다.
-// 실제 인증 세션의 사용자/workspace로 교체하고 계정 전환·늦은 응답 격리를 검증한다.
-// 개발 핸들은 제품 저장소로 자동 이관하지 않는다. 명세 §6/7 참고.
-const developmentOwner = { userId: "development-local", workspaceId: "folder-connection-review" };
+import type { ConnectionOwner } from "../types";
 
 const SourceFolderContext = createContext<ReturnType<typeof useSourceFolderConnection> | null>(null);
 
 /** 작업 영역의 공통 layout만 소유한다. 페이지 이동으로 연결 수명이 끝나지 않는다. */
-export function SourceFolderProvider({ children }: { children: ReactNode }) {
-  const connection = useSourceFolderConnection(developmentOwner);
+export function SourceFolderProvider({ children, owner }: { children: ReactNode; owner: ConnectionOwner }) {
+  const connection = useSourceFolderConnection(owner);
   return <SourceFolderContext.Provider value={connection}>{children}</SourceFolderContext.Provider>;
 }
 

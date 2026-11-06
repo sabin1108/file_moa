@@ -6,15 +6,19 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import styles from "../../prototypes/styles/preview-notice.module.css";
 import ui from "../../styles/workspace-ui.module.css";
+import { requireWorkspace } from "../../server/session-guards";
+import { SessionBoundary } from "../../features/auth/components/SessionBoundary";
+import { checkAuthSessionAction } from "../actions/auth";
 
-export default function PreviewLayout({ children }: { children: ReactNode }) {
+export default async function PreviewLayout({ children }: { children: ReactNode }) {
+  const owner = await requireWorkspace();
   return (
-    <>
+    <SessionBoundary userId={owner.userId} checkSessionAction={checkAuthSessionAction}>
       <aside className={`${ui.system} ${styles.previewNotice}`} aria-label="시안 안내">
         <p><strong>시안 보관함</strong> · 합성 데이터로 화면을 검토합니다. 실제 계정·파일·작업 결과가 아닙니다.</p>
         <Link href="/settings">실제 폴더 연결로 돌아가기</Link>
       </aside>
       {children}
-    </>
+    </SessionBoundary>
   );
 }

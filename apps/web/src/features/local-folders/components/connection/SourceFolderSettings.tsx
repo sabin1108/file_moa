@@ -77,9 +77,8 @@ export function SourceFolderSettings({ onConnected }: { onConnected?: () => void
   }
 
   return <div className={styles.settings} ref={region} tabIndex={-1} aria-label="자료 폴더 연결 설정">
-    {/* TEMPORARY(local-folder-dev): 실제 인증/저장소 전환을 검증한 뒤 제거할 안내. */}
     <p className={styles.scope}>
-      개발용 로컬 연결 · 이 브라우저에만 저장합니다.
+      로그인한 계정의 연결 · 이 브라우저에만 저장합니다.
     </p>
     {state.view?.status !== "connected" && <FolderPermissionGuide />}
     {state.phase === "loading" && (
