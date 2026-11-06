@@ -5,9 +5,20 @@ vi.mock("../../src/server/auth-handler", () => ({ handleAuthRequest: protocol })
 vi.mock("../../src/server/auth", () => ({ getAuth: () => ({ options: { baseURL: "https://app.example.invalid" } }) }));
 import { beginSocialSignIn, socialErrorMessage } from "../../src/server/auth-social";
 import { socialProviderConfiguration } from "../../src/server/social-providers";
+import { createRequire } from "node:module";
+import { pathToFileURL } from "node:url";
 
 beforeEach(() => { protocol.mockReset(); });
 describe("social authentication trust boundary", () => {
+  it("requests only email and nickname in the real installed Kakao authorization URL", async () => {
+    const webRequire = createRequire(new URL("../../package.json", import.meta.url));
+    const authRequire = createRequire(webRequire.resolve("better-auth"));
+    const { kakao } = await import(/* @vite-ignore */ pathToFileURL(authRequire.resolve("@better-auth/core/social-providers")).href);
+    const config = socialProviderConfiguration({ KAKAO_CLIENT_ID: "fixture-id", KAKAO_CLIENT_SECRET: "fixture-secret" });
+    const url = await kakao(config.kakao!).createAuthorizationURL({ state: "fixture-state", redirectURI: "https://app.example.invalid/api/auth/callback/kakao" });
+    expect(url.searchParams.get("scope")?.split(" ").sort()).toEqual(["account_email", "profile_nickname"]);
+    expect(url.searchParams.get("redirect_uri")).toBe("https://app.example.invalid/api/auth/callback/kakao");
+  });
   it("uses provider identity without forcing email/password registration or app email verification", () => {
     const config = socialProviderConfiguration({ GOOGLE_CLIENT_ID: "fixture-id", GOOGLE_CLIENT_SECRET: "fixture-secret", NAVER_CLIENT_ID: "incomplete" });
     expect(config).toMatchObject({ google: { clientId: "fixture-id", clientSecret: "fixture-secret", requireEmailVerification: false, disableImplicitSignUp: true } });

@@ -14,6 +14,6 @@ export function socialProviderConfiguration(environment: Record<string, string |
   const kakao = credentials("KAKAO");
   if (google) config.google = google;
   if (naver) config.naver = naver;
-  if (kakao) config.kakao = kakao;
+  if (kakao) config.kakao = { ...kakao, disableDefaultScope: true, scope: ["account_email", "profile_nickname"] };
   return config;
 }
