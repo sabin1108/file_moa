@@ -10,7 +10,7 @@ const out = process.argv[4] || 'docs/verification/settings-folder-connection';
 const width = Number(process.argv[5] || 1440);
 const routes = ['/', '/files', '/settings', '/login', '/welcome', '/preview'];
 const selectedRoute = process.argv[6];
-if (selectedRoute && !routes.includes(selectedRoute)) throw new Error('Unknown route');
+if (selectedRoute && ![...routes, '/forgot-password', '/verify-email', '/reset-password', '/account'].includes(selectedRoute)) throw new Error('Unknown route');
 if (![390, 1440].includes(width)) throw new Error('Viewport must be 390 or 1440');
 mkdirSync(out, { recursive: true });
 const files = path => readdirSync(path, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? files(join(path, entry.name)) : [join(path, entry.name)]);
@@ -35,7 +35,7 @@ try {
       await page.goto(base + route, { settleMs: 1200 });
       const data = await page.eval(() => {
         const entries = [...performance.getEntriesByType('navigation'), ...performance.getEntriesByType('resource')];
-        return { ...window.lab, transferBytes: entries.reduce((sum, e) => sum + e.transferSize, 0), jsBytes: entries.filter(e => /\.js(?:\?|$)/.test(e.name)).reduce((sum, e) => sum + e.transferSize, 0), requests: entries.length, loadMs: performance.getEntriesByType('navigation')[0].loadEventEnd };
+        return { ...window.lab, observedPath: location.pathname, transferBytes: entries.reduce((sum, e) => sum + e.transferSize, 0), jsBytes: entries.filter(e => /\.js(?:\?|$)/.test(e.name)).reduce((sum, e) => sum + e.transferSize, 0), requests: entries.length, loadMs: performance.getEntriesByType('navigation')[0].loadEventEnd };
       });
       const { metrics } = await page.send('Performance.getMetrics');
       samples.push({ route, run, ...data, heapBytes: metrics.find(m => m.name === 'JSHeapUsedSize')?.value, errors: page.consoleErrors });

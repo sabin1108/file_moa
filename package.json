@@ -16,7 +16,10 @@
     "test:boundaries": "node tests/architecture/check-server-boundary.mjs",
     "test:structure": "node tests/architecture/check-feature-boundary.mjs",
     "test:s0-graph": "node tests/architecture/check-s0-module-graph.mjs",
-    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm test:boundaries && pnpm test:structure && pnpm build"
+    "db:validate": "pnpm --filter @personal-ai/web db:validate",
+    "db:generate": "pnpm --filter @personal-ai/web db:generate",
+    "test:database": "node tests/database/auth-schema-check.mjs",
+    "check": "pnpm db:validate && pnpm typecheck && pnpm lint && pnpm test && pnpm test:boundaries && pnpm test:structure && pnpm build"
   },
   "devDependencies": {
     "@types/node": "24.10.1",

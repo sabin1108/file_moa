@@ -1,0 +1,58 @@
+{
+  "at": "2026-11-06T02:12:09.049Z",
+  "candidateFiles": 3285,
+  "trackedFiles": 3206,
+  "untrackedFiles": 81,
+  "textFiles": 1113,
+  "binaryFiles": 2172,
+  "actualSecretVariantsChecked": 13,
+  "actualMatches": [],
+  "patternMatches": [],
+  "personalMatches": [],
+  "credentialFileNames": [],
+  "historyCommits": 1,
+  "historyActualMatches": [],
+  "historyPatternMatches": [],
+  "ignored": [
+    {
+      "path": "apps/web/.env.local",
+      "ignored": true,
+      "tracked": false
+    },
+    {
+      "path": "apps/web/generated/prisma/client.ts",
+      "ignored": true,
+      "tracked": false
+    },
+    {
+      "path": ".omx/state/publish-check.json",
+      "ignored": true,
+      "tracked": false
+    }
+  ],
+  "remoteHasEmbeddedCredentials": false,
+  "limitations": [
+    "Pattern and current-value matching cannot prove absence of unknown secrets.",
+    "Binary artifacts were enumerated but not OCR-scanned.",
+    "GitHub production/runtime security is separate from upload-secret safety."
+  ],
+  "binaryExactMatches": [],
+  "clientBundleSecretMatches": [],
+  "binaryBytes": 95690407,
+  "binaryExtensions": {
+    ".png": 2138,
+    ".log": 4,
+    ".jpg": 30
+  },
+  "prismaCertificate": {
+    "parsesAsPublicX509": true,
+    "containsPrivateKey": false,
+    "ca": true
+  },
+  "logEncodingSupplement": {
+    "at": "2026-11-06T02:19:50.840Z",
+    "files": 5,
+    "utf16Decoded": 4,
+    "matches": []
+  }
+}

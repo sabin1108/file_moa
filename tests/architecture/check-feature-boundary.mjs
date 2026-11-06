@@ -50,7 +50,10 @@ const filesUnder = root => readdirSync(root, { withFileTypes: true }).flatMap(en
 const sourceFiles = filesUnder(`${webRoot}/src`);
 assert.deepEqual(sourceFiles.filter(file => /\.(test|spec)\.[^.]+$/.test(file)), [], 'Product src must not contain tests');
 const routeNames = /^(page|layout|route|template|loading|error|global-error|not-found|default)\.(ts|tsx)$|^(icon|favicon)\.(svg|ico|png)$/;
-assert.deepEqual(filesUnder(`${webRoot}/src/app`).filter(file => !routeNames.test(file.split(/[\\/]/).at(-1))), [], 'Keep app limited to route entrypoints and metadata');
+assert.deepEqual(filesUnder(`${webRoot}/src/app`).filter(file => {
+  const actionEntry = file.replaceAll('\\', '/').includes('/src/app/actions/') && file.endsWith('.ts');
+  return !actionEntry && !routeNames.test(file.split(/[\\/]/).at(-1));
+}), [], 'Keep app limited to route/action entrypoints and metadata');
 // domain은 웹 ESLint 범위 밖이므로 실제 TS 모듈 참조도 별도로 확인한다.
 const domainRoot = resolve(webRoot, '../../packages/domain/src');
 const domainFiles = filesUnder(domainRoot);

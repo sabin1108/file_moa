@@ -1,0 +1,57 @@
+{
+  "at": "2026-11-06T02:06:31.493Z",
+  "label": "after",
+  "base": "http://127.0.0.1:3043",
+  "sourceSha256": "0ba6024347cbad60396bcb3b5332fea0e14c64984b4e5e8e752fe6394e580aec",
+  "staticBytes": 1249314,
+  "browser": "Chrome/156.0.8078.80",
+  "conditions": "production; Windows; 1440x900; no CPU/network throttling; HTTP cache disabled; same browser profile with new tab per run; 1.2s observation after load; no auth/model/API; three runs per route; LCP/CLS from PerformanceObserver, not Lighthouse; no field INP/TBT measurement",
+  "samples": [
+    {
+      "route": "/verify-email",
+      "run": 1,
+      "lcp": 340,
+      "cls": 0,
+      "longTasks": [
+        60
+      ],
+      "observedPath": "/verify-email",
+      "transferBytes": 254781,
+      "jsBytes": 222062,
+      "requests": 22,
+      "loadMs": 309.60000002384186,
+      "heapBytes": 3008304,
+      "errors": []
+    },
+    {
+      "route": "/verify-email",
+      "run": 2,
+      "lcp": 148,
+      "cls": 0,
+      "longTasks": [
+        53
+      ],
+      "observedPath": "/verify-email",
+      "transferBytes": 254118,
+      "jsBytes": 222062,
+      "requests": 21,
+      "loadMs": 195.60000002384186,
+      "heapBytes": 2990864,
+      "errors": []
+    },
+    {
+      "route": "/verify-email",
+      "run": 3,
+      "lcp": 100,
+      "cls": 0,
+      "longTasks": [],
+      "observedPath": "/verify-email",
+      "transferBytes": 254117,
+      "jsBytes": 222062,
+      "requests": 21,
+      "loadMs": 143.0999999642372,
+      "heapBytes": 3004796,
+      "errors": []
+    }
+  ]
+}

@@ -2,9 +2,11 @@
 
 사용자가 요청한 방식으로 로컬 파일·폴더를 정리하고, 선택 자료로 보고서·이력서 등 문서를 만드는 브라우저 서비스입니다. 임시 이름은 모아입니다.
 
-승인된 시안에서 기능을 연결하는 단계입니다. localhost 개발 환경에서 폴더 연결·탐색·MD/TXT 미리보기와 편집, 실제 파일/폴더 복사·이동, 복구 보관함·앱 휴지통을 구현했습니다. 실제 로그인·AI 연동은 후속입니다. 현재 기능과 검증 한계는 최신 인수인계와 기능별 검증 문서를 확인하세요.
+승인된 시안에서 기능을 연결하는 단계입니다. localhost 개발 환경에서 폴더 연결·탐색·MD/TXT 미리보기와 편집, 실제 파일/폴더 복사·이동, 복구 보관함·앱 휴지통을 구현했습니다. 이메일 가입·로그인·확인/비밀번호 재설정 API와 화면을 연결했습니다. 소셜 인증·계정별 폴더 owner 전환·AI 연동은 후속입니다. 현재 기능과 검증 한계는 최신 인수인계와 기능별 검증 문서를 확인하세요.
 
 ## 현재 화면과 개발 상태
+
+- [실제 로그인](http://127.0.0.1:3034/login) · [회원가입](http://127.0.0.1:3034/welcome) · [비밀번호 찾기](http://127.0.0.1:3034/forgot-password): 기존 인증 시안과 공통 Stepper를 재사용했습니다. [인증 UI 검증](docs/verification/auth-ui/README.md). 로그인 후에는 계정 확인 화면으로 이동하며 개발용 폴더를 자동 연결하지 않습니다.
 
 - 처음 읽는 분을 위한 [화면부터 따라가는 자세한 코드 설명서](docs/코드_이해하기.md): 버튼 → 컴포넌트 → controller → session → 파일 처리, 수동·자동저장과 F5 복원까지 설명합니다.
 
@@ -14,7 +16,7 @@
 - [책임별 소스 분류와 연결 후 자동 이동 검증](docs/verification/feature-classification/README.md), [소스 폴더 안내](apps/web/src/README.md).
 - [MD/TXT 미리보기 검증](docs/verification/source-file-preview/README.md): 명세·실패 테스트·구현·회귀 결과와 미검증 범위.
 - [최종 시안 캡처와 화면 목록](docs/prototype/README.md): 27개 상태 시안과 대화·파일·로그인·첫 가입·설정.
-- 실행 중인 화면: [전체 시안](http://127.0.0.1:3000/preview) · [파일](http://127.0.0.1:3000/files) · [대화](http://127.0.0.1:3000/).
+- 로컬 실행 주소: [전체 시안](http://127.0.0.1:3034/preview) · [파일](http://127.0.0.1:3034/files) · [대화](http://127.0.0.1:3034/).
 - [디자인 기준](DESIGN.md): 현재 팔레트·레이아웃·공통 컴포넌트·기능 연결 경계.
 - [로컬 보관 계약](docs/specs/local-ai-storage.md), [기록 형식](docs/specs/local-record-v1.md), [저장 복구 계약](docs/specs/local-record-recovery.md).
 - [S0 검증 기록과 남은 일](docs/verification/s0/README.md), [구현 순서](docs/roadmap.md).
@@ -30,6 +32,10 @@ pnpm install --frozen-lockfile
 pnpm exec node --version
 pnpm dev
 ```
+
+로컬 앱은 `http://127.0.0.1:3034`에서 실행합니다. 폴더 연결 핸들과 브라우저 기록은 origin별로 저장되므로 기존 주소를 유지합니다. 서버 환경 변수는 `apps/web/.env.example`을 기준으로 Git에서 제외되는 `apps/web/.env.local`에 보관합니다. 로컬 `BETTER_AUTH_URL`도 같은 주소를 사용하고, Vercel Production에는 운영 주소를 설정합니다.
+
+인증 DB의 [스키마·SQL 실행 안내](apps/web/prisma/README.md)와 [PostgreSQL 검증 결과](docs/verification/auth-database/README.md)를 분리해 관리합니다. `pnpm db:validate`, `pnpm db:generate`는 실제 DB 연결 없이 실행하며, dev/typecheck/build는 필요한 Prisma client를 먼저 생성합니다. `pnpm test:database`는 Docker의 임시 DB만 사용합니다. 실제 Supabase에는 제한된 역할과 5개 테이블을 적용했고, [서버 DB·이메일 인증 API·Workspace 소유권](docs/verification/auth-database/README.md)을 연결했습니다. 사용자가 Resend 가입 본인 Gmail의 테스트 메일 수신을 확인했습니다. 이메일 인증 화면은 구현했고 소셜 인증·브라우저 owner 교체·공개 회원용 발신 도메인 인증은 후속입니다. [Git 공개 전 검사와 배포 준비](docs/verification/publish-safety/README.md)를 참고하세요.
 
 pnpm이 없는 다른 환경에서는 `npx --yes pnpm@12.15.0`을 위 명령의 `pnpm` 대신 사용할 수 있습니다. 현재 PC에는 pnpm 명령을 설치했습니다. Windows 전체 Node는 관리자 권한 때문에 24.16.0으로 남아 있으므로 이 프로젝트에서는 단독 `node` 대신 `pnpm exec node`를 사용합니다. [업데이트 판단과 검증](docs/verification/dependency-update-20261027/README.md).
 

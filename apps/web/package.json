@@ -3,23 +3,32 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --hostname 127.0.0.1",
-    "build": "next build",
-    "start": "next start --hostname 127.0.0.1",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint ."
+    "dev": "prisma generate && next dev --hostname 127.0.0.1 --port 3034",
+    "build": "prisma generate && next build",
+    "start": "next start --hostname 127.0.0.1 --port 3034",
+    "typecheck": "prisma generate && tsc --noEmit",
+    "lint": "eslint .",
+    "db:validate": "prisma validate",
+    "db:generate": "prisma generate"
   },
   "dependencies": {
     "@personal-ai/domain": "workspace:*",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "better-auth": "1.7.17",
     "next": "16.4.3",
+    "pg": "8.23.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
+    "server-only": "0.0.1",
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@types/pg": "8.23.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "eslint": "9.39.5",
-    "eslint-config-next": "16.4.3"
+    "eslint-config-next": "16.4.3",
+    "prisma": "7.10.1"
   }
 }

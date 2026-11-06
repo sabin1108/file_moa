@@ -1,5 +1,15 @@
 # 코드 읽기 안내 — 화면 진입부터 로컬 파일 읽기까지
 
+## 이메일 인증 화면 읽기 — 2026-11-06
+
+1. `app/login`, `app/welcome`, `app/verify-email`, `app/forgot-password`, `app/reset-password`, `app/account`: 화면 조합·서버 query/세션 진입.
+2. `components/layout/AuthShell.tsx`와 CSS: 실제/시안 공통 표시. `components/ui/WorkflowStepper.tsx`는 파일 작업·가입·재설정이 함께 쓴다.
+3. `features/auth/components/AuthScreen.tsx` → `lib/form-config.ts`·`hooks/useAuthDraft.ts`: 공통 폼/오류/대기, 단계 데이터·허용 표시 상태, 이름·이메일 초안. 비밀번호/token은 저장하지 않는다.
+4. `app/actions/auth.ts` → `server/auth-forms.ts` → `server/auth-handler.ts` → `server/auth.ts`: 제출→서버 검증→동일 프로세스 인증→쿠키 반영→결과/redirect. 직접 auth.api 호출로 HTTP 보호를 우회하지 않는다.
+5. `shared/auth-contract.ts`: 양쪽에서 쓰는 최소 상태 타입. `tests/server/auth-actions.test.ts`·`auth-forms.test.ts`, `tests/auth/flow.test.ts`, 루트 `tests/browser/check-auth-ui.mjs`: 실패·쿠키·단계·실브라우저 검증.
+
+상세 읽기 링크와 재현은 [인증 UI 검증](verification/auth-ui/README.md)을 따른다.
+
 처음 읽는 사용자에게는 [화면에서 시작하는 자세한 코드 설명서](코드_이해하기.md)를 권한다. 실제 버튼에서 controller/session/파일 처리까지 따라가고, 인라인 편집·한 번 보존·수동/주기 저장·URL과 F5 복원·수정 위치를 설명한다. 아래 날짜별 절은 당시 기능 단위의 기록이다.
 
 ## 2026-11-04 파일 관리1~6

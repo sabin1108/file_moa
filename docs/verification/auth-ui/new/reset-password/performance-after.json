@@ -1,0 +1,53 @@
+{
+  "at": "2026-11-06T02:12:35.292Z",
+  "label": "after",
+  "base": "http://127.0.0.1:3034",
+  "sourceSha256": "0ba6024347cbad60396bcb3b5332fea0e14c64984b4e5e8e752fe6394e580aec",
+  "staticBytes": 1249314,
+  "browser": "Chrome/156.0.8078.80",
+  "conditions": "production; Windows; 1440x900; no CPU/network throttling; HTTP cache disabled; same browser profile with new tab per run; 1.2s observation after load; no auth/model/API; three runs per route; LCP/CLS from PerformanceObserver, not Lighthouse; no field INP/TBT measurement",
+  "samples": [
+    {
+      "route": "/reset-password",
+      "run": 1,
+      "lcp": 404,
+      "cls": 0,
+      "longTasks": [],
+      "observedPath": "/reset-password",
+      "transferBytes": 255718,
+      "jsBytes": 222062,
+      "requests": 21,
+      "loadMs": 387.9000000357628,
+      "heapBytes": 3022988,
+      "errors": []
+    },
+    {
+      "route": "/reset-password",
+      "run": 2,
+      "lcp": 124,
+      "cls": 0,
+      "longTasks": [],
+      "observedPath": "/reset-password",
+      "transferBytes": 255055,
+      "jsBytes": 222062,
+      "requests": 20,
+      "loadMs": 137.19999998807907,
+      "heapBytes": 3019984,
+      "errors": []
+    },
+    {
+      "route": "/reset-password",
+      "run": 3,
+      "lcp": 156,
+      "cls": 0,
+      "longTasks": [],
+      "observedPath": "/reset-password",
+      "transferBytes": 255055,
+      "jsBytes": 222062,
+      "requests": 20,
+      "loadMs": 192.69999998807907,
+      "heapBytes": 3032732,
+      "errors": []
+    }
+  ]
+}

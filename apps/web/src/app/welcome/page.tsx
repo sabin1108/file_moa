@@ -1,12 +1,10 @@
-import { WorkspaceShell } from "../../components/layout/WorkspaceShell";
-import { UnavailableFeature } from "../../components/ui/feedback/UnavailableFeature";
+import { AuthShell } from "../../components/layout/AuthShell";
+import { AuthScreen } from "../../features/auth/components/AuthScreen";
+import { signupOperation } from "../../features/auth/lib/form-config";
+import { signupAction, resendAction } from "../actions/auth";
 
-export default function Page() {
-  return (
-    <WorkspaceShell title="가입 안내">
-      <UnavailableFeature title="계정 생성은 아직 구현되지 않았습니다.">
-        로그인과 가입 정보 저장이 연결되지 않았습니다. 이름을 입력하거나 가입 완료를 진행할 수 없습니다.
-      </UnavailableFeature>
-    </WorkspaceShell>
-  );
+export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const operation = signupOperation((await searchParams).step);
+
+  return <AuthShell><AuthScreen key={operation} operation={operation} action={operation === "signup" ? signupAction : resendAction} /></AuthShell>;
 }

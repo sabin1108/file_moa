@@ -1,0 +1,57 @@
+{
+  "at": "2026-11-06T02:03:03.468Z",
+  "label": "after",
+  "base": "http://127.0.0.1:3043",
+  "sourceSha256": "0ba6024347cbad60396bcb3b5332fea0e14c64984b4e5e8e752fe6394e580aec",
+  "staticBytes": 1249314,
+  "browser": "Chrome/156.0.8078.80",
+  "conditions": "production; Windows; 1440x900; no CPU/network throttling; HTTP cache disabled; same browser profile with new tab per run; 1.2s observation after load; no auth/model/API; three runs per route; LCP/CLS from PerformanceObserver, not Lighthouse; no field INP/TBT measurement",
+  "samples": [
+    {
+      "route": "/forgot-password",
+      "run": 1,
+      "lcp": 244,
+      "cls": 0,
+      "longTasks": [
+        52
+      ],
+      "observedPath": "/forgot-password",
+      "transferBytes": 252272,
+      "jsBytes": 222062,
+      "requests": 19,
+      "loadMs": 186.30000001192093,
+      "heapBytes": 3044068,
+      "errors": []
+    },
+    {
+      "route": "/forgot-password",
+      "run": 2,
+      "lcp": 100,
+      "cls": 0,
+      "longTasks": [],
+      "observedPath": "/forgot-password",
+      "transferBytes": 251609,
+      "jsBytes": 222062,
+      "requests": 18,
+      "loadMs": 134,
+      "heapBytes": 3027952,
+      "errors": []
+    },
+    {
+      "route": "/forgot-password",
+      "run": 3,
+      "lcp": 128,
+      "cls": 0,
+      "longTasks": [
+        50
+      ],
+      "observedPath": "/forgot-password",
+      "transferBytes": 251609,
+      "jsBytes": 222062,
+      "requests": 18,
+      "loadMs": 182.39999997615814,
+      "heapBytes": 3012964,
+      "errors": []
+    }
+  ]
+}

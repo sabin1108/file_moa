@@ -13,6 +13,6 @@ export default defineConfig([
     files: ["src/**/*.{ts,tsx}"],
     rules: { "@typescript-eslint/no-explicit-any": "error" },
   },
-  globalIgnores([".next/**", "next-env.d.ts"]),
+  globalIgnores([".next/**", "generated/prisma/**", "next-env.d.ts"]),
 ]);
 

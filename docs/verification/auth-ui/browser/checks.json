@@ -1,0 +1,183 @@
+{
+  "at": "2026-11-06T01:59:01.515Z",
+  "buildId": "PRxH9HegdrG5WO4ULyc8b",
+  "fixture": "disposable PostgreSQL with strict TLS; private Next build copy; synthetic Resend capture; isolated Chromium",
+  "checks": [
+    {
+      "name": "/login fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=verification fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/reset-password fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/verify-email fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/login fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=verification fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/reset-password fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/verify-email fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/login fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=verification fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/reset-password fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/verify-email fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/login fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=verification fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/reset-password fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/verify-email fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "forged completion URL returns to signup details",
+      "passed": true
+    },
+    {
+      "name": "reload keeps identity inputs but never passwords",
+      "passed": true
+    },
+    {
+      "name": "server password mismatch uses the common form error state",
+      "passed": true
+    },
+    {
+      "name": "successful signup advances the shared Stepper",
+      "passed": true
+    },
+    {
+      "name": "verification step survives refresh without resubmitting signup",
+      "passed": true
+    },
+    {
+      "name": "browser back restores the previous step and identity draft",
+      "passed": true
+    },
+    {
+      "name": "verification token is removed from the URL",
+      "passed": true
+    },
+    {
+      "name": "only verified server success reaches the completed signup step",
+      "passed": true
+    },
+    {
+      "name": "Server Action forwards the HttpOnly cookie and loads the real account",
+      "passed": true
+    },
+    {
+      "name": "account refresh revalidates the cookie on the server",
+      "passed": true
+    },
+    {
+      "name": "authentication inputs never persist secret tokens or passwords",
+      "passed": true
+    },
+    {
+      "name": "logout removes the cookie and the server blocks account re-entry",
+      "passed": true
+    },
+    {
+      "name": "reset callback arrives with an in-memory token and a clean URL",
+      "passed": true
+    },
+    {
+      "name": "reset uses the same common Stepper and completes after server validation",
+      "passed": true
+    },
+    {
+      "name": "the old password is rejected",
+      "passed": true
+    },
+    {
+      "name": "the new password signs in through the real Server Action",
+      "passed": true
+    },
+    {
+      "name": "keyboard Tab follows labeled form fields",
+      "passed": true
+    },
+    {
+      "name": "IME Enter is prevented while composing",
+      "passed": true
+    },
+    {
+      "name": "blocked storage does not prevent typing",
+      "passed": true
+    },
+    {
+      "name": "no browser runtime errors",
+      "passed": true
+    }
+  ]
+}

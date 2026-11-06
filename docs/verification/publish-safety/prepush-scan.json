@@ -1,0 +1,40 @@
+{
+  "at": "2026-11-06T02:47:44.347Z",
+  "mode": "worktree",
+  "scannedFiles": 3294,
+  "textFiles": 1120,
+  "binaryFiles": 2172,
+  "utf16Logs": 4,
+  "actualSecretVariantsChecked": 16,
+  "matches": [],
+  "historyCommits": 1,
+  "historyMatches": [],
+  "exclusions": [
+    {
+      "path": "apps/web/.env.local",
+      "ignored": true,
+      "tracked": false
+    },
+    {
+      "path": "apps/web/generated/prisma/client.ts",
+      "ignored": true,
+      "tracked": false
+    },
+    {
+      "path": ".omx/state/prepush.json",
+      "ignored": true,
+      "tracked": false
+    }
+  ],
+  "suspiciousPaths": [],
+  "clientBundleMatches": [],
+  "certificate": {
+    "publicCA": true,
+    "containsPrivateKey": false
+  },
+  "limitations": [
+    "Unknown secrets are not guaranteed absent.",
+    "Images were not OCR-scanned.",
+    "Upload-secret checks do not establish public-runtime readiness."
+  ]
+}

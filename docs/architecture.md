@@ -1,5 +1,27 @@
 # 기술 경계
 
+## 이메일 인증 UI 개정 — 2026-11-06
+
+인증 UI는 `features/auth`, 서버/브라우저 공통 타입 계약은 `shared/auth-contract.ts`, 진입 action은 `app/actions/auth.ts`, 입력검증과 인증 프로토콜 조합은 `server/auth-forms.ts`다. app 페이지가 feature에 action을 전달하므로 feature→app/server→feature 역방향 의존이 없다. Server Action은 자기 API에 HTTP fetch하거나 보호를 건너뛰는 direct auth.api 호출 대신 같은 프로세스의 auth handler를 거쳐 요청 제한/Origin을 유지한다. 응답 쿠키는 Better Auth 공개 parser/options로 Next cookies에 옮긴다. 로그인 후 `/account`는 실제 세션으로 확인하며 기존 로컬 개발 owner는 후속 전환까지 유지한다. [실행 증거/한계](verification/auth-ui/README.md).
+
+## 이메일 인증 API 개정 — 2026-11-06
+
+`/api/auth/[...all]`을 이메일 인증 프로토콜용 최소 Route Handler로 연결했다. 서버 `auth-handler.ts`가 허용 경로/메서드·no-store·최소 JSON을 담당하고 `auth.ts`의 Better Auth는 검증 전 로그인 금지·서명 세션·재설정 토큰 단발소비/세션폐기를 맡는다. `auth-mail.ts`는 기존 fetch와 Resend를 사용하며 Next after 수명관리로 전송한다. 검증 코드와 실제 발송 한계는 [최신 검증](verification/auth-database/README.md)을 따른다. 메모리 요청제한은 다중 인스턴스 공개 전 공유 저장소/프록시 검증이 필요하다. 화면·소셜·브라우저 owner 연결은 후속이다.
+
+## 서버 DB 연결 개정 — 2026-11-06
+
+`src/server/database`에 제한 runtime 역할·공개 CA를 사용하는 PrismaPg client를 추가했다. `src/server/auth.ts`는 기존 Better Auth의 Prisma adapter와 유효 세션 조회를 연결하고, `src/server/workspace.ts`는 세션 User.id로 같은 트랜잭션의 RLS 문맥과 기본 Workspace를 초기화한다. 입력으로 userId/workspaceId를 받지 않고 최소 owner DTO만 반환한다. 인증 endpoint·로그인 화면·메일/OAuth·브라우저 owner 교체는 아직 없다. 아래의 앱 DB client/인증 인스턴스 미구현 기록보다 이 절을 우선한다. [실행 증거와 한계](verification/auth-database/README.md).
+
+## 인증 준비 개정 — 2026-11-05
+
+인증은 Better Auth 1.7.17, ORM은 Prisma 7.10.1, 서버 DB는 Supabase PostgreSQL로 선택했다. `apps/web`에 Better Auth·Prisma Client와 개발용 Prisma CLI를 정확한 버전으로 설치했다. 아래 Drizzle 후보 기록보다 이 결정이 우선한다.
+
+Prisma schema/client와 초기 migration·grant/RLS SQL을 작성해 격리된 PostgreSQL24검사를 통과했고, 사용자 지시로 실제 Supabase에 제한된 역할과 5개 테이블을 적용했다. runtime 접속·TLS·RLS 검증과 검증 행 롤백까지 확인했다. 인증 인스턴스·API·앱 runtime DB client·메일 발송은 아직 구현하지 않았고 기존 개발용 소유자도 교체하지 않았다. [검증과 남은 TLS/앱 연결 범위](verification/auth-database/README.md).
+
+인증 4테이블·개인 Workspace·소유권/DB 역할·로컬 자료 보존 계약은 [인증 DB 설계](specs/auth-database-design.md)에 정리했다. 테이블 적용을 실제 로그인 기능 완료와 구분한다.
+
+로컬 origin은 `http://127.0.0.1:3034`로 유지한다. 서버 비밀값은 Git에서 제외되는 `apps/web/.env.local`에 저장하고, 운영 값은 Vercel Production 환경 변수로 관리한다. 실제 인증 구현 시 인증·소유권·DB 권한의 책임을 구분하며, 기존 서버 전용 접근과 로컬 원본 보호 계약을 따른다.
+
 2026-10-28 최신 구조: src/app은 라우트 진입점, components/layout·ui는 공통 프레임/표시, features/local-folders는 기능별 components와 providers/hooks/store/services/lib/types로 구성한다. 테스트는 src 밖 apps/web/tests·packages/domain/tests·루트 tests에 분리했다. 원본 읽기·다중 선택·연결 관리 팝업까지 구현했으며 실제 로그인·서버 DB·원본 쓰기는 미구현이다. [현재 소스 지도](code-map.md), [현재 검증](verification/readable-structure/README.md). 아래 날짜별 기술 결정은 그 시점의 범위를 나타낸다.
 
 ## 서버 데이터 경계 개정 — 2026-10-27
