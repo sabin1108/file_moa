@@ -14,6 +14,8 @@
 
 Prisma client는 `apps/web/generated/prisma`에 생성되며 Git과 lint 대상에서 제외한다. dev/typecheck/build가 먼저 client를 생성한다. `src/server/database/client.ts`에서 PrismaPg와 제한 runtime/공개 CA를 연결했고 `src/server/auth.ts`에서 기존 Better Auth Prisma adapter를 사용한다. 이메일 인증 endpoint·전송 코드를 연결했으며 소셜 로그인은 후속이다.
 
+Vercel Root Directory는 `apps/web`이다. 같은 디렉터리의 `vercel.json`이 Build Command를 `pnpm run build`로 고정해 Dashboard의 직접 `next build` 설정보다 우선한다. 따라서 캐시된 설치나 설치 훅에 의존하지 않고 매 빌드 전에 Client를 생성한다. 생성물이 없는 상태에서 이 명령의 생성·Next 빌드 성공을 확인했으며 생성물을 Git에 추가하지 않는다.
+
 ## DB 연결 없는 검사
 
 저장소 루트에서 실행한다.
