@@ -28,3 +28,5 @@ Windows 격리 Chromium, production build, 폐기형 PostgreSQL의 검증 TLS, �
 변경 전 공개 `/api/auth/get-session`을 쿠키 없이 순서대로3회 조회한 값은3839/529/527ms다. 첫 요청은 warm으로 가정하지 않는다. 응답은 icn1 edge→iad1 function, 실제 DB pooler 주소의 지역은 ap-southeast-2였다. [원자료](production-timing-before.json).
 
 Vercel function 실행을 syd1로 지정해 DB 연결 지점과 가깝게 둔다. 이 설정은 정적 자산/CDN을 옮기는 설정이 아니다. 새 배포 후 실행 지역과 같은 요청을 확인하며 측정 전 개선율은 주장하지 않는다. [Vercel 지역](https://vercel.com/docs/regions), [project regions 설정](https://vercel.com/docs/project-configuration/vercel-json#regions).
+
+3cda743 배포 성공 후 같은 Node 순차 요청에서1140/276/277ms, icn1→syd1 실행을 확인했다. [변경 후 원자료](production-timing-after.json). 첫 요청에는 초기 연결/실행 비용이 섞일 수 있다. 후속 두 표본은 기존529/527ms, 이후276/277ms였으며, 작은 표본으로 p95나 실사용 로그인 전체 개선율을 계산하지 않는다. 이번 배포에는 인증/화면 변경도 포함되어 있어 지역 변경만의 분리 실험으로 표현하지 않는다.

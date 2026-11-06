@@ -24,7 +24,9 @@
 
 운영 인증메일 재요청은 앱200, 사용자가 Resend 최신 항목의 Delivered와 본인 주소/제목을 확인했고 이후 사이트 접속을 확인했다. 이전 로컬 메일은 Gmail 스팸함에 있었다. Delivered는 수신 서버의 수락이며 Gmail에서 보이는 위치/실제 수신 지연 전 구간을 측정한 결과는 아니다. 같은 제목의 대화 묶음/스팸 여부와 이벤트 시각을 구분한다. 기본 sender와 send-only 키를 유지했고 키 권한을 확대하거나 실제 계정/비밀번호를 변경하지 않았다.
 
-운영 공개 get-session3회는3839/529/527ms, 응답 실행 경로는 icn1→iad1이고 DB pooler 연결 지점은 ap-southeast-2였다. Vercel 함수 지역을 동일 Sydney(syd1)로 지정했다. 배포 후 실행 지역과 같은 요청을 재측정하며 작은 표본이나 첫 요청을 안정적인 분위수/순수 개선율로 표현하지 않는다. [변경 전](production-timing-before.json).
+운영 공개 get-session3회는3839/529/527ms, 응답 실행 경로는 icn1→iad1이고 DB pooler 연결 지점은 ap-southeast-2였다. Vercel 함수 지역을 동일 Sydney(syd1)로 지정했다. 3cda743 배포 success 뒤 실행 경로 icn1→syd1과1140/276/277ms를 확인했다. 양쪽의 첫 요청은 warm으로 가정하지 않으며 로그인 전체 시간이나 안정적인 분위수/순수 개선율로 표현하지 않는다. [변경 전](production-timing-before.json), [배포 후](production-timing-after.json).
+
+최신 운영 GET9개는 로그인/가입/대기/소셜 화면200, 작업 경로307→login으로 통과했다. 실제 새 소셜 가입/연결을 운영 계정으로 실행하지는 않았다. 수정 파일의 실제 로컬 비밀값 대조0건과 client static37개 자산의 비밀값 대조0건, env/생성 Client 제외를 확인했다.
 
 ## 범위
 

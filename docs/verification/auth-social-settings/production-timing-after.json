@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-06T06:03:09.121Z",
+  "commit": "3cda743",
+  "route": "/api/auth/get-session",
+  "conditions": "Node fetch; no cookie; one sequential process; three samples; first request not assumed warm; response consumed; no field INP or signed-in journey claim",
+  "samples": [
+    {
+      "run": 1,
+      "elapsedMs": 1140,
+      "regions": [
+        "icn1",
+        "syd1"
+      ]
+    },
+    {
+      "run": 2,
+      "elapsedMs": 276,
+      "regions": [
+        "icn1",
+        "syd1"
+      ]
+    },
+    {
+      "run": 3,
+      "elapsedMs": 277,
+      "regions": [
+        "icn1",
+        "syd1"
+      ]
+    }
+  ]
+}
