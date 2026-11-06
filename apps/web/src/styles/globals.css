@@ -1,5 +1,5 @@
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   /* 사용자 제공 팔레트: 배경 → 패널 → 선택 → 경계 → 보조 본문 → 주요 본문 */
   --navy-950: #06141b;
   --navy-900: #11212d;
@@ -19,7 +19,9 @@
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; }
-body { background: var(--ground); color: var(--text); font-family: var(--font-ui); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+/* Keep the document canvas light while streamed page/loading surfaces are being replaced. */
+html, body { background: #e4e8e6; }
+body { color: var(--text); font-family: var(--font-ui); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
 button, textarea { font: inherit; color: inherit; }
 button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin: 0; padding: 0; border: 0; background: none; text-align: left; }
 button[aria-disabled="true"] { cursor: default; }

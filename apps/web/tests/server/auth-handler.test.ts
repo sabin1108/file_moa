@@ -12,6 +12,17 @@ import { GET, POST } from "../../src/app/api/auth/[...all]/route";
 beforeEach(() => { handler.mockReset(); session.mockReset(); session.mockResolvedValue(null); });
 
 describe("public authentication protocol boundary", () => {
+  it("allows only a valid name for the authenticated current user, with a trusted origin", async () => {
+    const request = (body: unknown, origin = "https://app.example.invalid") => POST(new Request("https://app.example.invalid/api/auth/update-user", { method: "POST", headers: { origin, "content-type": "application/json" }, body: JSON.stringify(body) }));
+    expect((await request({ name: "이름" })).status).toBe(401);
+    session.mockResolvedValue({ user: { id: "user-a" } });
+    expect((await request({ name: "이름" }, "https://evil.example.invalid")).status).toBe(403);
+    for (const body of [{ name: " " }, { name: "x".repeat(41) }, { name: "이름", userId: "user-b" }, { name: "이름", emailVerified: true }, { name: "이름", image: "https://example.invalid" }]) expect((await request(body)).status).toBe(400);
+    expect(handler).not.toHaveBeenCalled();
+    handler.mockResolvedValue(Response.json({ status: true }));
+    expect((await request({ name: " 이름 " })).status).toBe(200);
+    expect(await handler.mock.calls[0][0].json()).toEqual({ name: "이름" });
+  });
   it("preserves a verification redirect even when its empty body has a JSON content type", async () => {
     handler.mockResolvedValue(new Response(null, { status: 302, headers: { location: "/login", "content-type": "application/json" } }));
 

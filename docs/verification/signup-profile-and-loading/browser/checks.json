@@ -1,0 +1,679 @@
+{
+  "at": "2026-11-06T08:53:38.584Z",
+  "buildId": "qju5BuUWLefjgmPJtvZO2",
+  "fixture": "disposable PostgreSQL with strict TLS; private Next build copy; synthetic Resend capture; isolated Chromium",
+  "checks": [
+    {
+      "name": "/login paints a light document canvas at 390px",
+      "passed": true
+    },
+    {
+      "name": "/login fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome paints a light document canvas at 390px",
+      "passed": true
+    },
+    {
+      "name": "/welcome fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=email paints a light document canvas at 390px",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=email fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=verification paints a light document canvas at 390px",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=verification fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password paints a light document canvas at 390px",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/reset-password paints a light document canvas at 390px",
+      "passed": true
+    },
+    {
+      "name": "/reset-password fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/verify-email paints a light document canvas at 390px",
+      "passed": true
+    },
+    {
+      "name": "/verify-email fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/social-signup paints a light document canvas at 390px",
+      "passed": true
+    },
+    {
+      "name": "/social-signup fits 390px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/login paints a light document canvas at 768px",
+      "passed": true
+    },
+    {
+      "name": "/login fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome paints a light document canvas at 768px",
+      "passed": true
+    },
+    {
+      "name": "/welcome fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=email paints a light document canvas at 768px",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=email fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=verification paints a light document canvas at 768px",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=verification fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password paints a light document canvas at 768px",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/reset-password paints a light document canvas at 768px",
+      "passed": true
+    },
+    {
+      "name": "/reset-password fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/verify-email paints a light document canvas at 768px",
+      "passed": true
+    },
+    {
+      "name": "/verify-email fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/social-signup paints a light document canvas at 768px",
+      "passed": true
+    },
+    {
+      "name": "/social-signup fits 768px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/login paints a light document canvas at 1440px",
+      "passed": true
+    },
+    {
+      "name": "/login fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome paints a light document canvas at 1440px",
+      "passed": true
+    },
+    {
+      "name": "/welcome fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=email paints a light document canvas at 1440px",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=email fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=verification paints a light document canvas at 1440px",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=verification fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password paints a light document canvas at 1440px",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/reset-password paints a light document canvas at 1440px",
+      "passed": true
+    },
+    {
+      "name": "/reset-password fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/verify-email paints a light document canvas at 1440px",
+      "passed": true
+    },
+    {
+      "name": "/verify-email fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/social-signup paints a light document canvas at 1440px",
+      "passed": true
+    },
+    {
+      "name": "/social-signup fits 1440px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/login paints a light document canvas at 1920px",
+      "passed": true
+    },
+    {
+      "name": "/login fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome paints a light document canvas at 1920px",
+      "passed": true
+    },
+    {
+      "name": "/welcome fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=email paints a light document canvas at 1920px",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=email fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=verification paints a light document canvas at 1920px",
+      "passed": true
+    },
+    {
+      "name": "/welcome?step=verification fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password paints a light document canvas at 1920px",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/reset-password paints a light document canvas at 1920px",
+      "passed": true
+    },
+    {
+      "name": "/reset-password fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/verify-email paints a light document canvas at 1920px",
+      "passed": true
+    },
+    {
+      "name": "/verify-email fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "/social-signup paints a light document canvas at 1920px",
+      "passed": true
+    },
+    {
+      "name": "/social-signup fits 1920px and has one main heading",
+      "passed": true
+    },
+    {
+      "name": "anonymous / redirects to login",
+      "passed": true
+    },
+    {
+      "name": "anonymous /files redirects to login",
+      "passed": true
+    },
+    {
+      "name": "anonymous /settings redirects to login",
+      "passed": true
+    },
+    {
+      "name": "anonymous /account redirects to login",
+      "passed": true
+    },
+    {
+      "name": "anonymous /preview redirects to login",
+      "passed": true
+    },
+    {
+      "name": "all three official social buttons have loaded images",
+      "passed": true
+    },
+    {
+      "name": "social methods occupy three full-width rows before email login",
+      "passed": true
+    },
+    {
+      "name": "guest home links point directly to login rather than a protected-home redirect",
+      "passed": true
+    },
+    {
+      "name": "a held page navigation shows the shared loading feedback",
+      "passed": true
+    },
+    {
+      "name": "pending navigation keeps the previous form visible",
+      "passed": true
+    },
+    {
+      "name": "navigation feedback stays at the viewport top while the link is hovered",
+      "passed": true
+    },
+    {
+      "name": "signup first offers social methods or a separate email form",
+      "passed": true
+    },
+    {
+      "name": "signup no longer collects a display name",
+      "passed": true
+    },
+    {
+      "name": "email choice opens the reusable progressive Stepper without duplicate social rows",
+      "passed": true
+    },
+    {
+      "name": "forged completion URL returns to email",
+      "passed": true
+    },
+    {
+      "name": "signup IME Enter does not advance",
+      "passed": true
+    },
+    {
+      "name": "email Tab enters the newly revealed password on the same form",
+      "passed": true
+    },
+    {
+      "name": "revealing password fields keeps the heading anchored",
+      "passed": true
+    },
+    {
+      "name": "reduced motion disables input reveal",
+      "passed": true
+    },
+    {
+      "name": "browser back and forward restore input progress",
+      "passed": true
+    },
+    {
+      "name": "password visibility preserves the value without submitting",
+      "passed": true
+    },
+    {
+      "name": "password visibility can be concealed again",
+      "passed": true
+    },
+    {
+      "name": "reload keeps identity inputs but never passwords",
+      "passed": true
+    },
+    {
+      "name": "a new tab restores only identity and progress",
+      "passed": true
+    },
+    {
+      "name": "server password mismatch uses the common form error state",
+      "passed": true
+    },
+    {
+      "name": "successful signup advances the shared Stepper",
+      "passed": true
+    },
+    {
+      "name": "verification step survives refresh without resubmitting signup",
+      "passed": true
+    },
+    {
+      "name": "mail waiting has a login link and removes the completed input draft",
+      "passed": true
+    },
+    {
+      "name": "verification waiting never links back to signup input",
+      "passed": true
+    },
+    {
+      "name": "completed signup does not retain the persistent identity draft",
+      "passed": true
+    },
+    {
+      "name": "verification token is removed from the URL",
+      "passed": true
+    },
+    {
+      "name": "verified success reaches completion with a login button",
+      "passed": true
+    },
+    {
+      "name": "verified signup asks only for a display name after first login",
+      "passed": true
+    },
+    {
+      "name": "unfinished name setup cannot bypass into a workspace",
+      "passed": true
+    },
+    {
+      "name": "invalid profile input stays editable without losing the typed value",
+      "passed": true
+    },
+    {
+      "name": "name setup IME Enter does not submit",
+      "passed": true
+    },
+    {
+      "name": "profile name is stored on the authenticated user",
+      "passed": true
+    },
+    {
+      "name": "Server Action forwards the HttpOnly cookie and opens the workspace",
+      "passed": true
+    },
+    {
+      "name": "authenticated /login redirects to workspace",
+      "passed": true
+    },
+    {
+      "name": "authenticated /welcome redirects to workspace",
+      "passed": true
+    },
+    {
+      "name": "authenticated /forgot-password redirects to workspace",
+      "passed": true
+    },
+    {
+      "name": "authenticated /reset-password redirects to workspace",
+      "passed": true
+    },
+    {
+      "name": "authenticated /social-signup redirects to workspace",
+      "passed": true
+    },
+    {
+      "name": "saved name does not prompt again",
+      "passed": true
+    },
+    {
+      "name": "account refresh revalidates the cookie on the server",
+      "passed": true
+    },
+    {
+      "name": "focus and visibility bursts share one in-flight session check",
+      "passed": true
+    },
+    {
+      "name": "pending background revalidation never hides or remounts the authenticated form",
+      "passed": true
+    },
+    {
+      "name": "blocking session changes show the shared loader instead of an empty screen",
+      "passed": true
+    },
+    {
+      "name": "blocking loader and uncovered document canvas remain light",
+      "passed": true
+    },
+    {
+      "name": "settings account fits 390px",
+      "passed": true
+    },
+    {
+      "name": "settings account has real account entry and no obsolete login notice",
+      "passed": true
+    },
+    {
+      "name": "social account settings show three real provider actions",
+      "passed": true
+    },
+    {
+      "name": "taste app inspection account at 390px has no failure",
+      "passed": true
+    },
+    {
+      "name": "settings folders fits 390px",
+      "passed": true
+    },
+    {
+      "name": "settings folders has real account entry and no obsolete login notice",
+      "passed": true
+    },
+    {
+      "name": "taste app inspection folders at 390px has no failure",
+      "passed": true
+    },
+    {
+      "name": "settings editor fits 390px",
+      "passed": true
+    },
+    {
+      "name": "settings editor has real account entry and no obsolete login notice",
+      "passed": true
+    },
+    {
+      "name": "taste app inspection editor at 390px has no failure",
+      "passed": true
+    },
+    {
+      "name": "settings account fits 1440px",
+      "passed": true
+    },
+    {
+      "name": "settings account has real account entry and no obsolete login notice",
+      "passed": true
+    },
+    {
+      "name": "social account settings show three real provider actions",
+      "passed": true
+    },
+    {
+      "name": "taste app inspection account at 1440px has no failure",
+      "passed": true
+    },
+    {
+      "name": "settings folders fits 1440px",
+      "passed": true
+    },
+    {
+      "name": "settings folders has real account entry and no obsolete login notice",
+      "passed": true
+    },
+    {
+      "name": "taste app inspection folders at 1440px has no failure",
+      "passed": true
+    },
+    {
+      "name": "settings editor fits 1440px",
+      "passed": true
+    },
+    {
+      "name": "settings editor has real account entry and no obsolete login notice",
+      "passed": true
+    },
+    {
+      "name": "taste app inspection editor at 1440px has no failure",
+      "passed": true
+    },
+    {
+      "name": "settings account fits 1920px",
+      "passed": true
+    },
+    {
+      "name": "settings account has real account entry and no obsolete login notice",
+      "passed": true
+    },
+    {
+      "name": "social account settings show three real provider actions",
+      "passed": true
+    },
+    {
+      "name": "taste app inspection account at 1920px has no failure",
+      "passed": true
+    },
+    {
+      "name": "settings folders fits 1920px",
+      "passed": true
+    },
+    {
+      "name": "settings folders has real account entry and no obsolete login notice",
+      "passed": true
+    },
+    {
+      "name": "taste app inspection folders at 1920px has no failure",
+      "passed": true
+    },
+    {
+      "name": "settings editor fits 1920px",
+      "passed": true
+    },
+    {
+      "name": "settings editor has real account entry and no obsolete login notice",
+      "passed": true
+    },
+    {
+      "name": "taste app inspection editor at 1920px has no failure",
+      "passed": true
+    },
+    {
+      "name": "settings switches retain one indicator with a real transform transition",
+      "passed": true
+    },
+    {
+      "name": "the settings underline passes through an intermediate position",
+      "passed": true
+    },
+    {
+      "name": "settings browser history restores the active navigation",
+      "passed": true
+    },
+    {
+      "name": "settings respects reduced motion",
+      "passed": true
+    },
+    {
+      "name": "the shared folder settings still connect a synthetic local folder",
+      "passed": true
+    },
+    {
+      "name": "36 authenticated route samples show the requested workspace and no blocking session notice",
+      "passed": true
+    },
+    {
+      "name": "authentication inputs never persist secret tokens or passwords",
+      "passed": true
+    },
+    {
+      "name": "logout removes the cookie and the server blocks account re-entry",
+      "passed": true
+    },
+    {
+      "name": "reset callback arrives with an in-memory token and a clean URL",
+      "passed": true
+    },
+    {
+      "name": "reset uses the same common Stepper and completes after server validation",
+      "passed": true
+    },
+    {
+      "name": "the old password is rejected",
+      "passed": true
+    },
+    {
+      "name": "the new password signs in through the real Server Action",
+      "passed": true
+    },
+    {
+      "name": "social-only settings offer native ownership proof and a workspace choice",
+      "passed": true
+    },
+    {
+      "name": "a rejected native proof keeps the account form and email visible without revoking the social session",
+      "passed": true
+    },
+    {
+      "name": "confirmed existing-account connection clears sessions and requires a new login",
+      "passed": true
+    },
+    {
+      "name": "linking restores the selected original workspace's existing local folder handle",
+      "passed": true
+    },
+    {
+      "name": "both original workspace choices remain available after linking",
+      "passed": true
+    },
+    {
+      "name": "connected workspace selection fits a narrow screen",
+      "passed": true
+    },
+    {
+      "name": "a native login can reopen the social workspace without changing its original local storage key",
+      "passed": true
+    },
+    {
+      "name": "preview validates the signed-in identity independently of the selected peer workspace",
+      "passed": true
+    },
+    {
+      "name": "disconnecting restores the native account's own original folder without moving or deleting either workspace",
+      "passed": true
+    },
+    {
+      "name": "keyboard Tab follows labeled form fields",
+      "passed": true
+    },
+    {
+      "name": "IME Enter is prevented while composing",
+      "passed": true
+    },
+    {
+      "name": "blocked storage does not prevent typing",
+      "passed": true
+    },
+    {
+      "name": "no browser runtime errors",
+      "passed": true
+    }
+  ]
+}

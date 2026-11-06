@@ -1,5 +1,7 @@
 # 사이트 전체 성능 측정 정책
 
+최신 가입 후 이름·문서 바탕: [기존 인증 경로36표본](verification/signup-profile-and-loading/performance.md). 검은 canvas 재현/초기 스타일 검사와 로딩 성능 표본을 구분하며 실제 사용자 GPU·INP 측정으로 확대하지 않는다.
+
 최신 인증/설정 후속: [인증된6경로×2폭×3회와 운영 실행 지역](verification/auth-social-settings/performance.md). 창 복귀의 blocking UI를 제거한 상호작용 검증, 로컬 초기 paint, 운영 공개 세션 조회를 구분한다.
 
 최신 단일 보관함 연결·A4 지면·우측 하단 알림: [2026-11-04 같은 source36표본](verification/document-a4-vault-actions/performance.md). 연결된 지면의 위치/비율 검증과 초기 로딩 측정을 분리했다.

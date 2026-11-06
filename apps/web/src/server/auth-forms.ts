@@ -5,6 +5,7 @@ import type { AuthFieldName, AuthFormState, AuthOperation } from "../shared/auth
 import { getAuth } from "./auth";
 import { handleAuthRequest } from "./auth-handler";
 import { reportAuthenticationFailure } from "./auth-diagnostics";
+import { displayNameSchema } from "../shared/auth-profile";
 
 const email = z.string().trim().max(254).pipe(z.email("올바른 이메일 주소를 입력해 주세요.")).transform(value => value.toLowerCase());
 const password = z.string().min(12, "비밀번호는 12자 이상 입력해 주세요.").max(128, "비밀번호는 128자 이하로 입력해 주세요.");
@@ -13,7 +14,8 @@ const confirmPassword = { message: "비밀번호가 일치하지 않습니다.",
 const newPassword = z.object({ password, passwordConfirm: z.string() }).refine(value => value.password === value.passwordConfirm, confirmPassword);
 const schemas = {
   login: z.object({ email, password: z.string().min(1, "비밀번호를 입력해 주세요.").max(128) }),
-  signup: z.object({ name: z.string().trim().min(1, "표시 이름을 입력해 주세요.").max(40), email, password, passwordConfirm: z.string() }).refine(value => value.password === value.passwordConfirm, confirmPassword),
+  signup: z.object({ email, password, passwordConfirm: z.string() }).refine(value => value.password === value.passwordConfirm, confirmPassword),
+  profile: z.object({ name: displayNameSchema }),
   resend: z.object({ email }),
   "request-reset": z.object({ email }),
   verify: z.object({ token }),
@@ -23,11 +25,13 @@ const schemas = {
 
 const paths: Record<AuthOperation, string> = {
   login: "/sign-in/email", signup: "/sign-up/email", resend: "/send-verification-email",
+  profile: "/update-user",
   "request-reset": "/request-password-reset", verify: "/verify-email", reset: "/reset-password", signout: "/sign-out",
 };
 
 const successMessages: Record<AuthOperation, string> = {
   login: "로그인했습니다.", signup: "가입 요청을 처리했습니다. 이메일의 확인 링크를 열어 주세요.",
+  profile: "표시 이름을 저장했습니다.",
   resend: "확인이 필요한 계정이라면 인증 메일을 보냅니다. 메일함을 확인해 주세요.",
   "request-reset": "해당 이메일로 가입한 계정이 있다면 재설정 메일을 보냅니다. 메일함을 확인해 주세요.",
   verify: "이메일 확인을 마쳤습니다. 이제 로그인할 수 있습니다.", reset: "비밀번호를 변경했습니다. 새 비밀번호로 로그인해 주세요.", signout: "로그아웃했습니다.",
@@ -64,6 +68,8 @@ export async function submitAuthForm(operation: AuthOperation, formData: FormDat
     const origin = new URL(baseURL).origin;
     const body: Record<string, unknown> = { ...parsed.data };
     delete body.passwordConfirm;
+    // Defer profile input until verified login, without deriving a public name from the email.
+    if (operation === "signup") body.name = "";
 
     if (operation === "signup" || operation === "resend") body.callbackURL = `${origin}/login`;
     if (operation === "request-reset") body.redirectTo = `${origin}/reset-password`;

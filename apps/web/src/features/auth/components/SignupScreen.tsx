@@ -26,17 +26,16 @@ export function SignupScreen({ action }: { action: AuthFormAction; providers?: r
     if (result.status === "success") {
       update("email", flow.draft.email);
       router.push("/welcome?step=verification", { scroll: false });
-    } else if (result.fieldErrors?.name) flow.goTo("name");
-    else if (result.fieldErrors?.email) flow.goTo("email");
+    } else if (result.fieldErrors?.email) flow.goTo("email");
     return result;
   }, { status: "idle" });
   const success = state.status === "success";
   const progress = authProgress(success ? "resend" : "signup", false, flow.stage)!;
-  const fields = authForms.signup.fields.filter(field => field.name === "name" || flow.index >= (field.name === "email" ? 1 : 2));
+  const fields = authForms.signup.fields.filter(field => field.name === "email" || flow.index >= 1);
 
   return <section className={`${styles.form} ${styles.signupForm}`} aria-labelledby="auth-title">
     <h1 id="auth-title">모아 계정 만들기</h1>
-    <p>이름부터 차례로 작성하세요. 입력한 내용은 한 장에 이어집니다.</p>
+    <p>이메일부터 입력해 주세요. 표시 이름은 가입을 마친 뒤 정합니다.</p>
     <WorkflowStepper {...progress} />
     {state.message && <StatusNotice state={success ? "success" : "error"} title={state.message} role={success ? "status" : "alert"} />}
     {success ? <ActionLink href="/welcome?step=verification" variant="primary">이메일 확인 안내로</ActionLink> : <form data-auth-form action={formAction} className={styles.fields} aria-busy={pending}
@@ -44,8 +43,8 @@ export function SignupScreen({ action }: { action: AuthFormAction; providers?: r
       onSubmit={event => { if (flow.stage !== "password" || composing.current) { event.preventDefault(); if (!composing.current) flow.advance(); } }}>
       <fieldset className={styles.fields} disabled={pending}>
         {fields.map(field => {
-          const identity = field.name === "name" || field.name === "email" ? field.name : undefined;
-          return <div key={field.name} className={field.name === "name" ? undefined : styles.revealedField}><div><AuthInput field={field} error={identity ? flow.errors[identity] ?? state.fieldErrors?.[identity] : state.fieldErrors?.[field.name]}
+          const identity = field.name === "email" ? field.name : undefined;
+          return <div key={field.name} className={field.name === "email" ? undefined : styles.revealedField}><div><AuthInput field={field} error={identity ? flow.errors[identity] ?? state.fieldErrors?.[identity] : state.fieldErrors?.[field.name]}
             value={identity ? flow.draft[identity] : undefined} onChange={identity ? event => flow.update(identity, event.target.value) : undefined}
             onBlur={identity ? event => {
               if (composing.current || event.relatedTarget instanceof Element && event.relatedTarget.closest("[data-signup-control], [data-signup-back]")) return;
@@ -67,7 +66,7 @@ export function SignupScreen({ action }: { action: AuthFormAction; providers?: r
       </fieldset>
     </form>}
     {pending && <PageLoading compact message="가입 요청을 처리하고 있어요." />}
-    <p className={styles.help}>이름·이메일·단계는 이 브라우저에 하루 동안 보관합니다. 비밀번호는 저장하지 않아요.</p>
+    <p className={styles.help}>이메일·단계는 이 브라우저에 하루 동안 보관합니다. 비밀번호는 저장하지 않아요.</p>
     <nav className={styles.links} aria-label="계정 메뉴"><ActionLink href="/welcome">다른 방법으로 가입</ActionLink><ActionLink href="/login">로그인으로</ActionLink></nav>
   </section>;
 }

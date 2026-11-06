@@ -5,11 +5,12 @@ import { ActionLink } from "../ui/ActionLink";
 import { NavigationProgress } from "../ui/feedback/NavigationProgress";
 import styles from "./auth-shell.module.css";
 
-export function AuthShell({ children, preview = false }: { children: ReactNode; preview?: boolean }) {
+export function AuthShell({ children, preview = false, guest = false }: { children: ReactNode; preview?: boolean; guest?: boolean }) {
+  const home = preview ? "/preview/screens/chat" : guest ? "/login" : "/";
   return <main className={[styles.page, !preview && styles.live, "reading-surface"].filter(Boolean).join(" ")}>
     <header className={styles.header}>
-      <Link href={preview ? "/preview/screens/chat" : "/"} className={styles.brand}><MoaMark size={28} />모아.<NavigationProgress /></Link>
-      <ActionLink href={preview ? "/preview" : "/"}>{preview ? "화면 둘러보기" : "모아 홈"}</ActionLink>
+      <Link href={home} className={styles.brand}><MoaMark size={28} />모아.<NavigationProgress /></Link>
+      <ActionLink href={preview ? "/preview" : home}>{preview ? "화면 둘러보기" : guest ? "로그인으로" : "모아 홈"}</ActionLink>
     </header>
     <div className={styles.layout}>
       <section className={styles.introduction} aria-label="모아 소개">

@@ -23,13 +23,14 @@ const { Pool } = requireWeb("pg");
 const fixtureSecret = "fixture-browser-" + randomUUID();
 const fixtureDatabase = new Pool({ connectionString: runtimeURL.toString(), ssl: { ca: readFileSync(process.env.MOA_TEST_TLS_CERT, "utf8"), rejectUnauthorized: true }, max: 1 });
 const next = requireWeb.resolve("next/dist/bin/next");
-const out = join(root, "docs/verification/auth-entry-and-account-connection/browser");
+const out = join(root, "docs/verification/signup-profile-and-loading/browser");
 mkdirSync(out, { recursive: true });
 mkdirSync(cache, { recursive: true });
 const app = mkdtempSync(join(cache, "moa-auth-browser-"));
 const mails = [];
 const checks = [];
 const designChecks = [];
+const canvasChecks = [];
 let server;
 let browser;
 let page;
@@ -135,11 +136,27 @@ try {
   mkdirSync(process.env.TASTE_SKILL_TMP, { recursive: true });
   browser = await Browser.launch();
   page = await browser.newPage({ width: 1440, height: 900 });
+  await page.send("Page.addScriptToEvaluateOnNewDocument", { source: `
+    window.moaCanvasSamples = [];
+    function sampleCanvas() {
+      if (!document.documentElement) return;
+      const root = getComputedStyle(document.documentElement);
+      const body = document.body && getComputedStyle(document.body);
+      window.moaCanvasSamples.push({ root: root.backgroundColor, body: body?.backgroundColor, scheme: root.colorScheme });
+    }
+    document.addEventListener("readystatechange", sampleCanvas);
+    let count = 0;
+    function sampleFrame() { sampleCanvas(); if (++count < 12) requestAnimationFrame(sampleFrame); }
+    requestAnimationFrame(sampleFrame);
+  ` });
 
   for (const width of [390, 768, 1440, 1920]) {
     await page.setViewport({ width, height: 900 });
-    for (const route of ["/login", "/welcome", "/welcome?step=name", "/welcome?step=verification", "/forgot-password", "/reset-password", "/verify-email", "/social-signup"]) {
+    for (const route of ["/login", "/welcome", "/welcome?step=email", "/welcome?step=verification", "/forgot-password", "/reset-password", "/verify-email", "/social-signup"]) {
       await page.goto(base + route, { settleMs: 180 });
+      const canvas = await page.eval(() => ({ samples: window.moaCanvasSamples, root: getComputedStyle(document.documentElement).backgroundColor, body: getComputedStyle(document.body).backgroundColor }));
+      canvasChecks.push({ route, width, ...canvas });
+      check(`${route} paints a light document canvas at ${width}px`, canvas.root === "rgb(228, 232, 230)" && canvas.body === "rgb(228, 232, 230)" && canvas.samples.length > 0 && canvas.samples.every(sample => sample.root === "rgb(228, 232, 230)" && sample.scheme === "light"));
       check(`${route} fits ${width}px and has one main heading`, await page.eval(() => document.documentElement.scrollWidth <= innerWidth && document.querySelectorAll("h1").length === 1));
       await page.screenshot({ path: join(out, `${route.split("?")[0].slice(1)}-${new URL(route, base).searchParams.get("step") ?? "entry"}-${width}.png`), format: "png" });
     }
@@ -155,6 +172,7 @@ try {
     return buttons.every((rect, index) => rect.height >= 44 && rect.width >= 260 && (!index || rect.top >= buttons[index - 1].bottom))
       && buttons[2].bottom < document.querySelector('form[data-auth-form]').getBoundingClientRect().top;
   }));
+  check("guest home links point directly to login rather than a protected-home redirect", await page.eval(() => [...document.querySelectorAll('header a')].every(link => link.getAttribute("href") === "/login")));
   const navigationResponses = [];
   await page.send("Network.enable");
   const stopNavigation = page.browser.on(page.sessionId, "Fetch.requestPaused", event => navigationResponses.push(event));
@@ -173,36 +191,27 @@ try {
   await page.send("Fetch.disable"); stopNavigation();
   await wait(() => location.pathname === "/welcome");
   await page.goto(base + "/welcome", { settleMs: 180 });
-  check("signup first offers social methods or a separate email form", await page.eval(() => document.querySelectorAll('button[name="provider"]').length === 3 && !!document.querySelector('a[href="/welcome?step=name"]') && !document.querySelector('[name="name"]')));
-  await page.eval(() => document.querySelector('a[href="/welcome?step=name"]').click());
-  await wait(() => !!document.querySelector('[name="name"]'));
+  check("signup first offers social methods or a separate email form", await page.eval(() => document.querySelectorAll('button[name="provider"]').length === 3 && !!document.querySelector('a[href="/welcome?step=email"]') && !document.querySelector('[name="name"]')));
+  await page.eval(() => document.querySelector('a[href="/welcome?step=email"]').click());
+  await wait(() => !!document.querySelector('[name="email"]'));
+  check("signup no longer collects a display name", await page.eval(() => !document.querySelector('[name="name"]')));
   check("email choice opens the reusable progressive Stepper without duplicate social rows", await page.eval(() => !!document.querySelector('[aria-current="step"]') && !document.querySelector('button[name="provider"]')));
 
   await page.goto(base + "/welcome?step=complete", { settleMs: 180 });
   const signupTop = await page.eval(() => document.querySelector("h1").getBoundingClientRect().top);
-  check("forged completion URL returns to the name field", await page.eval(() => document.querySelector('[aria-current="step"]').textContent.includes("이름") && !document.querySelector('[name="email"]')));
-  await input("name", "가상 사용자");
-  check("signup IME Enter does not advance", await page.eval(() => !document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", isComposing: true, bubbles: true, cancelable: true })) && !document.querySelector('[name="email"]')));
-  await page.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13 });
-  await page.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13 });
-  await wait(() => !!document.querySelector('[name="email"]'));
-  check("name Enter reveals email below the retained name", await page.eval(() => document.querySelector('[name="name"]').value === "가상 사용자" && !document.querySelector('[name="password"]')));
-  await page.eval(() => history.back());
-  await wait(() => location.search === "?step=name" && !document.querySelector('[name="email"]'));
-  await page.eval(() => document.querySelector('[name="name"]').focus());
-  await page.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 });
-  await page.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 });
-  await wait(() => document.activeElement?.getAttribute("name") === "email");
-  check("name Tab enters the newly revealed email instead of skipping it", true);
-  check("revealing an input keeps the form heading anchored", Math.abs(await page.eval(() => document.querySelector("h1").getBoundingClientRect().top) - signupTop) < 1);
-  await page.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
-  check("reduced motion disables input reveal animation", await page.eval(() => getComputedStyle(document.querySelector('[name="email"]').closest('[class*="revealedField"]')).animationName === "none"));
-  await page.send("Emulation.setEmulatedMedia", { features: [] });
+  check("forged completion URL returns to email", await page.eval(() => document.querySelector('[aria-current="step"]').textContent.includes("이메일") && !document.querySelector('[name="password"]')));
   await input("email", "browser-flow@example.invalid");
+  check("signup IME Enter does not advance", await page.eval(() => !document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", isComposing: true, bubbles: true, cancelable: true })) && !document.querySelector('[name="password"]')));
   await page.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 });
   await page.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 });
-  await wait(() => !!document.querySelector('[name="password"]'));
+  await wait(() => !!document.querySelector('[name="passwordConfirm"]') && document.activeElement?.getAttribute("name") === "password");
   check("email Tab enters the newly revealed password on the same form", await page.eval(() => !!document.querySelector('[name="passwordConfirm"]') && document.activeElement?.getAttribute("name") === "password" && document.querySelectorAll('form[data-auth-form]').length === 1));
+  await page.eval(() => new Promise(resolve => setTimeout(resolve, 260)));
+  check("revealing password fields keeps the heading anchored", Math.abs(await page.eval(() => document.querySelector("h1").getBoundingClientRect().top) - signupTop) < 1);
+  await page.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
+  check("reduced motion disables input reveal", await page.eval(() => getComputedStyle(document.querySelector('[name="password"]').closest('[class*="revealedField"]')).animationName === "none"));
+  await page.send("Emulation.setEmulatedMedia", { features: [] });
+
   await page.eval(() => history.back());
   await wait(() => location.search === "?step=email" && !document.querySelector('[name="password"]'));
   await page.eval(() => history.forward());
@@ -215,7 +224,7 @@ try {
   check("password visibility can be concealed again", await page.eval(() => document.querySelector('[name="password"]').type === "password"));
   await page.send("Page.reload");
   await wait(() => document.querySelector('[name="email"]')?.value === "browser-flow@example.invalid");
-  check("reload keeps identity inputs but never passwords", await page.eval(() => document.querySelector('[name="name"]').value === "가상 사용자" && document.querySelector('[name="password"]').value === ""));
+  check("reload keeps identity inputs but never passwords", await page.eval(() => !document.querySelector('[name="name"]') && document.querySelector('[name="password"]').value === ""));
   const previousPage = page;
   page = await browser.newPage({ width: 1440, height: 900 });
   await page.goto(base + "/welcome", { settleMs: 180 });
@@ -234,8 +243,8 @@ try {
   check("mail waiting has a login link and removes the completed input draft", await page.eval(() => !!document.querySelector('nav a[href="/login"]') && !localStorage.getItem("moa-signup-draft-v1")));
   check("verification waiting never links back to signup input", await page.eval(() => ![...document.querySelectorAll('a')].some(link => link.getAttribute("href") === "/welcome")));
   await page.eval(() => { history.back(); });
-  await wait(() => document.querySelector('[aria-current="step"]')?.textContent.includes("이름"));
-  check("completed signup does not retain the persistent identity draft", await page.eval(() => document.querySelector('[name="name"]').value === ""));
+  await wait(() => document.querySelector('h1')?.textContent === "모아 계정 만들기" && location.search === "?step=email" && document.querySelector('[name="email"]')?.value === "");
+  check("completed signup does not retain the persistent identity draft", await page.eval(() => document.querySelector('[name="email"]').value === ""));
   await page.eval(() => { history.forward(); });
   await wait(() => document.querySelector('[aria-current="step"]')?.textContent.includes("이메일 확인"));
 
@@ -244,13 +253,25 @@ try {
   await submit(); await wait(() => document.querySelector('[aria-current="step"]')?.textContent.includes("완료"));
   check("verified success reaches completion with a login button", await page.eval(() => document.querySelector('[aria-current="step"]').textContent.includes("완료") && !!document.querySelector('a[href="/login"]')));
   await page.goto(base + "/login", { settleMs: 180 });
-  await input("password", "fixture-browser-password"); await submit(); await wait(() => location.pathname === "/");
+  await input("password", "fixture-browser-password"); await submit(); await wait(() => location.pathname === "/account" && !!document.querySelector('[name="name"]'));
+  check("verified signup asks only for a display name after first login", await page.eval(() => document.querySelectorAll('form[data-auth-form] input').length === 1 && !document.querySelector('[name="password"]')));
+  await page.screenshot({ path: join(out, "profile-name-1440.png"), fullPage: true });
+  await page.goto(base + "/files", { settleMs: 180 });
+  check("unfinished name setup cannot bypass into a workspace", await page.eval(() => location.pathname === "/account" && !!document.querySelector('[name="name"]')));
+  await input("name", "   ");
+  await submit(); await wait(() => !!document.querySelector('[name="name"][aria-invalid="true"]'));
+  check("invalid profile input stays editable without losing the typed value", await page.eval(() => document.querySelector('[name="name"]').value === "   " && location.pathname === "/account"));
+  await input("name", "가상 사용자");
+  check("name setup IME Enter does not submit", await page.eval(() => !document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", isComposing: true, bubbles: true, cancelable: true }))));
+  await submit(); await wait(() => location.pathname === "/");
+  check("profile name is stored on the authenticated user", (await fixtureDatabase.query('SELECT name FROM moa_auth."user" WHERE email=$1', ["browser-flow@example.invalid"])).rows[0].name === "가상 사용자");
   check("Server Action forwards the HttpOnly cookie and opens the workspace", await page.eval(() => !document.cookie.includes("session_token")));
   for (const route of ["/login", "/welcome", "/forgot-password", "/reset-password", "/social-signup"]) {
     await page.goto(base + route, { settleMs: 180 });
     check(`authenticated ${route} redirects to workspace`, await page.eval(() => location.pathname === "/"));
   }
   await page.goto(base + "/account", { settleMs: 180 });
+  check("saved name does not prompt again", await page.eval(() => !document.querySelector('[name="name"]') && document.body.textContent.includes("가상 사용자")));
   await wait(() => !!document.querySelector('form[data-auth-form] button[type="submit"]'));
   check("account refresh revalidates the cookie on the server", await page.eval(() => document.body.textContent.includes("browser-flow@example.invalid")));
   await sleep(500);
@@ -275,6 +296,7 @@ try {
   await page.eval(() => window.dispatchEvent(new Event("moa-auth-session-changed")));
   for (let count = 0; count < 100 && !blocked.length; count++) await sleep(30);
   check("blocking session changes show the shared loader instead of an empty screen", await page.eval(() => !!document.querySelector('[role="status"][aria-busy="true"]') && document.body.textContent.includes("로그인 상태를 확인하고 있어요.")));
+  check("blocking loader and uncovered document canvas remain light", await page.eval(() => getComputedStyle(document.documentElement).backgroundColor === "rgb(228, 232, 230)" && getComputedStyle(document.body).backgroundColor === "rgb(228, 232, 230)" && getComputedStyle(document.querySelector('[role="status"][aria-busy="true"]')).backgroundColor === "rgb(228, 232, 230)"));
   for (const event of blocked) await page.send("Fetch.continueResponse", { requestId: event.requestId });
   await page.send("Fetch.disable"); stopBlocked();
   await wait(() => !!document.querySelector('form[data-auth-form]'));
@@ -448,6 +470,7 @@ try {
   check("blocked storage does not prevent typing", await page.eval(() => document.querySelector('[name="email"]').value === "blocked-store@example.invalid"));
   check("no browser runtime errors", page.consoleErrors.length === 0);
   writeFileSync(join(out, "checks.json"), JSON.stringify({ at: new Date().toISOString(), buildId: readFileSync(join(app, ".next/BUILD_ID"), "utf8").trim(), fixture: "disposable PostgreSQL with strict TLS; private Next build copy; synthetic Resend capture; isolated Chromium", checks }, null, 2));
+  writeFileSync(join(out, "canvas-checks.json"), JSON.stringify({ scope: "computed document canvas samples during readystatechange/initial animation frames; not an OS/GPU compositor recording", checks: canvasChecks }, null, 2));
   console.log(`Authentication UI: ${checks.length} browser checks passed.`);
 } catch (error) {
   if (page) {

@@ -18,6 +18,11 @@ beforeEach(() => {
 });
 
 describe("server route session guards", () => {
+  it("requires a name only after authentication and before opening a workspace", async () => {
+    calls.session.mockResolvedValue({ user: { id: "user-a", name: "", emailVerified: true }, session: { expiresAt: new Date("2027-01-01") } });
+    await expect(requireWorkspace()).rejects.toThrow("fixture-redirect:/account");
+    expect(calls.workspace).not.toHaveBeenCalled();
+  });
   it("sends an authenticated verified guest-page visitor to the fixed workspace route", async () => {
     calls.session.mockResolvedValue({ user: { id: "user-a", emailVerified: true } });
     await expect(requireGuest()).rejects.toThrow("fixture-redirect:/");
@@ -30,7 +35,7 @@ describe("server route session guards", () => {
   });
 
   it("does not send an authenticated social user back to email verification", async () => {
-    calls.session.mockResolvedValue({ user: { id: "user-a", emailVerified: false }, session: { expiresAt: new Date("2027-01-01") } });
+    calls.session.mockResolvedValue({ user: { id: "user-a", name: "소셜 사용자", emailVerified: false }, session: { expiresAt: new Date("2027-01-01") } });
     calls.social.mockResolvedValue({ id: "social-a" });
     calls.workspace.mockResolvedValue({ userId: "user-a", workspaceId: "workspace-a" });
     await expect(requireWorkspace()).resolves.toMatchObject({ userId: "user-a" });
@@ -55,7 +60,7 @@ describe("server route session guards", () => {
   });
 
   it("uses only the authenticated server workspace identity", async () => {
-    calls.session.mockResolvedValue({ user: { id: "user-a", emailVerified: true }, session: { expiresAt: new Date("2027-01-01") } });
+    calls.session.mockResolvedValue({ user: { id: "user-a", name: "기존 사용자", emailVerified: true }, session: { expiresAt: new Date("2027-01-01") } });
     calls.workspace.mockResolvedValue({ userId: "user-a", workspaceId: "workspace-a" });
     await expect(requireWorkspace()).resolves.toMatchObject({ userId: "user-a", workspaceId: "workspace-a" });
   });

@@ -35,8 +35,20 @@ describe("authentication form trust boundary", () => {
     expect(result.state.status).toBe("success");
     expect(request.headers.get("origin")).toBe(headers.get("origin"));
     expect(request.headers.get("x-vercel-forwarded-for")).toBe("192.0.2.1");
-    expect(await request.json()).toMatchObject({ name: "이름", email: "fixture@example.invalid", callbackURL: "http://127.0.0.1:3034/login" });
+    expect(await request.json()).toMatchObject({ name: "", email: "fixture@example.invalid", callbackURL: "http://127.0.0.1:3034/login" });
     expect(JSON.stringify(result.state)).not.toContain("fixture-password");
+  });
+
+  it("creates an email signup without collecting a name and only accepts a valid name after login", async () => {
+    protocol.mockResolvedValue(Response.json({ status: true }));
+    expect((await submitAuthForm("signup", fields({ email: "fixture@example.invalid", password: "fixture-password-123", passwordConfirm: "fixture-password-123" }), new Headers())).state.status).toBe("success");
+    expect(await protocol.mock.calls[0][0].json()).toMatchObject({ name: "" });
+    protocol.mockClear();
+    expect((await submitAuthForm("profile", fields({ name: "  " }), new Headers())).state.fieldErrors?.name).toBeDefined();
+    expect(protocol).not.toHaveBeenCalled();
+    expect((await submitAuthForm("profile", fields({ name: " 이름 ", userId: "other-user" }), new Headers())).state.status).toBe("success");
+    expect(await protocol.mock.calls[0][0].json()).toEqual({ name: "이름" });
+    expect(protocol.mock.calls[0][0].url).toContain("/update-user");
   });
 
   it("maps an unverified login to a Korean message without returning the response body", async () => {

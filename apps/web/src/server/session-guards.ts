@@ -34,6 +34,8 @@ export async function requireWorkspace() {
 
   if (!session) redirect("/login");
 
+  if (!session.user.name.trim()) redirect("/account");
+
   try {
     return { ...await getAuthenticatedWorkspace(requestHeaders), sessionExpiresAt: session.session.expiresAt.toISOString() };
   } catch (error) {

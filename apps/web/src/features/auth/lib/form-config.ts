@@ -3,7 +3,7 @@ import type { AuthFieldName, AuthOperation } from "../../../shared/auth-contract
 import type { SignupStage } from "./signup-flow";
 
 export const signupSteps = [
-  { id: "name", label: "이름" }, { id: "email", label: "이메일" }, { id: "password", label: "비밀번호" }, { id: "verification", label: "이메일 확인" }, { id: "complete", label: "완료" },
+  { id: "email", label: "이메일" }, { id: "password", label: "비밀번호" }, { id: "verification", label: "이메일 확인" }, { id: "complete", label: "완료" },
 ] as const satisfies readonly WorkflowStep[];
 export const resetSteps = [
   { id: "request", label: "메일 받기" }, { id: "password", label: "비밀번호 변경" }, { id: "complete", label: "완료" },
@@ -11,7 +11,7 @@ export const resetSteps = [
 
 export function signupOperation(step: unknown) { return step === "verification" ? "resend" : "signup"; }
 
-export function authProgress(operation: AuthOperation, success: boolean, signupStage: SignupStage = "name") {
+export function authProgress(operation: AuthOperation, success: boolean, signupStage: SignupStage = "email") {
   if (operation === "signup" || operation === "resend" || operation === "verify") {
     const current = operation === "verify" && success ? "complete" : operation === "signup" ? signupStage : "verification";
 
@@ -31,7 +31,8 @@ const confirm: Field = { ...newPassword, name: "passwordConfirm", label: "비밀
 
 export const authForms: Record<AuthOperation, { title: string; description: string; submit: string; fields: readonly Field[] }> = {
   login: { title: "모아 로그인", description: "사용할 로그인 방법을 선택해 주세요.", submit: "로그인", fields: [{ ...email, autoComplete: "username" }, { ...newPassword, minLength: 1, autoComplete: "current-password" }] },
-  signup: { title: "모아 계정 만들기", description: "계정 정보를 입력하고 이메일 주소를 확인하세요.", submit: "가입하고 인증 메일 받기", fields: [{ name: "name", label: "표시 이름", type: "text", autoComplete: "nickname", maxLength: 40 }, email, newPassword, confirm] },
+  signup: { title: "모아 계정 만들기", description: "계정 정보를 입력하고 이메일 주소를 확인하세요.", submit: "가입하고 인증 메일 받기", fields: [email, newPassword, confirm] },
+  profile: { title: "어떤 이름으로 불러드릴까요?", description: "가입을 마쳤습니다. 모아에서 사용할 표시 이름을 정해 주세요.", submit: "저장하고 시작하기", fields: [{ name: "name", label: "표시 이름", type: "text", autoComplete: "nickname", maxLength: 40 }] },
   resend: { title: "이메일을 확인해 주세요", description: "메일의 확인 링크를 열면 가입 절차를 이어갈 수 있어요.", submit: "인증 메일 다시 요청", fields: [email] },
   "request-reset": { title: "비밀번호 찾기", description: "가입한 이메일로 비밀번호 재설정 링크를 요청하세요.", submit: "재설정 메일 요청", fields: [email] },
   verify: { title: "이메일 주소 확인", description: "아래 버튼을 눌러 이 이메일 주소의 사용을 확인하세요.", submit: "이메일 주소 확인", fields: [] },

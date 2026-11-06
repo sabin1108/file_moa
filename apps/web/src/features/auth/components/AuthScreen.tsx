@@ -31,6 +31,7 @@ export function AuthScreen(props: AuthScreenProps) {
 function AuthFormScreen({ operation, action: submitAction, initialToken = "", account, providers, socialAction, notice }: AuthScreenProps) {
   const { draft, update, clear } = useAuthDraft();
   const [secretToken, setSecretToken] = useState(initialToken);
+  const [profileName, setProfileName] = useState("");
   const [state, formAction, pending] = useActionState(async (previous: AuthFormState, data: FormData) => {
     const changesSession = operation === "login" || operation === "signout";
     if (changesSession) { if (operation === "signout") clearSignupDraft(); announceAuthSessionChange(); }
@@ -82,17 +83,18 @@ function AuthFormScreen({ operation, action: submitAction, initialToken = "", ac
       <fieldset disabled={pending} className={styles.fields}>
         {config.fields.map(field => {
           const error = state.fieldErrors?.[field.name];
-          const draftField = field.name === "email" || field.name === "name" ? field.name : undefined;
+          const draftField = operation !== "profile" && (field.name === "email" || field.name === "name") ? field.name : undefined;
 
-          return <AuthInput key={field.name} field={field} error={error} value={draftField ? draft[draftField] : undefined}
-            onChange={draftField ? event => update(draftField, event.target.value) : undefined} />;
+          return <AuthInput key={field.name} field={field} error={error} value={operation === "profile" ? profileName : draftField ? draft[draftField] : undefined}
+            onChange={operation === "profile" ? event => setProfileName(event.target.value) : draftField ? event => update(draftField, event.target.value) : undefined} />;
         })}
         <button type="submit" className={actionClasses("primary", styles.submit)} disabled={pending}>{pending ? "처리 중…" : config.submit}</button>
       </fieldset>
     </form>}
     {pending && <PageLoading compact message={operation === "login" ? "로그인하고 작업 공간으로 이동하고 있어요." : "요청을 처리하고 있어요."} />}
     {operation === "resend" && socialAction && !!providers?.length && <section className={styles.socialSection} aria-label="소셜 계정으로 계속하기"><p>소셜 계정으로 계속하기</p><SocialProviders providers={providers} action={socialAction} /></section>}
-    {operation !== "signout" && <nav className={styles.links} aria-label="계정 메뉴">
+    {operation === "profile" && <p className={styles.help}>실명 대신 별명을 사용해도 됩니다.</p>}
+    {operation !== "signout" && operation !== "profile" && <nav className={styles.links} aria-label="계정 메뉴">
       {operation === "login" ? <><ActionLink href="/welcome">계정 만들기</ActionLink><ActionLink href="/forgot-password">비밀번호 찾기</ActionLink></> : <ActionLink href="/login">로그인으로</ActionLink>}
     </nav>}
     {operation === "resend" && <p className={styles.help}>재발송 버튼은 메일을 다시 요청합니다. 받은 메일의 인증 링크를 눌러야 다음 단계로 넘어갑니다. 처음 가입하지 않았거나 주소가 다르면 메일이 오지 않으니 가입 정보를 확인해 주세요.</p>}

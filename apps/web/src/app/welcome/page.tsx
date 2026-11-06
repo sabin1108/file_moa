@@ -14,7 +14,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const configured = socialProviderConfiguration();
   const providers = socialProviders.filter(provider => configured[provider]);
 
-  return <AuthShell><GuestSessionObserver checkSessionAction={checkAuthSessionAction} />{step === undefined
+  return <AuthShell guest><GuestSessionObserver checkSessionAction={checkAuthSessionAction} />{step === undefined
     ? <SignupMethods providers={providers} action={socialSigninAction} />
     : <AuthScreen key={operation} operation={operation} action={operation === "signup" ? signupAction : resendAction} providers={providers} socialAction={socialSigninAction} />}</AuthShell>;
 }

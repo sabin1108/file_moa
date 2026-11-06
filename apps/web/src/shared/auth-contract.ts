@@ -1,4 +1,4 @@
-export type AuthOperation = "login" | "signup" | "resend" | "request-reset" | "verify" | "reset" | "signout";
+export type AuthOperation = "login" | "signup" | "resend" | "request-reset" | "verify" | "reset" | "signout" | "profile";
 export type AuthFieldName = "name" | "email" | "password" | "passwordConfirm" | "token";
 export type AuthFormState = {
   status: "idle" | "success" | "error";

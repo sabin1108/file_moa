@@ -1,0 +1,23 @@
+{
+  "scope": "actual RootLayout and globals rendered without page content to reproduce the uncovered document gap; before=36efe0f; not a recording of every real redirect frame",
+  "results": [
+    {
+      "name": "before",
+      "root": "rgba(0, 0, 0, 0)",
+      "body": "rgb(6, 20, 27)",
+      "scheme": "dark"
+    },
+    {
+      "name": "after",
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)",
+      "scheme": "light"
+    },
+    {
+      "name": "after-before-stylesheet",
+      "root": "rgb(228, 232, 230)",
+      "body": "rgba(0, 0, 0, 0)",
+      "scheme": "light"
+    }
+  ]
+}

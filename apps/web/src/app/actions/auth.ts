@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { parseSetCookieHeader, toCookieOptions } from "better-auth/cookies";
 import type { AuthFormState, AuthOperation, AuthSessionSnapshot } from "../../shared/auth-contract";
 import { submitAuthForm } from "../../server/auth-forms";
-import { requireGuest } from "../../server/session-guards";
+import { requireGuest, requireAccountSession } from "../../server/session-guards";
 import { beginSocialSignIn } from "../../server/auth-social";
 import { getAuthenticatedSession } from "../../server/authenticated-session";
 import { manageSocialAccount } from "../../server/auth-account";
@@ -21,7 +21,8 @@ async function applyAuthCookies(response?: Response) {
 }
 
 async function perform(operation: AuthOperation, formData: FormData): Promise<AuthFormState> {
-  if (operation !== "signout") await requireGuest();
+  if (operation === "profile") await requireAccountSession();
+  else if (operation !== "signout") await requireGuest();
   const { state, response } = await submitAuthForm(operation, formData, new Headers(await headers()));
   await applyAuthCookies(response);
 
@@ -36,6 +37,11 @@ export async function loginAction(_previous: AuthFormState, data: FormData) {
 }
 
 export async function signupAction(_previous: AuthFormState, data: FormData) { return perform("signup", data); }
+export async function profileAction(_previous: AuthFormState, data: FormData) {
+  const state = await perform("profile", data);
+  if (state.status === "success") redirect("/");
+  return state;
+}
 export async function resendAction(_previous: AuthFormState, data: FormData) { return perform("resend", data); }
 export async function requestResetAction(_previous: AuthFormState, data: FormData) { return perform("request-reset", data); }
 export async function verifyAction(_previous: AuthFormState, data: FormData) { return perform("verify", data); }

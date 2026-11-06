@@ -5,12 +5,14 @@ import { getAuth } from "./auth";
 import { socialProviders } from "../shared/social-auth";
 import { reportAuthenticationFailure } from "./auth-diagnostics";
 import { getAuthenticatedSession } from "./authenticated-session";
+import { displayNameSchema } from "../shared/auth-profile";
 
 const postPaths = new Set([
   "/sign-up/email", "/sign-in/email", "/sign-out", "/send-verification-email",
   "/request-password-reset", "/reset-password",
   "/sign-in/social",
   "/link-social",
+  "/update-user",
 ]);
 
 export async function handleAuthRequest(request: Request) {
@@ -23,6 +25,18 @@ export async function handleAuthRequest(request: Request) {
   }
 
   try {
+    if (path === "/update-user") {
+      const origin = new URL(String(getAuth().options.baseURL)).origin;
+      if (request.headers.get("origin") !== origin) return Response.json({ code: "INVALID_ORIGIN" }, { status: 403, headers: { "cache-control": "no-store" } });
+      const session = await getAuthenticatedSession(request.headers);
+      if (!session) return Response.json({ code: "UNAUTHORIZED" }, { status: 401, headers: { "cache-control": "no-store" } });
+      const input = z.object({ name: displayNameSchema }).strict().safeParse(await request.clone().json().catch(() => null));
+      if (!input.success) return Response.json({ code: "INVALID_PROFILE" }, { status: 400, headers: { "cache-control": "no-store" } });
+      const headers = new Headers(request.headers);
+      headers.delete("content-length");
+      headers.set("content-type", "application/json");
+      request = new Request(request.url, { method: "POST", headers, body: JSON.stringify(input.data) });
+    }
     if (path === "/sign-in/social" || path === "/link-social") {
       const linking = path === "/link-social";
       if (linking) {

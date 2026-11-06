@@ -90,11 +90,12 @@ describe("email authentication through the real route and PostgreSQL", () => {
     expect((await request("/sign-up/email", { email, name: "Fixture", password: "short" })).status).toBe(400);
     expect(await database.user.findUnique({ where: { email } })).toBeNull();
 
-    const response = await request("/sign-up/email", { email, name: "Fixture", password });
+    const response = await request("/sign-up/email", { email, name: "", password });
     expect(response.status).toBe(200);
     expect(await response.json()).not.toHaveProperty("token");
     expect(response.headers.get("set-cookie") ?? "").not.toContain("session_token");
     expect(await database.session.count({ where: { user: { email } } })).toBe(0);
+    expect((await database.user.findUniqueOrThrow({ where: { email } })).name).toBe("");
 
     const account = await database.account.findFirstOrThrow({ where: { user: { email }, providerId: "credential" } });
     expect(account.password).not.toBe(password);
@@ -164,6 +165,21 @@ describe("email authentication through the real route and PostgreSQL", () => {
     const saved = await database.session.findFirstOrThrow({ where: { user: { email } } });
     expect(saved.ipAddress).toBeNull();
     expect(saved.userAgent).toBeNull();
+  });
+
+  it("AUTHPROFILE-001 saves a name only for the verified session owner and preserves another user", async () => {
+    const user = await database.user.findUniqueOrThrow({ where: { email } });
+    expect(user.name).toBe("");
+    const other = await database.user.create({ data: { id: randomUUID(), name: "Other", email: "profile-other@example.invalid", emailVerified: true } });
+    expect((await request("/update-user", { name: "Owner" })).status).toBe(401);
+    expect((await request("/update-user", { name: "Owner" }, "better-auth.session_token=forged")).status).toBe(401);
+    for (const body of [{ name: " " }, { name: "x".repeat(41) }, { name: "Owner", userId: other.id }, { name: "Owner", emailVerified: true }]) expect((await request("/update-user", body, sessionCookie)).status).toBe(400);
+    expect((await POST(new Request(`${baseURL}/api/auth/update-user`, { method: "POST", headers: { origin: "https://evil.example.invalid", cookie: sessionCookie, "content-type": "application/json" }, body: JSON.stringify({ name: "Owner" }) }))).status).toBe(403);
+    expect((await database.user.findUniqueOrThrow({ where: { id: user.id } })).name).toBe("");
+    expect((await request("/update-user", { name: " 이름 설정 " }, sessionCookie)).status).toBe(200);
+    expect((await database.user.findUniqueOrThrow({ where: { id: user.id } })).name).toBe("이름 설정");
+    expect((await database.user.findUniqueOrThrow({ where: { id: other.id } })).name).toBe("Other");
+    expect((await (await request("/get-session", undefined, sessionCookie)).json()).user.name).toBe("이름 설정");
   });
 
   it("AUTHMAIL-005 blocks cross-site requests and external redirects before sending mail", async () => {
