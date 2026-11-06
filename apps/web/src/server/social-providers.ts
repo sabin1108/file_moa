@@ -11,9 +11,8 @@ export function socialProviderConfiguration(environment: Record<string, string |
   };
   const google = credentials("GOOGLE");
   const naver = credentials("NAVER");
-  const kakao = credentials("KAKAO");
+  // Kakao enrollment is paused; saved account IDs remain recognized separately.
   if (google) config.google = google;
   if (naver) config.naver = naver;
-  if (kakao) config.kakao = { ...kakao, disableDefaultScope: true, scope: ["account_email", "profile_nickname"] };
   return config;
 }

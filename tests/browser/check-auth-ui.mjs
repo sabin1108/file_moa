@@ -23,7 +23,7 @@ const { Pool } = requireWeb("pg");
 const fixtureSecret = "fixture-browser-" + randomUUID();
 const fixtureDatabase = new Pool({ connectionString: runtimeURL.toString(), ssl: { ca: readFileSync(process.env.MOA_TEST_TLS_CERT, "utf8"), rejectUnauthorized: true }, max: 1 });
 const next = requireWeb.resolve("next/dist/bin/next");
-const out = join(root, "docs/verification/signup-profile-and-loading/browser");
+const out = join(root, "docs/verification/kakao-disabled/browser");
 mkdirSync(out, { recursive: true });
 mkdirSync(cache, { recursive: true });
 const app = mkdtempSync(join(cache, "moa-auth-browser-"));
@@ -166,11 +166,12 @@ try {
     await page.goto(base + route, { settleMs: 180 });
     check(`anonymous ${route} redirects to login`, await page.eval(() => location.pathname === "/login"));
   }
-  check("all three official social buttons have loaded images", await page.eval(() => [...document.querySelectorAll('button[name="provider"] img')].length === 3 && [...document.querySelectorAll('button[name="provider"] img')].every(image => image.complete && image.naturalWidth > 0)));
-  check("social methods occupy three full-width rows before email login", await page.eval(() => {
+  check("Kakao is absent from login despite stored fixture credentials", await page.eval(() => !document.querySelector('button[name="provider"][value="kakao"]')));
+  check("both enabled official social buttons have loaded images", await page.eval(() => [...document.querySelectorAll('button[name="provider"] img')].length === 2 && [...document.querySelectorAll('button[name="provider"] img')].every(image => image.complete && image.naturalWidth > 0)));
+  check("social methods occupy two full-width rows before email login", await page.eval(() => {
     const buttons = [...document.querySelectorAll('button[name="provider"]')].map(button => button.getBoundingClientRect());
     return buttons.every((rect, index) => rect.height >= 44 && rect.width >= 260 && (!index || rect.top >= buttons[index - 1].bottom))
-      && buttons[2].bottom < document.querySelector('form[data-auth-form]').getBoundingClientRect().top;
+      && buttons[1].bottom < document.querySelector('form[data-auth-form]').getBoundingClientRect().top;
   }));
   check("guest home links point directly to login rather than a protected-home redirect", await page.eval(() => [...document.querySelectorAll('header a')].every(link => link.getAttribute("href") === "/login")));
   const navigationResponses = [];
@@ -191,7 +192,7 @@ try {
   await page.send("Fetch.disable"); stopNavigation();
   await wait(() => location.pathname === "/welcome");
   await page.goto(base + "/welcome", { settleMs: 180 });
-  check("signup first offers social methods or a separate email form", await page.eval(() => document.querySelectorAll('button[name="provider"]').length === 3 && !!document.querySelector('a[href="/welcome?step=email"]') && !document.querySelector('[name="name"]')));
+  check("signup first offers social methods or a separate email form", await page.eval(() => document.querySelectorAll('button[name="provider"]').length === 2 && !!document.querySelector('a[href="/welcome?step=email"]') && !document.querySelector('[name="name"]')));
   await page.eval(() => document.querySelector('a[href="/welcome?step=email"]').click());
   await wait(() => !!document.querySelector('[name="email"]'));
   check("signup no longer collects a display name", await page.eval(() => !document.querySelector('[name="name"]')));
@@ -309,7 +310,7 @@ try {
       await page.eval(async () => { await Promise.all(document.getAnimations().filter(animation => animation.effect?.getTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))); });
       check(`settings ${tab} fits ${width}px`, await page.eval(() => document.documentElement.scrollWidth <= innerWidth && document.querySelectorAll("h1").length === 1));
       check(`settings ${tab} has real account entry and no obsolete login notice`, await page.eval(() => !!document.querySelector('a[href="/account"]') && !document.body.textContent.includes("실제 로그인은 아직 연결되지 않았습니다")));
-      if (tab === "account") check("social account settings show three real provider actions", await page.eval(() => document.querySelectorAll('[aria-label="소셜 로그인 연결 관리"] button').length === 3));
+      if (tab === "account") check("social account settings show two enabled provider actions", await page.eval(() => document.querySelectorAll('[aria-label="소셜 로그인 연결 관리"] button').length === 2));
       const metrics = await page.eval(probe);
       const arrangement = await page.eval(layout);
       const appMetrics = await page.eval(appProbe);

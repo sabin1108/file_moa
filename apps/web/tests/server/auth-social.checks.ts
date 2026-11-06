@@ -36,8 +36,6 @@ function googleToken() {
 }
 const fetchMock = vi.fn(async (input: string | URL | Request, options?: RequestInit) => {
   const url = input instanceof Request ? input.url : String(input);
-  if (url.startsWith("https://kauth.kakao.com/oauth/token")) return Response.json({ access_token: accessToken, refresh_token: "fixture-refresh-token", id_token: "fixture-id-token-not-for-storage", token_type: "bearer", expires_in: 3600 });
-  if (url === "https://kapi.kakao.com/v2/user/me") return Response.json(profile);
   if (url === "https://oauth2.googleapis.com/token") return Response.json({ access_token: accessToken, token_type: "bearer", expires_in: 3600, id_token: googleToken() });
   if (url === "https://www.googleapis.com/oauth2/v3/certs") return Response.json({ keys: [{ ...googleKeys.publicKey.export({ format: "jwk" }), kid: "fixture-key", alg: "RS256", use: "sig" }] });
   if (url.startsWith("https://nid.naver.com/oauth2.0/token")) return Response.json({ access_token: accessToken, token_type: "bearer", expires_in: 3600 });
@@ -62,7 +60,7 @@ async function start(provider: string, intent = "signup") {
   const cookie = response.headers.getSetCookie().map(value => value.split(";")[0]).join("; ");
   return { state: url.searchParams.get("state")!, cookie, url };
 }
-function callback(state: string, cookie: string) { return request(`/callback/kakao?state=${encodeURIComponent(state)}&code=fixture-code`, undefined, cookie); }
+function callback(state: string, cookie: string) { return request(`/callback/naver?state=${encodeURIComponent(state)}&code=fixture-code`, undefined, cookie); }
 function identity(id: number, email?: string, verified = true) {
   profile = { id, kakao_account: { email, is_email_valid: verified, is_email_verified: verified, profile: { nickname: "OAuth Fixture" } } };
 }
@@ -80,54 +78,59 @@ beforeAll(() => {
 afterAll(async () => { await Promise.all(background.tasks.splice(0)); await database?.$disconnect(); vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
 
 describe("OAuth SDK and SQL integration with synthetic provider HTTP", () => {
-  it.each(["google", "naver", "kakao"])("starts %s with signed state and a fixed callback", async provider => {
+  it("does not start Kakao or contact its provider while enrollment is paused", async () => {
+    const before = fetchMock.mock.calls.length;
+    expect((await request("/sign-in/social", { provider: "kakao", intent: "signup" })).ok).toBe(false);
+    expect(fetchMock.mock.calls.length).toBe(before);
+  });
+  it.each(["google", "naver"])("starts %s with signed state and a fixed callback", async provider => {
     const flow = await start(provider);
     expect(flow.state.length).toBeGreaterThan(10); expect(flow.cookie).not.toBe("");
     if (provider === "google") expect(flow.url.searchParams.get("code_challenge_method")).toBe("S256");
   });
   it("rejects changed state before any provider HTTP or account creation", async () => {
-    const flow = await start("kakao"); const calls = fetchMock.mock.calls.length;
+    const flow = await start("naver"); const calls = fetchMock.mock.calls.length;
     const response = await callback(flow.state + "changed", flow.cookie);
     expect(response.status).toBe(302); expect(response.headers.get("location")).toContain("/login?");
     expect(fetchMock.mock.calls.length).toBe(calls);
   });
   it("does not implicitly register a new social identity from login", async () => {
     identity(1001, "oauth-unregistered@example.invalid");
-    const flow = await start("kakao", "signin");
+    const flow = await start("naver", "signin");
     expect(errorCode(await callback(flow.state, flow.cookie))).toBe("signup_disabled");
     expect(await database.user.findUnique({ where: { email: "oauth-unregistered@example.invalid" } })).toBeNull();
   });
-  it("explicit signup creates a verified identity and encrypts tokens; replay fails", async () => {
+  it("explicit signup creates a social identity and encrypts tokens; replay fails", async () => {
     identity(1002, "oauth-verified@example.invalid");
-    const flow = await start("kakao"); const response = await callback(flow.state, flow.cookie);
+    const flow = await start("naver"); const response = await callback(flow.state, flow.cookie);
     expect(response.status).toBe(302); expect(response.headers.get("location")).toBe(base + "/");
     expect(response.headers.get("set-cookie")).toContain("session_token=");
-    const account = await database.account.findFirstOrThrow({ where: { providerId: "kakao", user: { email: "oauth-verified@example.invalid" } } });
+    const account = await database.account.findFirstOrThrow({ where: { providerId: "naver", user: { email: "oauth-verified@example.invalid" } } });
     cookies.set("oauth-verified@example.invalid", response.headers.getSetCookie().map(value => value.split(";")[0]).join("; "));
     expect(account.accessToken).not.toBe(accessToken); expect(account.accessToken?.length).toBeGreaterThan(accessToken.length);
     expect(account.idToken).toBeNull();
     const replay = await callback(flow.state, flow.cookie);
     expect(replay.headers.get("set-cookie") ?? "").not.toContain("session_token=");
     expect(await database.user.count({ where: { email: "oauth-verified@example.invalid" } })).toBe(1);
-    const signin = await start("kakao", "signin");
+    const signin = await start("naver", "signin");
     expect((await callback(signin.state, signin.cookie)).headers.get("location")).toBe(base + "/");
     expect((await database.account.findUniqueOrThrow({ where: { id: account.id } })).idToken).toBeNull();
   });
   it("never implicitly merges another provider identity with an existing email", async () => {
     identity(1003, "oauth-verified@example.invalid");
-    const flow = await start("kakao"); const response = await callback(flow.state, flow.cookie);
+    const flow = await start("naver"); const response = await callback(flow.state, flow.cookie);
     expect(errorCode(response)).toBe("account_not_linked");
     expect(await database.account.count({ where: { user: { email: "oauth-verified@example.invalid" } } })).toBe(1);
     expect(response.headers.get("set-cookie") ?? "").not.toContain("session_token=");
   });
   it("missing email fails without creating an account", async () => {
-    identity(1004); const flow = await start("kakao");
+    identity(1004); const flow = await start("naver");
     expect(errorCode(await callback(flow.state, flow.cookie))).toBe("email_not_found");
-    expect(await database.account.count({ where: { providerId: "kakao", accountId: "1004" } })).toBe(0);
+    expect(await database.account.count({ where: { providerId: "naver", accountId: "1004" } })).toBe(0);
   });
-  it.each(["google", "naver", "kakao"])("%s identity can sign up without app email verification or a password", async provider => {
+  it.each(["google", "naver"])("%s identity can sign up without app email verification or a password", async provider => {
     const email = `oauth-contact-${provider}@example.invalid`;
-    identity(2000 + ["google", "naver", "kakao"].indexOf(provider), email, false);
+    identity(2000 + ["google", "naver"].indexOf(provider), email, false);
     const before = mails.length;
     const flow = await start(provider);
     const response = await request(`/callback/${provider}?state=${encodeURIComponent(flow.state)}&code=fixture-code`, undefined, flow.cookie);
@@ -137,6 +140,7 @@ describe("OAuth SDK and SQL integration with synthetic provider HTTP", () => {
     cookies.set(email, cookie);
     expect((await database.user.findUniqueOrThrow({ where: { email } })).emailVerified).toBe(false);
     expect(await database.account.count({ where: { providerId: "credential", user: { email } } })).toBe(0);
+    expect((await database.account.findFirstOrThrow({ where: { providerId: provider, user: { email } } })).idToken).toBeNull();
     const workspace = await getAuthenticatedWorkspace(new Headers({ cookie }));
     expect(workspace.workspaceId.length).toBeGreaterThan(0);
     expect(mails.length).toBe(before);
@@ -186,7 +190,7 @@ describe("OAuth SDK and SQL integration with synthetic provider HTTP", () => {
     await manageSocialAccount(form, accountHeaders("oauth-verified@example.invalid"));
     expect(await database.account.count({ where: { userId: target.id } })).toBe(1);
     const crossOrigin = accountHeaders("oauth-verified@example.invalid"); crossOrigin.set("origin", "https://attacker.example.invalid");
-    expect((await manageSocialAccount(accountForm("unlink", "kakao"), crossOrigin)).state.status).toBe("error");
+    expect((await manageSocialAccount(accountForm("unlink", "naver"), crossOrigin)).state.status).toBe("error");
     expect(await database.account.count({ where: { user: { email: "oauth-verified@example.invalid" } } })).toBe(1);
   });
   it("password reset cannot add a credential to a social-only identity", async () => {
@@ -211,7 +215,7 @@ describe("OAuth SDK and SQL integration with synthetic provider HTTP", () => {
     } finally { observer.mockRestore(); }
   });
 
-  it("an email account can explicitly link Naver and Kakao without losing its password reset", async () => {
+  it("an email account can explicitly link Google and Naver without losing its password reset", async () => {
     const userId = "native-link-fixture";
     const email = "native-link-fixture@example.invalid";
     await database.user.create({ data: { id: userId, name: "Native Fixture", email, emailVerified: true } });
@@ -220,12 +224,16 @@ describe("OAuth SDK and SQL integration with synthetic provider HTTP", () => {
     await database.session.create({ data: { id: "native-link-session", userId, token, expiresAt: new Date(Date.now() + 3_600_000) } });
     const signature = createHmac("sha256", process.env.BETTER_AUTH_SECRET!).update(token).digest("base64");
     cookies.set(email, `better-auth.session_token=${encodeURIComponent(`${token}.${signature}`)}`);
-    for (const [index, provider] of ["naver", "kakao"].entries()) {
+    identity(9499, email, true);
+    const duplicate = await start("google");
+    expect(errorCode(await request(`/callback/google?state=${encodeURIComponent(duplicate.state)}&code=fixture-code`, undefined, duplicate.cookie))).toBe("account_not_linked");
+    expect(await database.account.count({ where: { userId } })).toBe(1);
+    for (const [index, provider] of ["google", "naver"].entries()) {
       const flow = await manageSocialAccount(accountForm("link", provider), accountHeaders(email));
       expect(flow.url).toBeDefined();
       const state = new URL(flow.url!).searchParams.get("state")!;
       const cookie = mergeCookies(cookies.get(email)!, flow.response!.headers.getSetCookie().map(value => value.split(";")[0]).join("; "));
-      identity(9500 + index, `other-contact-${provider}@example.invalid`, false);
+      identity(9500 + index, provider === "google" ? email : `other-contact-${provider}@example.invalid`, provider === "google");
       const response = await request(`/callback/${provider}?state=${encodeURIComponent(state)}&code=fixture-code`, undefined, cookie);
       expect(response.headers.get("location")).toBe(base + "/settings?tab=account");
     }
@@ -235,5 +243,19 @@ describe("OAuth SDK and SQL integration with synthetic provider HTTP", () => {
     const before = mails.length;
     expect((await request("/request-password-reset", { email })).status).toBe(200);
     expect(mails.length).toBe(before + 1);
+  });
+  it("preserves a saved Kakao binding and session without offering new Kakao enrollment", async () => {
+    const userId = "paused-kakao-fixture", email = "paused-kakao@example.invalid", token = randomUUID();
+    await database.user.create({ data: { id: userId, name: "Saved Kakao", email, emailVerified: false } });
+    await database.account.create({ data: { id: "paused-kakao-account", userId, providerId: "kakao", accountId: "saved-kakao-id" } });
+    await database.session.create({ data: { id: "paused-kakao-session", userId, token, expiresAt: new Date(Date.now() + 3_600_000) } });
+    const signature = createHmac("sha256", process.env.BETTER_AUTH_SECRET!).update(token).digest("base64");
+    cookies.set(email, `better-auth.session_token=${encodeURIComponent(`${token}.${signature}`)}`);
+    expect(await getAuthenticatedWorkspace(accountHeaders(email))).toHaveProperty("workspaceId");
+    const settings = await readAccountLoginSettings(accountHeaders(email));
+    expect(settings.providers).toContainEqual({ id: "kakao", connected: true, available: false });
+    expect((await manageSocialAccount(accountForm("link", "kakao"), accountHeaders(email))).state.status).toBe("error");
+    expect((await manageSocialAccount(accountForm("unlink", "kakao"), accountHeaders(email))).state.status).toBe("error");
+    expect(await database.account.count({ where: { userId, providerId: "kakao" } })).toBe(1);
   });
 });

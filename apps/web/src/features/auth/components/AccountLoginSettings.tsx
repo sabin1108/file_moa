@@ -29,8 +29,8 @@ export function AccountLoginSettings({ account, action, notice }: { account: Acc
     <div role="group" aria-label="소셜 로그인 연결 관리" aria-busy={pending}>
       {account.providers.map(provider => <form key={provider.id} action={formAction}>
         <input type="hidden" name="provider" value={provider.id} /><input type="hidden" name="operation" value={provider.connected ? "unlink" : "link"} />
-        <SettingRow title={socialLabels[provider.id]} description={provider.connected ? "이 소셜 계정으로 로그인할 수 있습니다." : "연결하면 이 소셜 계정으로도 로그인할 수 있습니다."}>
-        <div className={styles.method}><span>{provider.connected ? "연결됨" : provider.available ? "미연결" : "연결 준비 중"}</span>
+        <SettingRow title={socialLabels[provider.id]} description={provider.connected ? provider.available ? "이 소셜 계정으로 로그인할 수 있습니다." : "연결 정보는 보관 중이며, 현재 이 로그인 수단은 제공하지 않습니다." : "연결하면 이 소셜 계정으로도 로그인할 수 있습니다."}>
+        <div className={styles.method}><span>{provider.connected ? provider.available ? "연결됨" : "일시 중지" : "미연결"}</span>
           <button type="submit" className={actionClasses("secondary")} disabled={pending || !provider.available && !provider.connected || provider.connected && !canUnlink(provider.id)}
             aria-label={`${socialLabels[provider.id]} ${provider.connected ? "연결 해제" : "연결"}`}>{provider.connected ? "연결 해제" : "연결"}</button>
         </div>

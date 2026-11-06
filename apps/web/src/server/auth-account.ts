@@ -24,7 +24,8 @@ export async function readAccountLoginSettings(headers: Headers): Promise<Accoun
   const configured = socialProviderConfiguration();
   return {
     name: session.user.name, email: session.user.email, hasPassword: methods.some(method => method.providerId === "credential"),
-    providers: socialProviders.map(id => ({ id, connected: methods.some(method => method.providerId === id), available: !!configured[id] })),
+    providers: socialProviders.filter(id => configured[id] || methods.some(method => method.providerId === id))
+      .map(id => ({ id, connected: methods.some(method => method.providerId === id), available: !!configured[id] })),
   };
 }
 

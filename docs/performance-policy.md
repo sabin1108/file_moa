@@ -1,5 +1,7 @@
 # 사이트 전체 성능 측정 정책
 
+최신 카카오 일시 제외: [두 공급자 UI와 기존 인증 경로36표본](verification/kakao-disabled/README.md). 활성 등록과 역사적 계정/세션 보존을 나누어 검증했고 로컬 lab 표본은 실사용 성능으로 확대하지 않는다.
+
 최신 가입 후 이름·문서 바탕: [기존 인증 경로36표본](verification/signup-profile-and-loading/performance.md). 검은 canvas 재현/초기 스타일 검사와 로딩 성능 표본을 구분하며 실제 사용자 GPU·INP 측정으로 확대하지 않는다.
 
 최신 인증/설정 후속: [인증된6경로×2폭×3회와 운영 실행 지역](verification/auth-social-settings/performance.md). 창 복귀의 blocking UI를 제거한 상호작용 검증, 로컬 초기 paint, 운영 공개 세션 조회를 구분한다.

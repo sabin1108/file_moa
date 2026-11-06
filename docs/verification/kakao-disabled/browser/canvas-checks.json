@@ -1,0 +1,2501 @@
+{
+  "scope": "computed document canvas samples during readystatechange/initial animation frames; not an OS/GPU compositor recording",
+  "checks": [
+    {
+      "route": "/login",
+      "width": 390,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/welcome",
+      "width": 390,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/welcome?step=email",
+      "width": 390,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/welcome?step=verification",
+      "width": 390,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/forgot-password",
+      "width": 390,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/reset-password",
+      "width": 390,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/verify-email",
+      "width": 390,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/social-signup",
+      "width": 390,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/login",
+      "width": 768,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/welcome",
+      "width": 768,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/welcome?step=email",
+      "width": 768,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/welcome?step=verification",
+      "width": 768,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/forgot-password",
+      "width": 768,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/reset-password",
+      "width": 768,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/verify-email",
+      "width": 768,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/social-signup",
+      "width": 768,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/login",
+      "width": 1440,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/welcome",
+      "width": 1440,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/welcome?step=email",
+      "width": 1440,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/welcome?step=verification",
+      "width": 1440,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/forgot-password",
+      "width": 1440,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/reset-password",
+      "width": 1440,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/verify-email",
+      "width": 1440,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/social-signup",
+      "width": 1440,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/login",
+      "width": 1920,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/welcome",
+      "width": 1920,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/welcome?step=email",
+      "width": 1920,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/welcome?step=verification",
+      "width": 1920,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/forgot-password",
+      "width": 1920,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/reset-password",
+      "width": 1920,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/verify-email",
+      "width": 1920,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    },
+    {
+      "route": "/social-signup",
+      "width": 1920,
+      "samples": [
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        },
+        {
+          "root": "rgb(228, 232, 230)",
+          "body": "rgb(228, 232, 230)",
+          "scheme": "light"
+        }
+      ],
+      "root": "rgb(228, 232, 230)",
+      "body": "rgb(228, 232, 230)"
+    }
+  ]
+}
