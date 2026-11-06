@@ -17,6 +17,7 @@
 - `pnpm test:database -- --ui`: 폐기형 PostgreSQL 상위25개 검사, 내부 통합30개, 격리 Chromium UI65개 통과. 이 수치는 서로 다른 검사 단위이다.
 - UI: 390/768/1440/1920px, 공식 소셜 이미지 로딩, 이름 Enter·이메일 blur·합성 IME, 순차 표시, F5/앞뒤 이동/새 탭 복원, 비밀번호 비보존, 메일 대기/인증 완료 로그인 버튼, 실제 쿠키 로그인/로그아웃/재설정, guest/private redirect, console 오류0. [실행 결과](browser/checks.json).
 - OAuth: 실제 Better Auth/Prisma/PostgreSQL과 합성 외부 HTTP를 사용했다. 세 공급자 시작·고정 callback·Google PKCE, 변경된 state, Kakao 명시 가입·재전송·같은 이메일 충돌·이메일 누락/미확인·토큰 암호화를 확인했다. 실제 공급자 콘솔/사용자 계정 검증을 뜻하지 않는다.
+- SDK의 `encryptOAuthTokens`가 ID 토큰까지 암호화하지 않는 것을 추가 실패 회귀로 확인했다. 콜백 검증 뒤 필요 없는 ID 토큰은 account 생성/갱신 시 저장하지 않으며 access/refresh 토큰 암호화는 유지한다. 가입 후 재로그인 갱신에서도 ID 토큰이 남지 않는지 검사한다.
 - 실제 Supabase에는 추가 limiter 테이블 migration을 적용하고 TLS 검증·runtime 권한·공개 API 역할 접근 거부를 확인했다. 기존 회원/폴더 데이터는 변경하지 않았다.
 - 변경 파일의 실제 로컬 환경 비밀값과 DB 비밀번호 대조0건. `.env.local`, 생성 Prisma Client, 임시 진단 스크립트는 Git 제외를 확인했다.
 

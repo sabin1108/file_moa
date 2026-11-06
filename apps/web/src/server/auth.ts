@@ -78,6 +78,11 @@ function createAuth() {
     session: { cookieCache: { enabled: false } },
     verification: { storeIdentifier: "hashed" },
     databaseHooks: {
+      account: {
+        // ID tokens are consumed during the callback; this app has no later use for them.
+        create: { before: async account => ({ data: { ...account, idToken: null } }) },
+        update: { before: async account => ({ data: { ...account, idToken: null } }) },
+      },
       session: {
         create: { before: async session => ({ data: { ...session, ipAddress: null, userAgent: null } }) },
       },

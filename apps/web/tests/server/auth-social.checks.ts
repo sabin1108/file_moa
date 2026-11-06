@@ -17,7 +17,7 @@ const mails: unknown[] = [];
 const accessToken = "fixture-oauth-access-token";
 const fetchMock = vi.fn(async (input: string | URL | Request, options?: RequestInit) => {
   const url = input instanceof Request ? input.url : String(input);
-  if (url.startsWith("https://kauth.kakao.com/oauth/token")) return Response.json({ access_token: accessToken, refresh_token: "fixture-refresh-token", token_type: "bearer", expires_in: 3600 });
+  if (url.startsWith("https://kauth.kakao.com/oauth/token")) return Response.json({ access_token: accessToken, refresh_token: "fixture-refresh-token", id_token: "fixture-id-token-not-for-storage", token_type: "bearer", expires_in: 3600 });
   if (url === "https://kapi.kakao.com/v2/user/me") return Response.json(profile);
   if (url === "https://api.resend.com/emails") { mails.push(JSON.parse(String(options?.body))); return Response.json({ id: randomUUID() }); }
   throw new Error("Unexpected external request in isolated OAuth test");
@@ -81,9 +81,13 @@ describe("OAuth SDK and SQL integration with synthetic provider HTTP", () => {
     expect(response.headers.get("set-cookie")).toContain("session_token=");
     const account = await database.account.findFirstOrThrow({ where: { providerId: "kakao", user: { email: "oauth-verified@example.invalid" } } });
     expect(account.accessToken).not.toBe(accessToken); expect(account.accessToken?.length).toBeGreaterThan(accessToken.length);
+    expect(account.idToken).toBeNull();
     const replay = await callback(flow.state, flow.cookie);
     expect(replay.headers.get("set-cookie") ?? "").not.toContain("session_token=");
     expect(await database.user.count({ where: { email: "oauth-verified@example.invalid" } })).toBe(1);
+    const signin = await start("kakao", "signin");
+    expect((await callback(signin.state, signin.cookie)).headers.get("location")).toBe(base + "/");
+    expect((await database.account.findUniqueOrThrow({ where: { id: account.id } })).idToken).toBeNull();
   });
   it("never implicitly merges another provider identity with an existing email", async () => {
     identity(1003, "oauth-verified@example.invalid");
