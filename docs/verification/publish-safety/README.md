@@ -16,6 +16,8 @@ Git 후보 파일과 이전 커밋에서 검사한 실제 비밀값이 발견되
 
 `apps/web/vercel.json`에 `buildCommand: "pnpm run build"`를 지정해 기존 `prisma generate && next build`를 실행하도록 보정했다. 생성 Client 디렉터리를 안전한 임시 위치로 보관해 출력이 없는 상태를 만들고, 해당 Vercel 명령만 실행해 Client 재생성과 Next production 빌드 성공을 검증했다. 보관 사본은 검증 후 정리됐고 실제 환경 파일/생성물은 계속 Git에서 제외된다. 소스 내 설정은 Dashboard의 Build Command보다 우선한다. [Vercel buildCommand 문서](https://vercel.com/docs/project-configuration/vercel-json#buildcommand). 실제 새 배포 결과는 별도로 확인한다.
 
+후속 배포에서는 Client 생성이 통과했고, `/account` 사전 렌더링 중 제한 runtime DB URL 검사 오류가 드러났다. 요청 헤더보다 인증을 먼저 초기화하던 평가 순서를 수정하고, 의도적으로 유효하지 않은 합성 DB URL을 사용한 전체 검사623개·production build로 빌드 중 DB 초기화를 하지 않음을 검증했다. 실제 요청의 잘못된 설정은 계속 차단한다. 사용자는 Vercel Production DB URL을 검증된 로컬 앱 전용 값으로 교체 완료했다고 확인했다. 실제 값은 소스/로그/보고서에 포함하지 않는다.
+
 - 실제 Supabase에 기존 `vitest.live.config.mts`의 READ ONLY 검사1개를 다시 실행해 통과했다. 공개 CA로 검증된 연결, `moa_runtime` 제한 역할(관리/BYPASSRLS/역할·DB 생성 권한 없음), Workspace RLS 강제, 소유자 문맥 없는 Workspace 접근 차단, 무쿠키 세션 없음이 확인됐다. 기본 제한 환경의 첫 실행은 네트워크 EACCES였으며 승인된 네트워크 실행에서는 통과했다. 사용자 레코드 본문/비밀값을 출력하거나 원격 데이터를 수정하지 않았다.
 - GitHub의 `main` 첫 커밋 `cff12bc105a27ed7b7acbca37cf3c4c912561593`에 Vercel commit status `success`가 확인됐다. [해당 배포 기록](https://vercel.com/sabins-projects-011c6dea/web/Cqn3tx4kechxbg2H3oKEvJjxYUdT). GitHub deployments 목록0개와 check-runs0개는 별도 채널이며 Vercel 연결이 없다는 증거가 아니다. 이번 인증 UI는 로컬 미커밋 변경이므로 그 첫 커밋의 배포에 포함되지 않는다.
 - 실제 Vercel 프로젝트 환경변수/Root Directory/최신 production 배포와 Supabase Dashboard SSL enforcement는 여전히 미확인이다. 확인한 로컬 환경·표준 CLI 위치에 관리 연결이 없었으며, 전용 Supabase/Vercel 플러그인은 제안 시점에 미설치·미연결이었다. 관리 연결 완료 전까지 실제 운영 설정 정상으로 판정하지 않는다.

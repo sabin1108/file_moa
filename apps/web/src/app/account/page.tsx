@@ -6,7 +6,8 @@ import { getAuth } from "../../server/auth";
 import { signoutAction } from "../actions/auth";
 
 export default async function Page() {
-  const session = await getAuth().api.getSession({ headers: await headers(), query: { disableCookieCache: true, disableRefresh: true } });
+  const requestHeaders = await headers();
+  const session = await getAuth().api.getSession({ headers: requestHeaders, query: { disableCookieCache: true, disableRefresh: true } });
   if (!session || !session.user.emailVerified) redirect("/login");
 
   return <AuthShell><AuthScreen operation="signout" action={signoutAction} account={{ name: session.user.name, email: session.user.email }} /></AuthShell>;
