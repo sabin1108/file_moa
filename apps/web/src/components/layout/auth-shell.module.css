@@ -35,6 +35,16 @@
 .field { display: grid; gap: 8px; font-size: 14px; font-weight: 500; }
 .field input { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--control-border, var(--border)); border-radius: var(--ui-radius-control, 5px); padding: 10px 12px; background: var(--surface); color: var(--text); font: inherit; }
 .field input:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.passwordControl { position: relative; }
+.passwordControl input { padding-inline-end: 72px; }
+.passwordToggle { position: absolute; inset: 0 0 0 auto; min-width: 64px; min-height: 44px; border: 0; border-radius: var(--ui-radius-control, 5px); background: transparent; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; }
+.passwordToggle:focus-visible { outline: 2px solid var(--focus); outline-offset: -4px; }
+.signupForm { align-self: start; }
+.live .layout:has(.signupForm) { margin-block: 0; flex: 1; align-items: start; padding-top: clamp(24px, 6vh, 64px); }
+.revealedField { display: grid; grid-template-rows: 1fr; animation: revealField 240ms ease-out; }
+.revealedField > div { min-height: 0; overflow: hidden; padding: 5px; margin: -5px; }
+@keyframes revealField { from { grid-template-rows: 0fr; opacity: .35; } to { grid-template-rows: 1fr; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .revealedField { animation: none; } }
 .fieldError { color: var(--danger, #a32929); font-size: 13px; font-weight: 400; }
 .submit { width: 100%; min-height: 44px; margin-top: 4px; cursor: pointer; }
 .submit:disabled { cursor: wait; opacity: .75; }

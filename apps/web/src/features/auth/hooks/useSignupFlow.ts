@@ -55,10 +55,12 @@ export function useSignupFlow() {
   }
 
   function advance(expected = stage, focus = true) {
-    if (expected !== current.current || expected === "password") return;
+    if (expected !== current.current || expected === "password") return false;
     const message = signupFieldError(expected, draft[expected]);
     setErrors(previous => ({ ...previous, [expected]: message }));
-    if (!message) goTo(signupNextStage(expected, draft), focus);
+    if (message) return false;
+    goTo(signupNextStage(expected, draft), focus);
+    return true;
   }
 
   useEffect(() => {

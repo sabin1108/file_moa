@@ -89,7 +89,6 @@ function AuthFormScreen({ operation, action: submitAction, initialToken = "", ac
     {operation === "signup" && <p className={styles.help}>이메일 확인 후 로그인합니다. 폴더 연결만으로 자료가 전송되지 않아요.</p>}
     {operation !== "signout" && <nav className={styles.links} aria-label="계정 메뉴">
       {operation === "login" ? <><ActionLink href="/welcome">계정 만들기</ActionLink><ActionLink href="/forgot-password">비밀번호 찾기</ActionLink></> : <ActionLink href="/login">로그인으로</ActionLink>}
-      {operation === "resend" && <ActionLink href="/welcome">가입 정보 입력으로</ActionLink>}
       {operation === "login" && socialAction && <ActionLink href="/social-signup">소셜 계정으로 새로 가입</ActionLink>}
     </nav>}
     {operation === "resend" && <p className={styles.help}>재발송 버튼은 메일을 다시 요청합니다. 받은 메일의 인증 링크를 눌러야 다음 단계로 넘어갑니다. 처음 가입하지 않았거나 주소가 다르면 메일이 오지 않으니 가입 정보를 확인해 주세요.</p>}

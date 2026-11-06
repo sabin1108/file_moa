@@ -1,6 +1,6 @@
 {
-  "at": "2026-11-06T04:43:21.581Z",
-  "buildId": "Jsu2fKJxGgCELnE6LPsD-",
+  "at": "2026-11-06T04:58:21.512Z",
+  "buildId": "3kqkqESkRU62Ol12IIvMW",
   "fixture": "disposable PostgreSQL with strict TLS; private Next build copy; synthetic Resend capture; isolated Chromium",
   "checks": [
     {
@@ -152,11 +152,31 @@
       "passed": true
     },
     {
-      "name": "valid email blur reveals password and confirmation on the same form",
+      "name": "name Tab enters the newly revealed email instead of skipping it",
+      "passed": true
+    },
+    {
+      "name": "revealing an input keeps the form heading anchored",
+      "passed": true
+    },
+    {
+      "name": "reduced motion disables input reveal animation",
+      "passed": true
+    },
+    {
+      "name": "email Tab enters the newly revealed password on the same form",
       "passed": true
     },
     {
       "name": "browser back and forward restore input progress",
+      "passed": true
+    },
+    {
+      "name": "password visibility preserves the value without submitting",
+      "passed": true
+    },
+    {
+      "name": "password visibility can be concealed again",
       "passed": true
     },
     {
@@ -181,6 +201,10 @@
     },
     {
       "name": "mail waiting has a login link and removes the completed input draft",
+      "passed": true
+    },
+    {
+      "name": "verification waiting never links back to signup input",
       "passed": true
     },
     {

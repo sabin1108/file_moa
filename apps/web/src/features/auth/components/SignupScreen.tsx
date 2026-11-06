@@ -32,7 +32,7 @@ export function SignupScreen({ action }: { action: AuthFormAction }) {
   const progress = authProgress(success ? "resend" : "signup", false, flow.stage)!;
   const fields = authForms.signup.fields.filter(field => field.name === "name" || flow.index >= (field.name === "email" ? 1 : 2));
 
-  return <section className={styles.form} aria-labelledby="auth-title">
+  return <section className={`${styles.form} ${styles.signupForm}`} aria-labelledby="auth-title">
     <h1 id="auth-title">모아 계정 만들기</h1>
     <p>이름부터 차례로 작성하세요. 입력한 내용은 한 장에 이어집니다.</p>
     <WorkflowStepper {...progress} />
@@ -43,17 +43,21 @@ export function SignupScreen({ action }: { action: AuthFormAction }) {
       <fieldset className={styles.fields} disabled={pending}>
         {fields.map(field => {
           const identity = field.name === "name" || field.name === "email" ? field.name : undefined;
-          return <AuthInput key={field.name} field={field} error={identity ? flow.errors[identity] ?? state.fieldErrors?.[identity] : state.fieldErrors?.[field.name]}
+          return <div key={field.name} className={field.name === "name" ? undefined : styles.revealedField}><div><AuthInput field={field} error={identity ? flow.errors[identity] ?? state.fieldErrors?.[identity] : state.fieldErrors?.[field.name]}
             value={identity ? flow.draft[identity] : undefined} onChange={identity ? event => flow.update(identity, event.target.value) : undefined}
             onBlur={identity ? event => {
-              if (composing.current || event.relatedTarget instanceof Element && event.relatedTarget.closest("[data-signup-back]")) return;
+              if (composing.current || event.relatedTarget instanceof Element && event.relatedTarget.closest("[data-signup-control], [data-signup-back]")) return;
               if (flow.stage === identity) flow.advance(identity, false);
             } : undefined}
             onKeyDown={event => {
+              if (composing.current || event.nativeEvent.isComposing || event.keyCode === 229) { if (event.key === "Enter") event.preventDefault(); return; }
+              if (event.key === "Tab" && !event.shiftKey && identity && flow.stage === identity) {
+                if (flow.advance(identity)) event.preventDefault();
+                return;
+              }
               if (event.key !== "Enter") return;
-              if (composing.current || event.nativeEvent.isComposing || event.keyCode === 229) { event.preventDefault(); return; }
               if (identity) { event.preventDefault(); flow.advance(identity); }
-            }} />;
+            }} /></div></div>;
         })}
         {flow.stage === "password" ? <button type="submit" className={actionClasses("primary", styles.submit)}>{pending ? "처리 중…" : "가입하고 인증 메일 받기"}</button>
           : <button type="button" data-signup-control className={actionClasses("primary", styles.submit)} onPointerDown={() => { pointerStage.current = flow.stage; }} onClick={event => flow.advance(event.detail ? pointerStage.current : flow.stage)}>다음</button>}
