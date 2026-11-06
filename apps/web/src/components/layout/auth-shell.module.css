@@ -14,8 +14,8 @@
 .form { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 32px; display: grid; gap: 22px; }
 .form h1, .form h2 { font-size: 24px; font-weight: 600; line-height: 1.5; }
 .form > p { font-size: 14px; color: var(--muted); line-height: 1.9; margin-top: -10px; }
-.providers { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
-.socialButton { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; min-width: 0; min-height: 52px; border: 1px solid #747775; border-radius: 6px; padding: 5px 10px; background: #fff; color: #1f1f1f; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: filter 160ms ease; }
+.providers { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.socialButton { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; min-width: 0; min-height: 48px; border: 1px solid #747775; border-radius: 6px; padding: 3px 10px; background: #fff; color: #1f1f1f; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: filter 160ms ease; }
 .socialButton[data-provider="naver"] { background: #03a94d; border-color: #03a94d; color: #fff; }
 .socialButton[data-provider="kakao"] { background: #fee500; border-color: #fee500; color: rgb(0 0 0 / 85%); border-radius: 12px; }
 .socialButton:hover { filter: brightness(.96); }
@@ -66,12 +66,6 @@
 .account { display: grid; grid-template-columns: auto 1fr; gap: 12px; font-size: 14px; }
 .account dt { color: var(--muted); }
 .account dd { margin: 0; overflow-wrap: anywhere; }
-.live .form { gap: 16px; }
 .live .form > nav:not(.links) { margin-block: 0; }
-.live .layout { padding-block: 32px; }
-.live .layout { max-width: 504px; display: block; padding: 24px 32px 56px; margin-block: 0; flex: 1; }
-.live .introduction { display: none; }
-.live .form { border: 0; background: transparent; padding: 16px 0; gap: 22px; }
-.live .layout:has(.signupForm) { padding-top: 24px; }
 @media (max-width: 900px) { .layout { gap: 40px; grid-template-columns: 1fr 360px; } .form { padding: 27px; } .tagline { font-size: 32px; } .folderSketch span { width: 160px; } }
 @media (max-width: 700px) { .layout { max-width: 480px; grid-template-columns: 1fr; padding: 22px 20px 35px; gap: 30px; } .introduction { display: none; } .header { padding: 20px; } .form { padding: 25px; } .footer { padding: 15px 20px; } .footer > span { display: none; } .footer a { margin: auto; } }
