@@ -27,6 +27,8 @@ const authorizationTargets: Record<SocialProvider, { host: string; path: string 
   kakao: { host: "kauth.kakao.com", path: "/oauth/authorize" },
 };
 
+const credentialParameters = new Set(["access_token", "refresh_token", "id_token", "client_secret", "oauth_token", "code"]);
+
 export async function beginSocialSignIn(form: FormData, headers: Headers, linking = false): Promise<{ state: AuthFormState; response?: Response; url?: string }> {
   const provider = z.enum(socialProviders).safeParse(form.get("provider"));
   if (!provider.success) return { state: { status: "error", message: "지원하지 않는 로그인 수단입니다." } };
@@ -47,8 +49,9 @@ export async function beginSocialSignIn(form: FormData, headers: Headers, linkin
     if (!response.ok || !data.success || !data.data.url) throw new Error("social-start-failed");
     const url = new URL(data.data.url);
     const expected = authorizationTargets[provider.data];
+    const containsCredential = Array.from(url.searchParams.keys()).some(name => credentialParameters.has(name.toLowerCase()));
     if (url.protocol !== "https:" || url.hostname !== expected.host || url.port || url.username || url.password || url.hash
-      || url.pathname !== expected.path || !url.searchParams.get("state")
+      || containsCredential || url.pathname !== expected.path || !url.searchParams.get("state")
       || url.searchParams.get("redirect_uri") !== `${origin}/api/auth/callback/${provider.data}`) throw new Error("social-target-invalid");
     return { state: { status: "success" }, response, url: url.href };
   } catch {

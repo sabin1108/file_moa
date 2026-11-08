@@ -34,6 +34,38 @@ describe("social authentication trust boundary", () => {
     expect(result.url).toBe(target.href);
     expect(await (protocol.mock.calls[0][0] as Request).json()).toEqual({ provider: "google", intent: "signin" });
   });
+  it.each(["access_token", "refresh_token", "id_token", "client_secret", "oauth_token", "code", "ACCESS_TOKEN"])("does not forward %s in a login or account-link authorization URL", async parameter => {
+    for (const provider of ["google", "naver"] as const) {
+      for (const linking of [false, true]) {
+        const target = new URL(provider === "google" ? "https://accounts.google.com/o/oauth2/v2/auth" : "https://nid.naver.com/oauth2.0/authorize");
+        target.searchParams.set("state", "fixture-oauth-state");
+        target.searchParams.set("redirect_uri", `https://app.example.invalid/api/auth/callback/${provider}`);
+        target.searchParams.set(parameter, "fixture-private-value");
+        protocol.mockResolvedValue(Response.json({ url: target.href }));
+        const form = new FormData();
+        form.set("provider", provider);
+        const result = await beginSocialSignIn(form, new Headers(), linking);
+        expect(result.state.status).toBe("error");
+        expect(result.url).toBeUndefined();
+        expect(result.response).toBeUndefined();
+        expect(JSON.stringify(result)).not.toContain("fixture-private-value");
+      }
+    }
+  });
+  it.each(["google", "naver"] as const)("keeps %s authorization and account linking available without credentials in the URL", async provider => {
+    const target = new URL(provider === "google" ? "https://accounts.google.com/o/oauth2/v2/auth" : "https://nid.naver.com/oauth2.0/authorize");
+    target.searchParams.set("state", "fixture-oauth-state");
+    target.searchParams.set("redirect_uri", `https://app.example.invalid/api/auth/callback/${provider}`);
+    target.searchParams.set("client_id", "fixture-public-id");
+    target.searchParams.set("response_type", "code");
+    target.searchParams.set("code_challenge", "fixture-public-challenge");
+    protocol.mockResolvedValue(Response.json({ url: target.href }));
+    const form = new FormData();
+    form.set("provider", provider);
+    for (const linking of [false, true]) {
+      expect((await beginSocialSignIn(form, new Headers(), linking)).url).toBe(target.href);
+    }
+  });
   it.each(["https://evil.example.invalid/auth", "http://accounts.google.com/o/oauth2/v2/auth", "https://accounts.google.com/other?state=x", "https://accounts.google.com/o/oauth2/v2/auth?state=x&redirect_uri=https://evil.example.invalid"])("does not navigate to an unexpected authorization target", async url => {
     protocol.mockResolvedValue(Response.json({ url }));
     const form = new FormData(); form.set("provider", "google");

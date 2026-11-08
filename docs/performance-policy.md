@@ -1,5 +1,7 @@
 # 사이트 전체 성능 측정 정책
 
+최신 로그인 복귀 후 대기 UI: [상위 loading 경계·실제 Next fixture 비교](verification/auth-transition/README.md). 합성1800ms guard의 상태 표시 선행29검사와 실제production guest/샘플12검사를 구분한다. JS/CSS1,701,044bytes 동일. 실제 네이버의 약3초·Vercel callback·전체 로그인 지연 감소는 미측정이다.
+
 최신 메인 화면 응답 후 설정 준비: [초기 대기 분리와 검증 한계](verification/settings-background-preparation/README.md). Next `after`로 초기 캐시 준비를 응답 이후로 이동했다. JS/CSS 1,701,044 bytes 동일, 새 실제 계정 지연·운영 성능은 미측정이다. 아래 80개 표본은 변경 전 blocking 캐시 구현의 기록이다.
 
 최신 설정 캐시 실제 사용자 비교: [이전 조회 방식 복원 vs 현재의 80개 화면 준비 표본](verification/settings-cache-timing/measurement-20261108-v2/report.md). 반복 설정 중앙값 1.541→0.675초, 56.2% 감소. 초기 작업 공간+첫 설정 합계는 6.852→6.927초로 거의 같음. 정확한 옛 빌드·운영 Vercel·사용자 집단의 성능으로 해석하지 않는다.

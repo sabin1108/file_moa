@@ -1,0 +1,169 @@
+{
+  "conditions": "Production Next fixture reusing actual RootLayout and PageLoading; nested layout has synthetic 1800ms guard. No OAuth, DB, account cookie or model API. Timing describes fixture DOM readiness, not real sign-in latency.",
+  "builds": {
+    "before": "RNM_aXlurbJkVmilXPDeh",
+    "after": "RzkvLwwElMTQGKYyz6chM"
+  },
+  "checks": [
+    {
+      "name": "390: baseline reproduces missing pending UI",
+      "passed": true
+    },
+    {
+      "name": "before 390: no browser exceptions",
+      "passed": true
+    },
+    {
+      "name": "1440: baseline reproduces missing pending UI",
+      "passed": true
+    },
+    {
+      "name": "before 1440: no browser exceptions",
+      "passed": true
+    },
+    {
+      "name": "1920: baseline reproduces missing pending UI",
+      "passed": true
+    },
+    {
+      "name": "before 1920: no browser exceptions",
+      "passed": true
+    },
+    {
+      "name": "390: pending guard exposes only public status",
+      "passed": true
+    },
+    {
+      "name": "390: loading fits viewport",
+      "passed": true
+    },
+    {
+      "name": "reduced motion disables loader animation",
+      "passed": true
+    },
+    {
+      "name": "390: status precedes main",
+      "passed": true
+    },
+    {
+      "name": "390: ready screen accepts keyboard input",
+      "passed": true
+    },
+    {
+      "name": "390: loading is removed after readiness",
+      "passed": true
+    },
+    {
+      "name": "390: rejected guard never exposes main",
+      "passed": true
+    },
+    {
+      "name": "after 390: no browser exceptions",
+      "passed": true
+    },
+    {
+      "name": "1440: pending guard exposes only public status",
+      "passed": true
+    },
+    {
+      "name": "1440: loading fits viewport",
+      "passed": true
+    },
+    {
+      "name": "1440: status precedes main",
+      "passed": true
+    },
+    {
+      "name": "1440: ready screen accepts keyboard input",
+      "passed": true
+    },
+    {
+      "name": "1440: loading is removed after readiness",
+      "passed": true
+    },
+    {
+      "name": "1440: rejected guard never exposes main",
+      "passed": true
+    },
+    {
+      "name": "after 1440: no browser exceptions",
+      "passed": true
+    },
+    {
+      "name": "1920: pending guard exposes only public status",
+      "passed": true
+    },
+    {
+      "name": "1920: loading fits viewport",
+      "passed": true
+    },
+    {
+      "name": "1920: status precedes main",
+      "passed": true
+    },
+    {
+      "name": "1920: ready screen accepts keyboard input",
+      "passed": true
+    },
+    {
+      "name": "1920: loading is removed after readiness",
+      "passed": true
+    },
+    {
+      "name": "1920: rejected guard never exposes main",
+      "passed": true
+    },
+    {
+      "name": "after 1920: no browser exceptions",
+      "passed": true
+    },
+    {
+      "name": "both fixture variants finish",
+      "passed": true
+    }
+  ],
+  "samples": [
+    {
+      "variant": "before",
+      "width": 390,
+      "loadingMs": null,
+      "readyMs": 1918.7999999523163,
+      "leaked": false
+    },
+    {
+      "variant": "before",
+      "width": 1440,
+      "loadingMs": null,
+      "readyMs": 1824,
+      "leaked": false
+    },
+    {
+      "variant": "before",
+      "width": 1920,
+      "loadingMs": null,
+      "readyMs": 1820.7000000476837,
+      "leaked": false
+    },
+    {
+      "variant": "after",
+      "width": 390,
+      "loadingMs": 118.29999995231628,
+      "readyMs": 1903,
+      "leaked": false
+    },
+    {
+      "variant": "after",
+      "width": 1440,
+      "loadingMs": 19.5,
+      "readyMs": 1813.1000000238419,
+      "leaked": false
+    },
+    {
+      "variant": "after",
+      "width": 1920,
+      "loadingMs": 18,
+      "readyMs": 1810.2999999523163,
+      "leaked": false
+    }
+  ]
+}
