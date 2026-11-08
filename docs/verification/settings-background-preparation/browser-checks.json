@@ -1,0 +1,53 @@
+{
+  "condition": "Production build; isolated guest and synthetic sample session; shared settings UI only. This does not measure authenticated cache latency.",
+  "results": [
+    {
+      "name": "/: production workspace requires login",
+      "passed": true
+    },
+    {
+      "name": "/files: production workspace requires login",
+      "passed": true
+    },
+    {
+      "name": "production settings still requires login",
+      "passed": true
+    },
+    {
+      "name": "local preferences remain available on the shared production settings UI",
+      "passed": true
+    },
+    {
+      "name": "quick-switch setting is stored locally",
+      "passed": true
+    },
+    {
+      "name": "local setting survives reload",
+      "passed": true
+    },
+    {
+      "name": "Back restores the settings tab",
+      "passed": true
+    },
+    {
+      "name": "390: settings fit the viewport",
+      "passed": true
+    },
+    {
+      "name": "768: settings fit the viewport",
+      "passed": true
+    },
+    {
+      "name": "1440: settings fit the viewport",
+      "passed": true
+    },
+    {
+      "name": "1920: settings fit the viewport",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true
+    }
+  ]
+}

@@ -16,7 +16,7 @@ const requireWeb = createRequire(join(web, "package.json"));
 const nextBin = requireWeb.resolve("next/dist/bin/next");
 process.loadEnvFile(join(web, ".env.local"));
 const env = measurementEnvironment(process.env);
-const manifest = { at: new Date().toISOString(), session, root, comparison: "reconstructed pre-cache read pattern vs current cache; not exact historical build", variants: {} };
+const manifest = { at: new Date().toISOString(), session, root, comparison: "reconstructed pre-cache read pattern vs blocking settings cache; not exact historical build", variants: {} };
 
 function edit(path, transform) {
   const source = readFileSync(path, "utf8").replaceAll("\r\n", "\n");
@@ -53,8 +53,11 @@ for (const variant of ["before", "after"]) {
     .replace('</WorkspaceShell>', '</WorkspaceShell></>'));
 
   const displayPath = join(app, "src/server/settings-display.ts");
+  // Preserve the original blocking comparison; background preparation needs a separate measurement.
+  edit(join(app, "src/app/(workspace)/layout.tsx"), source => source
+    .replace('import { after } from "next/server";\n', '')
+    .replace('  const requestHeaders = await headers();\n  after(() => prepareSettingsDisplay(requestHeaders));\n', variant === "before" ? '' : '  await prepareSettingsDisplay(await headers());\n'));
   if (variant === "before") {
-    edit(join(app, "src/app/(workspace)/layout.tsx"), source => source.replace('  await prepareSettingsDisplay(await headers());\n', ''));
     writeFileSync(displayPath, `import "server-only";\nimport { readAccountLoginSettings } from "./auth-account";\nimport { readWorkspaceConnection } from "./auth-account-connection";\nexport async function readSettingsDisplay(headers: Headers, label = "prepare") {\n  const began = performance.now();\n  const [account,connection] = await Promise.all([readAccountLoginSettings(headers), readWorkspaceConnection(headers)]);\n  console.log("MOA_MEASURE:" + JSON.stringify({kind:"server",variant:"before",label,elapsedMs:performance.now()-began,callbackCalls:1}));\n  return {account,connection};\n}\nexport async function prepareSettingsDisplay(_headers: Headers) {}\n`);
   } else {
     edit(displayPath, source => source

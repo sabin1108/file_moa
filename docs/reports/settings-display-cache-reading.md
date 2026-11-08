@@ -19,13 +19,13 @@ use cache로 전환하려면 Cache Components와 동적 영역, 화면 수명까
 ## 로그인 후 작업 공간을 여는 순서
 
 1. 기존 workspace layout이 requireWorkspace로 현재 사용자와 owner를 확인한다. 원래의 권한 검사와 owner별 Provider는 유지된다.
-2. layout은 prepareSettingsDisplay(await headers())를 기다린다. 사용자가 선호한 초기 준비 방식이다. 같은 route group 안 이동마다 layout이 반드시 다시 실행되는 것은 아니다.
+2. layout은 요청 headers를 읽고 `after(() => prepareSettingsDisplay(requestHeaders))`를 등록한 뒤 메인 화면을 반환한다. 2026-11-08 후속 요청에 따라 초기 준비를 기다리던 방식을 응답 이후 준비로 바꿨다. 같은 route group 안 이동마다 layout이 반드시 다시 실행되는 것은 아니다.
 3. prepareSettingsDisplay는 readSettingsDisplay를 호출한다. 세션이 없으면 cache를 조회하지 않는다.
 4. 인증된 사용자 ID와 로그인 세션 ID의 SHA-256 구분값으로 Next cache key를 만든다. 원본 세션 객체·토큰·쿠키·이메일은 key나 tag에 넣지 않는다.
 5. cache가 비어 있으면 로그인 수단 표시와 계정 연결 표시를 병렬로 읽는다. 이름·이메일은 cache 내부에서 사용자 ID로 조회한다. callback이 외부의 이름·이메일을 몰래 캡처하지 않는다.
-6. 결과 { account, connection }이 캐시에 저장되고 초기 화면 준비가 완료된다. 초기 준비가 실패하면 민감 내용 없는 진단만 남기고 작업 공간은 연다.
+6. 응답 이후 실행된 준비의 결과 { account, connection }이 캐시에 저장된다. 메인 화면은 이 완료를 기다리지 않는다. 초기 준비가 실패하면 민감 내용 없는 진단만 남기며 설정 진입은 기존 reader를 사용한다.
 
-초기 준비는 cache miss 때 프로필 읽기까지 추가하므로 처음부터 비용이 없는 방식은 아니다. 그 준비 비용을 지불해 이후 같은 로그인에서 설정 자료를 재사용한다. 캐시는 실행 환경에 따라 비거나 제거될 수 있으므로 설정 page도 miss 시 직접 준비할 수 있다.
+초기 준비는 cache miss 때 프로필 읽기까지 추가하므로 처음부터 비용이 없는 방식은 아니다. 이 비용을 화면 응답 뒤에 지불해 이후 같은 로그인에서 설정 자료를 재사용한다. 준비 도중 설정에 들어가면 조회 대기가 생길 수 있다. `after`는 배포 환경의 실행 시간 제한을 받으며 작업 완료를 영구 보장하는 큐가 아니다. 캐시는 실행 환경에 따라 비거나 제거될 수 있으므로 설정 page도 miss 시 직접 준비할 수 있다.
 
 ## 설정을 여는 순서
 

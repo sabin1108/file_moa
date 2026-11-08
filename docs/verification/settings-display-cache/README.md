@@ -1,5 +1,7 @@
 # 설정 표시 데이터 cache 검증
 
+2026-11-08 후속: 초기 준비는 메인 응답 이후로 이동했다. [변경 검증](../settings-background-preparation/README.md)을 우선하며 아래는 기존 캐시 도입 당시의 검증이다.
+
 구현 명세: [SC-001~006](../../specs/settings-display-cache.md)
 문제·선택·호출 흐름: [구현 설명](../../reports/settings-display-cache-reading.md)
 
