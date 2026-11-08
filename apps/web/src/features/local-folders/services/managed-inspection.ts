@@ -1,4 +1,4 @@
-import { MANAGED_LIMITS, managedNames, type ManagedPreview, type ManagedRequest, type ManagedManifest } from "../lib/managed-files";
+import { MANAGED_LIMITS, managedNames, managedTreePath, type ManagedPreview, type ManagedRequest, type ManagedManifest } from "../lib/managed-files";
 import { restoreDestinationPath, restoreFileName } from "../lib/recovery-restore";
 import { comparableName } from "../lib/file-change-plan";
 import { assertManagedVault, openManagedArchive, readManagedJson, type ManagedContext } from "./managed-archive";
@@ -61,7 +61,7 @@ export async function prepareManagedOperation(context: ManagedContext, request: 
     await recoveryCurrent();
   } else {
     const names = managedNames(fixed.names);
-    const captured = await captureManagedTree(context.root, source, names, context.check, hash);
+    const captured = await captureManagedTree(context.root, source, names, context.check, hash, fixed.kind !== "copy");
     nodes = captured.nodes;
     skipped = captured.skipped;
     roots = names.map(name => [...source, name]);
@@ -110,7 +110,7 @@ export async function prepareManagedOperation(context: ManagedContext, request: 
     const index = roots.findIndex(path => path.every((part, depth) => node.view.path[depth] === part));
     if (index < 0) throw Error("managed-archive-invalid");
     const target = [...destinationPath, rootNames[index], ...node.view.path.slice(roots[index].length)];
-    restoreDestinationPath(target);
+    managedTreePath(target);
     return target;
   });
   const view: ManagedPreview = {

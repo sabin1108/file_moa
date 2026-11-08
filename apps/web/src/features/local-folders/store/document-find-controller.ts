@@ -7,6 +7,7 @@ import {
 } from "../lib/document-find";
 import type { OrganizationScope } from "../lib/source-snapshot";
 import { copyFolderPath } from "../lib/folder-path";
+import { parseFindReply } from "../lib/document-find-reply";
 
 const initial = {
   phase: "idle" as
@@ -22,6 +23,8 @@ const initial = {
   scope: { kind: "all" } as OrganizationScope,
   result: null as FindResult | null,
   issue: null as string | null,
+  submittedReply: "",
+  selectedPaths: [] as readonly (readonly string[])[],
 };
 export type DocumentFindState = typeof initial;
 
@@ -63,10 +66,21 @@ export class DocumentFindController {
       phase: "confirm",
       request: request.trim(),
       draft: request,
-      filters: inferFindRequest(request),
+      filters: inferFindRequest(request, new Date().getFullYear()),
     });
   };
   updateDraft = (draft: string) => this.publish({ ...this.state, draft });
+  submitReply = (reply: string) => {
+    const parsed = parseFindReply(reply, new Date().getFullYear());
+    if (parsed.kind === "none") return false;
+    if (parsed.kind === "invalid") {
+      this.publish({ ...this.state, issue: "조건을 전부 확인하지 못했어요. 연도·월·날짜 기준을 나누어 적거나 아래 조건에서 선택해 주세요." });
+      return true;
+    }
+    this.configure(parsed.filters);
+    this.publish({ ...this.state, submittedReply: reply.trim(), draft: "" });
+    return true;
+  };
   configure = (filters: Partial<FindFilters>) => {
     this.stop();
     this.publish({
@@ -75,6 +89,7 @@ export class DocumentFindController {
       phase: "confirm",
       result: null,
       issue: null,
+      selectedPaths: [],
     });
   };
   setScope = (path: readonly string[] | null) => {
@@ -88,6 +103,7 @@ export class DocumentFindController {
       phase: "confirm",
       result: null,
       issue: null,
+      selectedPaths: [],
     });
   };
   search = async () => {
@@ -111,6 +127,7 @@ export class DocumentFindController {
       phase: "searching",
       issue: null,
       result: null,
+      selectedPaths: [],
     });
     try {
       const result = await this.read(this.state.scope, query, abort.signal);
@@ -140,11 +157,20 @@ export class DocumentFindController {
       ...this.state,
       phase: "cancelled",
       result: null,
+      selectedPaths: [],
       issue: "검색을 중지했어요.",
     });
   };
   reset = () => {
     this.stop();
     this.publish(initial);
+  };
+  toggle = (path: readonly string[]) => {
+    if (this.state.phase !== "ready" || !this.state.result?.documents.some(document => JSON.stringify(document.path) === JSON.stringify(path))) return;
+    const selected = this.state.selectedPaths.some(value => JSON.stringify(value) === JSON.stringify(path));
+    this.publish({ ...this.state, selectedPaths: selected
+      ? this.state.selectedPaths.filter(value => JSON.stringify(value) !== JSON.stringify(path))
+      : [...this.state.selectedPaths, copyFolderPath(path)],
+    });
   };
 }

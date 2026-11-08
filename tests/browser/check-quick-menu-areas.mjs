@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { Browser } from "../../.agents/skills/design-taste-frontend/scripts/lib/cdp.mjs";
 
-const output = "docs/verification/quick-menu-scope";
+const output = process.argv[3] ?? "docs/verification/quick-menu-scope";
+const base = process.argv[2] ?? "http://127.0.0.1:3034";
 mkdirSync(output, { recursive: true });
 const results = [];
 const check = (name, passed) => { results.push({ name, passed: !!passed }); assert.ok(passed, name); };
@@ -17,7 +18,7 @@ try {
   const page = await browser.newPage({ width: 1440, height: 1000 });
   await page.send("Page.addScriptToEvaluateOnNewDocument", { source: `window.drawerAnimations=[];const animate=Element.prototype.animate;Element.prototype.animate=function(frames,options){if(this.id==='conversation-materials')window.drawerAnimations.push({state:this.dataset.drawerState,duration:options.duration,frames});return animate.call(this,frames,options)};` });
   for (const route of ["/demo", "/demo/files", "/demo/settings?tab=controls"]) {
-    await page.goto("http://127.0.0.1:3034" + route, { settleMs: 300 });
+    await page.goto(base + route, { settleMs: 300 });
     await wait(page, () => document.querySelector('[data-workspace-quick-menu]'));
     check(`${route}: no upper-right quick switch button`, await page.eval(() => !document.querySelector('header [aria-label="빠른 전환 열기"]')));
     await mouse(page, 'mousePressed', 8, 450, 1); await pause(620);
@@ -33,7 +34,7 @@ try {
   await click(page, '[aria-label="빠른 전환 열기"]');
   check("settings retains a visible keyboard/click preview alternative", await page.eval(() => document.querySelector('[data-quick-switch-menu]')?.dataset.quickMode === 'click'));
   await key(page, 'keyDown', 'Escape', 'Escape'); await key(page, 'keyUp', 'Escape', 'Escape');
-  await page.goto("http://127.0.0.1:3034/demo", { settleMs: 250 });
+  await page.goto(base + "/demo", { settleMs: 250 });
   const addOverlay = () => page.eval(() => { const overlay = document.createElement('div'); overlay.dataset.navigationLoading = ''; document.body.append(overlay); });
   const removeOverlay = () => page.eval(() => document.querySelector('[data-navigation-loading]').remove());
   await mouse(page, 'mousePressed', 8, 450, 1); await pause(200); await addOverlay(); await pause(420);
@@ -73,7 +74,7 @@ try {
   check("reduced motion switches immediately without animation", await page.eval(before => document.getElementById('conversation-materials').open && document.getElementById('conversation-materials').dataset.drawerState === 'open' && window.drawerAnimations.length === before, before));
   await click(page, '[aria-label="자료 창 닫기"]');
   for (const route of ["/login", "/welcome", "/forgot-password", "/reset-password", "/preview"]) {
-    await page.goto('http://127.0.0.1:3034' + route, { settleMs: 180 });
+    await page.goto(base + route, { settleMs: 180 });
     await page.eval(() => document.activeElement?.blur());
     check(`${route}: public/auth view has no work scope`, await page.eval(() => !document.querySelector('[data-workspace-quick-menu]')));
     await mouse(page, 'mousePressed', 8, 450, 1); await pause(540); await mouse(page, 'mouseReleased', 8, 450);

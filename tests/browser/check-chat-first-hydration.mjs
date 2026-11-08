@@ -68,7 +68,7 @@ renderDocument = () => {
   );
 };
 const url = `http://127.0.0.1:${server.httpServer.address().port}/__ssr-chat-first`;
-const output = "docs/verification/chat-first-live";
+const output = process.argv[2] ?? "docs/verification/chat-first-live";
 mkdirSync(output, { recursive: true });
 const browser = await Browser.launch({
   extraArgs: [

@@ -12,9 +12,11 @@ import { SourceFolderTree } from "../../local-folders/components/listing/SourceF
 import { SourceConnectionControl } from "../../local-folders/components/connection/SourceConnectionControl";
 import { OrganizationPreparationPanel } from "../../local-folders/components/organization/OrganizationPreparationPanel";
 import type { LiveOrganizationAction } from "../../../shared/live-organization";
-import { isFindRequest } from "../../local-folders/lib/document-find";
 import { FindConversation } from "./FindConversation";
 import type { AiProvider } from "../../../shared/ai-provider";
+import { classifyConversationRequest } from "../lib/request-routing";
+import { RequestIntentChoice } from "./RequestIntentChoice";
+import { useConversationRequests } from "../hooks/useConversationRequests";
 
 export function LiveConversation({
   organizeAction,
@@ -23,12 +25,12 @@ export function LiveConversation({
   organizeAction?: LiveOrganizationAction;
   aiProvider?: AiProvider | null;
 }) {
+  const local = useSharedSourceFolderConnection();
   const {
     state: connection,
     organization,
     finding,
-    preview,
-  } = useSharedSourceFolderConnection();
+  } = local;
   const findState = useSyncExternalStore(
     finding.subscribe,
     finding.getSnapshot,
@@ -45,6 +47,17 @@ export function LiveConversation({
   const sending = state.phase === "sending";
   const pending = reading || checking || sending;
   const answering = !!state.snapshot && state.questions.length > 0;
+  const currentDraft = findState.phase !== "idle" ? findState.draft : state.request;
+  const requests = useConversationRequests(local, currentDraft);
+  const pendingRequest = requests.pendingRequest;
+  const requestChoice = connected && pendingRequest !== null && pendingRequest === currentDraft ? (
+    <RequestIntentChoice
+      disabled={!requests.canStart}
+      onChoose={intent => requests.submitRequest(pendingRequest, intent)}
+      onCancel={requests.cancelChoice}
+    />
+  ) : null;
+  const requestIntent = classifyConversationRequest(state.request);
   const messages: ConversationMessage[] = [];
   if (state.submittedRequest) {
     messages.push({
@@ -82,7 +95,15 @@ export function LiveConversation({
     }
   }
 
-  if (findState.phase !== "idle") return <FindConversation state={findState} />;
+  if (findState.phase !== "idle") return <FindConversation
+    state={findState}
+    canStart={requests.canStart}
+    onRequest={requests.submitRequest}
+    onDraftChange={requests.updateFindDraft}
+    onReturn={requests.returnToOrganization}
+    onPrepare={requests.prepareFound}
+    requestChoice={requestChoice}
+  />;
   return (
     <WorkspaceShell
       title="채팅"
@@ -95,16 +116,13 @@ export function LiveConversation({
         onDraftChange={
           answering
             ? organization.updateReply
-            : (request) => organization.update({ request })
+            : requests.updateOrganizationDraft
         }
         onSend={() => {
           if (answering) organization.submitReply();
-          else if (isFindRequest(state.request)) {
-            preview.close();
-            finding.start(state.request);
-          } else void organization.prepare();
+          else requests.submitRequest(state.request);
         }}
-        canSend={connected}
+        canSend={requests.canStart}
         pending={pending}
         pendingLabel={
           checking
@@ -116,9 +134,9 @@ export function LiveConversation({
         submitLabel={
           answering
             ? "답변 반영"
-            : isFindRequest(state.request)
+            : requestIntent === "find"
               ? "찾을 조건 확인"
-              : "자료 준비"
+              : requestIntent === "organize" ? "자료 준비" : "작업 선택"
         }
         inputLabel={answering ? "확인 질문에 대한 답변" : undefined}
         inputPlaceholder={
@@ -157,7 +175,7 @@ export function LiveConversation({
         intro={
           <>
             <h2 tabIndex={-1} data-conversation-title>
-              {connected ? "어떤 자료를 정리할까요?" : "자료 폴더를 연결하세요"}
+              {connected ? "어떤 자료로 작업할까요?" : "자료 폴더를 연결하세요"}
             </h2>
             {!connected ? (
               <>
@@ -170,7 +188,7 @@ export function LiveConversation({
             ) : (
               <>
                 <p>
-                  원하는 내용을 적고 자료를 준비해 보세요. 범위와 발췌를 확인한
+                  찾거나 정리할 내용을 적어 주세요. 범위와 발췌를 확인한
                   뒤 선택한 자료만 AI에 보낼 수 있어요. AI 분석만으로 원본을
                   바꾸지 않으며 실제 파일 작업은 검토 후 별도로 실행합니다.
                 </p>
@@ -181,9 +199,9 @@ export function LiveConversation({
         }
         panel={null}
         interaction={
-          connected && state.submittedRequest ? (
+          requestChoice ?? (connected && state.submittedRequest ? (
             <OrganizationPreparationPanel organizeAction={organizeAction} aiProvider={aiProvider} />
-          ) : undefined
+          ) : undefined)
         }
       />
     </WorkspaceShell>

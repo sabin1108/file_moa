@@ -1,5 +1,7 @@
 # 사이트 전체 성능 측정 정책
 
+최신 검색·정리 요청 전환: [공통 판별과 취소 경계 검증](verification/request-routing/README.md). 실제 controller/합성 OPFS45개와 질문 답변 회귀35개를 구분한다. 전체 JS/CSS +2,897bytes. 실제 경로별 진입 지연·heap·INP는 미측정이며 속도 개선을 주장하지 않는다.
+
 최신 로그인 복귀 후 대기 UI: [상위 loading 경계·실제 Next fixture 비교](verification/auth-transition/README.md). 합성1800ms guard의 상태 표시 선행29검사와 실제production guest/샘플12검사를 구분한다. JS/CSS1,701,044bytes 동일. 실제 네이버의 약3초·Vercel callback·전체 로그인 지연 감소는 미측정이다.
 
 최신 메인 화면 응답 후 설정 준비: [초기 대기 분리와 검증 한계](verification/settings-background-preparation/README.md). Next `after`로 초기 캐시 준비를 응답 이후로 이동했다. JS/CSS 1,701,044 bytes 동일, 새 실제 계정 지연·운영 성능은 미측정이다. 아래 80개 표본은 변경 전 blocking 캐시 구현의 기록이다.
@@ -127,3 +129,7 @@ PDF의 번들/이미지 크기와 경로별 로딩 지표 기록 방식을 참�
 # 2026-11-08 설정 표시 데이터 캐시
 
 [검증](verification/settings-display-cache/README.md): 실제 Next Data Cache와 기본 메모리 backend에 합성 인증·DB를 연결해 초기 준비와 다음 요청의 표시 getter 재사용을 확인했다. 실제 PostgreSQL SQL 수, 사용자 로그인 상태의 설정 대기 시간·서버 비용은 미측정이다. production 산출물 전후 JS/CSS는 1,700,147 bytes/42파일로 동일하다. 전체 1,059개와 production guest/샘플 브라우저 10개 검사를 사용자별 실제 성능 측정으로 확대하지 않는다. 초기 준비를 기다리는 비용과 다음 방문의 cache hit 이점을 함께 비교하며, 개발 컴파일 시간은 운영 지연과 분리한다.
+
+## 2026-11-08 검색·작업 흐름 마감
+
+[원자료](verification/completion-five/performance/routes-assets.json): production 6경로 각3회 lab 측정, 보호 경로는 guest redirect다. JS/CSS 총합 1,703,941 → 1,718,378 bytes, 43파일 유지, +14,437 bytes. 경로별 초기 전송량이나 이전 대비 속도 향상률로 해석하지 않는다. 검색/정리/파일 동작은 합성 OPFS이며 실제 Windows 체감·field INP·인증 경로 비용은 별도다. 로컬 단계 URL에는 기존 SettingsTabs와 같은 Next native History 통합을 사용하고, 진행 상태마다 서버 route 전환을 만들지 않는다. [검증/한계](verification/completion-five/README.md).

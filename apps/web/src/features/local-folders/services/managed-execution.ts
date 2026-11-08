@@ -76,7 +76,7 @@ export async function executeManagedOperation(prepared: PreparedManaged, signal:
   const verifyTargetTree = async () => {
     if (!prepared.destination) return;
     const rootNames = prepared.targets.filter(path => path.length === prepared.view.destination.length + 1).map(path => path.at(-1)!);
-    const fresh = await captureManagedTree(context.root, prepared.view.destination, rootNames, check, hash);
+    const fresh = await captureManagedTree(context.root, prepared.view.destination, rootNames, check, hash, prepared.nodes.some(node => node.view.path.some(part => part.toLowerCase() === ".moa-history")));
     if (fresh.skipped || fresh.nodes.length !== prepared.nodes.length) throw Error("managed-changed");
     for (const current of fresh.nodes) {
       const index = prepared.targets.findIndex(path => key(path) === key(current.view.path));

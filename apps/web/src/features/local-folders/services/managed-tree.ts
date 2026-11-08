@@ -1,12 +1,12 @@
 import { comparableName } from "../lib/file-change-plan";
-import { MANAGED_LIMITS, managedNames, type ManagedNode } from "../lib/managed-files";
+import { MANAGED_LIMITS, managedNames, managedTreePath, type ManagedNode } from "../lib/managed-files";
 import { openSourceDirectory, isRecoveryDirectory } from "./source-directory";
 
 export type CapturedNode = { view: ManagedNode; handle: FileSystemFileHandle | FileSystemDirectoryHandle };
 export type ManagedHash = (file: File) => Promise<string>;
 
 export async function captureManagedTree(root: FileSystemDirectoryHandle, parentPath: readonly string[], names: readonly string[],
-  check: () => void, hash: ManagedHash) {
+  check: () => void, hash: ManagedHash, includeHistory = false) {
   const parent = await openSourceDirectory(root, parentPath, check);
   const nodes: CapturedNode[] = [];
   let bytes = 0;
@@ -14,7 +14,7 @@ export async function captureManagedTree(root: FileSystemDirectoryHandle, parent
   const visit = async (directory: FileSystemDirectoryHandle, name: string, path: string[], depth: number) => {
     check();
     if (depth > MANAGED_LIMITS.depth || path.length > 32 || nodes.length >= MANAGED_LIMITS.entries) throw Error("managed-limit");
-    managedNames([name]);
+    managedTreePath(path);
     let fileHandle: FileSystemFileHandle;
     try {
       fileHandle = await directory.getFileHandle(name, { create: false });
@@ -34,7 +34,7 @@ export async function captureManagedTree(root: FileSystemDirectoryHandle, parent
       entries.sort((left, right) => left.name.localeCompare(right.name));
       const seen = new Set<string>();
       for (const entry of entries) {
-        if (comparableName(entry.name).startsWith(".moa-")) { skipped = true; continue; }
+        if (comparableName(entry.name).startsWith(".moa-") && !(includeHistory && entry.kind === "directory" && comparableName(entry.name) === ".moa-history")) { skipped = true; continue; }
         if (entry.kind === "directory" && await isRecoveryDirectory(entry as FileSystemDirectoryHandle, check)) { skipped = true; continue; }
         const key = comparableName(entry.name);
         if (seen.has(key)) throw Error("managed-conflict");
@@ -61,7 +61,7 @@ export async function captureManagedTree(root: FileSystemDirectoryHandle, parent
 
 export async function assertManagedTree(root: FileSystemDirectoryHandle, parentPath: readonly string[], names: readonly string[],
   expected: readonly CapturedNode[], check: () => void, hash: ManagedHash) {
-  const fresh = await captureManagedTree(root, parentPath, names, check, hash);
+  const fresh = await captureManagedTree(root, parentPath, names, check, hash, expected.some(node => node.view.path.some(part => part.toLowerCase() === ".moa-history")));
   if (fresh.nodes.length !== expected.length) throw Error("managed-changed");
   for (let index = 0; index < expected.length; index++) {
     const before = expected[index];

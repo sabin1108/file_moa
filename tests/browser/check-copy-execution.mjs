@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { finishSourceSetup, waitForVisibleAction } from '../fixtures/finish-source-setup.mjs';
+import { waitForVisibleAction } from '../fixtures/finish-source-setup.mjs';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { Browser } from '../../.agents/skills/design-taste-frontend/scripts/lib/cdp.mjs';
 import { installFolderBrowserFixture } from '../fixtures/folder-browser-fixture.mjs';
@@ -20,7 +20,8 @@ async function click(label) {
   if (await revealSelectionControl(page, label)) return;
   await waitForVisibleAction(page, label);
   const point = await page.eval(label => {
-    const el = [...document.querySelectorAll('button,summary,input[type="checkbox"]')].find(el => (el.textContent.trim() === label || el.getAttribute('aria-label') === label || el.closest('label')?.textContent.trim() === label) && el.getClientRects().length && !el.disabled);
+    const root = [...document.querySelectorAll('dialog:modal')].at(-1) ?? document;
+    const el = [...root.querySelectorAll('button,summary,input[type="checkbox"]')].find(el => (el.textContent.trim() === label || el.getAttribute('aria-label') === label || el.closest('label')?.textContent.trim() === label) && el.checkVisibility() && !el.disabled);
     if (!el) throw Error(`Missing ${label}`); el.scrollIntoView({ block: 'center' }); const r = el.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
   }, label);
   for (const type of ['mousePressed', 'mouseReleased']) await page.send('Input.dispatchMouseEvent', { type, ...point, button: 'left', clickCount: 1 });
@@ -29,9 +30,12 @@ try {
   page = await browser.newPage({ width: 1440, height: 1000 });
   await page.send('Page.addScriptToEvaluateOnNewDocument', { source: `(${installFolderBrowserFixture.toString()})();` });
   await page.goto(base + '/files', { settleMs: 250 });
-  await click('폴더 연결 관리'); await click('폴더 연결');
-  await finishSourceSetup(page);
+  await wait(() => !!document.querySelector('[aria-label="폴더 연결 관리"]'));
+  await click('폴더 연결 관리');
+  await page.eval(() => Promise.all(document.querySelector('dialog:modal').getAnimations().map(animation => animation.finished)));
+  await click('폴더 연결');
   await wait(() => document.querySelector('[data-listing-phase]')?.dataset.listingPhase === 'ready');
+  await click('폴더 연결 관리 닫기');
   for (const name of ['읽기 안내.md', '할 일.txt']) await click(`${name} 선택`);
   await click('복사');
   await choosePlanDestination(page, click, '빈 폴더');
@@ -40,7 +44,27 @@ try {
   await click('복사 전 검사'); await wait(() => document.querySelector('[data-copy-inspection]')?.dataset.copyInspection === 'ready');
   check('inspection has zero writes', await page.eval(() => listingProbe.productWrites === 0));
   check('inspection step hides destination inputs', await page.eval(() => !document.querySelector('[aria-label="목적지 지정"]') && document.querySelector('[data-plan-phase]').dataset.workStep === '2'));
+  await page.eval(() => {
+    const create = FileSystemFileHandle.prototype.createWritable;
+    FileSystemFileHandle.prototype.createWritable = async function (...args) {
+      const stream = await create.apply(this, args);
+      if (this.name === '읽기 안내.md' && !listingProbe.copyGateUsed) {
+        listingProbe.copyGateUsed = true;
+        const write = stream.write.bind(stream);
+        stream.write = async data => { listingProbe.copyHeld = true; await new Promise(resolve => { listingProbe.releaseCopy = resolve; }); return write(data); };
+      }
+      return stream;
+    };
+  });
   await click('이 계획대로 복사');
+  await wait(() => listingProbe.copyHeld);
+  for (const type of ['keyDown', 'keyUp']) await page.send('Input.dispatchKeyEvent', { type, key: 'q', code: 'KeyQ', modifiers: 1 });
+  const holdPoint = await page.eval(() => { const r = document.querySelector('[data-plan-phase] h2').getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; });
+  await page.send('Input.dispatchMouseEvent', { type: 'mousePressed', ...holdPoint, button: 'left', buttons: 1, clickCount: 1 });
+  await new Promise(resolve => setTimeout(resolve, 650));
+  check('running copy blocks quick navigation by shortcut and plain-text hold', await page.eval(() => !document.querySelector('[data-quick-switch-menu]') && document.querySelector('[data-plan-phase]').matches('[data-quick-switch-block]:modal') && document.querySelector('[data-copy-execution]').dataset.copyExecution === 'running'));
+  await page.send('Input.dispatchMouseEvent', { type: 'mouseReleased', ...holdPoint, button: 'left', clickCount: 1 });
+  await page.eval(() => listingProbe.releaseCopy());
   await wait(() => ['completed', 'error', 'cancelled'].includes(document.querySelector('[data-copy-execution]')?.dataset.copyExecution));
   const state = await page.eval(() => ({ state: document.querySelector('[data-copy-execution]').dataset.copyExecution, text: document.querySelector('[data-copy-execution]').textContent }));
   check('copy completes in actual OPFS', state.state === 'completed', state);
@@ -81,11 +105,12 @@ try {
   }));
   await page.eval(async () => { await Promise.all(document.getAnimations().filter(a => Number.isFinite(a.effect?.getComputedTiming().endTime)).map(a => a.finished.catch(() => {}))); });
   await page.screenshot({ path: `${out}/copy-history-1920.png`, format: 'png' });
+  if (!process.argv.includes('--quick-guard')) {
   await page.goto(base + '/files', { settleMs: 250 });
   await click('폴더 연결 관리');
   await click('다시 연결');
-  await finishSourceSetup(page);
   await wait(() => document.querySelector('[data-listing-phase]')?.dataset.listingPhase === 'ready');
+  await click('폴더 연결 관리 닫기');
   await click('빈 폴더 폴더 열기'); await wait(() => document.querySelector('[data-listing-phase]')?.dataset.listingPhase === 'ready');
   await click('작업 기록'); await wait(() => document.querySelector('[data-history-phase]')?.dataset.historyPhase === 'ready');
   check('history survives reload and explicit reconnect', await page.eval(() => document.querySelector('[aria-label="복사 작업 기록"]')?.textContent.includes('복사 완료 기록')));
@@ -126,6 +151,7 @@ try {
     }
     return true;
   }));
+  }
   check('no browser exceptions', page.consoleErrors.length === 0, page.consoleErrors);
 } finally {
   writeFileSync(`${out}/checks.json`, JSON.stringify(checks, null, 2));

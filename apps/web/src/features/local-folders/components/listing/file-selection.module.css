@@ -15,8 +15,8 @@
 .fileRow[data-selecting="false"] > .fileAction { padding-left: var(--ui-space-2); }
 @media (max-width: 550px) { .selectAll { flex-basis: 100%; } .count { margin-left: 0; margin-right: auto; } }
 @media (prefers-reduced-motion: reduce) { .fileRow { transition: none; } .fileRow[data-holding="true"]::after { animation: none; opacity: .5; } }
-.fileActions { display: flex; flex-basis: 100%; gap: 8px; }
-.fileActions button { flex: 1; transition: background-color 120ms ease; }
+.fileActions { display: flex; flex-wrap: wrap; flex-basis: 100%; min-width: 0; gap: 8px; }
+.fileActions button { flex: 1 1 auto; transition: background-color 120ms ease; }
 .moveIcon { transform: rotate(90deg); }
 .selectionHint { flex-basis: 100%; color: var(--muted); font-size: 14px; }
 .toolbar { padding: 8px; margin-top: 0; gap: 8px; border: 1px solid var(--control-border); border-radius: 4px; font-size: 13px; }

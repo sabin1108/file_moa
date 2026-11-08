@@ -5,11 +5,12 @@ import { canStartQuickHold, clampQuickPosition, matchesQuickShortcut, parseQuick
 import { readQuickPreferences, serverQuickPreferences, subscribeQuickPreferences } from "../store/quick-preferences";
 
 type Point = Readonly<{ x: number; y: number }>;
-type Menu = Readonly<{ position: Point; anchor: Point; active: number | null; trigger: "pointer" | "keyboard" | "click"; pointerId?: number; code?: string; route: string }>;
+type Menu = Readonly<{ position: Point; anchor: Point; active: number | null; trigger: "pointer" | "keyboard" | "click"; pointerId?: number; code?: string; route: string; host: HTMLElement }>;
 const editable = "input,textarea,select,[contenteditable]:not([contenteditable=false])";
 const scope = "[data-workspace-quick-menu]";
-const blockedOverlay = () => !!document.querySelector("dialog:modal,[data-navigation-loading]");
-const activeScope = () => document.querySelector<HTMLElement>(scope)?.checkVisibility() ?? false;
+const blockedOverlay = () => [...document.querySelectorAll<HTMLElement>("[data-navigation-loading],[data-quick-switch-block]")].some(node => node.checkVisibility());
+const activeScope = () => [...document.querySelectorAll<HTMLElement>(scope)].some(node => node.checkVisibility());
+const activeHost = () => [...document.querySelectorAll<HTMLDialogElement>("dialog:modal")].at(-1) ?? document.body;
 
 export function useQuickSwitch(route: string, onChoose: (index: number) => void) {
   const raw = useSyncExternalStore(subscribeQuickPreferences, readQuickPreferences, serverQuickPreferences);
@@ -25,8 +26,11 @@ export function useQuickSwitch(route: string, onChoose: (index: number) => void)
 
   useLayoutEffect(() => {
     if (!position) return;
+    const element = root.current;
+    if (element?.showPopover && !element.matches(":popover-open")) element.showPopover();
     if (trigger === "click") root.current?.querySelectorAll<HTMLButtonElement>("[data-quick-target]")[1]?.focus();
     else root.current?.focus({ preventScroll: true });
+    return () => { if (element?.hidePopover && element.matches(":popover-open")) element.hidePopover(); };
   }, [position, trigger]);
 
   const close = useCallback((restore = true) => {
@@ -41,7 +45,7 @@ export function useQuickSwitch(route: string, onChoose: (index: number) => void)
   }, []);
 
   const choose = useCallback((index: number | null) => {
-    if (!activeScope() || blockedOverlay() || session.current?.route !== route) { close(false); return; }
+    if (!activeScope() || blockedOverlay() || session.current?.route !== route || session.current.host !== activeHost()) { close(false); return; }
     close(index === null);
     if (index !== null) onChoose(index);
   }, [route, close, onChoose]);
@@ -55,7 +59,7 @@ export function useQuickSwitch(route: string, onChoose: (index: number) => void)
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
-    let pending: (Point & { id: number }) | null = null;
+    let pending: (Point & { id: number; host: HTMLElement }) | null = null;
     let lastPointer: Point | null = null;
     const clearPending = () => { clearTimeout(timer); timer = undefined; pending = null; };
     const guardClick = () => {
@@ -72,6 +76,7 @@ export function useQuickSwitch(route: string, onChoose: (index: number) => void)
         active: trigger === "click" ? 1 : null,
         trigger,
         route,
+        host: activeHost(),
         ...extra,
       };
       setMenu(session.current);
@@ -92,9 +97,10 @@ export function useQuickSwitch(route: string, onChoose: (index: number) => void)
         return;
       }
       const target = event.target instanceof Element ? event.target : null;
-      if (!["both", "hold"].includes(preferences.trigger) || !target?.closest(scope) || !activeScope() || blockedOverlay()) return;
+      const host = activeHost();
+      if (!["both", "hold"].includes(preferences.trigger) || !target || !activeScope() || blockedOverlay() || host !== document.body && !host.contains(target)) return;
       const blocked = !!target.closest(
-        `${editable},button,a,label,p,span,li,td,th,summary,h1,h2,h3,pre,code,blockquote,[role=button],[role=link],[draggable=true],[data-long-press-selection]`,
+        `${editable},button,a,label,summary,[role=button],[role=link],[draggable=true],[data-long-press-selection]`,
       );
       if (
         !canStartQuickHold({
@@ -106,9 +112,9 @@ export function useQuickSwitch(route: string, onChoose: (index: number) => void)
         })
       )
         return;
-      pending = { x: event.clientX, y: event.clientY, id: event.pointerId };
+      pending = { x: event.clientX, y: event.clientY, id: event.pointerId, host: activeHost() };
       timer = setTimeout(() => {
-        if (!activeScope() || blockedOverlay()) { cancel(); return; }
+        if (!activeScope() || blockedOverlay() || pending?.host !== activeHost()) { cancel(); return; }
         if (pending && window.getSelection()?.isCollapsed) open(pending, "pointer", { pointerId: pending.id });
       }, QUICK_HOLD_MS);
     };
@@ -161,6 +167,7 @@ export function useQuickSwitch(route: string, onChoose: (index: number) => void)
     window.addEventListener("keydown", key);
     window.addEventListener("keyup", keyUp);
     window.addEventListener("resize", cancel);
+    document.addEventListener("close", cancel, true);
     return () => {
       clearPending();
       close(false);
@@ -176,6 +183,7 @@ export function useQuickSwitch(route: string, onChoose: (index: number) => void)
       window.removeEventListener("keydown", key);
       window.removeEventListener("keyup", keyUp);
       window.removeEventListener("resize", cancel);
+      document.removeEventListener("close", cancel, true);
     };
   }, [route, preferences.trigger, preferences.shortcut, close, choose, select]);
 

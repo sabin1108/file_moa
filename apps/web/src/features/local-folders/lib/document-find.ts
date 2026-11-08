@@ -1,5 +1,6 @@
 import { contentDates } from "../../../shared/content-dates";
 import type { SourceSnapshot } from "./source-snapshot";
+import { findRelativeYear } from "./document-find-reply";
 
 export type FindFilters = Readonly<{
   terms: string;
@@ -7,6 +8,7 @@ export type FindFilters = Readonly<{
   month: string;
   basis: string;
   window: string;
+  endMonth?: string;
 }>;
 export type FindQuery = Readonly<{
   terms: readonly string[];
@@ -37,12 +39,12 @@ export type FindableSnapshot = SourceSnapshot & {
 
 export function isFindRequest(request: string) {
   return (
-    /찾아|검색/u.test(request) &&
+    /찾아|찾기|검색/u.test(request) &&
     !/정리|모아|이동|복사|분류|찾지|검색하지/u.test(request)
   );
 }
 
-export function inferFindRequest(request: string): FindFilters {
+export function inferFindRequest(request: string, referenceYear?: number): FindFilters {
   const written = /작성\s*(?:일시|날짜|일)(?=\s|[은는을를로:：]|$)/u.test(
     request,
   );
@@ -66,7 +68,9 @@ export function inferFindRequest(request: string): FindFilters {
   ];
   const words =
     request
+      .replace(/재작년|작년|올해/gu, " ")
       .replace(/20\d{2}\s*년?/gu, " ")
+      .replace(/\d{1,2}\s*월?\s*(?:부터|~|에서|-)\s*\d{1,2}\s*월(?:까지)?/gu, " ")
       .replace(/\d{1,2}\s*월(?:쯤|경|초|말|무렵)?/gu, " ")
       .match(/[가-힣a-zA-Z0-9]+/gu) ?? [];
   const generic = new Set([
@@ -98,23 +102,27 @@ export function inferFindRequest(request: string): FindFilters {
           (word) =>
             word.length >= 2 &&
             !generic.has(word) &&
-            !/^(?:찾|검색)/u.test(word),
+            !/^(?:찾|검색)/u.test(word) &&
+            !/^(?:(?:정리|분류|이동|복사)(?:해(?:줘|주세요)?|하기|하자)|모아(?:줘|주세요))$/u.test(word),
         ),
     ),
   ].slice(0, 8);
+  const monthRange = request.match(/(?<!\d)(1[0-2]|0?[1-9])\s*월?\s*(?:부터|~|에서|-)\s*(1[0-2]|0?[1-9])\s*월(?:까지)?/u);
+  const relativeYear = findRelativeYear(request, referenceYear);
   return {
     terms: terms.join(" "),
-    year: years.length === 1 ? years[0] : "",
+    year: negated ? "" : years.length === 1 && !relativeYear ? years[0] : !years.length ? relativeYear : "",
     month: negated
       ? ""
-      : months.length === 1
+      : monthRange && +monthRange[1] <= +monthRange[2] ? String(+monthRange[1]) : months.length === 1
         ? months[0]
-        : years.length || /월/u.test(request)
+        : years.length || /월|재작년|작년|올해/u.test(request)
           ? ""
           : "all",
     basis:
       negated || written === meeting ? "" : written ? "written" : "meeting",
-    window: /쯤|전후|무렵|월\s*(?:초|말|중순)/u.test(request) ? "" : "month",
+    window: monthRange ? "months" : /월\s*말/u.test(request) ? "late" : /쯤|전후|무렵|월\s*(?:초|중순)/u.test(request) ? "" : "month",
+    endMonth: monthRange ? String(+monthRange[2]) : "",
   };
 }
 
@@ -134,16 +142,17 @@ export function confirmFindQuery(filters: FindFilters): FindQuery {
     !/^20\d{2}$/u.test(filters.year) ||
     !/^(?:[1-9]|1[0-2])$/u.test(filters.month) ||
     !["meeting", "written", "body"].includes(filters.basis) ||
-    !["month", "around"].includes(filters.window)
+    !["month", "around", "late", "months"].includes(filters.window) ||
+    filters.window === "months" && (!/^(?:[1-9]|1[0-2])$/u.test(filters.endMonth ?? "") || Number(filters.endMonth) < Number(filters.month))
   )
     throw Error("unconfirmed-find-period");
   const year = Number(filters.year),
     month = Number(filters.month);
   const padding = filters.window === "around" ? 7 : 0;
-  const from = new Date(Date.UTC(year, month - 1, 1 - padding))
+  const from = new Date(Date.UTC(year, month - 1, filters.window === "late" ? 21 : 1 - padding))
     .toISOString()
     .slice(0, 10);
-  const to = new Date(Date.UTC(year, month, padding))
+  const to = new Date(Date.UTC(year, filters.window === "months" ? Number(filters.endMonth) : month, padding))
     .toISOString()
     .slice(0, 10);
   if (!from.startsWith("20") || !to.startsWith("20"))

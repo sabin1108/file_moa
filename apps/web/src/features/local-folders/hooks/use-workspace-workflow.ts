@@ -6,6 +6,7 @@ import type { InlineEditorController } from "../store/inline-editor-controller";
 import type { WorkflowDraft } from "../services/workflow-drafts";
 import { useWorkflowUrl } from "./use-workflow-url";
 import { recoveryIdSchema } from "../lib/recovery-vault";
+import { managedWorkflowStep } from "../lib/managed-workflow-step";
 
 /** URL 단계와 로컬 초안을 연결한다. 복원한 단계는 실행 승인으로 사용하지 않는다. */
 export function useWorkspaceWorkflow(managed: ManagedFilesController, editor: InlineEditorController) {
@@ -104,8 +105,7 @@ export function useWorkspaceWorkflow(managed: ManagedFilesController, editor: In
       if (moved.open && moved.request && moved.request.kind !== "edit") {
         const id = ids.current.managed ??= crypto.randomUUID();
         const picker = managed.picker.getSnapshot();
-        const step = moved.phase === "running" ? moved.result?.phase === "preserving" ? "preserve" : "execute"
-          : moved.result ? "result" : moved.phase === "ready" ? "review" : "destination";
+        const step = managedWorkflowStep(moved);
         updateManaged(step, id);
         persist({ id, flow: "managed", source: [...moved.request.source], names: [...moved.request.names],
           destination: [...moved.request.destination], kind: moved.request.kind,

@@ -33,6 +33,7 @@ export function InlineDocumentEditor({ controller, folderName, onClosed, onSaved
   return (
     <DocumentWorkspace
       mode="editor"
+      blockQuickSwitch={state.phase === "saving" || state.text !== state.savedText}
       phase={state.phase}
       title={state.path.at(-1) ?? "문서 편집"}
       back={

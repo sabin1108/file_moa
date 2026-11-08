@@ -1,0 +1,137 @@
+{
+  "condition": "Actual local production sample workspace and guest auth routes; no AI calls or personal folders",
+  "results": [
+    {
+      "name": "/demo: no upper-right quick switch button",
+      "passed": true
+    },
+    {
+      "name": "/demo: blank workspace outside chat opens quick menu",
+      "passed": true
+    },
+    {
+      "name": "/demo: shared shortcut works",
+      "passed": true
+    },
+    {
+      "name": "/demo/files: no upper-right quick switch button",
+      "passed": true
+    },
+    {
+      "name": "/demo/files: blank workspace outside chat opens quick menu",
+      "passed": true
+    },
+    {
+      "name": "/demo/files: shared shortcut works",
+      "passed": true
+    },
+    {
+      "name": "/demo/settings?tab=controls: no upper-right quick switch button",
+      "passed": true
+    },
+    {
+      "name": "/demo/settings?tab=controls: blank workspace outside chat opens quick menu",
+      "passed": true
+    },
+    {
+      "name": "/demo/settings?tab=controls: shared shortcut works",
+      "passed": true
+    },
+    {
+      "name": "settings retains a visible keyboard/click preview alternative",
+      "passed": true
+    },
+    {
+      "name": "overlay appearing during hold prevents delayed opening",
+      "passed": true
+    },
+    {
+      "name": "overlay appearing before pointer release cancels navigation",
+      "passed": true
+    },
+    {
+      "name": "overlay appearing before key release cancels navigation",
+      "passed": true
+    },
+    {
+      "name": "drawer opening uses 260ms transform/opacity motion",
+      "passed": true
+    },
+    {
+      "name": "drawer remains open during exit animation",
+      "passed": true
+    },
+    {
+      "name": "exit completes before focus returns and input DOM survives",
+      "passed": true
+    },
+    {
+      "name": "rapid reversal cancels obsolete close completion",
+      "passed": true
+    },
+    {
+      "name": "390: adaptive animated drawer fits",
+      "passed": true
+    },
+    {
+      "name": "768: adaptive animated drawer fits",
+      "passed": true
+    },
+    {
+      "name": "1440: adaptive animated drawer fits",
+      "passed": true
+    },
+    {
+      "name": "1920: adaptive animated drawer fits",
+      "passed": true
+    },
+    {
+      "name": "reduced motion switches immediately without animation",
+      "passed": true
+    },
+    {
+      "name": "/login: public/auth view has no work scope",
+      "passed": true
+    },
+    {
+      "name": "/login: hold, shortcut and open event are ignored",
+      "passed": true
+    },
+    {
+      "name": "/welcome: public/auth view has no work scope",
+      "passed": true
+    },
+    {
+      "name": "/welcome: hold, shortcut and open event are ignored",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password: public/auth view has no work scope",
+      "passed": true
+    },
+    {
+      "name": "/forgot-password: hold, shortcut and open event are ignored",
+      "passed": true
+    },
+    {
+      "name": "/reset-password: public/auth view has no work scope",
+      "passed": true
+    },
+    {
+      "name": "/reset-password: hold, shortcut and open event are ignored",
+      "passed": true
+    },
+    {
+      "name": "/preview: public/auth view has no work scope",
+      "passed": true
+    },
+    {
+      "name": "/preview: hold, shortcut and open event are ignored",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true
+    }
+  ]
+}

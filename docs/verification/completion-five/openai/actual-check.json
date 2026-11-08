@@ -1,0 +1,28 @@
+{
+  "at": "2026-11-08T12:27:17.399Z",
+  "condition": "One synthetic document through actual production organization policy, OpenAI adapter and live response parser. No authentication, DB quota, personal folder or source writes.",
+  "totalLatencyMs": 3461,
+  "calls": [
+    {
+      "method": "input_tokens",
+      "status": 200,
+      "latencyMs": 1156
+    },
+    {
+      "method": "responses",
+      "status": 200,
+      "latencyMs": 2286
+    }
+  ],
+  "model": "gpt-6-luna",
+  "usage": {
+    "inputTokens": 1162,
+    "outputTokens": 91,
+    "totalTokens": 1253
+  },
+  "matches": 1,
+  "held": 0,
+  "estimatedStandardGenerationUsd": 0.0001617,
+  "pricingNote": "Estimated Standard generation only. Input counting, actual service tier, credits and invoicing must be checked in the billing dashboard.",
+  "passed": true
+}

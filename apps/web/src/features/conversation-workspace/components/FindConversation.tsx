@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { WorkspaceShell } from "../../../components/layout/WorkspaceShell";
 import { ConversationWorkspace } from "../../../components/layout/ConversationWorkspace";
 import { actionClasses } from "../../../components/ui/action-classes";
@@ -9,7 +9,15 @@ import { DocumentFindPanel } from "../../local-folders/components/organization/D
 import { SourceDocumentPreview } from "../../local-folders/components/preview/SourceDocumentPreview";
 import type { DocumentFindState } from "../../local-folders/store/document-find-controller";
 
-export function FindConversation({ state }: { state: DocumentFindState }) {
+export function FindConversation({ state, onRequest, onDraftChange, onReturn, onPrepare, requestChoice, canStart }: {
+  state: DocumentFindState;
+  onRequest: (request: string) => void;
+  onDraftChange: (request: string) => void;
+  onReturn: () => void;
+  onPrepare: () => void;
+  requestChoice: ReactNode;
+  canStart: boolean;
+}) {
   const connection = useSharedSourceFolderConnection();
   const controller = connection.finding;
   const preview = useSyncExternalStore(
@@ -51,47 +59,47 @@ export function FindConversation({ state }: { state: DocumentFindState }) {
                 ? "찾은 후보와 본문 근거를 확인해 주세요."
                 : "검색할 범위와 날짜 기준을 확인해 주세요.",
           },
+          ...(state.submittedReply ? [
+            { id: "find-reply", author: "user" as const, text: state.submittedReply },
+            { id: "find-reply-confirmed", author: "assistant" as const, text: "검색 조건을 반영했어요. 표시된 기간과 기준을 확인한 뒤 검색 시작을 눌러 주세요." },
+          ] : []),
         ]}
         draft={state.draft}
-        onDraftChange={controller.updateDraft}
-        onSend={() => {
-          connection.preview.close();
-          controller.start(state.draft);
-        }}
-        canSend={connection.state.view?.status === "connected"}
+        onDraftChange={onDraftChange}
+        onSend={() => onRequest(state.draft)}
+        canSend={canStart}
         pending={state.phase === "searching"}
         pendingLabel="TXT·MD 본문에서 자료를 찾고 있어요…"
         onCancel={controller.cancel}
         cancelLabel="검색 중지"
-        submitLabel="찾을 조건 확인"
-        inputLabel="새로 찾을 자료 요청"
-        inputPlaceholder="예: 10월쯤 한 회의 자료를 찾아줘"
+        submitLabel="새 요청 확인"
+        inputLabel="새 자료 요청"
+        inputPlaceholder="예: 2026년 회의일 기준 / 성능 보고서 정리해줘"
         panel={null}
         panelOpen={false}
         onPanelChange={() => {}}
         intro={null}
-        showComposer={state.phase !== "confirm"}
         notice={
           <button
             type="button"
             className={actionClasses("ghost")}
-            onClick={() => {
-              connection.preview.close();
-              controller.reset();
-            }}
+            disabled={!canStart}
+            onClick={onReturn}
           >
             정리 요청으로 돌아가기
           </button>
         }
         scope={<p>이 기기에서만 검색 · TXT·MD</p>}
         interaction={
-          <>
+          requestChoice ?? <>
             <div hidden={showing}>
               <DocumentFindPanel
                 controller={controller}
                 state={state}
                 folderName={folderName}
                 currentPath={listing.result?.path ?? []}
+                onPrepare={onPrepare}
+                canPrepare={canStart}
                 onOpenFile={(path) => {
                   trigger.current =
                     document.activeElement instanceof HTMLElement

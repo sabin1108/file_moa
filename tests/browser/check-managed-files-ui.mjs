@@ -40,6 +40,7 @@ try {
   page = await browser.newPage({ width: 1440, height: 900 });
   await page.send('Page.addScriptToEvaluateOnNewDocument', { source: `(${installFolderBrowserFixture.toString()})();` });
   await page.goto(base + '/files', { settleMs: 350 });
+  await wait(() => !!document.querySelector('[aria-label="폴더 연결 관리"]'));
   await click('폴더 연결 관리');
   await wait(() => [...document.querySelectorAll('button')].some(el => el.textContent === '폴더 연결' && !el.disabled));
   check('app permission guide is visible without triggering a picker or permission request', await page.eval(() => !!document.querySelector('[aria-label="폴더 접근 안내"]') && listingProbe.permissionRequests === 0));
@@ -72,6 +73,9 @@ try {
       await a.getDirectoryHandle('작업 목적지', { create: true });
       await a.getDirectoryHandle('이동 목적지', { create: true });
       const tree = await a.getDirectoryHandle('샘플 트리', { create: true });
+      const history = await tree.getDirectoryHandle('.moa-history', { create: true });
+      const record = await history.getFileHandle('moa-copy-fixture.json', { create: true });
+      const recordWriter = await record.createWritable(); await recordWriter.write('synthetic immutable history'); await recordWriter.close();
       const nested = await tree.getDirectoryHandle('하위', { create: true });
       await nested.getDirectoryHandle('빈 폴더', { create: true });
       const file = await nested.getFileHandle('자료.txt', { create: true });
@@ -116,16 +120,41 @@ try {
     assert.equal(await page.eval(() => document.querySelector('[data-managed-phase]')?.dataset.managedPhase), 'ready', await page.eval(() => document.body.innerText));
   }
   async function run(label) {
+    await page.eval(() => {
+      listingProbe.steps = [];
+      listingProbe.stepObserver?.disconnect();
+      listingProbe.stepObserver = new MutationObserver(() => {
+        const root = document.querySelector('[data-managed-dialog-phase]');
+        const step = root?.querySelector('[aria-current="step"]')?.textContent;
+        if (step && listingProbe.steps.at(-1) !== step) listingProbe.steps.push(step);
+      });
+      listingProbe.stepObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-current'] });
+    });
     await click(label);
     await wait(() => ['completed', 'error', 'cancelled'].includes(document.querySelector('[data-managed-phase]')?.dataset.managedPhase));
     assert.equal(await page.eval(() => document.querySelector('[data-managed-phase]')?.dataset.managedPhase), 'completed', await page.eval(() => document.body.innerText));
     await wait(() => document.querySelector('[data-listing-phase]')?.dataset.listingPhase === 'ready');
+    check('finished operation retains result step and offers a return action', await page.eval(() => {
+      const root = document.querySelector('[data-managed-dialog-phase]');
+      const active = root?.querySelector('[aria-current="step"]')?.textContent;
+      const execution = listingProbe.steps.findIndex(step => step.includes('실행·검증'));
+      return active?.includes('결과') && !![...root.querySelectorAll('button')].find(button => button.textContent === '폴더로 돌아가기') && (execution < 0 || !listingProbe.steps.slice(execution + 1).some(step => step.includes('원본 보존')));
+    }));
   }
   async function closeManaged() {
     await click('파일 작업 닫기');
     await wait(() => !document.querySelector('[data-managed-dialog-phase]'));
   }
   await click('할 일.txt 선택');
+  for (const width of [390, 768, 1440, 1920]) {
+    await page.setViewport({ width, height: 900 });
+    check(`selection actions wrap inside their pane ${width}`, await page.eval(() => {
+      const toolbar = document.querySelector('[aria-label="파일 선택"]');
+      const bounds = toolbar.getBoundingClientRect();
+      return [...toolbar.querySelectorAll('button')].every(button => { const r = button.getBoundingClientRect(); return r.left >= bounds.left && r.right <= bounds.right + 1 && button.scrollWidth <= button.clientWidth; });
+    }));
+    await page.screenshot({ path: `${out}/selection-actions-${width}.png`, format: 'png' });
+  }
   await click('이동');
   await choose('작업 목적지');
   check('move preview focuses cancel and has no source removal', await page.eval(() => document.activeElement.textContent === '검토 취소' && listingProbe.removed.length === 0));
@@ -143,7 +172,8 @@ try {
     const file = await (await (await listingProbe.a.getDirectoryHandle('작업 목적지')).getFileHandle('할 일.txt')).getFile();
     return (await file.text()).includes('합성 원문') && listingProbe.removed.length === 1 && !listingProbe.removed[0].recursive;
   }));
-  await closeManaged();
+  await click('폴더로 돌아가기');
+  check('bottom return action closes the result and reveals the file workspace', await page.eval(() => !document.querySelector('[data-managed-dialog-phase]') && document.querySelector('[data-listing-phase]')?.checkVisibility()));
   await click('전체 선택 해제');
   await click('샘플 트리 폴더 선택');
   await click('복사');
@@ -166,6 +196,11 @@ try {
     try { await listingProbe.a.getDirectoryHandle('샘플 트리'); return false; } catch (e) { if (e.name !== 'NotFoundError') throw e; }
     await (await (await listingProbe.a.getDirectoryHandle('이동 목적지')).getDirectoryHandle('샘플 트리')).getDirectoryHandle('하위');
     return listingProbe.removed.every(entry => !entry.recursive) && listingProbe.treeChunks.length === 512 && listingProbe.treeChunks.every(size => size <= 65536);
+  }));
+  check('folder move preserves internal history bytes rather than blocking or dropping them', await page.eval(async () => {
+    const target = await (await listingProbe.a.getDirectoryHandle('이동 목적지')).getDirectoryHandle('샘플 트리');
+    const history = await target.getDirectoryHandle('.moa-history');
+    return await (await (await history.getFileHandle('moa-copy-fixture.json')).getFile()).text() === 'synthetic immutable history';
   }));
   await closeManaged();
   await click('전체 선택 해제');
@@ -223,6 +258,8 @@ try {
   });
   await click('보존 후 이동 실행');
   await wait(() => listingProbe.managedHeld);
+  for (const type of ['keyDown', 'keyUp']) await page.send('Input.dispatchKeyEvent', { type, key: 'q', code: 'KeyQ', modifiers: 1 });
+  check('running managed operation blocks quick navigation', await page.eval(() => !document.querySelector('[data-quick-switch-menu]') && !!document.querySelector('[data-managed-dialog-phase="running"][data-quick-switch-block]')));
   for (const type of ['keyDown', 'keyUp']) await page.send('Input.dispatchKeyEvent', { type, key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
   check('Escape retains a running managed dialog while cancellation settles', await page.eval(() => document.querySelector('[data-managed-dialog-phase]')?.dataset.managedDialogPhase === 'running' && document.body.textContent.includes('중단 결과를 정리')));
   await page.eval(() => listingProbe.releaseManaged());

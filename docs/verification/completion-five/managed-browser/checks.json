@@ -1,0 +1,134 @@
+{
+  "checks": [
+    {
+      "name": "app permission guide is visible without triggering a picker or permission request",
+      "passed": true
+    },
+    {
+      "name": "permission guide contained 390",
+      "passed": true
+    },
+    {
+      "name": "permission guide contained 1440",
+      "passed": true
+    },
+    {
+      "name": "empty connected vault is shown honestly inside settings",
+      "passed": true
+    },
+    {
+      "name": "nested archive Escape retains settings and restores its trigger",
+      "passed": true
+    },
+    {
+      "name": "selection actions wrap inside their pane 390",
+      "passed": true
+    },
+    {
+      "name": "selection actions wrap inside their pane 768",
+      "passed": true
+    },
+    {
+      "name": "selection actions wrap inside their pane 1440",
+      "passed": true
+    },
+    {
+      "name": "selection actions wrap inside their pane 1920",
+      "passed": true
+    },
+    {
+      "name": "move preview focuses cancel and has no source removal",
+      "passed": true
+    },
+    {
+      "name": "move review contained 390",
+      "passed": true
+    },
+    {
+      "name": "move review contained 768",
+      "passed": true
+    },
+    {
+      "name": "move review contained 1440",
+      "passed": true
+    },
+    {
+      "name": "move review contained 1920",
+      "passed": true
+    },
+    {
+      "name": "finished operation retains result step and offers a return action",
+      "passed": true
+    },
+    {
+      "name": "actual single-file move verifies destination and removes the source non-recursively",
+      "passed": true
+    },
+    {
+      "name": "bottom return action closes the result and reveals the file workspace",
+      "passed": true
+    },
+    {
+      "name": "finished operation retains result step and offers a return action",
+      "passed": true
+    },
+    {
+      "name": "recursive copy preserves source and empty descendants",
+      "passed": true
+    },
+    {
+      "name": "finished operation retains result step and offers a return action",
+      "passed": true
+    },
+    {
+      "name": "recursive move finishes and never uses recursive removal",
+      "passed": true
+    },
+    {
+      "name": "folder move preserves internal history bytes rather than blocking or dropping them",
+      "passed": true
+    },
+    {
+      "name": "finished operation retains result step and offers a return action",
+      "passed": true
+    },
+    {
+      "name": "finished operation retains result step and offers a return action",
+      "passed": true
+    },
+    {
+      "name": "trash restores the exact prior bytes and keeps recovery payloads",
+      "passed": true
+    },
+    {
+      "name": "running managed operation blocks quick navigation",
+      "passed": true
+    },
+    {
+      "name": "Escape retains a running managed dialog while cancellation settles",
+      "passed": true
+    },
+    {
+      "name": "cancelled move keeps the source and an uncertain partial target",
+      "passed": true
+    },
+    {
+      "name": "late empty destination collision blocks all writes and source removal",
+      "passed": true
+    },
+    {
+      "name": "all permission requests originate in active user gestures",
+      "passed": true
+    },
+    {
+      "name": "unselected sentinel remains unchanged",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

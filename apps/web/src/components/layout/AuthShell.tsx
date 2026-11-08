@@ -7,7 +7,7 @@ import styles from "./auth-shell.module.css";
 
 export function AuthShell({ children, preview = false, guest = false }: { children: ReactNode; preview?: boolean; guest?: boolean }) {
   const home = preview ? "/preview/screens/chat" : guest ? "/login" : "/";
-  return <main className={[styles.page, !preview && styles.live, "reading-surface"].filter(Boolean).join(" ")}>
+  return <main data-workspace-quick-menu={!guest && !preview || undefined} className={[styles.page, !preview && styles.live, "reading-surface"].filter(Boolean).join(" ")}>
     <header className={styles.header}>
       <Link href={home} className={styles.brand}><MoaMark size={28} />모아.<NavigationProgress /></Link>
       <ActionLink href={preview ? "/preview" : home}>{preview ? "화면 둘러보기" : guest ? "로그인으로" : "모아 홈"}</ActionLink>

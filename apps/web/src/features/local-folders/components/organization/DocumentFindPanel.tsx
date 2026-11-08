@@ -15,12 +15,16 @@ export function DocumentFindPanel({
   folderName,
   currentPath,
   onOpenFile,
+  onPrepare,
+  canPrepare,
 }: {
   controller: DocumentFindController;
   state: DocumentFindState;
   folderName: string;
   currentPath: readonly string[];
   onOpenFile: (path: readonly string[]) => void;
+  onPrepare: () => void;
+  canPrepare: boolean;
 }) {
   const busy = state.phase === "searching";
   const period = state.filters.month !== "all";
@@ -129,8 +133,17 @@ export function DocumentFindPanel({
                       <option value="">기간 확인</option>
                       <option value="month">해당 월만</option>
                       <option value="around">해당 월의 앞뒤 7일도 포함</option>
+                      <option value="late">월말 · 21일부터 마지막 날</option>
+                      <option value="months">여러 달 · 같은 해</option>
                     </select>
                   </label>
+                  {state.filters.window === "months" && <label className={styles.basis}>
+                    마지막 달
+                    <select aria-label="검색 마지막 달" required value={state.filters.endMonth ?? ""} onChange={event => controller.configure({ endMonth: event.target.value })}>
+                      <option value="">마지막 달 선택</option>
+                      {Array.from({ length: 12 }, (_, index) => <option key={index + 1} value={index + 1}>{index + 1}월</option>)}
+                    </select>
+                  </label>}
                 </>
               )}
             </div>
@@ -168,11 +181,26 @@ export function DocumentFindPanel({
       {state.issue && <StatusNotice state="attention" title={state.issue} />}
       {busy && <p role="status">본문을 읽고 근거를 확인하고 있어요…</p>}
       {state.result && (
+        <>
         <DocumentFindResults
           result={state.result}
           folderName={folderName}
           onOpenFile={onOpenFile}
+          selectedPaths={state.selectedPaths}
+          onToggle={controller.toggle}
         />
+        {!state.result.documents.length ? <div className={styles.actions}>
+          {period && <button type="button" className={actionClasses("secondary")} onClick={() => controller.configure({ month: "all", endMonth: "" })}>기간 제한 없이 다시 확인</button>}
+          <button type="button" className={actionClasses("ghost")} onClick={() => {
+            document.querySelector<HTMLDetailsElement>("[data-document-find] details")!.open = true;
+            document.querySelector<HTMLInputElement>('[aria-label="본문 검색어"]')?.focus();
+          }}>검색어 바꾸기</button>
+          <p className={styles.note}>조건을 바꾼 뒤 검색 시작을 눌러 주세요. 검색 범위와 읽기 문제도 확인할 수 있어요.</p>
+        </div> : <div className={styles.actions}>
+          <button type="button" data-find-prepare className={actionClasses("primary")} disabled={!canPrepare || !state.selectedPaths.length} onClick={onPrepare}>선택한 {state.selectedPaths.length}개 정리 준비</button>
+          <p className={styles.note}>선택한 원본을 다시 읽습니다. 발췌 확인과 전송 동의 후 AI 제안을 받을 수 있어요.</p>
+        </div>}
+        </>
       )}
     </div>
   );

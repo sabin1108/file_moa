@@ -102,6 +102,7 @@ export function SourcePlanDialog({ controller, folderName, vaultName, onCopied, 
       className={styles.dialog}
       aria-labelledby={titleId}
       data-plan-phase={state.phase}
+      data-quick-switch-block={execution.running || backup.phase === "running" || undefined}
       data-work-step={step}
       onKeyDown={event => {
         if (event.key !== "Tab") {

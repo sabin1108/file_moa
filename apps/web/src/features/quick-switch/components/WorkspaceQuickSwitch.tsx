@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "../../../components/ui/Icon";
 import { LoadingOverlay } from "../../../components/ui/feedback/LoadingOverlay";
@@ -30,7 +31,7 @@ export function WorkspaceQuickSwitch() {
   const { menu, root, close, choose, select } = useQuickSwitch(pathname, navigate);
   if (!menu || menu.route !== pathname) return pending ? <LoadingOverlay /> : null;
 
-  return <div ref={root} role="dialog" tabIndex={-1} aria-label="빠른 전환" aria-describedby="quick-switch-hint" aria-modal="false"
+  return createPortal(<div ref={root} popover="manual" role="dialog" tabIndex={-1} aria-label="빠른 전환" aria-describedby="quick-switch-hint" aria-modal="false"
     data-quick-switch-menu data-quick-mode={menu.trigger} className={styles.menu} style={{ left: menu.position.x, top: menu.position.y }}
     onBlur={event => { if (event.relatedTarget instanceof Node && !root.current?.contains(event.relatedTarget)) close(false); }}
     onKeyDown={event => {
@@ -50,5 +51,5 @@ export function WorkspaceQuickSwitch() {
     </button>)}</nav>
     <button type="button" className={styles.center} aria-label="빠른 전환 닫기" onClick={() => close()}><Icon name="close" size={20} /></button>
     <span id="quick-switch-hint" className={styles.hint}>{menu.trigger === "click" ? "클릭 또는 Enter로 이동" : "방향을 고르고 놓으세요"}</span>
-  </div>;
+  </div>, menu.host);
 }

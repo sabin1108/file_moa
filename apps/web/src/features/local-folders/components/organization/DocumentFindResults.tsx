@@ -19,10 +19,14 @@ export function DocumentFindResults({
   result,
   folderName,
   onOpenFile,
+  selectedPaths,
+  onToggle,
 }: {
   result: FindResult;
   folderName: string;
   onOpenFile: (path: readonly string[]) => void;
+  selectedPaths: readonly (readonly string[])[];
+  onToggle: (path: readonly string[]) => void;
 }) {
   const [limit, setLimit] = useState(20);
   const confirmed = result.documents.filter(
@@ -58,13 +62,13 @@ export function DocumentFindResults({
           <li key={JSON.stringify(document.path)}>
             <SourceFileRow
               name={document.name}
-              selected={false}
+              selected={selectedPaths.some(path => JSON.stringify(path) === JSON.stringify(document.path))}
               previewing={false}
-              selecting={false}
-              selectionDisabled={true}
+              selecting={true}
+              selectionDisabled={false}
               previewDisabled={false}
-              onToggle={() => {}}
-              onLongSelect={() => {}}
+              onToggle={() => onToggle(document.path)}
+              onLongSelect={() => onToggle(document.path)}
               onPreview={() => onOpenFile(document.path)}
             />
             <p className={styles.note}>

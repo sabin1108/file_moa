@@ -12,15 +12,17 @@ import styles from "./managed-files.module.css";
 import { WorkflowStepper } from "../../../../components/ui/WorkflowStepper";
 import { managedSteps } from "../../lib/workflow-steps";
 import { useWorkflowUrl } from "../../hooks/use-workflow-url";
+import { managedWorkflowStep } from "../../lib/managed-workflow-step";
 import { FileOperationHeader } from "../plan/FileOperationHeader";
 import planStyles from "../plan/file-change-plan.module.css";
 
 const titles = { copy: "파일·폴더 복사", move: "파일·폴더 이동", trash: "휴지통으로 보내기", edit: "문서 편집", recover: "보존본 복구" };
-export function ManagedFilesDialog({ controller, folderName, disabled, onChanged, step }: {
-  controller: ManagedFilesController; folderName: string; disabled: boolean; onChanged: () => void; step?: string;
+export function ManagedFilesDialog({ controller, folderName, disabled, onChanged, step, returnLabel = "폴더로 돌아가기" }: {
+  controller: ManagedFilesController; folderName: string; disabled: boolean; onChanged: () => void; step?: string; returnLabel?: string;
 }) {
   const state = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getServerSnapshot);
   const url = useWorkflowUrl("managed");
+  const currentStep = state.phase === "running" || state.result ? managedWorkflowStep(state) : step ?? url.step;
   const picker = useSyncExternalStore(controller.picker.subscribe, controller.picker.getSnapshot, controller.picker.getServerSnapshot);
   const dialog = useRef<HTMLDialogElement>(null);
   const title = useRef<HTMLHeadingElement>(null);
@@ -78,7 +80,10 @@ export function ManagedFilesDialog({ controller, folderName, disabled, onChanged
       }}
     >
       {state.open && (
-        <section data-managed-dialog-phase={state.phase}>
+        <section data-managed-dialog-phase={state.phase} data-quick-switch-block={
+          state.phase === "running" || discarding ||
+          !!state.editor && state.editor.text !== state.text && state.phase !== "completed" || undefined
+        }>
           {planning ? (
             <FileOperationHeader
               title={titles[state.request!.kind]}
@@ -92,7 +97,7 @@ export function ManagedFilesDialog({ controller, folderName, disabled, onChanged
               source={[folderName, ...state.request!.source]}
               count={state.request!.names.length}
               steps={managedSteps}
-              current={step ?? url.step}
+              current={currentStep}
               onClose={() => close()}
               closeLabel={state.phase === "running" ? "작업 중단" : "계획 닫기"}
               closeAriaLabel="파일 작업 닫기"
@@ -113,7 +118,7 @@ export function ManagedFilesDialog({ controller, folderName, disabled, onChanged
             </div>
           )}
           {!planning && state.mode === "operation" && state.request?.kind !== "edit" && (
-            <WorkflowStepper steps={managedSteps} current={step ?? url.step} />
+            <WorkflowStepper steps={managedSteps} current={currentStep} />
           )}
           {discarding ? (
             <>
@@ -175,6 +180,8 @@ export function ManagedFilesDialog({ controller, folderName, disabled, onChanged
                   controller={controller}
                   state={state}
                   folderName={folderName}
+                  onReturn={() => close()}
+                  returnLabel={returnLabel}
                 />
               )}
             </>

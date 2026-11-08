@@ -26,8 +26,19 @@ const pathSchema = z.array(z.string()).min(1).max(32).refine(value => {
   try { return JSON.stringify(restoreDestinationPath(value)) === JSON.stringify(value); }
   catch { return false; }
 });
+
+/** 일반 폴더의 하위 작업 기록만 보존한다. 직접 선택·목적지 경계는 기존 검증을 쓴다. */
+export function managedTreePath(path: readonly string[]): string[] {
+  const masked = path.map(part => part.toLowerCase() === ".moa-history" ? "moa-history" : part);
+  restoreDestinationPath(masked);
+  if (!path.length || path[0].toLowerCase() === ".moa-history" || masked.some(part => resolveEntryName(part, "folder") !== part)) throw Error("managed-name");
+  return [...path];
+}
+const treePathSchema = z.array(z.string()).min(1).max(32).refine(value => {
+  try { managedTreePath(value); return true; } catch { return false; }
+});
 const nodeSchema = z.strictObject({
-  path: pathSchema, kind: z.enum(["file", "directory"]), size: z.number().int().min(0).max(MANAGED_LIMITS.fileBytes),
+  path: treePathSchema, kind: z.enum(["file", "directory"]), size: z.number().int().min(0).max(MANAGED_LIMITS.fileBytes),
   modified: z.number().int().min(0), sha256: z.string().regex(/^[a-f0-9]{64}$/u).nullable(), payload: recoveryIdSchema.nullable(),
 }).refine(node => node.kind === "directory" ? node.size === 0 && node.sha256 === null && node.payload === null
   : node.sha256 !== null && node.payload !== null);
@@ -36,7 +47,7 @@ const manifestSchema = z.strictObject({
   kind: z.enum(["copy", "move", "trash", "edit", "recover"]), owner: ownerSchema, vaultId: recoveryIdSchema,
   createdAt: createdAtSchema, roots: z.array(pathSchema).min(1).max(MANAGED_LIMITS.selection),
   historyParent: z.array(z.string()).max(32).refine(value => { try { restoreDestinationPath(value); return true; } catch { return false; } }),
-  targets: z.array(pathSchema).min(1).max(MANAGED_LIMITS.entries),
+  targets: z.array(treePathSchema).min(1).max(MANAGED_LIMITS.entries),
   nodes: z.array(nodeSchema).min(1).max(MANAGED_LIMITS.entries),
 }).superRefine((value, context) => {
   // Zod가 배열 길이 오류도 수집하는 동안 이 교차 검증이 호출될 수 있다.
@@ -57,9 +68,7 @@ const manifestSchema = z.strictObject({
       || (node.payload !== null && payloads.has(node.payload))) context.addIssue({ code: "custom", message: "invalid tree" });
     keys.add(key);
     const siblingKey = JSON.stringify(node.path.slice(0, -1)) + "/" + node.path.at(-1)!.normalize("NFC").toLocaleLowerCase("en-US");
-    if (siblingKeys.has(siblingKey) || node.path.some(part => {
-      try { return resolveEntryName(part, "folder") !== part; } catch { return true; }
-    })) context.addIssue({ code: "custom", message: "invalid name" });
+    if (siblingKeys.has(siblingKey) || node.kind !== "directory" && node.path.at(-1)!.toLowerCase() === ".moa-history") context.addIssue({ code: "custom", message: "invalid name" });
     siblingKeys.add(siblingKey);
     if (node.payload) payloads.add(node.payload);
     bytes += node.size;

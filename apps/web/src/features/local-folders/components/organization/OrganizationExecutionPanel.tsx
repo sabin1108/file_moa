@@ -9,6 +9,7 @@ import type { OrganizationPreparationState } from "../../store/organization-prep
 import styles from "./organization-preparation.module.css";
 import { hasUnansweredReview } from "../../../../shared/live-organization-review";
 import { FileChangeComparison } from "../plan/FileChangeComparison";
+import { managedWorkflowStep } from "../../lib/managed-workflow-step";
 
 export function OrganizationExecutionPanel({
   preparation,
@@ -34,15 +35,7 @@ export function OrganizationExecutionPanel({
   );
   const folderName = connection.state.view?.folderName ?? "내 폴더";
   const running = managed.phase === "running";
-  const step = running
-    ? managed.result?.phase === "preserving"
-      ? "preserve"
-      : "execute"
-    : managed.result
-      ? "result"
-      : managed.preview
-        ? "review"
-        : "destination";
+  const step = managedWorkflowStep(managed);
   return (
     <>
       {preparation.result &&
@@ -207,6 +200,7 @@ export function OrganizationExecutionPanel({
         controller={controller.managed}
         folderName={folderName}
         step={step}
+        returnLabel="정리 화면으로 돌아가기"
         disabled={connection.state.view?.status !== "connected"}
         onChanged={() => void connection.listing.refresh()}
       />

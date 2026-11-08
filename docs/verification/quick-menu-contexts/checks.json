@@ -1,0 +1,81 @@
+{
+  "condition": "Isolated production sample app and synthetic native dialog; no model calls, user profile or source-file changes",
+  "results": [
+    {
+      "name": "ordinary preview text outside the shell DOM opens the shared menu",
+      "passed": true
+    },
+    {
+      "name": "modal preview text opens menu inside the active dialog",
+      "passed": true
+    },
+    {
+      "name": "menu is in top layer and receives hit tests",
+      "passed": true
+    },
+    {
+      "name": "Escape closes only the quick menu",
+      "passed": true
+    },
+    {
+      "name": "#modal-input keeps its original interaction",
+      "passed": true
+    },
+    {
+      "name": "#modal-button keeps its original interaction",
+      "passed": true
+    },
+    {
+      "name": "#modal-folder keeps its original interaction",
+      "passed": true
+    },
+    {
+      "name": "#modal-drag keeps its original interaction",
+      "passed": true
+    },
+    {
+      "name": "existing text selection prevents menu",
+      "passed": true
+    },
+    {
+      "name": "dragging before hold completes cancels menu",
+      "passed": true
+    },
+    {
+      "name": "critical state appearing during hold prevents menu",
+      "passed": true
+    },
+    {
+      "name": "dialog closing removes its top layer menu",
+      "passed": true
+    },
+    {
+      "name": "390: modal menu fits viewport",
+      "passed": true
+    },
+    {
+      "name": "768: modal menu fits viewport",
+      "passed": true
+    },
+    {
+      "name": "1440: modal menu fits viewport",
+      "passed": true
+    },
+    {
+      "name": "1920: modal menu fits viewport",
+      "passed": true
+    },
+    {
+      "name": "keyboard shortcut still opens menu",
+      "passed": true
+    },
+    {
+      "name": "public login remains outside workspace scope",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true
+    }
+  ]
+}

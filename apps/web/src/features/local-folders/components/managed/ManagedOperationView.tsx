@@ -29,10 +29,14 @@ export function ManagedOperationView({
   controller,
   state,
   folderName,
+  onReturn,
+  returnLabel,
 }: {
   controller: ManagedFilesController;
   state: ManagedFilesState;
   folderName: string;
+  onReturn: () => void;
+  returnLabel: string;
 }) {
   const cancel = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -142,6 +146,9 @@ export function ManagedOperationView({
               title="관리 폴더는 복사에서 제외합니다."
             />
           )}
+          {state.preview.paths.some(path => path.some(part => part.toLowerCase() === ".moa-history")) && (
+            <p className={historyStyles.note}>폴더 안의 작업 기록도 보존·검증하며, 복구할 때 함께 복원합니다. 위 규모에 기록 파일이 포함되어 있습니다.</p>
+          )}
           <details>
             <summary>
               {"항목별 위치 "}
@@ -240,6 +247,7 @@ export function ManagedOperationView({
         />
       )}
       <div className={styles.actions}>
+        {!running && finished && <button type="button" className={actionClasses("primary")} onClick={onReturn}>{returnLabel}</button>}
         {(state.phase === "preparing" || running) && (
           <button
             type="button"

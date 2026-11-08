@@ -1,0 +1,6 @@
+{
+  "at": "2026-11-08T12:51:11.636Z",
+  "condition": "Configured production database adapter; read-only SELECT 1. No identity records, quota mutations, model requests or ownership test.",
+  "passed": true,
+  "elapsedMs": 2276
+}

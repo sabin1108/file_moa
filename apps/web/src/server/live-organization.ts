@@ -13,6 +13,7 @@ import {
   parseLiveOrganizationResponse
 } from "../shared/live-organization-review";
 import type { LiveOrganizationResult } from "../shared/live-organization";
+import { reportLiveAi, type LiveAiDiagnostic } from "./live-ai-diagnostics";
 
 const segment = z
   .string()
@@ -98,6 +99,8 @@ export async function organizeLive(
   origin: string | null,
   expectedProvider?: AiProvider | null,
 ): Promise<LiveOrganizationResult> {
+  const started = performance.now();
+  let diagnostic: LiveAiDiagnostic | undefined;
   try {
     let session: Awaited<ReturnType<typeof requireWorkspace>>;
     try {
@@ -170,6 +173,7 @@ export async function organizeLive(
     if (input.documents.reduce((sum, document) => sum + document.excerpt.length, 0) > 6000)
       return { ok: false, code: "input" };
     const provider = requireAiProvider(expectedProvider);
+    diagnostic = { stage: "quota", provider, outcome: "unavailable" };
     quota ??= createAuthRateLimiter(getDatabase, process.env.BETTER_AUTH_SECRET!);
     // Failed/cancelled calls may already have reached the provider; reservations are never refunded.
     const reservation = await quota.consumeAll([
@@ -179,8 +183,10 @@ export async function organizeLive(
       { key: "sample-ai-v1:global-minute", max: 1, window: 60 },
       { key: "sample-ai-v1:global-hour", max: 12, window: 3600 }
     ]);
-    if (!reservation.allowed)
+    if (!reservation.allowed) {
+      diagnostic.outcome = "limit";
       return { ok: false, code: "limit", retryAfter: reservation.retryAfter ?? 60 };
+    }
     const assertSession = async () => {
       let current: typeof session;
       try {
@@ -197,6 +203,7 @@ export async function organizeLive(
       )
         throw new SampleAiError("session");
     };
+    diagnostic.stage = "session";
     await assertSession();
     const timeout = Math.min(
       AI_LIMITS.timeoutMs,
@@ -224,9 +231,15 @@ export async function organizeLive(
         sourcePath: document.path.slice(0, -1)
       }))
     };
+    diagnostic.stage = "generation";
     const result = await generateOrganization(request, AbortSignal.timeout(timeout), provider);
+    diagnostic.usage = result.usage;
+    diagnostic.stage = "session";
     await assertSession();
+    diagnostic.stage = "response";
     const reviewed = parseLiveOrganizationResponse(result.value, request, answers);
+    diagnostic.stage = "complete";
+    diagnostic.outcome = "success";
     return {
       ok: true,
       ...reviewed,
@@ -234,9 +247,11 @@ export async function organizeLive(
       usage: result.usage
     };
   } catch (error) {
-    if (error instanceof SampleAiError) return { ok: false, code: error.code };
-    if (error instanceof Error && ["TimeoutError", "AbortError"].includes(error.name))
-      return { ok: false, code: "timeout" };
-    return { ok: false, code: "unavailable" };
+    const code = error instanceof SampleAiError ? error.code
+      : error instanceof Error && ["TimeoutError", "AbortError"].includes(error.name) ? "timeout" : "unavailable";
+    if (diagnostic) diagnostic.outcome = code;
+    return { ok: false, code };
+  } finally {
+    if (diagnostic) reportLiveAi({ ...diagnostic, elapsedMs: Math.round(performance.now() - started) });
   }
 }

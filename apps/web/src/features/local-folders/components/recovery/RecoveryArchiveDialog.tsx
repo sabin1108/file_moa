@@ -46,7 +46,7 @@ export function RecoveryArchiveDialog({ resumeOnReload = false }: { resumeOnRelo
     <button ref={trigger} type="button" className={actionClasses("secondary")} disabled={disabled}
       aria-haspopup="dialog" aria-controls={id} aria-expanded={state.open}
       onClick={() => { dialog.current?.showModal(); void controller.open(); }}>복구 보관함 보기</button>
-    <dialog ref={dialog} id={id} className={dialogStyles.dialog} aria-labelledby={`${id}-title`}
+    <dialog ref={dialog} id={id} className={dialogStyles.dialog} aria-labelledby={`${id}-title`} data-quick-switch-block={restoreState.phase === "running" || restoreState.cancelling || undefined}
       onCancel={event => { event.preventDefault(); event.stopPropagation(); if (picker.open) restore.picker.close(); else close(); }}
       onClose={event => { event.stopPropagation(); if (!dialog.current?.open) controller.close(); }}
       onKeyDown={event => {

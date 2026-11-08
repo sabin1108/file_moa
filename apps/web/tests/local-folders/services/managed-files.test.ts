@@ -196,15 +196,58 @@ describe("managed file operations preserve before mutation", () => {
     expect(f.writes.some(path => path.endsWith("stopped.json"))).toBe(false);
   });
 
-  it("protects management folders and refuses nested destinations before writing", async () => {
+  it("protects direct management selection and nested destinations while copy excludes history", async () => {
     const f = await fixture();
     await f.tree();
     await (await (await f.root.getDirectoryHandle("from")).getDirectoryHandle("tree")).getDirectoryHandle(".moa-history", { create: true });
-    await expect(f.prepare(f.request("move", ["tree"]))).rejects.toThrow("managed-protected");
+    await expect(f.prepare(f.request("trash", [".moa-history"]))).rejects.toThrow();
     await expect(f.prepare({ ...f.request("copy", ["tree"]), destination: ["from", "tree", "nested"] })).rejects.toThrow("managed-nested");
     const copy = await f.prepare(f.request("copy", ["tree"]));
     expect(copy.view.skipped).toBe(true);
     expect(f.writes).toEqual([]);
+  });
+
+  it.each(["move", "trash"] as const)("preserves internal history before %s and restores its exact bytes", async kind => {
+    const f = await fixture(); await f.tree();
+    const tree = await (await f.root.getDirectoryHandle("from")).getDirectoryHandle("tree");
+    const history = await tree.getDirectoryHandle(".moa-history", { create: true });
+    await history.getDirectoryHandle("moa-managed-previous", { create: true });
+    const original = new File(["immutable previous journal"], "prepared.json", { lastModified: 22 });
+    f.bytes.set("source/from/tree/.moa-history/moa-managed-previous/prepared.json", original);
+    const prepared = await f.prepare(f.request(kind, ["tree"]));
+    expect(f.writes).toEqual([]);
+    const historyNode = prepared.nodes.find(node => node.view.path.at(-1) === "prepared.json")!;
+    expect(historyNode).toBeDefined();
+    expect((await f.run(prepared)).phase).toBe("completed");
+    expect(f.directories.has("source/from/tree")).toBe(false);
+    expect(await f.bytes.get(`vault/moa-managed-${prepared.view.id}/${historyNode.view.payload}.bin`)!.text()).toBe(await original.text());
+    if (kind === "move") expect(await f.bytes.get("source/dest/tree/.moa-history/moa-managed-previous/prepared.json")!.text()).toBe(await original.text());
+    const recovery = await f.prepare({ kind: "recover", source: [], names: [], destination: ["from"], archiveId: prepared.view.id });
+    expect((await f.run(recovery)).phase).toBe("completed");
+    expect(await f.bytes.get("source/from/tree/.moa-history/moa-managed-previous/prepared.json")!.text()).toBe(await original.text());
+    expect(f.removes.mock.calls.every(call => !call[1]?.recursive)).toBe(true);
+  });
+
+  it.each(["changed", "backup-failed", "vault-inside", "other-reserved"])("keeps original internal history on %s", async fault => {
+    const f = await fixture(); await f.tree();
+    const tree = await (await f.root.getDirectoryHandle("from")).getDirectoryHandle("tree");
+    await tree.getDirectoryHandle(".moa-history", { create: true });
+    const historyPath = "source/from/tree/.moa-history/record.json";
+    f.bytes.set(historyPath, new File(["old journal"], "record.json", { lastModified: 22 }));
+    if (fault === "vault-inside") {
+      f.bytes.set("source/from/tree/.moa-vault.json", new File(["marker"], ".moa-vault.json"));
+      await expect(f.prepare(f.request("trash", ["tree"]))).rejects.toThrow("managed-protected"); return;
+    }
+    if (fault === "other-reserved") {
+      await tree.getDirectoryHandle(".moa-private", { create: true });
+      await expect(f.prepare(f.request("trash", ["tree"]))).rejects.toThrow("managed-protected"); return;
+    }
+    const prepared = await f.prepare(f.request("trash", ["tree"]));
+    if (fault === "changed") f.bytes.set(historyPath, new File(["new journal"], "record.json"));
+    else f.fail((key, step) => key.startsWith("vault/") && key.endsWith(".bin") && step === "write");
+    expect((await f.run(prepared)).phase).toBe("error");
+    expect(f.bytes.has(historyPath)).toBe(true);
+    expect(f.removes).not.toHaveBeenCalled();
   });
 
   it("rejects oversized files, edit output and malformed recovery manifests", async () => {

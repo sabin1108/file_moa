@@ -8,6 +8,7 @@ import "../../src/styles/globals.css";
 import ui from "../../src/styles/workspace-ui.module.css";
 import files from "../../src/features/local-folders/components/listing/folder-workspace.module.css";
 import { liveOrganizationFixtureAction } from "./live-organization-action";
+import { WorkspaceQuickSwitch } from "../../src/features/quick-switch/components/WorkspaceQuickSwitch";
 
 const organizeAction = new URLSearchParams(location.search).has("transfer") ? liveOrganizationFixtureAction() : undefined;
 
@@ -16,7 +17,7 @@ const owners = [
   { userId: "organization-B", workspaceId: "fixture" }
 ];
 function Fixture() {
-  const [view, setView] = useState("chat");
+  const [view, setView] = useState(location.pathname === "/files" ? "files" : "chat");
   const [owner, setOwner] = useState(0);
   return (
     <>
@@ -34,11 +35,12 @@ function Fixture() {
         {view === "chat" ? (
           <LiveConversation organizeAction={organizeAction} />
         ) : view === "files" ? (
-          <div className={`${ui.system} ${files.theme}`}><SourceFolderBrowser /></div>
+          <div data-workspace-quick-menu className={`${ui.system} ${files.theme}`}><SourceFolderBrowser /></div>
         ) : (
           <SourceFolderSettings />
         )}
       </SourceFolderProvider>
+      <WorkspaceQuickSwitch />
     </>
   );
 }
