@@ -1,0 +1,37 @@
+{
+  "condition": "Actual local Next production route; isolated signed sample session and guest auth gate; no AI send or personal files",
+  "results": [
+    {
+      "name": "workspace still requires authentication",
+      "passed": true
+    },
+    {
+      "name": "production sample discloses OpenAI from server configuration",
+      "passed": true
+    },
+    {
+      "name": "sample is not pre-consented",
+      "passed": true
+    },
+    {
+      "name": "390: production sample fits viewport",
+      "passed": true
+    },
+    {
+      "name": "768: production sample fits viewport",
+      "passed": true
+    },
+    {
+      "name": "1440: production sample fits viewport",
+      "passed": true
+    },
+    {
+      "name": "1920: production sample fits viewport",
+      "passed": true
+    },
+    {
+      "name": "no provider request or browser exception",
+      "passed": true
+    }
+  ]
+}

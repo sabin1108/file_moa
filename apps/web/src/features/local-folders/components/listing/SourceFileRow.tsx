@@ -15,9 +15,10 @@ type Props = {
   onToggle: () => void;
   onPreview: () => void;
   onLongSelect: () => void;
+  previewSupported?: boolean;
 };
 /** checkbox와 미리보기는 형제 조작이다. 파일 선택이 본문 읽기를 유발하지 않는다. */
-export function SourceFileRow({ name, selected, previewing, selecting, selectionDisabled, previewDisabled, onToggle, onPreview, onLongSelect }: Props) {
+export function SourceFileRow({ name, selected, previewing, selecting, selectionDisabled, previewDisabled, onToggle, onPreview, onLongSelect, previewSupported }: Props) {
   const press = useLongPressSelection(selectionDisabled, onLongSelect);
   const keyboard = useSelectionRow(selecting, selectionDisabled, onToggle);
   const contents = <><Icon name="file" size={20} /><span className={styles.name}>{name}{previewing && <small className={styles.rowState}>미리보기 중</small>}</span></>;
@@ -29,6 +30,7 @@ export function SourceFileRow({ name, selected, previewing, selecting, selection
     data-selected={selected}
     data-selecting={selecting}
     data-previewing={previewing}
+    data-long-press-selection
     {...press}
     {...keyboard}
   >
@@ -41,7 +43,7 @@ export function SourceFileRow({ name, selected, previewing, selecting, selection
         onChange={onToggle}
       />
     </label>
-    {checkDocumentCandidate(name, 0) === null
+    {previewSupported ?? (checkDocumentCandidate(name, 0) === null)
       ? <button
         type="button"
         className={className}

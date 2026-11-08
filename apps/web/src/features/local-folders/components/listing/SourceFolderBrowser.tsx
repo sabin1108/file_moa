@@ -23,6 +23,7 @@ import { useInlineEditor } from "../../hooks/use-inline-editor";
 import { InlineDocumentEditor } from "../preview/InlineDocumentEditor";
 import { useWorkspaceWorkflow } from "../../hooks/use-workspace-workflow";
 import { DismissibleNotice } from "../../../../components/ui/feedback/DismissibleNotice";
+import { SourceFolderTree } from "./SourceFolderTree";
 /** 화면 조합과 초점·스크롤만 맡는다. 파일 접근과 요청 수명은 controller/session이 소유한다. */
 export function SourceFolderBrowser() {
   const { state: connection, listing, preview, plan, navigation, trail, search, recoveryView, recoveryKey } = useSharedSourceFolderConnection();
@@ -47,7 +48,6 @@ export function SourceFolderBrowser() {
   }, [documentKey, isPreviewOpen]);
   const previousPhase = useRef(state.phase);
   const previousPreviewPhase = useRef(previewState.phase);
-  useEffect(() => listing.activate(), [listing]);
   useEffect(() => {
     // 탐색/취소 버튼이 사라졌을 때만 복구한다. 사용자가 옮긴 초점은 빼앗지 않는다.
     if (previousPhase.current === "loading" && state.phase !== "loading"
@@ -67,111 +67,187 @@ export function SourceFolderBrowser() {
     previousPreviewPhase.current = previewState.phase;
   }, [previewState.phase]);
 
-  return <>
-    {restoredNotice && <DismissibleNotice state="attention" title={restoredNotice.text} autoDismissMs={restoredNotice.blocking ? 0 : 5000} />}
-    <FolderWorkspaceFrame
-      rootName={connection.view?.folderName ?? "내 폴더"}
-      path={state.result?.path ?? []}
-      ancestors={ancestors}
-      disabled={!state.available || state.phase === "loading"}
-      onOpen={navigation.openFolder}
-      onOpenFile={navigation.openFile}
-      onSelectPrevious={navigation.selectFromPrevious}
-      footer={<span>{state.result?.path.at(-1) ?? connection.view?.folderName ?? "폴더 연결 필요"} · {state.result?.entries.length ?? 0}개 항목 · {state.selectedNames.length}개 선택</span>}
-      preview={<FilePreviewPane open={isPreviewOpen || editorState.open} onClose={() => {
-        if (editor.getSnapshot().open) { if (editor.close()) void preview.refresh(); }
-        else navigation.closeFile();
-      }}>
-        {editorState.open ? <InlineDocumentEditor controller={editor} folderName={connection.view?.folderName ?? "연결 폴더"} onClosed={refreshEdited} onSaved={refreshEdited} /> : <SourceDocumentPreview
-          key={documentKey}
-          state={previewState}
-          folderName={connection.view?.folderName ?? null}
-          headingRef={documentHeading}
-          onClose={navigation.closeFile}
-          onRefresh={preview.refresh}
-          onCancel={preview.cancel}
-          onEdit={() => {
-            const path = preview.getSnapshot().path;
-            if (path) void editor.open(path);
-          }}
-        />}
-      </FilePreviewPane>}
-    >
-      <FolderListingView
-        state={state}
-        searchState={searchState}
-        onSearchCancel={search.cancel}
-        onSearchRetry={search.retry}
-        onSelectSearch={navigation.selectFromPrevious}
-        folderName={connection.view?.folderName ?? null}
-        headingRef={heading}
-        connectionControls={<SourceFolderSettingsDialog compact />}
-        historyControls={<><FolderHistoryDialog
-          key={JSON.stringify([listing.getEpoch(), state.result?.path])}
-          path={state.result?.path ?? []}
-          folderName={connection.view?.folderName ?? "내 폴더"}
-          disabled={!state.available || state.phase !== "ready" || state.stale}
-        /><RecoveryArchiveDialog key={recoveryKey} resumeOnReload /><button type="button" className={actionClasses("secondary")} disabled={!state.available || state.phase !== "ready"}
-          onClick={() => { void managed.showArchives(); }}>휴지통·보존 기록</button></>}
+  return (
+    <>
+      {restoredNotice && (
+        <DismissibleNotice
+          state="attention"
+          title={restoredNotice.text}
+          autoDismissMs={restoredNotice.blocking ? 0 : 5000}
+        />
+      )}
+      <FolderWorkspaceFrame
+        folderTree={<SourceFolderTree />}
+        rootName={connection.view?.folderName ?? "내 폴더"}
+        path={state.result?.path ?? []}
+        ancestors={ancestors}
+        disabled={!state.available || state.phase === "loading"}
         onOpen={navigation.openFolder}
         onOpenFile={navigation.openFile}
-        onRefresh={listing.refresh}
-        onRetry={listing.retry}
-        onCancel={listing.cancel}
-        onToggleSelection={listing.toggleSelection}
-        onSelectAll={listing.selectAll}
-        onClearVisibleSelection={() => {
-          listing.clearVisibleSelection();
-
-          if (!listing.getSnapshot().selectionOpen) {
-            heading.current?.focus({ preventScroll: true });
+        onSelectPrevious={navigation.selectFromPrevious}
+        footer={
+          <span>
+            {state.result?.path.at(-1) ?? connection.view?.folderName ?? "폴더 연결 필요"}
+            {" · "}
+            {state.result?.entries.length ?? 0}
+            {"개 항목 · "}
+            {state.selectedNames.length}개 선택
+          </span>
+        }
+        preview={
+          <FilePreviewPane
+            open={isPreviewOpen || editorState.open}
+            onClose={() => {
+              if (editor.getSnapshot().open) {
+                if (editor.close()) void preview.refresh();
+              } else navigation.closeFile();
+            }}
+          >
+            {editorState.open ? (
+              <InlineDocumentEditor
+                controller={editor}
+                folderName={connection.view?.folderName ?? "연결 폴더"}
+                onClosed={refreshEdited}
+                onSaved={refreshEdited}
+              />
+            ) : (
+              <SourceDocumentPreview
+                key={documentKey}
+                state={previewState}
+                folderName={connection.view?.folderName ?? null}
+                headingRef={documentHeading}
+                onClose={navigation.closeFile}
+                onRefresh={preview.refresh}
+                onCancel={preview.cancel}
+                onEdit={() => {
+                  const path = preview.getSnapshot().path;
+                  if (path) void editor.open(path);
+                }}
+              />
+            )}
+          </FilePreviewPane>
+        }
+      >
+        <FolderListingView
+          state={state}
+          searchState={searchState}
+          onSearchCancel={search.cancel}
+          onSearchRetry={search.retry}
+          onSelectSearch={navigation.selectFromPrevious}
+          folderName={connection.view?.folderName ?? null}
+          headingRef={heading}
+          connectionControls={<SourceFolderSettingsDialog compact />}
+          historyControls={
+            <>
+              <FolderHistoryDialog
+                key={JSON.stringify([listing.getEpoch(), state.result?.path])}
+                path={state.result?.path ?? []}
+                folderName={connection.view?.folderName ?? "내 폴더"}
+                disabled={!state.available || state.phase !== "ready" || state.stale}
+              />
+              <RecoveryArchiveDialog key={recoveryKey} resumeOnReload />
+              <button
+                type="button"
+                className={actionClasses("secondary")}
+                disabled={!state.available || state.phase !== "ready"}
+                onClick={() => {
+                  void managed.showArchives();
+                }}
+              >
+                휴지통·보존 기록
+              </button>
+            </>
           }
+          onOpen={navigation.openFolder}
+          onOpenFile={navigation.openFile}
+          onRefresh={listing.refresh}
+          onRetry={listing.retry}
+          onCancel={listing.cancel}
+          onToggleSelection={listing.toggleSelection}
+          onSelectAll={listing.selectAll}
+          onClearVisibleSelection={() => {
+            listing.clearVisibleSelection();
+
+            if (!listing.getSnapshot().selectionOpen) {
+              heading.current?.focus({ preventScroll: true });
+            }
+          }}
+          onQueryChange={listing.setQuery}
+          onSearchOpen={listing.setSearchOpen}
+          onClearSelection={() => {
+            listing.clearSelection();
+          }}
+          onExitSelection={() => {
+            listing.exitSelection();
+            heading.current?.focus({ preventScroll: true });
+          }}
+          onReviewPlan={operation => {
+            const current = listing.getSnapshot();
+            const folders = current.result?.entries.some(
+              entry => entry.kind === "directory" && current.selectedNames.includes(entry.name),
+            );
+            if (operation === "move" || folders) {
+              void managed.open({
+                kind: operation,
+                source: current.result?.path ?? [],
+                names: current.selectedNames,
+                destination: current.result?.path ?? [],
+              });
+            } else plan.open(operation);
+          }}
+          onTrash={() => {
+            const current = listing.getSnapshot();
+            void managed.open({
+              kind: "trash",
+              source: current.result?.path ?? [],
+              names: current.selectedNames,
+              destination: [],
+            });
+          }}
+          previewName={previewState.path?.at(-1) ?? null}
+          creation={
+            <NewEntryForm
+              key={JSON.stringify([listing.getEpoch(), state.result?.path])}
+              path={state.result?.path ?? []}
+              folderName={connection.view?.folderName ?? "내 폴더"}
+              disabled={!state.available || state.phase !== "ready" || state.stale}
+              onCreated={listing.refresh}
+            />
+          }
+        />
+      </FolderWorkspaceFrame>
+      <SourcePlanDialog
+        controller={plan}
+        folderName={connection.view?.folderName ?? "자료 폴더"}
+        vaultName={recoveryView.folderName ?? "연결되지 않음"}
+        onMove={() => {
+          const previous = plan.getSnapshot();
+          plan.close();
+          const current = listing.getSnapshot();
+          void managed.open(
+            {
+              kind: "move",
+              source: current.result?.path ?? [],
+              names: current.selectedNames,
+              destination: previous.destination.split("/").filter(Boolean),
+            },
+            previous.destinationConfirmed,
+          );
         }}
-        onQueryChange={listing.setQuery}
-        onSearchOpen={listing.setSearchOpen}
-        onClearSelection={() => {
-          listing.clearSelection();
+        onCopied={async path => {
+          await navigation.openFolder(path);
           heading.current?.focus({ preventScroll: true });
         }}
-        onReviewPlan={operation => {
-          const current = listing.getSnapshot();
-          const folders = current.result?.entries.some(entry => entry.kind === "directory" && current.selectedNames.includes(entry.name));
-          if (operation === "move" || folders) {
-            void managed.open({ kind: operation, source: current.result?.path ?? [], names: current.selectedNames, destination: current.result?.path ?? [] });
-          } else plan.open(operation);
-        }}
-        onTrash={() => {
-          const current = listing.getSnapshot();
-          void managed.open({ kind: "trash", source: current.result?.path ?? [], names: current.selectedNames, destination: [] });
-        }}
-        previewName={previewState.path?.at(-1) ?? null}
-        creation={<NewEntryForm
-          key={JSON.stringify([listing.getEpoch(), state.result?.path])}
-          path={state.result?.path ?? []}
-          folderName={connection.view?.folderName ?? "내 폴더"}
-          disabled={!state.available || state.phase !== "ready" || state.stale}
-          onCreated={listing.refresh}
-        />}
       />
-    </FolderWorkspaceFrame>
-    <SourcePlanDialog
-      controller={plan}
-      folderName={connection.view?.folderName ?? "자료 폴더"}
-      vaultName={recoveryView.folderName ?? "연결되지 않음"}
-      onMove={() => {
-        const previous = plan.getSnapshot();
-        plan.close();
-        const current = listing.getSnapshot();
-        void managed.open({ kind: "move", source: current.result?.path ?? [], names: current.selectedNames,
-          destination: previous.destination.split("/").filter(Boolean) }, previous.destinationConfirmed);
-      }}
-      onCopied={async (path) => {
-        await navigation.openFolder(path);
-        heading.current?.focus({ preventScroll: true });
-      }}
-    />
-    <ManagedFilesDialog controller={managed} folderName={connection.view?.folderName ?? "자료 폴더"}
-      disabled={connection.view?.status !== "connected" || !!connection.pending}
-      onChanged={() => { listing.refresh(); if (preview.getSnapshot().path) preview.refresh(); }} />
-  </>;
+      <ManagedFilesDialog
+        controller={managed}
+        folderName={connection.view?.folderName ?? "자료 폴더"}
+        disabled={connection.view?.status !== "connected" || !!connection.pending}
+        onChanged={() => {
+          listing.refresh();
+          if (preview.getSnapshot().path) preview.refresh();
+        }}
+      />
+    </>
+  );
 }

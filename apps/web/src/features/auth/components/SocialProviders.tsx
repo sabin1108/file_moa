@@ -16,15 +16,40 @@ export function SocialProviders({ providers, action, intent = "signup" }: { prov
     finally { announceAuthSessionChange(); }
   }, { status: "idle" });
 
-  return <form action={formAction} className={styles.providers} aria-label="소셜 로그인" aria-busy={pending}>
-    <input type="hidden" name="intent" value={intent} />
-    {providers.map(provider => <button key={provider} type="submit" name="provider" value={provider} className={styles.socialButton} data-provider={provider} disabled={pending}
-      aria-label={`${socialLabels[provider]}로 계속하기`}>
-      <Image src={`/auth-providers/${provider === "google" ? "google-mark" : provider + "-icon"}.${provider === "kakao" ? "svg" : "png"}`} alt="" width={40} height={40} unoptimized />
-      <span>{socialLabels[provider]} 계정으로 계속하기</span>
-    </button>)}
-    {intent === "signup" && <p className={styles.socialHint}>처음이라면 선택한 소셜 계정으로 가입합니다.</p>}
-    {pending && <PageLoading compact message="로그인 서비스로 이동하고 있어요." />}
-    {state.message && <StatusNotice state="error" title={state.message} role="alert" />}
-  </form>;
+  return (
+    <form
+      action={formAction}
+      className={styles.providers}
+      aria-label="소셜 로그인"
+      aria-busy={pending}
+    >
+      <input type="hidden" name="intent" value={intent} />
+      {providers.map(provider => (
+        <button
+          key={provider}
+          type="submit"
+          name="provider"
+          value={provider}
+          className={styles.socialButton}
+          data-provider={provider}
+          disabled={pending}
+          aria-label={`${socialLabels[provider]}로 계속하기`}
+        >
+          <Image
+            src={`/auth-providers/${provider === "google" ? "google-mark" : provider + "-icon"}.${provider === "kakao" ? "svg" : "png"}`}
+            alt=""
+            width={40}
+            height={40}
+            unoptimized
+          />
+          <span>{socialLabels[provider]} 계정으로 계속하기</span>
+        </button>
+      ))}
+      {intent === "signup" && (
+        <p className={styles.socialHint}>처음이라면 선택한 소셜 계정으로 가입합니다.</p>
+      )}
+      {pending && <PageLoading compact message="로그인 서비스로 이동하고 있어요." />}
+      {state.message && <StatusNotice state="error" title={state.message} role="alert" />}
+    </form>
+  );
 }

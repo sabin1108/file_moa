@@ -1,0 +1,105 @@
+{
+  "version": "wording-v1",
+  "reviewStatus": "unreviewed",
+  "mode": "offline-shortlist-only",
+  "providerCalls": 0,
+  "modelComprehension": "not-measured",
+  "results": [
+    {
+      "id": "date-body-wording",
+      "baseCaseId": "body-over-filename",
+      "intentId": "time",
+      "candidateCount": 22,
+      "missingIds": [],
+      "characters": 5994
+    },
+    {
+      "id": "performance-wording",
+      "baseCaseId": "measured-web-performance",
+      "intentId": "performance",
+      "candidateCount": 21,
+      "missingIds": [],
+      "characters": 5987
+    },
+    {
+      "id": "expenses-wording",
+      "baseCaseId": "company-expenses",
+      "intentId": "finance",
+      "candidateCount": 20,
+      "missingIds": [],
+      "characters": 5995
+    },
+    {
+      "id": "survey-wording",
+      "baseCaseId": "survey-satisfaction",
+      "intentId": "analytics",
+      "candidateCount": 20,
+      "missingIds": [],
+      "characters": 5903
+    },
+    {
+      "id": "probability-wording",
+      "baseCaseId": "probability-notes",
+      "intentId": "study",
+      "candidateCount": 19,
+      "missingIds": [],
+      "characters": 5981
+    },
+    {
+      "id": "submission-wording",
+      "baseCaseId": "paper-submission",
+      "intentId": "research",
+      "candidateCount": 19,
+      "missingIds": [],
+      "characters": 5960
+    },
+    {
+      "id": "ime-wording",
+      "baseCaseId": "korean-enter-input",
+      "intentId": "development",
+      "candidateCount": 20,
+      "missingIds": [],
+      "characters": 5857
+    },
+    {
+      "id": "inventory-wording",
+      "baseCaseId": "inventory-movement",
+      "intentId": "work",
+      "candidateCount": 19,
+      "missingIds": [],
+      "characters": 5860
+    },
+    {
+      "id": "travel-wording",
+      "baseCaseId": "travel-with-mixed-note",
+      "intentId": "personal",
+      "candidateCount": 3,
+      "missingIds": [],
+      "characters": 824
+    },
+    {
+      "id": "pdf-wording",
+      "baseCaseId": "pdf-handoff",
+      "intentId": "formats",
+      "candidateCount": 3,
+      "missingIds": [],
+      "characters": 831
+    },
+    {
+      "id": "selection-wording",
+      "baseCaseId": "selected-only",
+      "intentId": "scope",
+      "candidateCount": 2,
+      "missingIds": [],
+      "characters": 476
+    },
+    {
+      "id": "injection-wording",
+      "baseCaseId": "document-injection",
+      "intentId": "safety",
+      "candidateCount": 3,
+      "missingIds": [],
+      "characters": 855
+    }
+  ]
+}

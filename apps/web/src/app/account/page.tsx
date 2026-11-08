@@ -7,7 +7,23 @@ import { SessionBoundary } from "../../features/auth/components/SessionBoundary"
 export default async function Page() {
   const session = await requireAccountSession();
 
-  return <SessionBoundary userId={session.user.id} initialExpiresAt={session.session.expiresAt.toISOString()} checkSessionAction={checkAuthSessionAction}><AuthShell>{session.user.name.trim()
-    ? <AuthScreen operation="signout" action={signoutAction} account={{ name: session.user.name, email: session.user.email }} />
-    : <AuthScreen operation="profile" action={profileAction} />}</AuthShell></SessionBoundary>;
+  return (
+    <SessionBoundary
+      userId={session.user.id}
+      initialExpiresAt={session.session.expiresAt.toISOString()}
+      checkSessionAction={checkAuthSessionAction}
+    >
+      <AuthShell>
+        {session.user.name.trim() ? (
+          <AuthScreen
+            operation="signout"
+            action={signoutAction}
+            account={{ name: session.user.name, email: session.user.email }}
+          />
+        ) : (
+          <AuthScreen operation="profile" action={profileAction} />
+        )}
+      </AuthShell>
+    </SessionBoundary>
+  );
 }

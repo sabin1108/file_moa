@@ -12,6 +12,7 @@ export function WorkflowStepper({ steps, current, label = "작업 진행 단계"
       <span className={styles.number} aria-hidden="true">{index < active ? "✓" : index + 1}</span>
       <span>{step.label}</span>
     </li>)}</ol>
+    <div className={styles.track} aria-hidden="true"><span style={{ transform: `scaleX(${steps.length > 1 ? active / (steps.length - 1) : 1})` }} /></div>
     <p role="status">{active + 1} / {steps.length} · {steps[active]?.label}</p>
   </nav>;
 }

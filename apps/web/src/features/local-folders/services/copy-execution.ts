@@ -11,9 +11,19 @@ export type CopyExecution = Readonly<{
   id: string; phase: "preparing" | "copying" | "completed" | "cancelled" | "error";
   items: readonly (CopyItem & { status: CopyItemStatus })[]; issue: string | null; journalComplete: boolean;
 }>;
-export async function executeCopy(root: FolderHandle, plan: FileChangePlan, approved: CopyInspection, owner: ConnectionOwner,
-  assertCurrent: () => void, signal: AbortSignal, progress: (result: CopyExecution) => void,
-  hashOverride?: (file: File) => Promise<string>, lock: (work: () => Promise<void>) => Promise<void> = async work => { await navigator.locks.request("moa-folder-creation", work); }): Promise<CopyExecution> {
+export async function executeCopy(
+  root: FolderHandle,
+  plan: FileChangePlan,
+  approved: CopyInspection,
+  owner: ConnectionOwner,
+  assertCurrent: () => void,
+  signal: AbortSignal,
+  progress: (result: CopyExecution) => void,
+  hashOverride?: (file: File) => Promise<string>,
+  lock: (work: () => Promise<void>) => Promise<void> = async work => {
+    await navigator.locks.request("moa-folder-creation", work);
+  },
+): Promise<CopyExecution> {
   // Capture trusted approval before awaiting permission; later caller mutations cannot change the work.
   const input = copyInspectionInput(plan), snapshot = structuredClone(approved);
   const fixedPlan = structuredClone(plan), capturedOwner = { ...owner };

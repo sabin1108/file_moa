@@ -1,0 +1,13 @@
+{
+  "condition": "Production build; isolated guest and synthetic sample session; shared settings UI only. This does not measure authenticated cache latency.",
+  "results": [
+    {
+      "name": "production settings still requires login",
+      "passed": true
+    },
+    {
+      "name": "local preferences remain available on the shared production settings UI",
+      "passed": true
+    }
+  ]
+}

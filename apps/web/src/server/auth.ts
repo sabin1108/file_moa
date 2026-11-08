@@ -9,6 +9,7 @@ import { socialProviderConfiguration } from "./social-providers";
 import { reportAuthenticationFailure } from "./auth-diagnostics";
 import { createAuthRateLimiter } from "./auth-rate-limit";
 import { socialProviders } from "../shared/social-auth";
+import { expireConnectedSettingsDisplay, expireSettingsDisplay } from "./settings-cache-policy";
 
 function createAuth() {
   const secret = process.env.BETTER_AUTH_SECRET;
@@ -50,7 +51,15 @@ function createAuth() {
       resetPasswordTokenExpiresIn: 1_800,
       revokeSessionsOnPasswordReset: true,
       sendResetPassword: async ({ user, url }) => {
-        const credential = await getDatabase().account.findFirst({ where: { userId: user.id, providerId: "credential", accountId: user.id, password: { not: null } }, select: { id: true } });
+        const credential = await getDatabase().account.findFirst({
+          where: {
+            userId: user.id,
+            providerId: "credential",
+            accountId: user.id,
+            password: { not: null },
+          },
+          select: { id: true },
+        });
         if (!credential) return;
         await sendAuthenticationEmail({
           to: user.email,
@@ -82,18 +91,32 @@ function createAuth() {
     session: { cookieCache: { enabled: false } },
     verification: { storeIdentifier: "hashed" },
     databaseHooks: {
+      user: {
+        update: { after: async () => { expireConnectedSettingsDisplay(); } },
+      },
       account: {
         // ID tokens are consumed during the callback; this app has no later use for them.
-        create: { before: async account => {
-          if (account.providerId === "credential" && await getDatabase().account.findFirst({
-            where: { userId: account.userId, providerId: { in: [...socialProviders] } }, select: { id: true },
-          })) throw new Error("A social account requires explicit credential linking.");
-          return { data: { ...account, idToken: null } };
-        } },
-        update: { before: async account => ({ data: { ...account, idToken: null } }) },
+        create: {
+          before: async account => {
+            if (account.providerId === "credential" && await getDatabase().account.findFirst({
+              where: { userId: account.userId, providerId: { in: [...socialProviders] } }, select: { id: true },
+            })) throw new Error("A social account requires explicit credential linking.");
+            return { data: { ...account, idToken: null } };
+          },
+          after: async account => { expireSettingsDisplay(account.userId); },
+        },
+        update: {
+          before: async account => ({ data: { ...account, idToken: null } }),
+          after: async account => { expireSettingsDisplay(account.userId); },
+        },
+        delete: { after: async account => { expireSettingsDisplay(account.userId); } },
       },
       session: {
-        create: { before: async session => ({ data: { ...session, ipAddress: null, userAgent: null } }) },
+        create: {
+          before: async session => ({ data: { ...session, ipAddress: null, userAgent: null } }),
+          after: async session => { expireSettingsDisplay(session.userId); },
+        },
+        delete: { after: async session => { expireSettingsDisplay(session.userId); } },
       },
     },
     rateLimit: {

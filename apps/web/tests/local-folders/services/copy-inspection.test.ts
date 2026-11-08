@@ -100,7 +100,7 @@ describe("read-only copy inspection", () => {
     replaced.handles.get("노트.md")!.isSameEntry.mockResolvedValue(false);
     await expect(replaced.inspect()).rejects.toThrow("source-changed");
     const conflict = fixture();
-    conflict.hash.mockImplementation(async () => { conflict.targetNames.push("ノート.md", "노트.md"); return "a".repeat(64); });
+    conflict.hash.mockImplementation(async () => { conflict.targetNames.push("notes.md", "노트.md"); return "a".repeat(64); });
     await expect(conflict.inspect()).rejects.toThrow("copy-conflict");
   });
   it("INSPECT-003 re-resolves the source directory rather than trusting a detached handle", async () => {

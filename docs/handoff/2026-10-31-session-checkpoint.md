@@ -40,7 +40,7 @@ E:/memory/chatbotfolder의 README → HANDOFF 최신 절 → NEXT_SESSION_PROMPT
 - 작업 기록: docs/specs/folder-history.md, docs/verification/folder-history/README.md
 - 현재 대상 확인: docs/specs/history-target-inspection.md, docs/verification/history-target-inspection/{README.md,performance.md}
 - 구현 읽기: docs/code-map.md, docs/reports/{folder-history-reading-guide.md,history-target-reading-guide.md}
-- 바탕화면: C:/Users/sabin/Desktop/모아_기능구현_코드읽기_가이드_2026-10-31.md (프로젝트 docs/reports에 같은 사본)
+- 바탕화면: %USERPROFILE%/Desktop/모아_기능구현_코드읽기_가이드_2026-10-31.md (프로젝트 docs/reports에 같은 사본)
 - 중요 요구/과정: E:/memory/chatbotfolder/last_post/import.md
 
 마지막 검증 URL은 http://127.0.0.1:3011/files 이다. 다음 세션에는 프로세스와 실제 빌드 상태를 먼저 확인한다. origin이 바뀌면 연결 저장소가 달라진다. 저장소는 세션 확인 당시 초기 커밋 없이 전체 untracked 상태였으므로 완료 커밋/PR/배포가 있다고 주장하지 않는다. 인수인계 폴더는 소스 백업이 아니다.

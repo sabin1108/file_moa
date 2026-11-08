@@ -18,5 +18,14 @@ export function LoadingRegion({ state, label, detail, placeholder, children, act
 }
 
 export function ContentSkeleton({ shape = "list", rows = 3 }: { shape?: "list" | "document"; rows?: number }) {
-  return <div className={styles.skeleton} data-shape={shape} aria-hidden="true">{Array.from({ length: rows }, (_, index) => <div className={styles.skeletonRow} key={index}><span /><span /></div>)}</div>;
+  return (
+    <div className={styles.skeleton} data-shape={shape} aria-hidden="true">
+      {Array.from({ length: rows }, (_, index) => (
+        <div className={styles.skeletonRow} key={index}>
+          <span />
+          <span />
+        </div>
+      ))}
+    </div>
+  );
 }

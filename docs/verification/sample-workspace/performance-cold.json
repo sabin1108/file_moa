@@ -1,0 +1,81 @@
+{
+  "at": "2026-11-07T02:18:53.681Z",
+  "base": "http://127.0.0.1:3034",
+  "condition": "local production /demo, valid sample cookie, HTTP cache disabled, no throttling, new target per sample",
+  "buildId": "a7XisV2iVHsfFstGzJHh0",
+  "staticJsCssBytes": 1497788,
+  "samples": [
+    {
+      "route": "/demo",
+      "width": 390,
+      "round": 0,
+      "finalPath": "/demo",
+      "lcp": 140,
+      "cls": 0,
+      "requests": 14,
+      "documentTransferBytes": 7551,
+      "transferBytes": 258646,
+      "jsTransferBytes": 237230
+    },
+    {
+      "route": "/demo",
+      "width": 390,
+      "round": 1,
+      "finalPath": "/demo",
+      "lcp": 112,
+      "cls": 0,
+      "requests": 13,
+      "documentTransferBytes": 7551,
+      "transferBytes": 257983,
+      "jsTransferBytes": 237230
+    },
+    {
+      "route": "/demo",
+      "width": 390,
+      "round": 2,
+      "finalPath": "/demo",
+      "lcp": 108,
+      "cls": 0,
+      "requests": 13,
+      "documentTransferBytes": 7551,
+      "transferBytes": 257983,
+      "jsTransferBytes": 237230
+    },
+    {
+      "route": "/demo",
+      "width": 1440,
+      "round": 0,
+      "finalPath": "/demo",
+      "lcp": 112,
+      "cls": 0,
+      "requests": 13,
+      "documentTransferBytes": 7551,
+      "transferBytes": 257983,
+      "jsTransferBytes": 237230
+    },
+    {
+      "route": "/demo",
+      "width": 1440,
+      "round": 1,
+      "finalPath": "/demo",
+      "lcp": 108,
+      "cls": 0,
+      "requests": 13,
+      "documentTransferBytes": 7551,
+      "transferBytes": 257983,
+      "jsTransferBytes": 237230
+    },
+    {
+      "route": "/demo",
+      "width": 1440,
+      "round": 2,
+      "finalPath": "/demo",
+      "lcp": 108,
+      "cls": 0,
+      "requests": 13,
+      "documentTransferBytes": 7551,
+      "transferBytes": 257983,
+      "jsTransferBytes": 237230
+    }
+  ]
+}

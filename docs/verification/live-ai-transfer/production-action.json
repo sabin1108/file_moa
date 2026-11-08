@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-08T00:47:41.225Z",
+  "buildId": "K0pIR9TcwuM-X5KNqcRgc",
+  "condition": "actual Next production Action HTTP; no signed-in user or provider call",
+  "checks": [
+    {
+      "origin": "same-origin-unauthenticated",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "origin": "cross-origin",
+      "status": 500,
+      "passed": true
+    }
+  ]
+}

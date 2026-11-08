@@ -26,4 +26,31 @@ describe("shared authentication limiter", () => {
     await expect(store.consume("fixture", { max: 0, window: 60 })).rejects.toThrow("Invalid authentication rate-limit rule.");
     expect(query).not.toHaveBeenCalled();
   });
+
+  it("rolls back every reservation on a later denial, including new request IDs", async () => {
+    const records = new Map<string, number>();
+    const cleanup = vi.fn().mockResolvedValue({ count: 0 });
+    const query = vi.fn(async (_strings: TemplateStringsArray, ...values: unknown[]) => {
+      if (_strings.join("").includes("SELECT greatest")) return [{ retryAfter: 60 }];
+      const key = String(values[1]);
+      const maximum = Number(values.at(-1));
+      const count = records.get(key) ?? 0;
+      if (count >= maximum) return [];
+      records.set(key, count + 1);
+      return [{ lastRequest: 1n }];
+    });
+    const transaction = vi.fn(async (run: (tx: { $queryRaw: typeof query }) => Promise<unknown>) => {
+      const before = new Map(records);
+      try { return await run({ $queryRaw: query }); }
+      catch (error) { records.clear(); before.forEach((value, key) => records.set(key, value)); throw error; }
+    });
+    const database = { $queryRaw: query, $transaction: transaction, rateLimit: { deleteMany: cleanup } } as unknown as PrismaClient;
+    const store = createAuthRateLimiter(() => database, "fixture-auth-secret");
+    const rules = (id: string) => [{ key: "a-global", max: 10, window: 60 }, { key: id, max: 1, window: 3600 }, { key: "z-session", max: 1, window: 3600 }];
+    expect(await store.consumeAll(rules("request-first"))).toMatchObject({ allowed: true });
+    const before = new Map(records);
+    for (let i = 0; i < 5; i++) expect(await store.consumeAll(rules(`request-new-${i}`))).toMatchObject({ allowed: false });
+    expect(records).toEqual(before);
+    expect(cleanup).toHaveBeenCalledTimes(1);
+  });
 });

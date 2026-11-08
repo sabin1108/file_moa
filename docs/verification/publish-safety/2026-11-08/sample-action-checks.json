@@ -1,0 +1,18 @@
+{
+  "condition": "Real local production Server Actions, newly created synthetic sample cookie, Vercel mode, fake model key and independent model-network blocker; not a signed-in user or paid call",
+  "checks": [
+    {
+      "action": "sampleClassificationAction",
+      "status": 200,
+      "code": "unavailable",
+      "passed": true
+    },
+    {
+      "action": "sampleOrganizationAction",
+      "status": 200,
+      "code": "unavailable",
+      "passed": true
+    }
+  ],
+  "blockedAttempts": 0
+}

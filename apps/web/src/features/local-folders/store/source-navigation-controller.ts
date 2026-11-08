@@ -96,7 +96,7 @@ export class SourceNavigationController {
     this.port = null;
     ++this.generation;
   }
-  /** popstateと画面再入場の入口。非同期復元は最新の移動/接続だけが完了できる。 */
+  /** popstate와 화면 재진입을 처리한다. 비동기 복원은 최신 이동과 연결에서만 완료할 수 있다. */
 
   async pop(save = true) {
     const port = this.port;

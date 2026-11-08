@@ -1,5 +1,39 @@
 # 기술 경계
 
+## AI 공급자 선택과 전송 확인 — 2026-11-08
+
+AI 공급자 연결 최신 개정: 샘플·정식은 서버의 공급자 설정과 같은 정리 지침·JSON Schema를 공유한다. page가 공급자 이름을 표시하고 Server Action에 고정하며 서비스는 예약 전에 현재 설정과 대조한다. 각 REST 어댑터는 공통 생성 입력을 변환한다. 인증·원본 재검사·멱등성·할당량·본문 근거 검증은 기존 경계에 남는다. [명세](specs/openai-provider.md), [검증](verification/openai-provider/README.md).
+
+## 로컬 본문 자료 찾기 — 2026-11-08
+
+현재 찾기와 정리는 상태/결과를 분리한다. 순수 검색 조건·근거 규칙, Provider 소유 찾기 controller, 기존 session의 owner/권한/세대/한도 읽기, 같은 Worker의 전체 본문 검색, 기존 preview의 원문 읽기를 연결했다. 서버/AI Action/DB/writer를 추가하지 않았고 검색 근거를 AI 전송 문서 DTO에 섞지 않는다. [읽기 순서와 근거](verification/document-find/README.md).
+
+## 로컬 채팅 답변 연결 — 2026-11-08
+
+질문 문장 해석은 선택 문서와 현재 근거 후보를 받는 브라우저의 순수 함수다. preparation controller가 최초 요청과 답변 초안을 따로 보관하고 기존 ReviewAnswer 검증을 통과한 전체 묶음만 반영한다. 타이핑은 동의를 바꾸지 않고 확정은 이전 제안/동의를 폐기한다. 새 서버 endpoint/모델 호출/파일 writer를 추가하지 않았다. [경계와 검증](verification/organization-reply/README.md).
+
+## 대화 안 정리와 공통 비교 — 2026-11-08
+
+대화 shell은 상호작용 위치만 제공하고 Provider/controller가 기존 상태를 소유한다. 조건 입력/자료 표시/전송 확인/결과와 경로 비교를 표시 책임으로 나눴다. `buildComparisonTrees`는 파일 접근 없는 투영이며 실행 승인·충돌 검사·writer가 아니다. 일반 계획·managed 검토·AI·시안이 같은 비교를 쓴다. [읽기 순서와 검증](verification/chat-first-live/README.md).
+
+## 정식 정리 후속 경계 — 2026-11-08
+
+질문/답변 DTO 검증은 shared, 인증/입력/예약/공급자는 server, 폴더 handle/참고 메타데이터/재검사는 browser session이 소유한다. execution controller는 AI 문서 ID를 기존 ManagedRequest로 투영하고 별도 writer 없이 기존 보존·실행·복구를 호출한다. 원본 버전 변경은 옛 제안의 모든 묶음을 차단한다. [호출 순서](reports/live-organization-completion-reading.md), [검증·한계](verification/live-organization-completion/README.md).
+
+## 공통 탐색과 데이터 어댑터 — 2026-11-07
+
+WorkspaceSidebar·WorkspaceFolderTree·ConversationWorkspace는 표시와 이벤트를 받는다. 실제 SourceFolderTree/SourceConnectionControl은 기존 Provider·controller를 사용하고 샘플은 SampleFolderTree/store를 주입한다. 공통 표시 컴포넌트는 사용자 핸들/계정/샘플 상태를 혼합하지 않는다. 목록 activate는 각 경로의 SourceFolderTree가 소유한다. 설정/대화/파일의 실제 연결 수명은 기존 상위 Provider에 남아 있다.
+
+빠른 전환은 공유 경로 생성기와 사용자 기기 설정만 사용하며 앱 루트에서 이동 간 유지한다. 서버 API·원본 쓰기·모델 호출을 실행하지 않는다. 샘플 후보 검색은 이미 공개된 본문에서 입력 크기를 제한하는 사전 단계이며 최종 분류나 서버 검증의 대체가 아니다. 서버는 등록 ID·본문·동의·세션·Origin·quota·countTokens·출력 근거/경로를 다시 검사한다. [명세](specs/workspace-navigation.md), [검증과 읽기 순서](verification/workspace-navigation/README.md).
+
+## 샘플 작업 공간 연결 — 2026-11-07
+
+`/demo`는 정식 `(workspace)`와 별도인 샘플 세션 경계다. `server/sample-session`의 서명·만료 검증과 별도 쿠키, `server/sample-catalog`의 공개 10개 자료, `features/sample-workspace`의 탭 저장소·가상 위치 상태를 사용한다. 정식 인증/DB/SourceFolderProvider와 연결하지 않는다. 공통 WorkspaceShell·Stepper·목적지 picker/controller/path form·계획 생성/표시를 재사용하며, PDF 페이지/엑셀 셀 미리보기와 원본 다운로드는 등록 샘플에 한정한다. 분류 검증은 서버→feature 의존을 만들지 않도록 `shared/ai-classification.ts`로 옮겼다. [구조/수명](specs/sample-workspace.md), [실행 증거/한계](verification/sample-workspace/README.md).
+
+## 정식 사용·테스트 사용 구조 명세 — 2026-11-07
+
+정식 사용과 테스트 사용을 모두 제공하는 요구를 [두 사용 구조 명세](specs/workspace-modes.md)에 작성했다. 공통 파일 작업 화면·계획/실행/복구 규칙을 재사용하고 세션·허용 작업·저장소를 분리하는 기준안이다. 기존 정식 인증 보호를 유지하며 테스트 자료가 실제 사용자 자료로 넘어가지 않도록 한다. 현재 [분류 입력/결과 검증과 샘플 테스트셋](specs/ai-classification.md)을 구현했다. 정식은 TXT·MD, 등록된 샘플은 PDF·XLSX까지 허용하며 사진은 제외한다. 테스트 세션·저장소·화면·AI 연동은 아직 후속이다.
+
 ## 이메일 인증 UI 개정 — 2026-11-06
 
 인증 UI는 `features/auth`, 서버/브라우저 공통 타입 계약은 `shared/auth-contract.ts`, 진입 action은 `app/actions/auth.ts`, 입력검증과 인증 프로토콜 조합은 `server/auth-forms.ts`다. app 페이지가 feature에 action을 전달하므로 feature→app/server→feature 역방향 의존이 없다. Server Action은 자기 API에 HTTP fetch하거나 보호를 건너뛰는 direct auth.api 호출 대신 같은 프로세스의 auth handler를 거쳐 요청 제한/Origin을 유지한다. 응답 쿠키는 Better Auth 공개 parser/options로 Next cookies에 옮긴다. 로그인 후 `/account`는 실제 세션으로 확인하며 기존 로컬 개발 owner는 후속 전환까지 유지한다. [실행 증거/한계](verification/auth-ui/README.md).
@@ -67,3 +101,20 @@ Query는 서버 상태, reducer는 초안·stream·패널 상태. 외부 API 호
 같은 모양/행동의 버튼·링크·상태는 공통 controls와 variant를 사용하며 파일 관리/채팅이 각각 재구현하지 않는다.
 읽기 영역은 reading-surface 토큰을 공유하고 네이비 탐색 영역과 분리한다.
 명세 docs/specs/workflows.md와 테스트 운영 docs/testing-strategy.md를 코드리뷰의 근거로 삼는다.
+# 2026-11-08 인증된 로컬 발췌 요청
+
+정식 route에 명시적 전송 Action을 연결했다. 선택 파일을 session/Worker로 다시 읽어 확인한 버전과 비교한 뒤, 서버에서 실제 workspace·Origin·scope/발췌해시/입력량·시간 포함 요청ID를 검증한다. 기존 원자 예약의 전역 키를 샘플과 공유하고 작업 공간/계정 한도를 별도로 둔다. 샘플/정식은 `organization-generation`의 의미/인용 정책과 Gemini adapter를 공유하며 익명 세션이나 샘플 catalog 권한을 공유하지 않는다. 본문/결과 영구 저장·자동 요청·원본 적용은 없다. 아래 이전 절의 정식 AI 비활성 설명은 당시 상태다. [실행 근거와 검증 한계](verification/live-ai-transfer/README.md).
+
+# 2026-11-07 Gemini 샘플 호출
+
+`app/demo/page` → 주입된 `app/actions/sample-ai` → `server/sample-ai`(서명 세션/Origin/동의/등록 ID) → `auth-rate-limit.consumeAll`(기존 DB의 원자 예약) → `server/gemini-classification`(countTokens/구조화 생성/검증) → 탭별 제안 보관과 공통 계획 검토다. 모델 대기 동안 DB 트랜잭션을 유지하지 않는다. 기존 인증의 단일 consume은 유지하며 여러 샘플 한도는 정렬된 키와 rollback으로 함께 예약한다. 모델키/원본 바이너리/holdout은 클라이언트 호출 입력이 아니다. 취소는 응답 반영을 중지하며 provider는 서버 timeout으로 제한한다. 실제 정식 개인 파일 AI와 배포는 별도다. 최신 검증: [sample-gemini](verification/sample-gemini/README.md).
+# 2026-11-07 대화 기반 정리
+
+정식 route는 LiveConversation+실제 SourceFolderProvider, 샘플 route는 SampleConversation+가상 상태를 통해 공통 ConversationWorkspace를 조합한다. 표현 공유가 권한/핸들 공유를 뜻하지 않는다. 정식 개인 AI 전송은 비활성 상태다. 샘플 자연어 Action은 서버 등록부→공통 원자 예약→기존 Gemini REST/countTokens 전송→새 organization 결과 검증→기존 변경계획으로 연결된다. 정확한 본문 인용·선택 ID·단일 본문 날짜·안전한 상대 경로를 검증하며, 가상 표시 루트 하나만 정규화하고 source 루트는 거부한다. 주제 요청에 날짜 필터가 섞이지 않도록 요청별 지침v2를 공급한다. 신규 가상 폴더는 최종 승인 참조만 커밋하고 폴더 이력까지 복원/되돌린다. 운영 개인 AI/파서/튜토리얼/배포와 분리한 증거는 [conversation-organization](verification/conversation-organization/README.md)에 있다.
+
+후속 지침 v3에서는 날짜 키워드로 기간 필터/날짜별 정리를 함께 켜던 분기를 제거했다. 모델이 요청의 긍정·부정 의미를 읽되 기간 필터와 폴더 그룹을 독립적으로 판단하도록 조건을 제공한다. 본문 날짜·인용·경로를 검사하는 결정적 응답 파서는 그대로 유지한다. 모델의 의미 해석은 이 지침만으로 보장하지 않으며 실제 응답 평가와 분리한다. 근거: CO-010, [실모델 평가](verification/organization-evaluation/live-evaluation.md).
+
+현재 지침 v4는 확인된 기간 밖 문서의 불필요한 보류를 방지하고, 요약을 적용 전 제안으로 표현하도록 추가했다. 실제 한 요청의 실패와 재검증은 [기대값·평가 검토](verification/expectation-review/README.md)에 있다. 정식 TXT/MD는 탐색 범위/참고 기준/목적지와 외부 전송 동의를 분리하는 [LT 명세](specs/live-txt-md-consent.md)를 준비했으며 아직 개인 자료 API를 활성화하지 않았다.
+# 2026-11-08 설정 표시 데이터의 요청 간 재사용
+
+설정 DTO는 server/settings-display.ts에서 매 요청 세션 확인 후 사용자와 로그인별 key로 Next Data Cache를 조회한다. workspace layout의 초기 준비와 settings page가 같은 reader를 사용한다. 토큰·원본 SDK session·cookie는 새 cache에 넣지 않고 기존 fresh 권한 경계를 유지한다. 현재 Cache Components 미활성 모델의 unstable_cache를 사용하며 전역 렌더·Provider 수명은 바꾸지 않는다. 변경은 SDK hook과 계정 관계 서비스의 commit 뒤 tag 만료로 반영한다. 세부 계약은 [명세](specs/settings-display-cache.md), 호출 흐름과 검증 한계는 [설명](reports/settings-display-cache-reading.md)을 따른다.

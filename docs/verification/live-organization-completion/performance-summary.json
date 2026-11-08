@@ -1,0 +1,188 @@
+{
+  "beforeBuild": "K0pIR9TcwuM-X5KNqcRgc",
+  "afterBuild": "A8UUyGVs7Odfss2_iK1gR",
+  "bytesBefore": 1598940,
+  "bytesAfter": 1641015,
+  "rows": [
+    {
+      "route": "/login",
+      "width": 390,
+      "finalPath": "/login",
+      "lcpBefore": 60,
+      "lcpAfter": 84,
+      "transferBefore": 3714,
+      "transferAfter": 3711,
+      "clsMax": 0
+    },
+    {
+      "route": "/login",
+      "width": 1440,
+      "finalPath": "/login",
+      "lcpBefore": 80,
+      "lcpAfter": 72,
+      "transferBefore": 3713,
+      "transferAfter": 3709,
+      "clsMax": 0
+    },
+    {
+      "route": "/welcome",
+      "width": 390,
+      "finalPath": "/welcome",
+      "lcpBefore": 48,
+      "lcpAfter": 64,
+      "transferBefore": 3227,
+      "transferAfter": 3226,
+      "clsMax": 0
+    },
+    {
+      "route": "/welcome",
+      "width": 1440,
+      "finalPath": "/welcome",
+      "lcpBefore": 72,
+      "lcpAfter": 72,
+      "transferBefore": 3228,
+      "transferAfter": 3225,
+      "clsMax": 0
+    },
+    {
+      "route": "/forgot-password",
+      "width": 390,
+      "finalPath": "/forgot-password",
+      "lcpBefore": 44,
+      "lcpAfter": 64,
+      "transferBefore": 1548,
+      "transferAfter": 1544,
+      "clsMax": 0
+    },
+    {
+      "route": "/forgot-password",
+      "width": 1440,
+      "finalPath": "/forgot-password",
+      "lcpBefore": 52,
+      "lcpAfter": 72,
+      "transferBefore": 1548,
+      "transferAfter": 1545,
+      "clsMax": 0
+    },
+    {
+      "route": "/reset-password",
+      "width": 390,
+      "finalPath": "/reset-password",
+      "lcpBefore": 68,
+      "lcpAfter": 76,
+      "transferBefore": 3110,
+      "transferAfter": 3106,
+      "clsMax": 0
+    },
+    {
+      "route": "/reset-password",
+      "width": 1440,
+      "finalPath": "/reset-password",
+      "lcpBefore": 108,
+      "lcpAfter": 92,
+      "transferBefore": 3111,
+      "transferAfter": 3105,
+      "clsMax": 0
+    },
+    {
+      "route": "/verify-email",
+      "width": 390,
+      "finalPath": "/verify-email",
+      "lcpBefore": 108,
+      "lcpAfter": 92,
+      "transferBefore": 3610,
+      "transferAfter": 3604,
+      "clsMax": 0
+    },
+    {
+      "route": "/verify-email",
+      "width": 1440,
+      "finalPath": "/verify-email",
+      "lcpBefore": 104,
+      "lcpAfter": 92,
+      "transferBefore": 3609,
+      "transferAfter": 3605,
+      "clsMax": 0
+    },
+    {
+      "route": "/files",
+      "width": 390,
+      "finalPath": "/login",
+      "lcpBefore": 76,
+      "lcpAfter": 76,
+      "transferBefore": 3715,
+      "transferAfter": 3709,
+      "clsMax": 0
+    },
+    {
+      "route": "/files",
+      "width": 1440,
+      "finalPath": "/login",
+      "lcpBefore": 80,
+      "lcpAfter": 80,
+      "transferBefore": 3715,
+      "transferAfter": 3711,
+      "clsMax": 0
+    },
+    {
+      "route": "/demo",
+      "width": 390,
+      "finalPath": "/demo",
+      "lcpBefore": 80,
+      "lcpAfter": 136,
+      "transferBefore": 4707,
+      "transferAfter": 4697,
+      "clsMax": 0
+    },
+    {
+      "route": "/demo",
+      "width": 1440,
+      "finalPath": "/demo",
+      "lcpBefore": 72,
+      "lcpAfter": 96,
+      "transferBefore": 4704,
+      "transferAfter": 4696,
+      "clsMax": 0
+    },
+    {
+      "route": "/demo/files",
+      "width": 390,
+      "finalPath": "/demo/files",
+      "lcpBefore": 72,
+      "lcpAfter": 80,
+      "transferBefore": 0,
+      "transferAfter": 0,
+      "clsMax": 0
+    },
+    {
+      "route": "/demo/files",
+      "width": 1440,
+      "finalPath": "/demo/files",
+      "lcpBefore": 76,
+      "lcpAfter": 76,
+      "transferBefore": 3130,
+      "transferAfter": 3126,
+      "clsMax": 0
+    },
+    {
+      "route": "/demo/settings",
+      "width": 390,
+      "finalPath": "/demo/settings",
+      "lcpBefore": 64,
+      "lcpAfter": 60,
+      "transferBefore": 4693,
+      "transferAfter": 4686,
+      "clsMax": 0
+    },
+    {
+      "route": "/demo/settings",
+      "width": 1440,
+      "finalPath": "/demo/settings",
+      "lcpBefore": 44,
+      "lcpAfter": 68,
+      "transferBefore": 4693,
+      "transferAfter": 4683,
+      "clsMax": 0
+    }
+  ]
+}

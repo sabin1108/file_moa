@@ -1,0 +1,140 @@
+{
+  "at": "2026-11-07T02:15:45.542Z",
+  "checks": [
+    {
+      "name": "public entry reaches sample workspace without production login",
+      "passed": true
+    },
+    {
+      "name": "sample entry preserves the browser origin",
+      "passed": true
+    },
+    {
+      "name": "ten public samples and prepared-result disclosure",
+      "passed": true
+    },
+    {
+      "name": "no IndexedDB or file picker access",
+      "passed": true
+    },
+    {
+      "name": "390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "768: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "PDF preview loads two checked page images",
+      "passed": true
+    },
+    {
+      "name": "PDF asset is a real PDF",
+      "passed": true
+    },
+    {
+      "name": "Excel preview shows checked cells and total",
+      "passed": true
+    },
+    {
+      "name": "Excel download is a real XLSX archive",
+      "passed": true
+    },
+    {
+      "name": "keyboard opens shared plan review before any sample move",
+      "passed": true
+    },
+    {
+      "name": "open destination browsing blocks applying the previous plan",
+      "passed": false
+    }
+  ],
+  "visual": [
+    {
+      "width": 390,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "small-title",
+          "width": 390,
+          "message": "The h1 is 16px (\"샘플 작업 공간\").",
+          "fix": "Set the title at display size, or make the large text of the first screen the h1."
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "small-title",
+          "width": 768,
+          "message": "The h1 is 16px (\"샘플 작업 공간\").",
+          "fix": "Set the title at display size, or make the large text of the first screen the h1."
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "small-title",
+          "width": 1440,
+          "message": "The h1 is 16px (\"샘플 작업 공간\").",
+          "fix": "Set the title at display size, or make the large text of the first screen the h1."
+        },
+        {
+          "level": "WARN",
+          "id": "ragged-row",
+          "width": 1440,
+          "message": "1 pair(s) of cards in one row end at different heights (by 378px).",
+          "fix": "Cards that share a row share a bottom edge: balance them by their content (the same number of rows, a block of similar height beside it), or stack them. In testing, ragged rows were marked down every time."
+        },
+        {
+          "level": "WARN",
+          "id": "panel-void",
+          "width": 1440,
+          "message": "1 card(s) hold a blank band inside: 45px in \"01-주간 회의.md\".",
+          "fix": "A card stretches to its neighbour only when it has content to fill. Keep a legend or a note directly under its chart (only an action or a total may sit at a stretched card's foot), let a short card keep its own height (align-items: start), and let a filtered block shrink to its rows."
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "findings": [
+        {
+          "level": "WARN",
+          "id": "small-title",
+          "width": 1920,
+          "message": "The h1 is 16px (\"샘플 작업 공간\").",
+          "fix": "Set the title at display size, or make the large text of the first screen the h1."
+        },
+        {
+          "level": "WARN",
+          "id": "ragged-row",
+          "width": 1920,
+          "message": "1 pair(s) of cards in one row end at different heights (by 408px).",
+          "fix": "Cards that share a row share a bottom edge: balance them by their content (the same number of rows, a block of similar height beside it), or stack them. In testing, ragged rows were marked down every time."
+        },
+        {
+          "level": "WARN",
+          "id": "panel-void",
+          "width": 1920,
+          "message": "1 card(s) hold a blank band inside: 45px in \"01-주간 회의.md\".",
+          "fix": "A card stretches to its neighbour only when it has content to fill. Keep a legend or a note directly under its chart (only an action or a total may sit at a stretched card's foot), let a short card keep its own height (align-items: start), and let a filtered block shrink to its rows."
+        }
+      ]
+    }
+  ],
+  "observations": []
+}

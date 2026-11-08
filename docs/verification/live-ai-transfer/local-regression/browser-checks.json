@@ -1,0 +1,140 @@
+{
+  "condition": "Actual product components, session, Worker and IndexedDB with synthetic owner and Chromium OPFS; Next routing shim; no physical Windows folder/authenticated-route claim",
+  "checks": [
+    {
+      "name": "disconnected chat stays compact",
+      "passed": true
+    },
+    {
+      "name": "connecting does not read document bodies",
+      "passed": true
+    },
+    {
+      "name": "Korean composing Enter never starts preparation",
+      "passed": true
+    },
+    {
+      "name": "Shift+Enter keeps a newline",
+      "passed": true
+    },
+    {
+      "name": "missing scope asks before body I/O",
+      "passed": true
+    },
+    {
+      "name": "reference folder never narrows the whole scope",
+      "passed": true
+    },
+    {
+      "name": "folder choices do not offer creation or perform writes",
+      "passed": true
+    },
+    {
+      "name": "real Worker reads nested TXT/MD with no hidden history or PDF",
+      "passed": true
+    },
+    {
+      "name": "body words beyond the document beginning appear in the actual excerpt",
+      "passed": true
+    },
+    {
+      "name": "whole-file SHA256 matches independent expected bytes",
+      "passed": true
+    },
+    {
+      "name": "explicit candidate confirmation is stored without a POST",
+      "passed": true
+    },
+    {
+      "name": "excluding a candidate revokes prior consent",
+      "passed": true
+    },
+    {
+      "name": "ten drawer transitions preserve the composer and request",
+      "passed": true
+    },
+    {
+      "name": "drawer close restores the invoking button",
+      "passed": true
+    },
+    {
+      "name": "Provider lifetime keeps preparation across screen unmount/remount",
+      "passed": true
+    },
+    {
+      "name": "390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "768: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "basis changes invalidate the snapshot and confirmation",
+      "passed": true
+    },
+    {
+      "name": "cancelled reads never publish a late snapshot",
+      "passed": true
+    },
+    {
+      "name": "selected-file scope never expands to other folders or files",
+      "passed": true
+    },
+    {
+      "name": "original sentinel is unchanged and zero product writes",
+      "passed": true
+    },
+    {
+      "name": "zero local or external POST/API calls",
+      "passed": true,
+      "detail": {
+        "posts": 0,
+        "external": 0
+      }
+    },
+    {
+      "name": "owner switch clears private request and prepared excerpts",
+      "passed": true
+    },
+    {
+      "name": "returning owner does not restore private draft or consent",
+      "passed": true
+    },
+    {
+      "name": "F5 restores only the granted folder, never scanning or replaying a request",
+      "passed": true
+    },
+    {
+      "name": "no component or Worker exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timings": [
+    {
+      "elapsedMs": 70,
+      "width": 1440
+    },
+    {
+      "elapsedMs": 92,
+      "width": 1440
+    },
+    {
+      "elapsedMs": 78,
+      "width": 1440
+    },
+    {
+      "elapsedMs": 52,
+      "width": 1440
+    }
+  ]
+}

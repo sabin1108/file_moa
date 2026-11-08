@@ -92,7 +92,12 @@ export async function submitAuthForm(operation: AuthOperation, formData: FormDat
 
     if (!response.ok) {
       const error = z.object({ code: z.string().optional() }).safeParse(await response.clone().json());
-      if (response.status >= 500 || error.success && ["INVALID_ORIGIN", "FAILED_TO_CREATE_USER"].includes(error.data.code ?? "")) reportAuthenticationFailure("form", error.success ? error.data : undefined);
+      if (
+        response.status >= 500 ||
+        (error.success &&
+          ["INVALID_ORIGIN", "FAILED_TO_CREATE_USER"].includes(error.data.code ?? ""))
+      )
+        reportAuthenticationFailure("form", error.success ? error.data : undefined);
       const message = response.status === 429 ? "요청이 많습니다. 잠시 기다린 뒤 다시 시도해 주세요."
         : error.success ? errorMessages[error.data.code ?? ""] : undefined;
 

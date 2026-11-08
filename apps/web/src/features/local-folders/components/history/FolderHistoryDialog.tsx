@@ -32,25 +32,92 @@ export function FolderHistoryDialog({ path, folderName, disabled }: {
   useEffect(() => { if (state.open) heading.current?.focus(); }, [state.open]);
   const close = () => { dialog.current?.close(); controller.close(); };
   const pending = state.phase === "loading";
-  return <>
-    <button type="button" className={actionClasses("ghost")} disabled={disabled} aria-haspopup="dialog" aria-controls={id} aria-expanded={state.open}
-      onClick={() => { dialog.current?.showModal(); void controller.open(path); }}>작업 기록</button>
-    <dialog ref={dialog} id={id} className={dialogStyles.dialog} aria-labelledby={`${id}-title`}
-      onCancel={event => { event.preventDefault(); close(); }} onClose={() => { if (!dialog.current?.open) controller.close(); }}>
-      {state.open && !disabled && <section data-history-phase={state.phase}>
-        <div className={dialogStyles.header}><h2 ref={heading} id={`${id}-title`} tabIndex={-1}>작업 기록</h2>
-          <button type="button" className={actionClasses("ghost")} aria-label="작업 기록 닫기" onClick={close}>닫기</button></div>
-        <p className={styles.location}>{[folderName, ...state.path].join(" / ")}</p>
-        <p className={styles.note}>이 위치에 저장된 생성·복사·복원 기록입니다. 저장 당시 결과와 현재 파일 상태는 다를 수 있어요.</p>
-        <div className={styles.toolbar}><p className={styles.note}>{state.checkedAt ? `읽은 시각 · ${historyTime(state.checkedAt)}` : "기록을 읽기만 하며 파일을 변경하지 않습니다."}</p>
-          <button type="button" className={actionClasses("secondary")} onClick={pending ? controller.cancel : () => void controller.refresh()}>{pending ? "기록 읽기 취소" : "기록 새로고침"}</button></div>
-        {pending && <StatusNotice state="pending" title="작업 기록을 읽고 있어요." />}
-        {state.phase === "cancelled" && <StatusNotice state="attention" title="기록 읽기를 취소했어요." />}
-        {state.phase === "error" && state.issue && <StatusNotice state="error" title={issues[state.issue]} />}
-        {state.result && <FolderHistoryView result={state.result} inspection={state.inspection} onInspect={controller.inspectTarget} onCancelInspection={controller.cancelInspection}
-          copyInspection={state.copyInspection} onInspectCopy={controller.inspectCopyTarget} onCancelCopy={controller.cancelCopyInspection}
-          restoreInspection={state.restoreInspection} onInspectRestore={controller.inspectRestoreTarget} />}
-      </section>}
-    </dialog>
-  </>;
+  return (
+    <>
+      <button
+        type="button"
+        className={actionClasses("ghost")}
+        disabled={disabled}
+        aria-haspopup="dialog"
+        aria-controls={id}
+        aria-expanded={state.open}
+        onClick={() => {
+          dialog.current?.showModal();
+          void controller.open(path);
+        }}
+      >
+        작업 기록
+      </button>
+      <dialog
+        ref={dialog}
+        id={id}
+        className={dialogStyles.dialog}
+        aria-labelledby={`${id}-title`}
+        onCancel={event => {
+          event.preventDefault();
+          close();
+        }}
+        onClose={() => {
+          if (!dialog.current?.open) controller.close();
+        }}
+      >
+        {state.open && !disabled && (
+          <section data-history-phase={state.phase}>
+            <div className={dialogStyles.header}>
+              <h2 ref={heading} id={`${id}-title`} tabIndex={-1}>
+                작업 기록
+              </h2>
+              <button
+                type="button"
+                className={actionClasses("ghost")}
+                aria-label="작업 기록 닫기"
+                onClick={close}
+              >
+                닫기
+              </button>
+            </div>
+            <p className={styles.location}>{[folderName, ...state.path].join(" / ")}</p>
+            <p className={styles.note}>
+              이 위치에 저장된 생성·복사·복원 기록입니다. 저장 당시 결과와 현재 파일 상태는 다를 수
+              있어요.
+            </p>
+            <div className={styles.toolbar}>
+              <p className={styles.note}>
+                {state.checkedAt
+                  ? `읽은 시각 · ${historyTime(state.checkedAt)}`
+                  : "기록을 읽기만 하며 파일을 변경하지 않습니다."}
+              </p>
+              <button
+                type="button"
+                className={actionClasses("secondary")}
+                onClick={pending ? controller.cancel : () => void controller.refresh()}
+              >
+                {pending ? "기록 읽기 취소" : "기록 새로고침"}
+              </button>
+            </div>
+            {pending && <StatusNotice state="pending" title="작업 기록을 읽고 있어요." />}
+            {state.phase === "cancelled" && (
+              <StatusNotice state="attention" title="기록 읽기를 취소했어요." />
+            )}
+            {state.phase === "error" && state.issue && (
+              <StatusNotice state="error" title={issues[state.issue]} />
+            )}
+            {state.result && (
+              <FolderHistoryView
+                result={state.result}
+                inspection={state.inspection}
+                onInspect={controller.inspectTarget}
+                onCancelInspection={controller.cancelInspection}
+                copyInspection={state.copyInspection}
+                onInspectCopy={controller.inspectCopyTarget}
+                onCancelCopy={controller.cancelCopyInspection}
+                restoreInspection={state.restoreInspection}
+                onInspectRestore={controller.inspectRestoreTarget}
+              />
+            )}
+          </section>
+        )}
+      </dialog>
+    </>
+  );
 }

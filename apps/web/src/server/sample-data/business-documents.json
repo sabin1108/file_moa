@@ -1,0 +1,982 @@
+[
+  {
+    "id": "business-company-1",
+    "name": "분기 영업 요약.md",
+    "format": "md",
+    "excerpt": "# 분기 영업 요약\n작성일: 2026-09-03\n가상기업A 3분기 매출 보고서. 온라인 판매 8400만원, 오프라인 판매 6100만원이다. 채널별 매출과 반품을 구분하고 영업이익 계산에는 원가를 별도로 반영한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-company",
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDrtoTquLAg7JiB7JeFIOyalOyVvQrsnpHshLHsnbw6IDIwMjYtMDktMDMK6rCA7IOB6riw7JeFQSAz67aE6riwIOunpOy2nCDrs7Tqs6DshJwuIOyYqOudvOyduCDtjJDrp6QgODQwMOunjOybkCwg7Jik7ZSE65287J24IO2MkOunpCA2MTAw66eM7JuQ7J2064ukLiDssYTrhJDrs4Qg66ek7Lac6rO8IOuwmO2SiOydhCDqtazrtoTtlZjqs6Ag7JiB7JeF7J207J21IOqzhOyCsOyXkOuKlCDsm5DqsIDrpbwg67OE64+E66GcIOuwmOyYge2VnOuLpC4K7Lac7LKYOiBNT0Eg7JuQ67O4IO2VqeyEsSDsg5jtlIwgYnVzaW5lc3MtdjEuIOyLpOygnCDquLDqtIDCt+qwnOyduCDsnpDro4zqsIAg7JWE64uZ64uI64ukLgo=",
+    "sha256": "cdd63972211eb288bf66060a0a73479444a0488300f2cebe48354c9ada14c1a7"
+  },
+  {
+    "id": "business-company-2",
+    "name": "월별 비용 메모.txt",
+    "format": "txt",
+    "excerpt": "월별 비용 메모\n작성일: 2026-09-04\n가상기업A 8월 비용은 인건비 3200만원, 임차료 800만원, 배송비 420만원이다. 판매량이 증가해도 고정비와 변동비를 구분해야 손익 변화 원인을 설명할 수 있다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-company",
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7JuU67OEIOu5hOyaqSDrqZTrqqgK7J6R7ISx7J28OiAyMDI2LTA5LTA0CuqwgOyDgeq4sOyXhUEgOOyblCDruYTsmqnsnYAg7J246rG067mEIDMyMDDrp4zsm5AsIOyehOywqOujjCA4MDDrp4zsm5AsIOuwsOyGoeu5hCA0MjDrp4zsm5DsnbTri6QuIO2MkOunpOufieydtCDspp3qsIDtlbTrj4Qg6rOg7KCV67mE7JmAIOuzgOuPmeu5hOulvCDqtazrtoTtlbTslbwg7IaQ7J21IOuzgO2ZlCDsm5DsnbjsnYQg7ISk66qF7ZWgIOyImCDsnojri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "e493c486846922843409aa10a250a0d701d074bafe12ce61f6974f3f695f1b54"
+  },
+  {
+    "id": "business-company-3",
+    "name": "재고 수불 기록.md",
+    "format": "md",
+    "excerpt": "# 재고 수불 기록\n작성일: 2026-09-05\n가상기업B 창고의 기초 재고는 120개, 입고 80개, 출고 95개이다. 기말 재고는 105개다. 반품 3개는 검사 대기라 판매 가능 수량에서 제외했다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-company",
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDsnqzqs6Ag7IiY67aIIOq4sOuhnQrsnpHshLHsnbw6IDIwMjYtMDktMDUK6rCA7IOB6riw7JeFQiDssL3qs6DsnZgg6riw7LSIIOyerOqzoOuKlCAxMjDqsJwsIOyeheqzoCA4MOqwnCwg7Lac6rOgIDk16rCc7J2064ukLiDquLDrp5Ag7J6s6rOg64qUIDEwNeqwnOuLpC4g67CY7ZKIIDPqsJzripQg6rKA7IKsIOuMgOq4sOudvCDtjJDrp6Qg6rCA64qlIOyImOufieyXkOyEnCDsoJzsmbjtlojri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "decb2af3ae473ba4ac21d0e4deb5004d21eea32fa89df0c77f99f84a3c0724e3"
+  },
+  {
+    "id": "business-company-4",
+    "name": "채권 확인.txt",
+    "format": "txt",
+    "excerpt": "채권 확인\n작성일: 2026-09-06\n가상기업B 거래처별 미수금 점검 자료. 계약A 450만원은 8월 말 지급 예정이고 계약B 280만원은 검수 후 청구한다. 매출 인식과 현금 입금 시점이 다르다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-company",
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7LGE6raMIO2ZleyduArsnpHshLHsnbw6IDIwMjYtMDktMDYK6rCA7IOB6riw7JeFQiDqsbDrnpjsspjrs4Qg66+47IiY6riIIOygkOqygCDsnpDro4wuIOqzhOyVvUEgNDUw66eM7JuQ7J2AIDjsm5Qg66eQIOyngOq4iSDsmIjsoJXsnbTqs6Ag6rOE7JW9QiAyODDrp4zsm5DsnYAg6rKA7IiYIO2bhCDssq3qtaztlZzri6QuIOunpOy2nCDsnbjsi53qs7wg7ZiE6riIIOyeheq4iCDsi5zsoJDsnbQg64uk66W064ukLgrstpzsspg6IE1PQSDsm5Drs7gg7ZWp7ISxIOyDmO2UjCBidXNpbmVzcy12MS4g7Iuk7KCcIOq4sOq0gMK36rCc7J24IOyekOujjOqwgCDslYTri5nri4jri6QuCg==",
+    "sha256": "1c4f3bd72af12bbde8c176d4edb8b40fe97f227ea801c8eff16cd95dd2ac414f"
+  },
+  {
+    "id": "business-company-5",
+    "name": "채널 변경안.md",
+    "format": "md",
+    "excerpt": "# 채널 변경안\n작성일: 2026-09-07\n가상기업C의 판매 전략 회의. 방문 유입은 늘었지만 구매 전환율이 낮아 상품 설명을 개선한다. 확정 실적이 아니라 다음 분기 실험 계획이며 영업 성과로 집계하지 않는다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-company",
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDssYTrhJAg67OA6rK97JWICuyekeyEseydvDogMjAyNi0wOS0wNwrqsIDsg4HquLDsl4VD7J2YIO2MkOunpCDsoITrnrUg7ZqM7J2YLiDrsKnrrLgg7Jyg7J6F7J2AIOuKmOyXiOyngOunjCDqtazrp6Qg7KCE7ZmY7Jyo7J20IOuCruyVhCDsg4Htkogg7ISk66qF7J2EIOqwnOyEoO2VnOuLpC4g7ZmV7KCVIOyLpOyggeydtCDslYTri4jrnbwg64uk7J2MIOu2hOq4sCDsi6Ttl5gg6rOE7ZqN7J2066mwIOyYgeyXhSDshLHqs7zroZwg7KeR6rOE7ZWY7KeAIOyViuuKlOuLpC4K7Lac7LKYOiBNT0Eg7JuQ67O4IO2VqeyEsSDsg5jtlIwgYnVzaW5lc3MtdjEuIOyLpOygnCDquLDqtIDCt+qwnOyduCDsnpDro4zqsIAg7JWE64uZ64uI64ukLgo=",
+    "sha256": "cc1984b64a55a64abce2beeb040a91610ef41c3109ac2b99724fc042d3713ec7"
+  },
+  {
+    "id": "business-company-6",
+    "name": "반품 원인 분류.txt",
+    "format": "txt",
+    "excerpt": "반품 원인 분류\n작성일: 2026-09-08\n가상기업C 9월 반품 45건 중 크기 불일치 21건, 배송 파손 14건, 기타 10건이다. 고객 상담 기록의 원문과 개인정보는 넣지 않은 합성 통계다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-company",
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "67CY7ZKIIOybkOyduCDrtoTrpZgK7J6R7ISx7J28OiAyMDI2LTA5LTA4CuqwgOyDgeq4sOyXhUMgOeyblCDrsJjtkoggNDXqsbQg7KSRIO2BrOq4sCDrtojsnbzsuZggMjHqsbQsIOuwsOyGoSDtjIzshpAgMTTqsbQsIOq4sO2DgCAxMOqxtOydtOuLpC4g6rOg6rCdIOyDgeuLtCDquLDroZ3snZgg7JuQ66y46rO8IOqwnOyduOygleuztOuKlCDrhKPsp4Ag7JWK7J2AIO2VqeyEsSDthrXqs4Tri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "9ed45af33aa5960ac3aa9838239807b4f5bb7e61e647ec80943830c59d7ebc5d"
+  },
+  {
+    "id": "business-research-1",
+    "name": "학기말 연구 초록.md",
+    "format": "md",
+    "excerpt": "# 학기말 연구 초록\n작성일: 2026-09-03\n가상학교A 교육 연구 논문 초록. 간격 반복 학습이 회상 정확도에 주는 영향을 조사했다. 실험군 24명과 비교군 24명을 가정한 모의 연구이며 실제 사람을 모집하지 않았다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-research",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDtlZnquLDrp5Ag7Jew6rWsIOy0iOuhnQrsnpHshLHsnbw6IDIwMjYtMDktMDMK6rCA7IOB7ZWZ6rWQQSDqtZDsnKEg7Jew6rWsIOuFvOusuCDstIjroZ0uIOqwhOqyqSDrsJjrs7Ug7ZWZ7Iq17J20IO2ajOyDgSDsoJXtmZXrj4Tsl5Ag7KO864qUIOyYge2WpeydhCDsobDsgqztlojri6QuIOyLpO2XmOq1sCAyNOuqheqzvCDruYTqtZDqtbAgMjTrqoXsnYQg6rCA7KCV7ZWcIOuqqOydmCDsl7DqtazsnbTrqbAg7Iuk7KCcIOyCrOuejOydhCDrqqjsp5HtlZjsp4Ag7JWK7JWY64ukLgrstpzsspg6IE1PQSDsm5Drs7gg7ZWp7ISxIOyDmO2UjCBidXNpbmVzcy12MS4g7Iuk7KCcIOq4sOq0gMK36rCc7J24IOyekOujjOqwgCDslYTri5nri4jri6QuCg==",
+    "sha256": "02870daab48a40a8a90cbfde4f41651df44bbd63aa02b528d84bddbbc045d36b"
+  },
+  {
+    "id": "business-research-2",
+    "name": "선행 연구 정리.txt",
+    "format": "txt",
+    "excerpt": "선행 연구 정리\n작성일: 2026-09-04\n가상학교A 논문 작성 연습. 검색 키워드, 포함 기준, 제외 기준을 먼저 정하고 초록과 방법을 비교한다. 실제 논문이나 DOI를 인용하지 않은 문헌 검토 절차 샘플이다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-research",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7ISg7ZaJIOyXsOq1rCDsoJXrpqwK7J6R7ISx7J28OiAyMDI2LTA5LTA0CuqwgOyDge2Vmeq1kEEg64W866y4IOyekeyEsSDsl7DsirUuIOqygOyDiSDtgqTsm4zrk5wsIO2PrO2VqCDquLDspIAsIOygnOyZuCDquLDspIDsnYQg66i87KCAIOygle2VmOqzoCDstIjroZ3qs7wg67Cp67KV7J2EIOu5hOq1kO2VnOuLpC4g7Iuk7KCcIOuFvOusuOydtOuCmCBET0nrpbwg7J247Jqp7ZWY7KeAIOyViuydgCDrrLjtl4wg6rKA7YagIOygiOywqCDsg5jtlIzsnbTri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "2d0cff28d09773a6acee35db67c591c3e1111cdd6d37b940dbe4a678ed2a69d7"
+  },
+  {
+    "id": "business-research-3",
+    "name": "실험 설계 초안.md",
+    "format": "md",
+    "excerpt": "# 실험 설계 초안\n작성일: 2026-09-05\n가상학교B 연구 설계. 가설은 주당 복습 횟수와 퀴즈 점수 사이의 양의 관계이다. 사전 점수 차이와 중도 이탈이 교란 요인이 될 수 있어 무작위 배정과 결측 처리 규칙을 기록한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-research",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDsi6Ttl5gg7ISk6rOEIOy0iOyViArsnpHshLHsnbw6IDIwMjYtMDktMDUK6rCA7IOB7ZWZ6rWQQiDsl7Dqtawg7ISk6rOELiDqsIDshKTsnYAg7KO864u5IOuzteyKtSDtmp/siJjsmYAg7YC07KaIIOygkOyImCDsgqzsnbTsnZgg7JaR7J2YIOq0gOqzhOydtOuLpC4g7IKs7KCEIOygkOyImCDssKjsnbTsmYAg7KSR64+EIOydtO2DiOydtCDqtZDrnoAg7JqU7J247J20IOuQoCDsiJgg7J6I7Ja0IOustOyekeychCDrsLDsoJXqs7wg6rKw7LihIOyymOumrCDqt5zsuZnsnYQg6riw66Gd7ZWc64ukLgrstpzsspg6IE1PQSDsm5Drs7gg7ZWp7ISxIOyDmO2UjCBidXNpbmVzcy12MS4g7Iuk7KCcIOq4sOq0gMK36rCc7J24IOyekOujjOqwgCDslYTri5nri4jri6QuCg==",
+    "sha256": "afd8f5b8477aa0a5acb35d960ac148e0b8c15f5151076bee00ce86eef97b500d"
+  },
+  {
+    "id": "business-research-4",
+    "name": "졸업 보고서 구성.txt",
+    "format": "txt",
+    "excerpt": "졸업 보고서 구성\n작성일: 2026-09-06\n가상학교B 졸업 보고서 목차는 문제 정의, 관련 연구, 방법, 실험, 한계 순서다. 학습용 예시이며 데이터의 출처와 재현 절차를 방법 절에 명시하도록 검토한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-research",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7KG47JeFIOuztOqzoOyEnCDqtazshLEK7J6R7ISx7J28OiAyMDI2LTA5LTA2CuqwgOyDge2Vmeq1kEIg7KG47JeFIOuztOqzoOyEnCDrqqnssKjripQg66y47KCcIOygleydmCwg6rSA66CoIOyXsOq1rCwg67Cp67KVLCDsi6Ttl5gsIO2VnOqzhCDsiJzshJzri6QuIO2VmeyKteyaqSDsmIjsi5zsnbTrqbAg642w7J207YSw7J2YIOy2nOyymOyZgCDsnqztmIQg7KCI7LCo66W8IOuwqeuylSDsoIjsl5Ag66qF7Iuc7ZWY64+E66GdIOqygO2GoO2VnOuLpC4K7Lac7LKYOiBNT0Eg7JuQ67O4IO2VqeyEsSDsg5jtlIwgYnVzaW5lc3MtdjEuIOyLpOygnCDquLDqtIDCt+qwnOyduCDsnpDro4zqsIAg7JWE64uZ64uI64ukLgo=",
+    "sha256": "360fc2150c1e03e2d7ea3e04edba7880f59fdf50678683f859d09fdb6ef8938d"
+  },
+  {
+    "id": "business-research-5",
+    "name": "연구실 회의 기록.md",
+    "format": "md",
+    "excerpt": "# 연구실 회의 기록\n작성일: 2026-09-07\n가상학교C 연구실 회의. 표본 크기 60개가 확보될 때까지 결론을 보류하고 이상치 제거 기준을 분석 전에 정한다. 유의한 결과만 남기는 선택적 보고를 피한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-research",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDsl7Dqtazsi6Qg7ZqM7J2YIOq4sOuhnQrsnpHshLHsnbw6IDIwMjYtMDktMDcK6rCA7IOB7ZWZ6rWQQyDsl7Dqtazsi6Qg7ZqM7J2YLiDtkZzrs7gg7YGs6riwIDYw6rCc6rCAIO2ZleuztOuQoCDrlYzquYzsp4Ag6rKw66Gg7J2EIOuztOulmO2VmOqzoCDsnbTsg4HsuZgg7KCc6rGwIOq4sOykgOydhCDrtoTshJ0g7KCE7JeQIOygle2VnOuLpC4g7Jyg7J2Y7ZWcIOqysOqzvOunjCDrgqjquLDripQg7ISg7YOd7KCBIOuztOqzoOulvCDtlLztlZzri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "a41d2649a1e94cf7146f85ca2dc8625e46efcc3118c982b8fcd144a9b295c9e5"
+  },
+  {
+    "id": "business-research-6",
+    "name": "논문 제출 점검.txt",
+    "format": "txt",
+    "excerpt": "논문 제출 점검\n작성일: 2026-09-08\n가상학교C 논문 제출 체크리스트. 표와 본문의 단위 일치, 익명화, 참고문헌 형식, 코드와 데이터의 재현 가능성을 확인한다. 현재 상태는 초안이며 심사 통과 기록이 아니다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-research",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "64W866y4IOygnOy2nCDsoJDqsoAK7J6R7ISx7J28OiAyMDI2LTA5LTA4CuqwgOyDge2Vmeq1kEMg64W866y4IOygnOy2nCDssrTtgazrpqzsiqTtirguIO2RnOyZgCDrs7jrrLjsnZgg64uo7JyEIOydvOy5mCwg7J2166qF7ZmULCDssLjqs6DrrLjtl4wg7ZiV7IudLCDsvZTrk5zsmYAg642w7J207YSw7J2YIOyerO2YhCDqsIDriqXshLHsnYQg7ZmV7J247ZWc64ukLiDtmITsnqwg7IOB7YOc64qUIOy0iOyViOydtOupsCDsi6zsgqwg7Ya16rO8IOq4sOuhneydtCDslYTri4jri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "7dee56c89f9b7b741e7b427a64db22a24ef0b19e087350df041d980c28e8bf90"
+  },
+  {
+    "id": "business-statistics-1",
+    "name": "표본 조사 설계.md",
+    "format": "md",
+    "excerpt": "# 표본 조사 설계\n작성일: 2026-09-03\n가상 설문 통계 자료. 모집단 1200명에서 학년별 층화 표본 120명을 가정한다. 응답률과 선택 편향을 함께 보고하며 응답자 비율을 모집단 전체의 확정 비율로 해석하지 않는다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-statistics",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDtkZzrs7gg7KGw7IKsIOyEpOqzhArsnpHshLHsnbw6IDIwMjYtMDktMDMK6rCA7IOBIOyEpOusuCDthrXqs4Qg7J6Q66OMLiDrqqjsp5Hri6ggMTIwMOuqheyXkOyEnCDtlZnrhYTrs4Qg7Li17ZmUIO2RnOuzuCAxMjDrqoXsnYQg6rCA7KCV7ZWc64ukLiDsnZHri7XrpaDqs7wg7ISg7YOdIO2OuO2WpeydhCDtlajqu5gg67O06rOg7ZWY66mwIOydkeuLteyekCDruYTsnKjsnYQg66qo7KeR64uoIOyghOyytOydmCDtmZXsoJUg67mE7Jyo66GcIO2VtOyEne2VmOyngCDslYrripTri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "fef0a02327af7aa389347eba87cb7edfe0ece712ec823f5f135abb960969ea94"
+  },
+  {
+    "id": "business-statistics-2",
+    "name": "기초 통계 계산.txt",
+    "format": "txt",
+    "excerpt": "기초 통계 계산\n작성일: 2026-09-04\n합성 측정값 12, 15, 18, 15, 20의 평균은 16이고 중앙값은 15이다. 표본 분산과 모집단 분산은 분모가 다르므로 수치의 정의를 함께 적는다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-statistics",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "6riw7LSIIO2GteqzhCDqs4TsgrAK7J6R7ISx7J28OiAyMDI2LTA5LTA0Cu2VqeyEsSDsuKHsoJXqsJIgMTIsIDE1LCAxOCwgMTUsIDIw7J2YIO2Pieq3oOydgCAxNuydtOqzoCDspJHslZnqsJLsnYAgMTXsnbTri6QuIO2RnOuzuCDrtoTsgrDqs7wg66qo7KeR64uoIOu2hOyCsOydgCDrtoTrqqjqsIAg64uk66W066+A66GcIOyImOy5mOydmCDsoJXsnZjrpbwg7ZWo6ruYIOyggeuKlOuLpC4K7Lac7LKYOiBNT0Eg7JuQ67O4IO2VqeyEsSDsg5jtlIwgYnVzaW5lc3MtdjEuIOyLpOygnCDquLDqtIDCt+qwnOyduCDsnpDro4zqsIAg7JWE64uZ64uI64ukLgo=",
+    "sha256": "5297577b746f4f8709d125fb09b5f6deb1b355b707f073f12937335a41a1d079"
+  },
+  {
+    "id": "business-statistics-3",
+    "name": "결측 처리 규칙.md",
+    "format": "md",
+    "excerpt": "# 결측 처리 규칙\n작성일: 2026-09-05\n모의 통계 분석에서 결측값은 0으로 바꾸지 않는다. 미응답과 실제 0을 구분하고 완전 사례 수, 제외 사유, 대체 방법을 남겨 분석 결과를 재현한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-statistics",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDqsrDsuKEg7LKY66asIOq3nOy5mQrsnpHshLHsnbw6IDIwMjYtMDktMDUK66qo7J2YIO2GteqzhCDrtoTshJ3sl5DshJwg6rKw7Lih6rCS7J2AIDDsnLzroZwg67CU6r647KeAIOyViuuKlOuLpC4g66+47J2R64u16rO8IOyLpOygnCAw7J2EIOq1rOu2hO2VmOqzoCDsmYTsoIQg7IKs66GAIOyImCwg7KCc7Jm4IOyCrOycoCwg64yA7LK0IOuwqeuyleydhCDrgqjqsqgg67aE7ISdIOqysOqzvOulvCDsnqztmITtlZzri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "7f559997b922549c707b0b7ea36cde2f167c13e1c85887568185bf3777f09e59"
+  },
+  {
+    "id": "business-statistics-4",
+    "name": "상관 해석 메모.txt",
+    "format": "txt",
+    "excerpt": "상관 해석 메모\n작성일: 2026-09-06\n합성 자료의 공부 시간과 시험 점수 상관을 살펴본다. 상관계수만으로 인과관계를 말할 수 없고 사전 지식과 수면 시간이 두 변수에 함께 영향을 줄 수 있다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-statistics",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7IOB6rSAIO2VtOyEnSDrqZTrqqgK7J6R7ISx7J28OiAyMDI2LTA5LTA2Cu2VqeyEsSDsnpDro4zsnZgg6rO167aAIOyLnOqwhOqzvCDsi5ztl5gg7KCQ7IiYIOyDgeq0gOydhCDsgrTtjrTrs7jri6QuIOyDgeq0gOqzhOyImOunjOycvOuhnCDsnbjqs7zqtIDqs4Trpbwg66eQ7ZWgIOyImCDsl4bqs6Ag7IKs7KCEIOyngOyLneqzvCDsiJjrqbQg7Iuc6rCE7J20IOuRkCDrs4DsiJjsl5Ag7ZWo6ruYIOyYge2WpeydhCDspIQg7IiYIOyeiOuLpC4K7Lac7LKYOiBNT0Eg7JuQ67O4IO2VqeyEsSDsg5jtlIwgYnVzaW5lc3MtdjEuIOyLpOygnCDquLDqtIDCt+qwnOyduCDsnpDro4zqsIAg7JWE64uZ64uI64ukLgo=",
+    "sha256": "4ff1000a9bb599289a974f38af896a0fa38b6e277eaca578ca1dca1da68f7aec"
+  },
+  {
+    "id": "business-statistics-5",
+    "name": "지표 정의서.md",
+    "format": "md",
+    "excerpt": "# 지표 정의서\n작성일: 2026-09-07\n가상 조직 통계 정의. 재구매율은 기간 내 구매자 중 과거 구매 이력이 있는 사람의 비율이다. 분모가 전체 방문자인 전환율과 혼동하지 않도록 집계 기간을 통일한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-statistics",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDsp4DtkZwg7KCV7J2Y7IScCuyekeyEseydvDogMjAyNi0wOS0wNwrqsIDsg4Eg7KGw7KeBIO2GteqzhCDsoJXsnZguIOyerOq1rOunpOycqOydgCDquLDqsIQg64K0IOq1rOunpOyekCDspJEg6rO86rGwIOq1rOunpCDsnbTroKXsnbQg7J6I64qUIOyCrOuejOydmCDruYTsnKjsnbTri6QuIOu2hOuqqOqwgCDsoITssrQg67Cp66y47J6Q7J24IOyghO2ZmOycqOqzvCDtmLzrj5ntlZjsp4Ag7JWK64+E66GdIOynkeqzhCDquLDqsITsnYQg7Ya17J287ZWc64ukLgrstpzsspg6IE1PQSDsm5Drs7gg7ZWp7ISxIOyDmO2UjCBidXNpbmVzcy12MS4g7Iuk7KCcIOq4sOq0gMK36rCc7J24IOyekOujjOqwgCDslYTri5nri4jri6QuCg==",
+    "sha256": "cf64ec2b92bf0df9137f6e11723dbc8ecc476abd79235316bf1a54bc9f6bbb54"
+  },
+  {
+    "id": "business-statistics-6",
+    "name": "조사 결과 보고.txt",
+    "format": "txt",
+    "excerpt": "조사 결과 보고\n작성일: 2026-09-08\n가상 만족도 조사 보고서. 응답 80건 중 만족 52건, 보통 20건, 불만족 8건이다. 비응답 40건은 분모에 넣지 않았으며 선택 편향 가능성을 한계로 기록한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-statistics",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7KGw7IKsIOqysOqzvCDrs7Tqs6AK7J6R7ISx7J28OiAyMDI2LTA5LTA4CuqwgOyDgSDrp4zsobHrj4Qg7KGw7IKsIOuztOqzoOyEnC4g7J2R64u1IDgw6rG0IOykkSDrp4zsobEgNTLqsbQsIOuztO2GtSAyMOqxtCwg67aI66eM7KGxIDjqsbTsnbTri6QuIOu5hOydkeuLtSA0MOqxtOydgCDrtoTrqqjsl5Ag64Sj7KeAIOyViuyVmOycvOupsCDshKDtg50g7Y647ZalIOqwgOuKpeyEseydhCDtlZzqs4TroZwg6riw66Gd7ZWc64ukLgrstpzsspg6IE1PQSDsm5Drs7gg7ZWp7ISxIOyDmO2UjCBidXNpbmVzcy12MS4g7Iuk7KCcIOq4sOq0gMK36rCc7J24IOyekOujjOqwgCDslYTri5nri4jri6QuCg==",
+    "sha256": "4a98e6c17a5677fb89058360f9816be4b1ee414e313b27c4851aa072630602a0"
+  },
+  {
+    "id": "business-visits-1",
+    "name": "주간 유입 분석.md",
+    "format": "md",
+    "excerpt": "# 주간 유입 분석\n작성일: 2026-09-03\n가상 웹서비스A 방문 분석 보고서. 검색 유입 1200회, 직접 유입 650회, 소셜 유입 420회이다. 세션은 중복 사용자를 포함하며 고유 방문자 수와 다르다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-visits",
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDso7zqsIQg7Jyg7J6FIOu2hOyEnQrsnpHshLHsnbw6IDIwMjYtMDktMDMK6rCA7IOBIOybueyEnOu5hOyKpEEg67Cp66y4IOu2hOyEnSDrs7Tqs6DshJwuIOqygOyDiSDsnKDsnoUgMTIwMO2ajCwg7KeB7KCRIOycoOyehSA2NTDtmowsIOyGjOyFnCDsnKDsnoUgNDIw7ZqM7J2064ukLiDshLjshZjsnYAg7KSR67O1IOyCrOyaqeyekOulvCDtj6ztlajtlZjrqbAg6rOg7JygIOuwqeusuOyekCDsiJjsmYAg64uk66W064ukLgrstpzsspg6IE1PQSDsm5Drs7gg7ZWp7ISxIOyDmO2UjCBidXNpbmVzcy12MS4g7Iuk7KCcIOq4sOq0gMK36rCc7J24IOyekOujjOqwgCDslYTri5nri4jri6QuCg==",
+    "sha256": "e2576d407f664b95a5e8cd953f7dc393fd4dd6e33d84413247dda2aac209c8df"
+  },
+  {
+    "id": "business-visits-2",
+    "name": "전환 퍼널 정의.txt",
+    "format": "txt",
+    "excerpt": "전환 퍼널 정의\n작성일: 2026-09-04\n가상 쇼핑몰의 방문 2400세션, 상품 조회 1500세션, 장바구니 240세션, 구매 96세션이다. 방문 대비 구매 전환율은 4퍼센트이고 단계별 이탈 원인을 구분한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-visits",
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7KCE7ZmYIO2NvOuEkCDsoJXsnZgK7J6R7ISx7J28OiAyMDI2LTA5LTA0CuqwgOyDgSDsh7ztlZHrqrDsnZgg67Cp66y4IDI0MDDshLjshZgsIOyDge2SiCDsobDtmowgMTUwMOyEuOyFmCwg7J6l67CU6rWs64uIIDI0MOyEuOyFmCwg6rWs66ekIDk27IS47IWY7J2064ukLiDrsKnrrLgg64yA67mEIOq1rOunpCDsoITtmZjsnKjsnYAgNO2NvOyEvO2KuOydtOqzoCDri6jqs4Trs4Qg7J207YOIIOybkOyduOydhCDqtazrtoTtlZzri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "d1653cc52f30d0a8fbe1ee9e3fc88601d2008f69727c69da61a2db6898ab130d"
+  },
+  {
+    "id": "business-visits-3",
+    "name": "캠페인 회고.md",
+    "format": "md",
+    "excerpt": "# 캠페인 회고\n작성일: 2026-09-05\n가상 웹서비스B 메일 캠페인의 방문 480회와 가입 36건을 집계했다. 중복 가입과 내부 직원 접속은 제외했다. 매출은 추적하지 않아 광고 수익률을 확정할 수 없다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-visits",
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDsuqDtjpjsnbgg7ZqM6rOgCuyekeyEseydvDogMjAyNi0wOS0wNQrqsIDsg4Eg7Ju57ISc67mE7IqkQiDrqZTsnbwg7Lqg7Y6Y7J247J2YIOuwqeusuCA0ODDtmozsmYAg6rCA7J6FIDM26rG07J2EIOynkeqzhO2WiOuLpC4g7KSR67O1IOqwgOyeheqzvCDrgrTrtoAg7KeB7JuQIOygkeyGjeydgCDsoJzsmbjtlojri6QuIOunpOy2nOydgCDstpTsoIHtlZjsp4Ag7JWK7JWEIOq0keqzoCDsiJjsnbXrpaDsnYQg7ZmV7KCV7ZWgIOyImCDsl4bri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "821bad6fa55ba157d95c0d449ae8e667cdf09e9e4f977bf1a73c796297b935ce"
+  },
+  {
+    "id": "business-visits-4",
+    "name": "방문수 집계 규칙.txt",
+    "format": "txt",
+    "excerpt": "방문수 집계 규칙\n작성일: 2026-09-06\n페이지뷰는 페이지 로드 횟수이고 방문수는 세션 수다. 합성 봇 트래픽 90건과 내부 접속 32건을 제외한 방문 지표를 사용한다. 실제 사용자 식별 정보는 없다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-visits",
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "67Cp66y47IiYIOynkeqzhCDqt5zsuZkK7J6R7ISx7J28OiAyMDI2LTA5LTA2Cu2OmOydtOyngOu3sOuKlCDtjpjsnbTsp4Ag66Gc65OcIO2an+yImOydtOqzoCDrsKnrrLjsiJjripQg7IS47IWYIOyImOuLpC4g7ZWp7ISxIOu0hyDtirjrnpjtlL0gOTDqsbTqs7wg64K067aAIOygkeyGjSAzMuqxtOydhCDsoJzsmbjtlZwg67Cp66y4IOyngO2RnOulvCDsgqzsmqntlZzri6QuIOyLpOygnCDsgqzsmqnsnpAg7Iud67OEIOygleuztOuKlCDsl4bri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "65869439a81af947e365b80be84cfde6831f3f5e829a4ea9e0f0b231106adf07"
+  },
+  {
+    "id": "business-visits-5",
+    "name": "유입 경로 점검.md",
+    "format": "md",
+    "excerpt": "# 유입 경로 점검\n작성일: 2026-09-07\n가상 웹서비스C 분석 태그의 누락으로 일부 추천 유입이 직접 방문으로 집계됐다. 9월 자료는 수정 전후를 구분하며 누락된 원천 데이터를 추정해 덮어쓰지 않는다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-visits",
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDsnKDsnoUg6rK966GcIOygkOqygArsnpHshLHsnbw6IDIwMjYtMDktMDcK6rCA7IOBIOybueyEnOu5hOyKpEMg67aE7ISdIO2DnOq3uOydmCDriITrnb3snLzroZwg7J2867aAIOy2lOyynCDsnKDsnoXsnbQg7KeB7KCRIOuwqeusuOycvOuhnCDsp5Hqs4TrkJDri6QuIDnsm5Qg7J6Q66OM64qUIOyImOyglSDsoITtm4Trpbwg6rWs67aE7ZWY66mwIOuIhOudveuQnCDsm5Dsspwg642w7J207YSw66W8IOy2lOygle2VtCDrja7slrTsk7Dsp4Ag7JWK64qU64ukLgrstpzsspg6IE1PQSDsm5Drs7gg7ZWp7ISxIOyDmO2UjCBidXNpbmVzcy12MS4g7Iuk7KCcIOq4sOq0gMK36rCc7J24IOyekOujjOqwgCDslYTri5nri4jri6QuCg==",
+    "sha256": "ef9b6c3c973f0d9ed0fe278f949e9e08dedd5e3e28fdb5082ccc2389d689ef64"
+  },
+  {
+    "id": "business-visits-6",
+    "name": "방문 분석 인수인계.txt",
+    "format": "txt",
+    "excerpt": "방문 분석 인수인계\n작성일: 2026-09-08\n가상 서비스 방문 대시보드 인수인계. 매주 월요일 동일 시간대에 집계하고 신규 방문과 재방문을 따로 본다. 성능 속도 측정 자료가 아니라 사용량과 전환 지표 설명이다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-visits",
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "67Cp66y4IOu2hOyEnSDsnbjsiJjsnbjqs4QK7J6R7ISx7J28OiAyMDI2LTA5LTA4CuqwgOyDgSDshJzruYTsiqQg67Cp66y4IOuMgOyLnOuztOuTnCDsnbjsiJjsnbjqs4QuIOunpOyjvCDsm5TsmpTsnbwg64+Z7J28IOyLnOqwhOuMgOyXkCDsp5Hqs4TtlZjqs6Ag7Iug6recIOuwqeusuOqzvCDsnqzrsKnrrLjsnYQg65Sw66GcIOuzuOuLpC4g7ISx64qlIOyGjeuPhCDsuKHsoJUg7J6Q66OM6rCAIOyVhOuLiOudvCDsgqzsmqnrn4nqs7wg7KCE7ZmYIOyngO2RnCDshKTrqoXsnbTri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "ee7fde20e8334abec57681ff7f40ae686aec27e0071627f52a57d99c0591150a"
+  },
+  {
+    "id": "business-study-1",
+    "name": "운영체제 복습.md",
+    "format": "md",
+    "excerpt": "# 운영체제 복습\n작성일: 2026-09-03\n개인 공부 노트. 프로세스는 독립 주소 공간을 사용하고 스레드는 같은 프로세스의 자원을 공유한다. 동기화가 필요한 공유 상태와 문맥 교환 비용을 예제로 복습한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-study",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDsmrTsmIHssrTsoJwg67O17Iq1CuyekeyEseydvDogMjAyNi0wOS0wMwrqsJzsnbgg6rO167aAIOuFuO2KuC4g7ZSE66Gc7IS47Iqk64qUIOuPheumvSDso7zshowg6rO16rCE7J2EIOyCrOyaqe2VmOqzoCDsiqTroIjrk5zripQg6rCZ7J2AIO2UhOuhnOyEuOyKpOydmCDsnpDsm5DsnYQg6rO17Jyg7ZWc64ukLiDrj5nquLDtmZTqsIAg7ZWE7JqU7ZWcIOqzteycoCDsg4Htg5zsmYAg66y466elIOq1kO2ZmCDruYTsmqnsnYQg7JiI7KCc66GcIOuzteyKte2VnOuLpC4K7Lac7LKYOiBNT0Eg7JuQ67O4IO2VqeyEsSDsg5jtlIwgYnVzaW5lc3MtdjEuIOyLpOygnCDquLDqtIDCt+qwnOyduCDsnpDro4zqsIAg7JWE64uZ64uI64ukLgo=",
+    "sha256": "17ddc878aa3457522a34d89f3dc28e319d3730aec984bced1b505e6635c9a249"
+  },
+  {
+    "id": "business-study-2",
+    "name": "자료구조 과제.txt",
+    "format": "txt",
+    "excerpt": "자료구조 과제\n작성일: 2026-09-04\n개인 학습 과제. 배열과 연결 리스트의 탐색과 삽입 비용을 비교하고 입력 크기를 고정해 설명한다. 아직 실행한 벤치마크가 아니라 계산 복잡도를 공부한 내용이다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-study",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7J6Q66OM6rWs7KGwIOqzvOygnArsnpHshLHsnbw6IDIwMjYtMDktMDQK6rCc7J24IO2VmeyKtSDqs7zsoJwuIOuwsOyXtOqzvCDsl7DqsrAg66as7Iqk7Yq47J2YIO2DkOyDieqzvCDsgr3snoUg67mE7Jqp7J2EIOu5hOq1kO2VmOqzoCDsnoXroKUg7YGs6riw66W8IOqzoOygle2VtCDshKTrqoXtlZzri6QuIOyVhOyngSDsi6TtlontlZwg67Kk7LmY66eI7YGs6rCAIOyVhOuLiOudvCDqs4TsgrAg67O17J6h64+E66W8IOqzteu2gO2VnCDrgrTsmqnsnbTri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "fc9fb524277647546a430d77cb7ada55f20e195e80dfb0edf41d888bccec511c"
+  },
+  {
+    "id": "business-study-3",
+    "name": "영어 학습 기록.md",
+    "format": "md",
+    "excerpt": "# 영어 학습 기록\n작성일: 2026-09-05\n가상 개인 학습 기록. 월요일 읽기 40분, 수요일 듣기 35분, 금요일 쓰기 45분을 수행했다. 주간 합계 120분이며 다음 복습은 어려웠던 표현을 중심으로 계획한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-study",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDsmIHslrQg7ZWZ7Iq1IOq4sOuhnQrsnpHshLHsnbw6IDIwMjYtMDktMDUK6rCA7IOBIOqwnOyduCDtlZnsirUg6riw66GdLiDsm5TsmpTsnbwg7J296riwIDQw67aELCDsiJjsmpTsnbwg65Oj6riwIDM167aELCDquIjsmpTsnbwg7JOw6riwIDQ167aE7J2EIOyImO2Wie2WiOuLpC4g7KO86rCEIO2VqeqzhCAxMjDrtoTsnbTrqbAg64uk7J2MIOuzteyKteydgCDslrTroKTsm6DrjZgg7ZGc7ZiE7J2EIOykkeyLrOycvOuhnCDqs4Ttmo3tlZzri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "37fbea6cd14400140a82336e385b7cb51d2102bb428f488f670c752a1e8fb2d1"
+  },
+  {
+    "id": "business-study-4",
+    "name": "확률 강의 필기.txt",
+    "format": "txt",
+    "excerpt": "확률 강의 필기\n작성일: 2026-09-06\n개인 확률 공부. 조건부 확률과 독립 사건을 구분한다. 주사위 두 번의 결과는 독립이지만 비복원 추출은 앞선 선택이 뒤의 확률에 영향을 준다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-study",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7ZmV66WgIOqwleydmCDtlYTquLAK7J6R7ISx7J28OiAyMDI2LTA5LTA2CuqwnOyduCDtmZXrpaAg6rO167aALiDsobDqsbTrtoAg7ZmV66Wg6rO8IOuPheumvSDsgqzqsbTsnYQg6rWs67aE7ZWc64ukLiDso7zsgqzsnIQg65GQIOuyiOydmCDqsrDqs7zripQg64+F66a97J207KeA66eMIOu5hOuzteybkCDstpTstpzsnYAg7JWe7ISgIOyEoO2DneydtCDrkqTsnZgg7ZmV66Wg7JeQIOyYge2WpeydhCDspIDri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "1d22dff074b9965ae3b8b779b00a6c01b4d9a36b647be479a35d5cf645b70281"
+  },
+  {
+    "id": "business-study-5",
+    "name": "자격시험 오답.md",
+    "format": "md",
+    "excerpt": "# 자격시험 오답\n작성일: 2026-09-07\n가상 자격시험 학습 오답 노트. 네트워크 서브넷 계산 4문제 중 2문제를 틀렸다. 공식 암기보다 주소 범위와 호스트 수를 직접 계산하는 연습이 필요하다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-study",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDsnpDqsqnsi5ztl5gg7Jik64u1CuyekeyEseydvDogMjAyNi0wOS0wNwrqsIDsg4Eg7J6Q6rKp7Iuc7ZeYIO2VmeyKtSDsmKTri7Ug64W47Yq4LiDrhKTtirjsm4ztgawg7ISc67iM64S3IOqzhOyCsCA066y47KCcIOykkSAy66y47KCc66W8IO2LgOuguOuLpC4g6rO17IudIOyVlOq4sOuztOuLpCDso7zshowg67KU7JyE7JmAIO2YuOyKpO2KuCDsiJjrpbwg7KeB7KCRIOqzhOyCsO2VmOuKlCDsl7DsirXsnbQg7ZWE7JqU7ZWY64ukLgrstpzsspg6IE1PQSDsm5Drs7gg7ZWp7ISxIOyDmO2UjCBidXNpbmVzcy12MS4g7Iuk7KCcIOq4sOq0gMK36rCc7J24IOyekOujjOqwgCDslYTri5nri4jri6QuCg==",
+    "sha256": "8bb2876b7794cfff8828b0a507cc12445c7453c352d32e7cffaf1f22509969ef"
+  },
+  {
+    "id": "business-study-6",
+    "name": "학습 계획 조정.txt",
+    "format": "txt",
+    "excerpt": "학습 계획 조정\n작성일: 2026-09-08\n개인 공부 계획. 주당 학습 목표 8시간 중 실제 6.5시간을 수행했다. 놓친 강의를 모두 다음 날로 미루기보다 핵심 복습과 과제를 먼저 배치한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-study",
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7ZWZ7Iq1IOqzhO2ajSDsobDsoJUK7J6R7ISx7J28OiAyMDI2LTA5LTA4CuqwnOyduCDqs7XrtoAg6rOE7ZqNLiDso7zri7kg7ZWZ7Iq1IOuqqe2RnCA47Iuc6rCEIOykkSDsi6TsoJwgNi417Iuc6rCE7J2EIOyImO2Wie2WiOuLpC4g64aT7LmcIOqwleydmOulvCDrqqjrkZAg64uk7J2MIOuCoOuhnCDrr7jro6jquLDrs7Tri6Qg7ZW17IusIOuzteyKteqzvCDqs7zsoJzrpbwg66i87KCAIOuwsOy5mO2VnOuLpC4K7Lac7LKYOiBNT0Eg7JuQ67O4IO2VqeyEsSDsg5jtlIwgYnVzaW5lc3MtdjEuIOyLpOygnCDquLDqtIDCt+qwnOyduCDsnpDro4zqsIAg7JWE64uZ64uI64ukLgo=",
+    "sha256": "95b174540f783086d3d8e4b1c73fef73b7e1df11521c91bed4eeee56c8007169"
+  },
+  {
+    "id": "business-developer-1",
+    "name": "라우팅 메모.md",
+    "format": "md",
+    "excerpt": "# 라우팅 메모\n작성일: 2026-09-03\n가상 개발 프로젝트A 웹사이트 문서. 화면 URL과 상태의 관계를 정의하고 새로고침으로 파일 변경 작업이 다시 실행되지 않게 읽기와 쓰기 동작을 분리한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-webdocs",
+    "proposal": {
+      "folderId": "engineering",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDrnbzsmrDtjIUg66mU66qoCuyekeyEseydvDogMjAyNi0wOS0wMwrqsIDsg4Eg6rCc67CcIO2UhOuhnOygne2KuEEg7Ju57IKs7J207Yq4IOusuOyEnC4g7ZmU66m0IFVSTOqzvCDsg4Htg5zsnZgg6rSA6rOE66W8IOygleydmO2VmOqzoCDsg4jroZzqs6DsuajsnLzroZwg7YyM7J28IOuzgOqyvSDsnpHsl4XsnbQg64uk7IucIOyLpO2WieuQmOyngCDslYrqsowg7J296riw7JmAIOyTsOq4sCDrj5nsnpHsnYQg67aE66as7ZWc64ukLgrstpzsspg6IE1PQSDsm5Drs7gg7ZWp7ISxIOyDmO2UjCBidXNpbmVzcy12MS4g7Iuk7KCcIOq4sOq0gMK36rCc7J24IOyekOujjOqwgCDslYTri5nri4jri6QuCg==",
+    "sha256": "79c28052f459e79386ae329e050490c621224f617ae29f502395b73bbdb91e65"
+  },
+  {
+    "id": "business-developer-2",
+    "name": "접근성 점검표.txt",
+    "format": "txt",
+    "excerpt": "접근성 점검표\n작성일: 2026-09-04\n개발자 웹사이트 학습 문서. 버튼에는 이름을 제공하고 키보드 초점과 오류 안내를 연결한다. 애니메이션은 reduced motion 설정을 따르며 색상만으로 상태를 구분하지 않는다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-webdocs",
+    "proposal": {
+      "folderId": "engineering",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7KCR6re87ISxIOygkOqygO2RnArsnpHshLHsnbw6IDIwMjYtMDktMDQK6rCc67Cc7J6QIOybueyCrOydtO2KuCDtlZnsirUg66y47IScLiDrsoTtirzsl5DripQg7J2066aE7J2EIOygnOqzte2VmOqzoCDtgqTrs7Trk5wg7LSI7KCQ6rO8IOyYpOulmCDslYjrgrTrpbwg7Jew6rKw7ZWc64ukLiDslaDri4jrqZTsnbTshZjsnYAgcmVkdWNlZCBtb3Rpb24g7ISk7KCV7J2EIOuUsOultOupsCDsg4nsg4Hrp4zsnLzroZwg7IOB7YOc66W8IOq1rOu2hO2VmOyngCDslYrripTri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "b88b74417ab909a79ed9a3f78d776a293b659bdfbd49398f9275e0503a03e271"
+  },
+  {
+    "id": "business-developer-3",
+    "name": "폼 처리 규약.md",
+    "format": "md",
+    "excerpt": "# 폼 처리 규약\n작성일: 2026-09-05\n가상 개발 프로젝트B 입력 폼 설계. 한국어 조합 중 Enter는 전송하지 않고 Shift Enter는 줄바꿈으로 처리한다. 중복 제출과 늦은 응답이 상태를 덮어쓰는 경우를 검사한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-webdocs",
+    "proposal": {
+      "folderId": "engineering",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDtj7wg7LKY66asIOq3nOyVvQrsnpHshLHsnbw6IDIwMjYtMDktMDUK6rCA7IOBIOqwnOuwnCDtlITroZzsoJ3tirhCIOyeheugpSDtj7wg7ISk6rOELiDtlZzqta3slrQg7KGw7ZWpIOykkSBFbnRlcuuKlCDsoITshqHtlZjsp4Ag7JWK6rOgIFNoaWZ0IEVudGVy64qUIOykhOuwlOq/iOycvOuhnCDsspjrpqztlZzri6QuIOykkeuztSDsoJzstpzqs7wg64qm7J2AIOydkeuLteydtCDsg4Htg5zrpbwg642u7Ja07JOw64qUIOqyveyasOulvCDqsoDsgqztlZzri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "b4c8d24f7b7671d3175fb19437379753b105ebfd18c3b17615f2fdd394f8d463"
+  },
+  {
+    "id": "business-developer-4",
+    "name": "API 응답 설명.txt",
+    "format": "txt",
+    "excerpt": "API 응답 설명\n작성일: 2026-09-06\n가상 개발 프로젝트B API 문서. 목록 조회는 읽기 전용이며 변경 요청에는 사용자 범위와 멱등 키가 필요하다. 비밀키는 브라우저 번들로 보내지 않는다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-webdocs",
+    "proposal": {
+      "folderId": "engineering",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "QVBJIOydkeuLtSDshKTrqoUK7J6R7ISx7J28OiAyMDI2LTA5LTA2CuqwgOyDgSDqsJzrsJwg7ZSE66Gc7KCd7Yq4QiBBUEkg66y47IScLiDrqqnroZ0g7KGw7ZqM64qUIOydveq4sCDsoITsmqnsnbTrqbAg67OA6rK9IOyalOyyreyXkOuKlCDsgqzsmqnsnpAg67KU7JyE7JmAIOupseuTsSDtgqTqsIAg7ZWE7JqU7ZWY64ukLiDruYTrsIDtgqTripQg67iM65287Jqw7KCAIOuyiOuTpOuhnCDrs7TrgrTsp4Ag7JWK64qU64ukLgrstpzsspg6IE1PQSDsm5Drs7gg7ZWp7ISxIOyDmO2UjCBidXNpbmVzcy12MS4g7Iuk7KCcIOq4sOq0gMK36rCc7J24IOyekOujjOqwgCDslYTri5nri4jri6QuCg==",
+    "sha256": "677aaff1950513d45b162fffc63bc8edf728a2d9e7f31f882fecd0b5de0b602b"
+  },
+  {
+    "id": "business-developer-5",
+    "name": "성능 지표 공부.md",
+    "format": "md",
+    "excerpt": "# 성능 지표 공부\n작성일: 2026-09-07\n개발자 학습 노트. LCP는 주요 콘텐츠 표시, INP는 상호작용 응답, CLS는 레이아웃 이동 지표다. 정의만 공부했으며 실제 사이트 성능 테스트나 측정 결과는 없다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-webdocs",
+    "proposal": {
+      "folderId": "engineering",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDshLHriqUg7KeA7ZGcIOqzteu2gArsnpHshLHsnbw6IDIwMjYtMDktMDcK6rCc67Cc7J6QIO2VmeyKtSDrhbjtirguIExDUOuKlCDso7zsmpQg7L2Y7YWQ7LigIO2RnOyLnCwgSU5Q64qUIOyDge2YuOyekeyaqSDsnZHri7UsIENMU+uKlCDroIjsnbTslYTsm4Mg7J2064+ZIOyngO2RnOuLpC4g7KCV7J2Y66eMIOqzteu2gO2WiOycvOupsCDsi6TsoJwg7IKs7J207Yq4IOyEseuKpSDthYzsiqTtirjrgpgg7Lih7KCVIOqysOqzvOuKlCDsl4bri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "4dcac6d11ff1879e999e8b658aa3774efab2506ffe4807fa7c999e23145b23db"
+  },
+  {
+    "id": "business-developer-6",
+    "name": "컴포넌트 계약.txt",
+    "format": "txt",
+    "excerpt": "컴포넌트 계약\n작성일: 2026-09-08\n가상 개발 프로젝트C 화면 컴포넌트 문서. 공통 사이드바는 메뉴와 표시를 맡고 파일 핸들과 서버 요청은 별도 연결부가 맡는다. 실제 반복 책임이 있을 때 재사용한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-webdocs",
+    "proposal": {
+      "folderId": "engineering",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7Lu07Y+s64SM7Yq4IOqzhOyVvQrsnpHshLHsnbw6IDIwMjYtMDktMDgK6rCA7IOBIOqwnOuwnCDtlITroZzsoJ3tirhDIO2ZlOuptCDsu7Ttj6zrhIztirgg66y47IScLiDqs7XthrUg7IKs7J2065Oc67CU64qUIOuplOuJtOyZgCDtkZzsi5zrpbwg66eh6rOgIO2MjOydvCDtlbjrk6Tqs7wg7ISc67KEIOyalOyyreydgCDrs4Trj4Qg7Jew6rKw67aA6rCAIOunoeuKlOuLpC4g7Iuk7KCcIOuwmOuztSDssYXsnoTsnbQg7J6I7J2EIOuVjCDsnqzsgqzsmqntlZzri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "d489415dc7e572b2e19510c962c40c210a16f9fa6063e24f497f154b95871035"
+  },
+  {
+    "id": "business-operations-1",
+    "name": "입사 안내.md",
+    "format": "md",
+    "excerpt": "# 입사 안내\n작성일: 2026-09-03\n가상기업A 신규 입사 교육 자료. 장비 신청, 권한 확인, 보안 교육, 팀 소개 순서로 진행한다. 계정 비밀번호와 실제 직원 정보는 포함하지 않는다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-company",
+    "proposal": {
+      "folderId": "meeting",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDsnoXsgqwg7JWI64K0CuyekeyEseydvDogMjAyNi0wOS0wMwrqsIDsg4HquLDsl4VBIOyLoOq3nCDsnoXsgqwg6rWQ7JyhIOyekOujjC4g7J6l67mEIOyLoOyyrSwg6raM7ZWcIO2ZleyduCwg67O07JWIIOq1kOycoSwg7YyAIOyGjOqwnCDsiJzshJzroZwg7KeE7ZaJ7ZWc64ukLiDqs4TsoJUg67mE67CA67KI7Zi47JmAIOyLpOygnCDsp4Hsm5Ag7KCV67O064qUIO2PrO2VqO2VmOyngCDslYrripTri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "c4f1443bfcce7b0b9a511f87496cb0dc0a8602f478916b7d7376a68c25f1adbf"
+  },
+  {
+    "id": "business-operations-2",
+    "name": "고객 지원 집계.txt",
+    "format": "txt",
+    "excerpt": "고객 지원 집계\n작성일: 2026-09-04\n가상기업B 고객 상담 통계. 문의 180건 중 배송 72건, 결제 54건, 계정 36건, 기타 18건이다. 해결 건수와 접수 건수는 기준 시점을 맞춰 비교한다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-company",
+    "proposal": {
+      "folderId": "meeting",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "6rOg6rCdIOyngOybkCDsp5Hqs4QK7J6R7ISx7J28OiAyMDI2LTA5LTA0CuqwgOyDgeq4sOyXhUIg6rOg6rCdIOyDgeuLtCDthrXqs4QuIOusuOydmCAxODDqsbQg7KSRIOuwsOyGoSA3MuqxtCwg6rKw7KCcIDU06rG0LCDqs4TsoJUgMzbqsbQsIOq4sO2DgCAxOOqxtOydtOuLpC4g7ZW06rKwIOqxtOyImOyZgCDsoJHsiJgg6rG07IiY64qUIOq4sOykgCDsi5zsoJDsnYQg66ee7LawIOu5hOq1kO2VnOuLpC4K7Lac7LKYOiBNT0Eg7JuQ67O4IO2VqeyEsSDsg5jtlIwgYnVzaW5lc3MtdjEuIOyLpOygnCDquLDqtIDCt+qwnOyduCDsnpDro4zqsIAg7JWE64uZ64uI64ukLgo=",
+    "sha256": "481991f1200e67b0fbaf60f06fb89cf17fc9cb1d34818cdd3b5abcff308871a5"
+  },
+  {
+    "id": "business-operations-3",
+    "name": "공급 일정.md",
+    "format": "md",
+    "excerpt": "# 공급 일정\n작성일: 2026-09-05\n가상기업C 구매 계획. 포장재 300개는 9월 둘째 주, 라벨 500개는 셋째 주에 입고할 예정이다. 예정 수량이므로 실제 재고와 혼합하지 않는다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-company",
+    "proposal": {
+      "folderId": "meeting",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDqs7XquIkg7J287KCVCuyekeyEseydvDogMjAyNi0wOS0wNQrqsIDsg4HquLDsl4VDIOq1rOunpCDqs4Ttmo0uIO2PrOyepeyerCAzMDDqsJzripQgOeyblCDrkZjsp7gg7KO8LCDrnbzrsqggNTAw6rCc64qUIOyFi+ynuCDso7zsl5Ag7J6F6rOg7ZWgIOyYiOygleydtOuLpC4g7JiI7KCVIOyImOufieydtOuvgOuhnCDsi6TsoJwg7J6s6rOg7JmAIO2YvO2Vqe2VmOyngCDslYrripTri6QuCuy2nOyymDogTU9BIOybkOuzuCDtlanshLEg7IOY7ZSMIGJ1c2luZXNzLXYxLiDsi6TsoJwg6riw6rSAwrfqsJzsnbgg7J6Q66OM6rCAIOyVhOuLmeuLiOuLpC4K",
+    "sha256": "4f2d96aea7d9985c392df4fd28c912f4a014b2a4073f66bcebb2a5b32902dd44"
+  },
+  {
+    "id": "business-operations-4",
+    "name": "학교 행사 운영.txt",
+    "format": "txt",
+    "excerpt": "학교 행사 운영\n작성일: 2026-09-06\n가상학교A 행사 운영 보고서. 신청 160명 중 참석 132명이며 설문 응답은 90명이다. 신청 대비 참석률과 참석 대비 설문 응답률은 서로 다른 지표다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-company",
+    "proposal": {
+      "folderId": "meeting",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7ZWZ6rWQIO2WieyCrCDsmrTsmIEK7J6R7ISx7J28OiAyMDI2LTA5LTA2CuqwgOyDge2Vmeq1kEEg7ZaJ7IKsIOyatOyYgSDrs7Tqs6DshJwuIOyLoOyyrSAxNjDrqoUg7KSRIOywuOyEnSAxMzLrqoXsnbTrqbAg7ISk66y4IOydkeuLteydgCA5MOuqheydtOuLpC4g7Iug7LKtIOuMgOu5hCDssLjshJ3rpaDqs7wg7LC47ISdIOuMgOu5hCDshKTrrLgg7J2R64u166Wg7J2AIOyEnOuhnCDri6Trpbgg7KeA7ZGc64ukLgrstpzsspg6IE1PQSDsm5Drs7gg7ZWp7ISxIOyDmO2UjCBidXNpbmVzcy12MS4g7Iuk7KCcIOq4sOq0gMK36rCc7J24IOyekOujjOqwgCDslYTri5nri4jri6QuCg==",
+    "sha256": "9fc38623ceaf057f8bb5ef3ff12c90a0dc3fec0e5d3af98d639eaaa7d7cd254f"
+  },
+  {
+    "id": "business-operations-5",
+    "name": "팀 업무 인계.md",
+    "format": "md",
+    "excerpt": "# 팀 업무 인계\n작성일: 2026-09-07\n가상 조직 주간 인수인계. 완료한 일, 진행 중인 일, 의사결정이 필요한 일을 나눈다. 담당자 실명과 외부 문서 링크 없이 업무 유형만 보여 주는 합성 자료다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-company",
+    "proposal": {
+      "folderId": "meeting",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "IyDtjIAg7JeF66y0IOyduOqzhArsnpHshLHsnbw6IDIwMjYtMDktMDcK6rCA7IOBIOyhsOyngSDso7zqsIQg7J247IiY7J246rOELiDsmYTro4ztlZwg7J28LCDsp4Ttlokg7KSR7J24IOydvCwg7J2Y7IKs6rKw7KCV7J20IO2VhOyalO2VnCDsnbzsnYQg64KY64iI64ukLiDri7Tri7nsnpAg7Iuk66qF6rO8IOyZuOu2gCDrrLjshJwg66eB7YGsIOyXhuydtCDsl4XrrLQg7Jyg7ZiV66eMIOuztOyXrCDso7zripQg7ZWp7ISxIOyekOujjOuLpC4K7Lac7LKYOiBNT0Eg7JuQ67O4IO2VqeyEsSDsg5jtlIwgYnVzaW5lc3MtdjEuIOyLpOygnCDquLDqtIDCt+qwnOyduCDsnpDro4zqsIAg7JWE64uZ64uI64ukLgo=",
+    "sha256": "3878afccca20c3bf4dfa712f621deeaf9e2c37206a659bfa1f77382a30b19b77"
+  },
+  {
+    "id": "business-operations-6",
+    "name": "회의와 결정.txt",
+    "format": "txt",
+    "excerpt": "회의와 결정\n작성일: 2026-09-08\n가상기업D 업무 회의록. 월별 매출 보고서와 방문 분석의 담당 부서를 정했다. 이 문서는 보고서 본문이 아니라 작성 책임과 일정을 정한 회의 기록이다.\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.",
+    "sourceFolderId": "source-company",
+    "proposal": {
+      "folderId": "meeting",
+      "reason": "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.",
+      "reviewRequired": false
+    },
+    "assetBase64": "7ZqM7J2Y7JmAIOqysOyglQrsnpHshLHsnbw6IDIwMjYtMDktMDgK6rCA7IOB6riw7JeFRCDsl4XrrLQg7ZqM7J2Y66GdLiDsm5Trs4Qg66ek7LacIOuztOqzoOyEnOyZgCDrsKnrrLgg67aE7ISd7J2YIOuLtOuLuSDrtoDshJzrpbwg7KCV7ZaI64ukLiDsnbQg66y47ISc64qUIOuztOqzoOyEnCDrs7jrrLjsnbQg7JWE64uI6528IOyekeyEsSDssYXsnoTqs7wg7J287KCV7J2EIOygle2VnCDtmozsnZgg6riw66Gd7J2064ukLgrstpzsspg6IE1PQSDsm5Drs7gg7ZWp7ISxIOyDmO2UjCBidXNpbmVzcy12MS4g7Iuk7KCcIOq4sOq0gMK36rCc7J24IOyekOujjOqwgCDslYTri5nri4jri6QuCg==",
+    "sha256": "5dd9205d61faac389d358b4691a6d2dcfa3325f75ecda69a50afd4d79feb0e94"
+  },
+  {
+    "id": "business-xlsx-sales",
+    "name": "채널별 매출.xlsx",
+    "format": "xlsx",
+    "excerpt": "채널별 매출\n기준월: 2026년 9월. MOA 원본 합성 수치 자료.\n채널 | 매출(만원) | 원가(만원) | 이익(만원)\n온라인 | 8400 | 5100 | 3300\n오프라인 | 6100 | 3900 | 2200\n도매 | 4200 | 3100 | 1100\n합계 | 18700 | 12100 | 6600\nD열은 B열에서 C열을 뺀 값이며 합계는 원자료를 합산한 뒤 계산한다.",
+    "sourceFolderId": "source-company",
+    "sheet": {
+      "name": "요약",
+      "rows": [
+        [
+          "채널",
+          "매출(만원)",
+          "원가(만원)",
+          "이익(만원)"
+        ],
+        [
+          "온라인",
+          8400,
+          5100,
+          3300
+        ],
+        [
+          "오프라인",
+          6100,
+          3900,
+          2200
+        ],
+        [
+          "도매",
+          4200,
+          3100,
+          1100
+        ],
+        [
+          "합계",
+          18700,
+          12100,
+          6600
+        ]
+      ]
+    },
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 수치 자료 제안입니다. 내용과 단위를 확인하세요.",
+      "reviewRequired": false
+    },
+    "assetBase64": "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",
+    "sha256": "d9f97604232ad95ce0cf27b87670b3deb4710d4cf25a6e2aeae32cb4cc957f54"
+  },
+  {
+    "id": "business-xlsx-visits",
+    "name": "방문과 구매.xlsx",
+    "format": "xlsx",
+    "excerpt": "방문과 구매\n기준월: 2026년 9월. MOA 원본 합성 수치 자료.\n유입 | 방문(세션) | 구매(건) | 전환율\n검색 | 1200 | 60 | 0.05\n직접 | 650 | 39 | 0.06\n소셜 | 420 | 21 | 0.05\n합계 | 2270 | 120 | 0.05286343612334802\nD열은 C열을 B열로 나눈 비율이며 합계는 원자료를 합산한 뒤 계산한다.",
+    "sourceFolderId": "source-visits",
+    "sheet": {
+      "name": "요약",
+      "rows": [
+        [
+          "유입",
+          "방문(세션)",
+          "구매(건)",
+          "전환율"
+        ],
+        [
+          "검색",
+          1200,
+          60,
+          0.05
+        ],
+        [
+          "직접",
+          650,
+          39,
+          0.06
+        ],
+        [
+          "소셜",
+          420,
+          21,
+          0.05
+        ],
+        [
+          "합계",
+          2270,
+          120,
+          0.05286343612334802
+        ]
+      ]
+    },
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 수치 자료 제안입니다. 내용과 단위를 확인하세요.",
+      "reviewRequired": false
+    },
+    "assetBase64": "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",
+    "sha256": "88110bd59180ac3ff9dacd7b0b07b90fb301d375a3a65d4c34ef4e85cc97792d"
+  },
+  {
+    "id": "business-xlsx-statistics",
+    "name": "학년별 설문.xlsx",
+    "format": "xlsx",
+    "excerpt": "학년별 설문\n기준월: 2026년 9월. MOA 원본 합성 수치 자료.\n학년 | 응답(명) | 만족(명) | 만족 비율\n1학년 | 30 | 21 | 0.7\n2학년 | 28 | 18 | 0.6428571428571429\n3학년 | 22 | 13 | 0.5909090909090909\n합계 | 80 | 52 | 0.65\nD열은 C열을 B열로 나눈 비율이며 합계는 원자료를 합산한 뒤 계산한다.",
+    "sourceFolderId": "source-statistics",
+    "sheet": {
+      "name": "요약",
+      "rows": [
+        [
+          "학년",
+          "응답(명)",
+          "만족(명)",
+          "만족 비율"
+        ],
+        [
+          "1학년",
+          30,
+          21,
+          0.7
+        ],
+        [
+          "2학년",
+          28,
+          18,
+          0.6428571428571429
+        ],
+        [
+          "3학년",
+          22,
+          13,
+          0.5909090909090909
+        ],
+        [
+          "합계",
+          80,
+          52,
+          0.65
+        ]
+      ]
+    },
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 수치 자료 제안입니다. 내용과 단위를 확인하세요.",
+      "reviewRequired": false
+    },
+    "assetBase64": "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",
+    "sha256": "2d5e5549c6bdac5d4c2fccbf6e197858eb280189657d79b2e98142fdcdab25b9"
+  },
+  {
+    "id": "business-xlsx-study",
+    "name": "과목별 공부 시간.xlsx",
+    "format": "xlsx",
+    "excerpt": "과목별 공부 시간\n기준월: 2026년 9월. MOA 원본 합성 수치 자료.\n과목 | 목표(시간) | 실제(시간) | 부족(시간)\n운영체제 | 3 | 2.5 | 0.5\n영어 | 2 | 2 | 0\n확률 | 3 | 2 | 1\n합계 | 8 | 6.5 | 1.5\nD열은 B열에서 C열을 뺀 값이며 합계는 원자료를 합산한 뒤 계산한다.",
+    "sourceFolderId": "source-study",
+    "sheet": {
+      "name": "요약",
+      "rows": [
+        [
+          "과목",
+          "목표(시간)",
+          "실제(시간)",
+          "부족(시간)"
+        ],
+        [
+          "운영체제",
+          3,
+          2.5,
+          0.5
+        ],
+        [
+          "영어",
+          2,
+          2,
+          0
+        ],
+        [
+          "확률",
+          3,
+          2,
+          1
+        ],
+        [
+          "합계",
+          8,
+          6.5,
+          1.5
+        ]
+      ]
+    },
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 수치 자료 제안입니다. 내용과 단위를 확인하세요.",
+      "reviewRequired": false
+    },
+    "assetBase64": "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",
+    "sha256": "43dd4a74eb224ec751dd78d5625b4202d11ad2bafb150839feeb3a9aedb82ad4"
+  },
+  {
+    "id": "business-xlsx-research",
+    "name": "연구 진행 현황.xlsx",
+    "format": "xlsx",
+    "excerpt": "연구 진행 현황\n기준월: 2026년 9월. MOA 원본 합성 수치 자료.\n단계 | 계획(건) | 완료(건) | 진행률\n문헌검토 | 12 | 9 | 0.75\n모의실험 | 6 | 4 | 0.6666666666666666\n표검토 | 8 | 3 | 0.375\n합계 | 26 | 16 | 0.6153846153846154\nD열은 C열을 B열로 나눈 비율이며 합계는 원자료를 합산한 뒤 계산한다.",
+    "sourceFolderId": "source-research",
+    "sheet": {
+      "name": "요약",
+      "rows": [
+        [
+          "단계",
+          "계획(건)",
+          "완료(건)",
+          "진행률"
+        ],
+        [
+          "문헌검토",
+          12,
+          9,
+          0.75
+        ],
+        [
+          "모의실험",
+          6,
+          4,
+          0.6666666666666666
+        ],
+        [
+          "표검토",
+          8,
+          3,
+          0.375
+        ],
+        [
+          "합계",
+          26,
+          16,
+          0.6153846153846154
+        ]
+      ]
+    },
+    "proposal": {
+      "folderId": "learning",
+      "reason": "준비된 수치 자료 제안입니다. 내용과 단위를 확인하세요.",
+      "reviewRequired": false
+    },
+    "assetBase64": "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",
+    "sha256": "844eec31b07fa93d1c78fa840fc58d3a7a9ec64816edde738cd19a33625ef8d2"
+  },
+  {
+    "id": "business-xlsx-operations",
+    "name": "문의 처리 통계.xlsx",
+    "format": "xlsx",
+    "excerpt": "문의 처리 통계\n기준월: 2026년 9월. MOA 원본 합성 수치 자료.\n유형 | 접수(건) | 해결(건) | 해결률\n배송 | 72 | 60 | 0.8333333333333334\n결제 | 54 | 48 | 0.8888888888888888\n계정 | 36 | 30 | 0.8333333333333334\n합계 | 162 | 138 | 0.8518518518518519\nD열은 C열을 B열로 나눈 비율이며 합계는 원자료를 합산한 뒤 계산한다.",
+    "sourceFolderId": "source-company",
+    "sheet": {
+      "name": "요약",
+      "rows": [
+        [
+          "유형",
+          "접수(건)",
+          "해결(건)",
+          "해결률"
+        ],
+        [
+          "배송",
+          72,
+          60,
+          0.8333333333333334
+        ],
+        [
+          "결제",
+          54,
+          48,
+          0.8888888888888888
+        ],
+        [
+          "계정",
+          36,
+          30,
+          0.8333333333333334
+        ],
+        [
+          "합계",
+          162,
+          138,
+          0.8518518518518519
+        ]
+      ]
+    },
+    "proposal": {
+      "folderId": "meeting",
+      "reason": "준비된 수치 자료 제안입니다. 내용과 단위를 확인하세요.",
+      "reviewRequired": false
+    },
+    "assetBase64": "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",
+    "sha256": "45dc11b29d6b27b705d30549de678a4c569ea2df2926b0c6edbccb15fa37d01d"
+  },
+  {
+    "id": "business-xlsx-budget",
+    "name": "부서별 예산.xlsx",
+    "format": "xlsx",
+    "excerpt": "부서별 예산\n기준월: 2026년 9월. MOA 원본 합성 수치 자료.\n부서 | 예산(만원) | 집행(만원) | 잔액(만원)\n교육 | 450 | 320 | 130\n개발 | 1200 | 960 | 240\n운영 | 800 | 700 | 100\n합계 | 2450 | 1980 | 470\nD열은 B열에서 C열을 뺀 값이며 합계는 원자료를 합산한 뒤 계산한다.",
+    "sourceFolderId": "source-company",
+    "sheet": {
+      "name": "요약",
+      "rows": [
+        [
+          "부서",
+          "예산(만원)",
+          "집행(만원)",
+          "잔액(만원)"
+        ],
+        [
+          "교육",
+          450,
+          320,
+          130
+        ],
+        [
+          "개발",
+          1200,
+          960,
+          240
+        ],
+        [
+          "운영",
+          800,
+          700,
+          100
+        ],
+        [
+          "합계",
+          2450,
+          1980,
+          470
+        ]
+      ]
+    },
+    "proposal": {
+      "folderId": "finance",
+      "reason": "준비된 수치 자료 제안입니다. 내용과 단위를 확인하세요.",
+      "reviewRequired": false
+    },
+    "assetBase64": "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",
+    "sha256": "8ceb51fcf24117de957bcb6f7c2e08d107ab17a18375bdfb5672cb3e04d84763"
+  },
+  {
+    "id": "business-xlsx-service",
+    "name": "웹서비스 오류 집계.xlsx",
+    "format": "xlsx",
+    "excerpt": "웹서비스 오류 집계\n기준월: 2026년 9월. MOA 원본 합성 수치 자료.\n구간 | 요청(건) | 오류(건) | 오류율\n로그인 | 2400 | 12 | 0.005\n목록 | 3800 | 19 | 0.005\n검색 | 1600 | 16 | 0.01\n합계 | 7800 | 47 | 0.006025641025641026\nD열은 C열을 B열로 나눈 비율이며 합계는 원자료를 합산한 뒤 계산한다. 요청 건수와 오류 비율 통계이며 사이트 속도 측정이나 성능 테스트 결과가 아니다.",
+    "sourceFolderId": "source-webdocs",
+    "sheet": {
+      "name": "요약",
+      "rows": [
+        [
+          "구간",
+          "요청(건)",
+          "오류(건)",
+          "오류율"
+        ],
+        [
+          "로그인",
+          2400,
+          12,
+          0.005
+        ],
+        [
+          "목록",
+          3800,
+          19,
+          0.005
+        ],
+        [
+          "검색",
+          1600,
+          16,
+          0.01
+        ],
+        [
+          "합계",
+          7800,
+          47,
+          0.006025641025641026
+        ]
+      ]
+    },
+    "proposal": {
+      "folderId": "engineering",
+      "reason": "준비된 수치 자료 제안입니다. 내용과 단위를 확인하세요.",
+      "reviewRequired": false
+    },
+    "assetBase64": "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",
+    "sha256": "1abf920cfcf28728449c503fa1570a6c68448a56249b24ded7b3ddc1806b3db2"
+  }
+]

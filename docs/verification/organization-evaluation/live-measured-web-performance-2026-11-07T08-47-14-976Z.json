@@ -1,0 +1,161 @@
+{
+  "at": "2026-11-07T08:47:14.976Z",
+  "caseId": "measured-web-performance",
+  "split": "development",
+  "reviewStatus": "unreviewed",
+  "corpusHash": "12630ded196c6f687a2fd781a524b096f2e346289de4c1e99dc7081cd6dc6980",
+  "policyHash": "f15de31e05d5ded8d0b6209ad1259fdd0aeee81e3e496c15280cc903447a9d93",
+  "promptHash": "939283190ae5e2e648ad6e9fa9f487d77be314ad0b43d83c2bd516730c7d636d",
+  "model": "gemini-3.5-flash-lite",
+  "scopeCount": 84,
+  "candidateIds": [
+    "business-developer-5",
+    "perf-lcp",
+    "perf-bundle",
+    "learning-http",
+    "perf-inp",
+    "perf-network",
+    "perf-longtask",
+    "report-ambiguous",
+    "business-developer-2",
+    "perf-titled-only",
+    "business-xlsx-service",
+    "text-014",
+    "perf-intent-injection",
+    "business-company-5",
+    "business-research-1",
+    "business-research-2",
+    "business-statistics-1",
+    "business-statistics-5",
+    "business-visits-3",
+    "business-visits-6"
+  ],
+  "latencyMs": 5184,
+  "requests": [
+    {
+      "method": "countTokens",
+      "status": 200,
+      "latencyMs": 307,
+      "countedTokens": 2836
+    },
+    {
+      "method": "generateContent",
+      "status": 200,
+      "latencyMs": 1942,
+      "modelVersion": "gemini-3.5-flash-lite"
+    }
+  ],
+  "result": {
+    "ok": true,
+    "organization": {
+      "summary": "실제 웹사이트 성능 테스트 및 측정 결과를 포함한 문서들을 성능 테스트 폴더에 분류했습니다.",
+      "matches": [
+        {
+          "documentId": "perf-lcp",
+          "destination": [
+            "성능 테스트"
+          ],
+          "evidence": "2026-10-03 웹사이트 성능 테스트를 실행했다. Lighthouse로 LCP 2.8초, CLS 0.02를 측정했다.",
+          "date": null
+        },
+        {
+          "documentId": "perf-bundle",
+          "destination": [
+            "성능 테스트"
+          ],
+          "evidence": "번들 분석으로 홈페이지 초기 JS를 240KiB 줄였다. 웹사이트 로딩 성능 테스트의 전후 LCP와 전송량을 동일 조건으로 비교했다.",
+          "date": null
+        },
+        {
+          "documentId": "perf-inp",
+          "destination": [
+            "성능 테스트"
+          ],
+          "evidence": "검색창 입력 지연을 웹사이트 성능 테스트에서 재현했다. INP는 310ms였고 긴 JavaScript 작업이 원인이었다.",
+          "date": null
+        },
+        {
+          "documentId": "perf-network",
+          "destination": [
+            "성능 테스트"
+          ],
+          "evidence": "웹사이트 성능 테스트 결과: Network waterfall에서 중복 API 요청과 큰 이미지 전송을 확인했다.",
+          "date": null
+        },
+        {
+          "documentId": "perf-longtask",
+          "destination": [
+            "성능 테스트"
+          ],
+          "evidence": "2026-11-02 웹사이트 성능 테스트 회고. Performance 패널에서 180ms long task를 찾고",
+          "date": null
+        }
+      ],
+      "held": []
+    },
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 2836,
+      "outputTokens": 437,
+      "totalTokens": 3273
+    }
+  },
+  "rawSyntheticResponse": {
+    "summary": "실제 웹사이트 성능 테스트 및 측정 결과를 포함한 문서들을 성능 테스트 폴더에 분류했습니다.",
+    "matches": [
+      {
+        "documentId": "perf-lcp",
+        "destination": [
+          "성능 테스트"
+        ],
+        "evidence": "2026-10-03 웹사이트 성능 테스트를 실행했다. Lighthouse로 LCP 2.8초, CLS 0.02를 측정했다.",
+        "date": null
+      },
+      {
+        "documentId": "perf-bundle",
+        "destination": [
+          "성능 테스트"
+        ],
+        "evidence": "번들 분석으로 홈페이지 초기 JS를 240KiB 줄였다. 웹사이트 로딩 성능 테스트의 전후 LCP와 전송량을 동일 조건으로 비교했다.",
+        "date": null
+      },
+      {
+        "documentId": "perf-inp",
+        "destination": [
+          "성능 테스트"
+        ],
+        "evidence": "검색창 입력 지연을 웹사이트 성능 테스트에서 재현했다. INP는 310ms였고 긴 JavaScript 작업이 원인이었다.",
+        "date": null
+      },
+      {
+        "documentId": "perf-network",
+        "destination": [
+          "성능 테스트"
+        ],
+        "evidence": "웹사이트 성능 테스트 결과: Network waterfall에서 중복 API 요청과 큰 이미지 전송을 확인했다.",
+        "date": null
+      },
+      {
+        "documentId": "perf-longtask",
+        "destination": [
+          "성능 테스트"
+        ],
+        "evidence": "2026-11-02 웹사이트 성능 테스트 회고. Performance 패널에서 180ms long task를 찾고",
+        "date": null
+      }
+    ],
+    "held": []
+  },
+  "evaluation": {
+    "passed": true,
+    "violations": [],
+    "matchedIds": [
+      "perf-lcp",
+      "perf-bundle",
+      "perf-inp",
+      "perf-network",
+      "perf-longtask"
+    ],
+    "heldIds": []
+  }
+}

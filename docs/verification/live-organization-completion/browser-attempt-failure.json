@@ -1,0 +1,78 @@
+{
+  "checks": [
+    {
+      "name": "actual recovery vault created and verified through existing settings",
+      "passed": true
+    },
+    {
+      "name": "natural language resolves root scope, separate reference and destination without a scope wizard",
+      "passed": true
+    },
+    {
+      "name": "confirmed reference metadata contains directories, not file names or bodies",
+      "passed": true
+    },
+    {
+      "name": "date and mixed documents are grouped at the end, with generated evidence-based date labels",
+      "passed": true
+    },
+    {
+      "name": "unanswered questions cannot obtain a new transmission consent",
+      "passed": true
+    },
+    {
+      "name": "answers invalidate old proposal without auto-generation",
+      "passed": true
+    },
+    {
+      "name": "explicit new analysis carries grounded answers and confirmed reference tree",
+      "passed": true
+    },
+    {
+      "name": "answered date criteria remain editable without being asked again",
+      "passed": true
+    },
+    {
+      "name": "projection yields two source/destination batches without file writes",
+      "passed": true
+    },
+    {
+      "name": "390: review has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "768: review has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: review has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: review has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "existing managed review focuses cancel and needs separate execution",
+      "passed": true
+    },
+    {
+      "name": "AI projection executes real verified copy while retaining the original",
+      "passed": true
+    },
+    {
+      "name": "completed batches cannot be executed twice",
+      "passed": true
+    },
+    {
+      "name": "same plan reuses real preserved move and removes only its verified source",
+      "passed": true
+    },
+    {
+      "name": "actual copy and move archives are discoverable using existing recovery UI",
+      "passed": true
+    }
+  ],
+  "error": "Error: Control not ready: [aria-label=\"검증 자료 A 최상위로 이동\"]",
+  "text": "chatfilessettings소유자 전환\n본문으로 건너뛰기\n모아.\n폴더\n채팅\n연결 폴더\n검증 자료 A\n빈 폴더\n정리\n참고\n하위 자료\n설정\n나의 계정\n채팅\n시안 보관함\n계정\n채팅\n자료 보기\n\n연결한 폴더 전체에서 성능 자료를 날짜 기준으로 정리. \"참고\" 폴더를 기준으로 \"정리\" 폴더로 모아 줘\n\n모아\n\n답변을 반영한 합성 제안입니다.\n\n자료 창에서 근거와 제안을 확인하세요. 실제 파일 작업은 별도 검토와 실행 승인을 거칩니다.\n\n찾을 범위: 연결한 폴더 전체 · 선택 발췌 AI 전송 · 파일 실행은 별도 검토\n\n정리하고 싶은 내용을 입력하세요\nEnter 전송 · Shift+Enter 줄바꿈\n자료 준비\n자료\n자료 준비\n내 파일 열기\n찾을 범위·정리 조건 · 검증 자료 A 전체\n설정한 범위의 TXT/MD 읽기\n확인한 기준·답변 수정\n\n실제 날짜 근거와 목적지를 함께 확인해 주세요. 답변을 바꾸면 이전 제안은 폐기하며, 다시 확인하고 전송해야 반영됩니다.\n\n날짜보고.md\n\n작성일과 검토 기준일 중 무엇을 사용할까요?\n\n어떤 날짜 의미로 정리할까요?\n근거를 확인하고 선택\n작성일 · 2026-10-01\n검토 기준일 · 2026-10-15\n이 자료는 날짜로 나누지 않기\n작성일: 2026-10-01\n검토 기준일: 2026-10-15\n이번 정리에서 제외\n\n답변을 보관했습니다. 전송 자료 확인에서 새로 확인하고 답변을 반영해 주세요.\n\n하위 자료 / 혼합.txt\n\n회사와 개인 주제가 섞여 있습니다. 어느 폴더로 정리할까요?\n\n이 자료의 정리 하위 경로\n이 목적지로 답변\n이번 정리에서 제외\n\n답변을 보관했습니다. 전송 자료 확인에서 새로 확인하고 답변을 반영해 주세요.\n\n전송 전 자료 확인\n\n확인한 파일 10개 · 읽은 TXT/MD 8개 · 선택 8개\n\n발췌는 요청 단어 주변 최대 1,200자입니다. 의미 일치 판정은 아직 하지 않았습니다. Gemini 전송 후보는 최대 40개·약 6,000자입니다. 아래 전송 버튼을 눌러야 Google Gemini에 보냅니다. 파일 이름·상대 경로·선택 발췌·요청·정리 기준·참고 및 목적지 경로를 보냅니다. 짧은 문서는 발췌에 본문 전체가 포함될 수 있습니다. 파일 바이너리와 폴더 핸들은 보내지 않습니다.\n\n함께 보낼 참고 폴더 구조 2개\n\n함께 반영할 답변 2개 · 날짜/목적지/이번 정리 제외 결정을 함께 전송합니다.\n\n공백 있는 이름.txt\n선택됨\n\n공백 있는 이름.txt\n\n긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 .md\n선택됨\n\n긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 긴 파일 이름을 확인하는 자료 .md\n\n날짜보고.md\n선택됨\n\n날짜보고.md\n\n읽기 안내.md\n선택됨\n\n읽기 안내.md\n\n할 일.txt\n선택됨\n\n할 일.txt\n\n회의 메모.md\n선택됨\n\n회의 메모.md\n\n하위 문서.txt\n선택됨\n\n하위 자료 / 하위 문서.txt\n\n혼합.txt\n선택됨\n\n하위 자료 / 혼합.txt\n\n제외·실패 내역 2개\n선택 자료의 발췌와 정리 조건을 외부 AI 전송 대상으로 확인했습니다.\n\n작업 공간·계정당 시간당 3회, 샘플과 합쳐 분당 1회·시간당 12회 한도입니다. 입력은 최대 8,192토큰, 출력은 최대 3,200토큰입니다. Google에 입력 토큰을 계산한 뒤 한도를 넘으면 생성을 중단하며 자동 재시도하지 않습니다. 전송 후 중지해도 이미 호출한 사용량은 반환되지 않을 수 있습니다.\n\n확인한 발췌를 AI에 전송\nAI 정리 제안\n\n답변을 반영한 합성 제안입니다.\n\n이 목록은 AI 제안입니다. 실제 실행 여부는 아래 작업 결과와 보존 기록에서 확인합니다.\n\n일치 자료 2개\n날짜보고.md\n\n제안 하위 경로: 날짜자료 / 2026-10-15\n\n-01 검토 기준일: 2026-10-15 성능 측정 결과 LCP 2.8초입니다. 실제 합성 측정 자료입니다.\n\n본문 날짜: 2026-10-15\n\n하위 자료 / 혼합.txt\n\n제안 하위 경로: 혼합자료\n\n회사 성능 테스트와 개인 학습이 섞여 있습니다. 성능 측정 결과 LCP 2.6초와 학습 노트입니다.\n확인 필요 0개\n\nfixture-provider · 입력 100 / 출력 20 / 합계 120토큰\n\n제안을 실제 작업 계획으로 검토\n\n복사/이동과 실제 목적지를 선택해 주세요. 파일을 바꾸려면 묶음별로 기존 검사와 실행 승인을 거칩니다.\n\n적용할 작업\n원본을 유지하고 복사\n보존 후 이동\n\n실제 목적지: 검증 자료 A / 정리\n\n실제 목적지 선택\n작업 계획 검토\n\n제안 하위 폴더가 없으면 묶음의 목적지 선택에서 공통 새 폴더 만들기로 생성하고 선택할 수 있습니다. 폴더 생성도 별도 명시 동작이며 자동 실행하지 않습니다.\n\n검증 자료 A · 날짜보고.md → 정리 / 날짜자료 / 2026-10-15\n\n완료 · 복사 1 / 원본 처리 0\n\n묶음 1 검토\n\n하위 자료 · 혼합.txt → 정리 / 혼합자료\n\n완료 · 복사 1 / 원본 처리 1\n\n묶음 2 검토\n보존 기록·복구 열기\n보존본 복구\n닫기\n1\n목적지·계획\n2\n계획·검사\n3\n원본 보존\n4\n실행·검증\n5\n결과\n\n1 / 5 · 목적지·계획\n\n목적지 폴더 선택\n목적지 탐색 취소\n경로 직접 입력\n경로 열기\n\nWindows 경로 붙여넣기 또는 /·\\로 구분한 상대 경로를 입력하세요. 비우면 연결 폴더를 엽니다.\n\n검증 자료 A\n\n선택할 폴더\n검증 자료 A\n\n이 폴더 선택\n＋ 새로 만들기\n\n하위 폴더\n빈 폴더\n정리\n참고\n하위 자료"
+}

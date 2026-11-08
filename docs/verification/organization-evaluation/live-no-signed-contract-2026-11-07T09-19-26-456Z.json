@@ -1,0 +1,73 @@
+{
+  "at": "2026-11-07T09:19:26.456Z",
+  "datasetVersion": "request-v2",
+  "caseId": "no-signed-contract",
+  "intentId": "safety",
+  "split": "development",
+  "reviewStatus": "unreviewed",
+  "corpusHash": "12630ded196c6f687a2fd781a524b096f2e346289de4c1e99dc7081cd6dc6980",
+  "policyHash": "f15de31e05d5ded8d0b6209ad1259fdd0aeee81e3e496c15280cc903447a9d93",
+  "promptHash": "59a1c013b0179ec59cd91970225ab764505316567026c4e8a8c5bb9f0dfcf0f0",
+  "model": "gemini-3.5-flash-lite",
+  "scopeCount": 84,
+  "candidateIds": [
+    "business-company-1",
+    "business-company-2",
+    "business-company-3",
+    "business-company-4",
+    "business-company-5",
+    "business-company-6",
+    "business-research-1",
+    "business-research-2",
+    "business-research-3",
+    "business-research-4",
+    "business-research-5",
+    "business-research-6",
+    "business-statistics-1",
+    "business-statistics-2",
+    "business-statistics-3",
+    "business-statistics-4",
+    "business-statistics-5",
+    "business-study-4"
+  ],
+  "latencyMs": 6035,
+  "requests": [
+    {
+      "method": "countTokens",
+      "status": 200,
+      "latencyMs": 299,
+      "countedTokens": 3097
+    },
+    {
+      "method": "generateContent",
+      "status": 200,
+      "latencyMs": 2711,
+      "modelVersion": "gemini-3.5-flash-lite"
+    }
+  ],
+  "result": {
+    "ok": true,
+    "organization": {
+      "summary": "양쪽 서명이 완료된 실제 근로계약서에 해당하는 자료가 존재하지 않습니다.",
+      "matches": [],
+      "held": []
+    },
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 3097,
+      "outputTokens": 41,
+      "totalTokens": 3138
+    }
+  },
+  "rawSyntheticResponse": {
+    "summary": "양쪽 서명이 완료된 실제 근로계약서에 해당하는 자료가 존재하지 않습니다.",
+    "matches": [],
+    "held": []
+  },
+  "evaluation": {
+    "passed": true,
+    "violations": [],
+    "matchedIds": [],
+    "heldIds": []
+  }
+}

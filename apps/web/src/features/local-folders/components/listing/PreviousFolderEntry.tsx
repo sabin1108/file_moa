@@ -11,7 +11,7 @@ export function PreviousFolderEntry({ name, kind, current, disabled, onOpen, onS
 }) {
   const press = useLongPressSelection(disabled, onSelect);
 
-  return <li {...press}><button
+  return <li {...press} data-long-press-selection><button
     type="button"
     data-kind={kind}
     title={name}

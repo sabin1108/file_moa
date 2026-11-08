@@ -21,6 +21,7 @@ export function SourceFolderRow({ name, selected, selecting, disabled, selection
     className={selectionStyles.fileRow}
     data-selected={selected}
     data-selecting={selecting}
+    data-long-press-selection
     {...press}
     {...keyboard}
   >

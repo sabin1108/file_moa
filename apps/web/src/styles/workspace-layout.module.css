@@ -14,10 +14,10 @@
 .settingsHeader p { margin-top: var(--ui-space-2); color: var(--muted); }
 .settingsCanvas { width: 100%; max-width: 1200px; margin-inline: auto; }
 .settingsNavigation { position: relative; margin-bottom: 32px; }
-.settingsTabs { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: min(100%, 480px); border-bottom: 1px solid var(--border); }
+.settingsTabs { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: min(100%, 640px); border-bottom: 1px solid var(--border); }
 .settingsTabs a { display: inline-flex; justify-content: center; align-items: center; min-height: 48px; padding: 8px; color: var(--muted); text-decoration: none; font-size: 14px; }
 .settingsTabs [aria-current="page"] { color: var(--text); font-weight: 600; }
-.settingsIndicator { position: absolute; bottom: -1px; left: 0; height: 2px; width: calc(100% / 3); background: var(--text); transition: transform 260ms cubic-bezier(.22, 1, .36, 1); pointer-events: none; }
+.settingsIndicator { position: absolute; bottom: -1px; left: 0; height: 2px; width: calc(100% / 4); background: var(--text); transition: transform 260ms cubic-bezier(.22, 1, .36, 1); pointer-events: none; }
 .settingsPending { position: absolute; top: 100%; left: 0; font-size: 13px; }
 .settingsSection { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 32px; align-items: start; animation: settingsEnter 180ms ease-out; }
 @keyframes settingsEnter { from { opacity: .6; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }

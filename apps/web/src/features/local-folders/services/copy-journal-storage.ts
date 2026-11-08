@@ -67,7 +67,12 @@ export class CopyJournalWriter {
 
 export async function readCopyHistory(root: FolderHandle, path: readonly string[], owner: ConnectionOwner, check: () => void): Promise<CopyHistory> {
   const parentPath = copyFolderPath(path);
-  const permission = async () => { check(); const result = await root.queryPermission({ mode: "read" }); check(); if (result !== "granted") throw new DOMException("permission", "NotAllowedError"); };
+  const permission = async () => {
+    check();
+    const result = await root.queryPermission({ mode: "read" });
+    check();
+    if (result !== "granted") throw new DOMException("permission", "NotAllowedError");
+  };
   await permission();
   const parent = await openCopyDirectory(root, parentPath, check), directory = await findHistory(parent); check();
   if (!directory) { await permission(); return { groups: [], incomplete: false, missing: true }; }

@@ -35,7 +35,7 @@ export function DocumentScenes({ scene, navigate, documentName = "리액트 성�
           </div>
           <div>
             <dt>파일</dt>
-            <dd>Markdown · {selectedFiles.find(file => file.name === documentName)?.size ?? 2.4} KB</dd>
+            <dd>{"Markdown · "}{selectedFiles.find(file => file.name === documentName)?.size ?? 2.4}{" KB"}</dd>
           </div>
           <div>
             <dt>자료 사용</dt>
@@ -64,14 +64,55 @@ export function DocumentScenes({ scene, navigate, documentName = "리액트 성�
   );
   return (
     <div className={styles.stack}>
-      <RiskNotice label="서버 전송 전 확인" title="선택한 문서의 내용이 기기 밖으로 전송돼요">문서에 개인정보나 비공개 내용이 있다면 함께 전송될 수 있어요. 목록과 원문을 확인한 뒤 동의해 주세요.</RiskNotice>
-      <ImpactComparison affected={{ title: "전송하는 내용", items: [`선택한 문서 ${selectedFiles.length}개의 텍스트`, "검색과 답변에 사용할 서버 복사본"] }} preserved={{ title: "전송·변경하지 않는 것", items: ["선택하지 않은 문서와 다른 폴더", "기기에 보관한 원본 파일"] }} />
-    <div className={layout.decision}>
-      <section><div className={layout.sectionTitle}><h3>선택한 자료</h3><span>{selectedFiles.length}개 · {selectedFiles.reduce((sum, file) => sum + file.size, 0).toFixed(1)} KB</span></div><FileSelection files={selectedFiles} /><p className={styles.note}>프론트엔드 공부 / React</p></section>
-      <div className={layout.decisionSide}><h3>전송 범위에 동의</h3><p>확인 전에는 자료 준비를 시작하지 않아요.</p>
-      <label className={styles.check}><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} />위 자료의 전송 범위를 확인했어요.</label>
-      <div className={styles.actions}><DemoButton variant="primary" disabled={!consent} onClick={() => navigate("indexing")}>자료 준비 화면 보기</DemoButton></div>
+      <RiskNotice label="서버 전송 전 확인" title="선택한 문서의 내용이 기기 밖으로 전송돼요">
+        문서에 개인정보나 비공개 내용이 있다면 함께 전송될 수 있어요. 목록과 원문을 확인한 뒤 동의해
+        주세요.
+      </RiskNotice>
+      <ImpactComparison
+        affected={{
+          title: "전송하는 내용",
+          items: [
+            `선택한 문서 ${selectedFiles.length}개의 텍스트`,
+            "검색과 답변에 사용할 서버 복사본",
+          ],
+        }}
+        preserved={{
+          title: "전송·변경하지 않는 것",
+          items: ["선택하지 않은 문서와 다른 폴더", "기기에 보관한 원본 파일"],
+        }}
+      />
+      <div className={layout.decision}>
+        <section>
+          <div className={layout.sectionTitle}>
+            <h3>선택한 자료</h3>
+            <span>
+              {selectedFiles.length}
+              {"개 · "}
+              {selectedFiles.reduce((sum, file) => sum + file.size, 0).toFixed(1)}
+              {" KB"}
+            </span>
+          </div>
+          <FileSelection files={selectedFiles} />
+          <p className={styles.note}>프론트엔드 공부 / React</p>
+        </section>
+        <div className={layout.decisionSide}>
+          <h3>전송 범위에 동의</h3>
+          <p>확인 전에는 자료 준비를 시작하지 않아요.</p>
+          <label className={styles.check}>
+            <input
+              type="checkbox"
+              checked={consent}
+              onChange={event => setConsent(event.target.checked)}
+            />
+            위 자료의 전송 범위를 확인했어요.
+          </label>
+          <div className={styles.actions}>
+            <DemoButton variant="primary" disabled={!consent} onClick={() => navigate("indexing")}>
+              자료 준비 화면 보기
+            </DemoButton>
+          </div>
+        </div>
       </div>
-    </div></div>
+    </div>
   );
 }

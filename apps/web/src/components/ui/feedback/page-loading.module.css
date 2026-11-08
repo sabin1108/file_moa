@@ -2,6 +2,8 @@
 .page { min-height: 100dvh; padding: 24px; flex-direction: column; }
 .compact { min-height: 44px; background: transparent; }
 .page p, .compact p { margin: 0; }
-.navigation { position: fixed; inset: 16px auto auto 50%; transform: translateX(-50%); z-index: 1100; max-width: calc(100vw - 32px); padding: 4px 16px; background: var(--surface, #f8faf8); color: var(--text, #253745); border: 1px solid var(--border, #d2dad6); border-radius: var(--ui-radius-control, 6px); animation: appear 160ms ease-out; }
+.navigation { position: fixed; inset: 0; z-index: 1300; display: grid; place-items: center; padding: 24px; background: #11212d66; color: #253745; animation: appear 160ms ease-out; }
+.loadingPanel { min-width: 220px; max-width: 100%; padding: 24px 32px; background: #f8faf8; border: 1px solid #d2dad6; border-radius: 8px; box-shadow: 0 12px 40px #11212d26; }
+.loadingPanel .page { min-height: 0; padding: 0; background: transparent; }
 @keyframes appear { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .navigation { animation: none; } }

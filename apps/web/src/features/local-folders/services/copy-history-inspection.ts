@@ -37,7 +37,13 @@ export async function inspectCopyHistoryTargets(root: FolderHandle, path: readon
       const again = await parent.getFileHandle(item.to.at(-1)!, { create: false }); check();
       if (!await handle.isSameEntry(again)) throw Error("history-target-changed"); check();
       const latest = await again.getFile(); check();
-      if (latest.size !== file.size || latest.lastModified !== file.lastModified || (sha256 !== null && await hash(latest) !== sha256)) throw Error("history-target-changed"); check();
+      if (
+        latest.size !== file.size ||
+        latest.lastModified !== file.lastModified ||
+        (sha256 !== null && (await hash(latest)) !== sha256)
+      )
+        throw Error("history-target-changed");
+      check();
       items.push({ itemId: item.itemId, status: sha256 === item.sha256 ? "matches" : "different" });
     }
     const latestParent = await openCopyDirectory(root, path, check);

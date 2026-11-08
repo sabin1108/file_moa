@@ -1,0 +1,49 @@
+{
+  "condition": "Actual React consent component and preparation controller; synthetic files, identity and transport; no paid API or physical disk",
+  "results": [
+    {
+      "name": "OpenAI disclosure is visible and unconfirmed send is blocked",
+      "passed": true
+    },
+    {
+      "name": "keyboard confirmation enables send",
+      "passed": true
+    },
+    {
+      "name": "provider change updates disclosure and revokes confirmation",
+      "passed": true
+    },
+    {
+      "name": "switching back does not restore old confirmation",
+      "passed": true
+    },
+    {
+      "name": "missing configuration disables confirmation",
+      "passed": true
+    },
+    {
+      "name": "390: confirmation fits viewport",
+      "passed": true
+    },
+    {
+      "name": "768: confirmation fits viewport",
+      "passed": true
+    },
+    {
+      "name": "1440: confirmation fits viewport",
+      "passed": true
+    },
+    {
+      "name": "1920: confirmation fits viewport",
+      "passed": true
+    },
+    {
+      "name": "explicit send invokes transport once and consumes confirmation",
+      "passed": true
+    },
+    {
+      "name": "no automatic retry, external call or component exception",
+      "passed": true
+    }
+  ]
+}

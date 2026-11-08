@@ -54,7 +54,7 @@ export class SourceListingController {
   };
 
   private publish(state: SourceListingState) {
-    this.state = { ...state, selectionOpen: state.selectedNames.length > 0 };
+    this.state = { ...state, selectionOpen: state.selectionOpen || state.selectedNames.length > 0 };
     this.listeners.forEach(listener => listener());
   }
 
@@ -148,7 +148,7 @@ export class SourceListingController {
     const selectedNames = this.state.selectedNames.includes(name)
       ? this.state.selectedNames.filter(selected => selected !== name)
       : [...this.state.selectedNames, name];
-    this.publish({ ...this.state, selectedNames });
+    this.publish({ ...this.state, selectedNames, selectionOpen: selectedNames.length > 0 });
   };
 
   selectAll = () => {
@@ -174,6 +174,8 @@ export class SourceListingController {
       this.publish({ ...this.state, selectedNames: [] });
     }
   };
+
+  exitSelection = () => this.publish({ ...this.state, selectedNames: [], selectionOpen: false });
 
   open = async (path: readonly string[]): Promise<void> => {
     if (!this.state.available) {
@@ -206,7 +208,8 @@ export class SourceListingController {
       const entries = new Map(result.entries.map(entry => [entry.name, entry.kind]));
       const selectedNames = this.state.selectedNames.filter(name => entries.has(name) && previousKinds.get(name) === entries.get(name));
       this.publish({
-        ...this.state, available: true, phase: "ready", result, requestedPath, stale: false, issue: null, selectedNames
+        ...this.state, available: true, phase: "ready", result, requestedPath, stale: false, issue: null, selectedNames,
+        selectionOpen: this.state.selectedNames.length > 0 && selectedNames.length === 0 ? false : this.state.selectionOpen
       });
     } catch (error) {
       if (generation !== this.generation) {

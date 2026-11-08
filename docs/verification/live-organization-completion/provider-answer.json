@@ -1,0 +1,54 @@
+{
+  "at": "2026-11-08T01:43:38.026Z",
+  "condition": "synthetic guard/session and public synthetic documents; real production quota store and Google countTokens/generation; not an authenticated user HTTP journey",
+  "phase": "answer",
+  "requestId": "1794102211733:c1f5304b-3bee-4bca-9919-a5e6cea03440",
+  "corpusHash": "df5a8587e937c20cae7ae20fcf2a22718bfe3d08e2d3ed2cb0035faf8c56043f",
+  "elapsedMs": 6293.4552,
+  "answers": [
+    {
+      "documentId": "document-1",
+      "date": "2026-10-15",
+      "dateLabel": "검토 기준일"
+    },
+    {
+      "documentId": "document-2",
+      "destination": [
+        "혼합자료"
+      ]
+    }
+  ],
+  "result": {
+    "ok": true,
+    "organization": {
+      "summary": "성능 실측 자료를 날짜별로 정리하기 위한 검토 제안입니다. 답변이 완료된 문서들을 반영하여 정리 계획을 구성했습니다.",
+      "matches": [
+        {
+          "documentId": "document-1",
+          "destination": [
+            "보고서",
+            "2026-10-15"
+          ],
+          "evidence": "사이트 성능 측정 결과 LCP 2.8초, CLS 0.01입니다.",
+          "date": "2026-10-15"
+        },
+        {
+          "documentId": "document-2",
+          "destination": [
+            "혼합자료"
+          ],
+          "evidence": "회사 웹사이트 성능 실측 결과 LCP 2.6초와 개인 영어 학습 노트가 하나의 문서에 섞여 있습니다.",
+          "date": null
+        }
+      ],
+      "held": []
+    },
+    "questions": [],
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 1257,
+      "outputTokens": 227,
+      "totalTokens": 1484
+    }
+  }
+}

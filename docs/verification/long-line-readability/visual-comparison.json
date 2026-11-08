@@ -1,0 +1,17 @@
+{
+  "condition": "Existing deterministic prototype captures compared with same viewport after formatting; PNG file hash comparison, not whole-site pixel validation.",
+  "results": [
+    {
+      "file": "files-1440.png",
+      "beforeSha256": "fd2d286b572a8b92c5a72168039ccd30fafb912ad6397c6a715b9b5aca8634f0",
+      "afterSha256": "fd2d286b572a8b92c5a72168039ccd30fafb912ad6397c6a715b9b5aca8634f0",
+      "equal": true
+    },
+    {
+      "file": "files-390.png",
+      "beforeSha256": "83f7794e0027c7eb83a198a61f0ee6118c94f21f7642d5c00b27991f8c3fb806",
+      "afterSha256": "83f7794e0027c7eb83a198a61f0ee6118c94f21f7642d5c00b27991f8c3fb806",
+      "equal": true
+    }
+  ]
+}

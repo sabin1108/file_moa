@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-08T02:05:25.654Z",
+  "phases": [
+    "initial",
+    "answer"
+  ],
+  "passed": true,
+  "condition": "saved real provider responses parsed by final shared validator; no new DB reservation or model call"
+}

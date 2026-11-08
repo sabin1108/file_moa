@@ -1,0 +1,163 @@
+.preparation {
+  display: grid;
+  gap: var(--ui-space-4);
+  min-width: 0;
+}
+.preparation header,
+.folderChoice {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-space-3);
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.preparation h2 {
+  font-size: 18px;
+}
+.preparation h3 {
+  font-size: 16px;
+}
+.preparation fieldset {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--ui-space-3);
+}
+.preparation legend {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: var(--ui-space-2);
+}
+.preparation p,
+.snapshot p {
+  overflow-wrap: anywhere;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ui-space-2);
+}
+.basis {
+  display: grid;
+  gap: var(--ui-space-2);
+}
+.conditions > summary {
+  cursor: pointer;
+  padding-block: var(--ui-space-2);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.conditions[open] > summary {
+  margin-bottom: var(--ui-space-3);
+}
+.basis textarea,
+.basis input,
+.basis select {
+  width: 100%;
+  min-height: 44px;
+  resize: vertical;
+  padding: var(--ui-space-3);
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--control-border);
+  border-radius: var(--ui-radius-control);
+}
+.basis textarea {
+  min-height: 80px;
+}
+.folderChoice {
+  padding-block: var(--ui-space-3);
+  border-bottom: 1px solid var(--border);
+}
+.folderChoice > div {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+.note {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.snapshot {
+  display: grid;
+  gap: var(--ui-space-3);
+  padding-top: var(--ui-space-4);
+  border-top: 1px solid var(--border);
+}
+.documents,
+.exclusions,
+.findDocuments {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.documents {
+  max-height: 52dvh;
+  overflow-y: auto;
+}
+.documents > li,
+.findDocuments > li {
+  padding-block: var(--ui-space-2);
+  border-bottom: 1px solid var(--border);
+}
+.documents > li > [data-long-press-selection],
+.findDocuments > li > [data-long-press-selection] {
+  height: auto;
+}
+.findFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ui-space-3);
+  align-items: end;
+}
+.findFields > label {
+  min-width: 0;
+}
+@media (max-width: 600px) {
+  .findFields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ui-space-2);
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 44px;
+}
+.check input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  accent-color: var(--text);
+}
+.excerpt {
+  padding: var(--ui-space-3);
+  background: var(--surface);
+}
+.excerpt h4 {
+  font-size: 15px;
+}
+.excerpt pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.85;
+  margin-block: var(--ui-space-3);
+}
+.excerpt details {
+  font-size: 13px;
+}
+.exclusions li {
+  padding-block: var(--ui-space-2);
+  overflow-wrap: anywhere;
+}
+.snapshot summary {
+  cursor: pointer;
+  padding-block: var(--ui-space-2);
+}

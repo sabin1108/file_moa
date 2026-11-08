@@ -131,7 +131,7 @@ describe("source folder listing", () => {
     for (const name of ["NotAllowedError", "NotFoundError", "NotReadableError"]) {
       const { session, root } = await connected();
       root.values.mockImplementation(async function* () {
-        yield file("先に読めた.txt");
+        yield file("먼저 읽은 파일.txt");
         throw new DOMException("injected failure", name);
       });
       await expect(session.listSourceFolder([])).rejects.toMatchObject({ name });
@@ -142,8 +142,8 @@ describe("source folder listing", () => {
   it("LIST-005 preserves a missing-child error without creating it or treating it as empty", async () => {
     const { session, root } = await connected();
     root.getDirectoryHandle.mockRejectedValue(new DOMException("missing", "NotFoundError"));
-    await expect(session.listSourceFolder(["消えた"])).rejects.toMatchObject({ name: "NotFoundError" });
-    expect(root.getDirectoryHandle).toHaveBeenCalledExactlyOnceWith("消えた", { create: false });
+    await expect(session.listSourceFolder(["삭제된 폴더"])).rejects.toMatchObject({ name: "NotFoundError" });
+    expect(root.getDirectoryHandle).toHaveBeenCalledExactlyOnceWith("삭제된 폴더", { create: false });
     expect(session.state("source")).toBe("connected");
   });
 
@@ -204,7 +204,7 @@ describe("source folder listing", () => {
       if (action === "refresh") await session.listSourceFolder([]);
       if (action === "owner") await session.switchOwner({ ...owner, userId: "other" });
       if (action === "disconnect") await session.disconnect("source");
-      if (action === "replace") await session.select("source", async () => asHandle(folder("別")));
+      if (action === "replace") await session.select("source", async () => asHandle(folder("다른 자료")));
       permission.resolve("granted");
       await rejection;
       expect(root.values).toHaveBeenCalledTimes(action === "refresh" ? 1 : 0);

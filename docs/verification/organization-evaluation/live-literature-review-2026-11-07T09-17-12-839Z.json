@@ -1,0 +1,92 @@
+{
+  "at": "2026-11-07T09:17:12.839Z",
+  "datasetVersion": "request-v2",
+  "caseId": "literature-review",
+  "intentId": "research",
+  "split": "development",
+  "reviewStatus": "unreviewed",
+  "corpusHash": "12630ded196c6f687a2fd781a524b096f2e346289de4c1e99dc7081cd6dc6980",
+  "policyHash": "f15de31e05d5ded8d0b6209ad1259fdd0aeee81e3e496c15280cc903447a9d93",
+  "promptHash": "a3759918393684dcad4b69425d07cc13e0112a4654c2d60369b7098f2e058be9",
+  "model": "gemini-3.5-flash-lite",
+  "scopeCount": 84,
+  "candidateIds": [
+    "business-research-2",
+    "business-research-1",
+    "business-research-6",
+    "business-xlsx-research",
+    "business-research-5",
+    "text-015",
+    "business-research-3",
+    "business-xlsx-sales",
+    "business-xlsx-visits",
+    "business-xlsx-statistics",
+    "business-xlsx-study",
+    "business-xlsx-operations",
+    "business-xlsx-budget",
+    "business-xlsx-service",
+    "text-007",
+    "text-013",
+    "report-1014"
+  ],
+  "latencyMs": 4447,
+  "requests": [
+    {
+      "method": "countTokens",
+      "status": 200,
+      "latencyMs": 319,
+      "countedTokens": 3321
+    },
+    {
+      "method": "generateContent",
+      "status": 200,
+      "latencyMs": 1991,
+      "modelVersion": "gemini-3.5-flash-lite"
+    }
+  ],
+  "result": {
+    "ok": true,
+    "organization": {
+      "summary": "선행 연구를 고르고 읽는 기준을 다룬 문헌 검토 관련 자료를 '선행 연구' 폴더로 분류하고, 논문 제출 형식을 점검하는 자료는 제외했습니다.",
+      "matches": [
+        {
+          "documentId": "business-research-2",
+          "destination": [
+            "선행 연구"
+          ],
+          "evidence": "검색 키워드, 포함 기준, 제외 기준을 먼저 정하고 초록과 방법을 비교한다.",
+          "date": null
+        }
+      ],
+      "held": []
+    },
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 3321,
+      "outputTokens": 130,
+      "totalTokens": 3451
+    }
+  },
+  "rawSyntheticResponse": {
+    "summary": "선행 연구를 고르고 읽는 기준을 다룬 문헌 검토 관련 자료를 '선행 연구' 폴더로 분류하고, 논문 제출 형식을 점검하는 자료는 제외했습니다.",
+    "matches": [
+      {
+        "documentId": "business-research-2",
+        "destination": [
+          "선행 연구"
+        ],
+        "evidence": "검색 키워드, 포함 기준, 제외 기준을 먼저 정하고 초록과 방법을 비교한다.",
+        "date": null
+      }
+    ],
+    "held": []
+  },
+  "evaluation": {
+    "passed": true,
+    "violations": [],
+    "matchedIds": [
+      "business-research-2"
+    ],
+    "heldIds": []
+  }
+}

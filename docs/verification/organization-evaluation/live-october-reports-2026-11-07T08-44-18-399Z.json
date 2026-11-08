@@ -1,0 +1,214 @@
+{
+  "at": "2026-11-07T08:44:18.399Z",
+  "caseId": "october-reports",
+  "split": "development",
+  "reviewStatus": "unreviewed",
+  "corpusHash": "12630ded196c6f687a2fd781a524b096f2e346289de4c1e99dc7081cd6dc6980",
+  "policyHash": "022797f071447208353a7824a0a5fc63dcb80ad4f0b1b602bc25e89af6b98f10",
+  "promptHash": "e7ca6440dd33cd4835d8fdd9bfb781e4f8e2e5883985bd5c15d7f7fc6c55ac36",
+  "model": "gemini-3.5-flash-lite",
+  "scopeCount": 84,
+  "candidateIds": [
+    "report-1021",
+    "report-0908",
+    "report-ambiguous",
+    "report-1104",
+    "report-1002",
+    "report-1005",
+    "plan-1010",
+    "report-1009",
+    "report-1014",
+    "report-1028",
+    "receipt-1004",
+    "meeting-1020",
+    "report-unknown",
+    "business-research-4",
+    "perf-lcp",
+    "business-company-1",
+    "business-statistics-6",
+    "business-visits-1",
+    "business-operations-4",
+    "business-operations-6",
+    "business-company-2",
+    "business-company-3",
+    "recipe"
+  ],
+  "latencyMs": 6798,
+  "requests": [
+    {
+      "method": "countTokens",
+      "status": 200,
+      "latencyMs": 343,
+      "countedTokens": 2799
+    },
+    {
+      "method": "generateContent",
+      "status": 200,
+      "latencyMs": 3452,
+      "modelVersion": "gemini-3.5-flash-lite"
+    }
+  ],
+  "result": {
+    "ok": true,
+    "organization": {
+      "summary": "10월달 보고서를 본문 작성일 기준으로 날짜별로 정리하였습니다. 10월 기간에 해당하지 않거나 날짜가 불확실한 문서는 제외 또는 보류하였습니다.",
+      "matches": [
+        {
+          "documentId": "report-1002",
+          "destination": [
+            "보고서",
+            "2026-10-02"
+          ],
+          "evidence": "작성일: 2026-10-02\n이번 보고 기간에 문서 업로드 오류를 줄였다.",
+          "date": "2026-10-02"
+        },
+        {
+          "documentId": "report-1005",
+          "destination": [
+            "보고서",
+            "2026-10-05"
+          ],
+          "evidence": "보고서 작성일은 2026-10-05이다. 고객 문의 처리와 결제 오류 수정 현황을 정리했다.",
+          "date": "2026-10-05"
+        },
+        {
+          "documentId": "report-1009",
+          "destination": [
+            "보고서",
+            "2026-10-09"
+          ],
+          "evidence": "# 결과 보고서\n보고일: 2026-10-09\n신규 계정 연결과 기존 자료 보존 검토 결과를 보고한다.",
+          "date": "2026-10-09"
+        },
+        {
+          "documentId": "report-1014",
+          "destination": [
+            "보고서",
+            "2026-10-14"
+          ],
+          "evidence": "2026년 10월 14일 업무 보고서. 이번 주 주문 처리 지연 원인을 조사하고 개선안을 제출했다.",
+          "date": "2026-10-14"
+        },
+        {
+          "documentId": "report-1021",
+          "destination": [
+            "보고서",
+            "2026-10-21"
+          ],
+          "evidence": "정정된 작성일: 2026-10-21. 파일명 날짜는 이전 초안의 날짜다. 현재 보고서의 기준일은 본문 작성일이다.",
+          "date": "2026-10-21"
+        },
+        {
+          "documentId": "report-1028",
+          "destination": [
+            "보고서",
+            "2026-10-28"
+          ],
+          "evidence": "# 운영 보고서\n보고 기준일: 2026-10-28\n재고 수량과 주문 누락 현황을 확인했다.",
+          "date": "2026-10-28"
+        }
+      ],
+      "held": [
+        {
+          "documentId": "report-ambiguous",
+          "reason": "작성일이 2026-10-12 또는 2026-11-12로 서로 다르게 적혀 있어 날짜 확정이 필요합니다."
+        },
+        {
+          "documentId": "report-unknown",
+          "reason": "본문에 날짜가 적혀 있지 않아 어떤 달의 보고서인지 확인이 필요합니다."
+        }
+      ]
+    },
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 2799,
+      "outputTokens": 822,
+      "totalTokens": 3621
+    }
+  },
+  "rawSyntheticResponse": {
+    "summary": "10월달 보고서를 본문 작성일 기준으로 날짜별로 정리하였습니다. 10월 기간에 해당하지 않거나 날짜가 불확실한 문서는 제외 또는 보류하였습니다.",
+    "matches": [
+      {
+        "documentId": "report-1002",
+        "destination": [
+          "보고서",
+          "2026-10-02"
+        ],
+        "evidence": "작성일: 2026-10-02\n이번 보고 기간에 문서 업로드 오류를 줄였다.",
+        "date": "2026-10-02"
+      },
+      {
+        "documentId": "report-1005",
+        "destination": [
+          "보고서",
+          "2026-10-05"
+        ],
+        "evidence": "보고서 작성일은 2026-10-05이다. 고객 문의 처리와 결제 오류 수정 현황을 정리했다.",
+        "date": "2026-10-05"
+      },
+      {
+        "documentId": "report-1009",
+        "destination": [
+          "보고서",
+          "2026-10-09"
+        ],
+        "evidence": "# 결과 보고서\n보고일: 2026-10-09\n신규 계정 연결과 기존 자료 보존 검토 결과를 보고한다.",
+        "date": "2026-10-09"
+      },
+      {
+        "documentId": "report-1014",
+        "destination": [
+          "보고서",
+          "2026-10-14"
+        ],
+        "evidence": "2026년 10월 14일 업무 보고서. 이번 주 주문 처리 지연 원인을 조사하고 개선안을 제출했다.",
+        "date": "2026-10-14"
+      },
+      {
+        "documentId": "report-1021",
+        "destination": [
+          "보고서",
+          "2026-10-21"
+        ],
+        "evidence": "정정된 작성일: 2026-10-21. 파일명 날짜는 이전 초안의 날짜다. 현재 보고서의 기준일은 본문 작성일이다.",
+        "date": "2026-10-21"
+      },
+      {
+        "documentId": "report-1028",
+        "destination": [
+          "보고서",
+          "2026-10-28"
+        ],
+        "evidence": "# 운영 보고서\n보고 기준일: 2026-10-28\n재고 수량과 주문 누락 현황을 확인했다.",
+        "date": "2026-10-28"
+      }
+    ],
+    "held": [
+      {
+        "documentId": "report-ambiguous",
+        "reason": "작성일이 2026-10-12 또는 2026-11-12로 서로 다르게 적혀 있어 날짜 확정이 필요합니다."
+      },
+      {
+        "documentId": "report-unknown",
+        "reason": "본문에 날짜가 적혀 있지 않아 어떤 달의 보고서인지 확인이 필요합니다."
+      }
+    ]
+  },
+  "evaluation": {
+    "passed": true,
+    "violations": [],
+    "matchedIds": [
+      "report-1002",
+      "report-1005",
+      "report-1009",
+      "report-1014",
+      "report-1021",
+      "report-1028"
+    ],
+    "heldIds": [
+      "report-ambiguous",
+      "report-unknown"
+    ]
+  }
+}

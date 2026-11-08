@@ -1,0 +1,45 @@
+{
+  "condition": "Actual Provider/LiveConversation/Settings components, synthetic owner and Chromium OPFS; Next routing shim; no authenticated route or physical disk claim",
+  "results": [
+    {
+      "name": "disconnected chat is compact with no disabled composer or drawer",
+      "passed": true
+    },
+    {
+      "name": "cancelling direct picker retains compact state and restores the button",
+      "passed": true
+    },
+    {
+      "name": "direct chat click connects through the real Provider with read permission",
+      "passed": true
+    },
+    {
+      "name": "successful connect focuses folder root and lazy children",
+      "passed": true
+    },
+    {
+      "name": "real nested tree groups descendants under their parent",
+      "passed": true
+    },
+    {
+      "name": "same-depth real folder icons align independently of label length",
+      "passed": true
+    },
+    {
+      "name": "settings is directly above the account footer",
+      "passed": true
+    },
+    {
+      "name": "vault heading keeps focus without full width blue outline",
+      "passed": true
+    },
+    {
+      "name": "fixture writes no original data",
+      "passed": true
+    },
+    {
+      "name": "no component exceptions",
+      "passed": true
+    }
+  ]
+}

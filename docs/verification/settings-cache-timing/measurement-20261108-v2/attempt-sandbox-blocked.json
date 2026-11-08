@@ -1,0 +1,47 @@
+{
+  "manifest": {
+    "at": "2026-11-08T09:13:04.233Z",
+    "session": "measurement-20261108-v2",
+    "root": "PROJECT_ROOT\\.omx\\settings-timing\\measurement-20261108-v2",
+    "comparison": "reconstructed pre-cache read pattern vs current cache; not exact historical build",
+    "variants": {
+      "before": {
+        "app": "PROJECT_ROOT\\.omx\\settings-timing\\measurement-20261108-v2\\before\\apps\\web",
+        "sourceHashes": {
+          "src/server/settings-display.ts": "03e973642fccbd700fea37173e7e8361cd5c8cf06394a4d9312183851f97393f",
+          "src/app/(workspace)/layout.tsx": "a638d61dbb9f7ca6a6e8b15ea5f1d30375f8326068bae5aa1a3c67c7fb7d91ca",
+          "src/app/(workspace)/settings/page.tsx": "b31da7ad052d001cd959d8cc2bc48fac5bd1b7fea27233124fa0b06b9026531c"
+        },
+        "buildId": "-EF8-XwVvWif1lXYYzMLN"
+      },
+      "after": {
+        "app": "PROJECT_ROOT\\.omx\\settings-timing\\measurement-20261108-v2\\after\\apps\\web",
+        "sourceHashes": {
+          "src/server/settings-display.ts": "d084ac194cf7bf0c4f972efadfdfe0e65a22e5d7e15fa77c1e4a790111029948",
+          "src/app/(workspace)/layout.tsx": "e2eca68720f942ce4d4fb481468af71a0ac27c2006267701c8a6f4f9c3a50448",
+          "src/app/(workspace)/settings/page.tsx": "40e00772438c4f41ee1062f919df198ec840061fdfa0595c619c4fa62d7f8750"
+        },
+        "buildId": "69sz8moxeLbyN5dDtl0GI"
+      }
+    }
+  },
+  "conditions": "Production copies, same DB/auth policy and UI. Original pre-cache read pattern reconstructed; not exact historical artifact. AI keys absent. All Link prefetch disabled; unique-query client navigations. No account or cookie data recorded.",
+  "records": [
+    {
+      "sequence": 1,
+      "at": "2026-11-08T09:16:30.191Z",
+      "kind": "start",
+      "variant": "before",
+      "run": "ec6b3b0f-7d7f-4e98-92f3-461befdb6876",
+      "rounds": 10
+    },
+    {
+      "sequence": 2,
+      "at": "2026-11-08T09:17:32.992Z",
+      "kind": "start",
+      "variant": "before",
+      "run": "53dabb73-3a69-4e62-bb94-aaf09bdabb08",
+      "rounds": 10
+    }
+  ]
+}

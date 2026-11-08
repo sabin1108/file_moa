@@ -1,0 +1,247 @@
+{
+  "at": "2026-11-07T06:56:09.843Z",
+  "checks": [
+    {
+      "name": "public entry reaches sample workspace without production login",
+      "passed": true
+    },
+    {
+      "name": "sample entry preserves the browser origin",
+      "passed": true
+    },
+    {
+      "name": "84 nested samples with ten root files and separate prepared/AI actions",
+      "passed": true
+    },
+    {
+      "name": "explicit sample consent enables AI",
+      "passed": true
+    },
+    {
+      "name": "changing the selection invalidates consent",
+      "passed": true
+    },
+    {
+      "name": "restoring the old selection still requires fresh consent",
+      "passed": true
+    },
+    {
+      "name": "no IndexedDB or file picker access",
+      "passed": true
+    },
+    {
+      "name": "390: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "768: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "PDF preview loads two checked page images",
+      "passed": true
+    },
+    {
+      "name": "PDF asset is a real PDF",
+      "passed": true
+    },
+    {
+      "name": "Excel preview shows checked cells and total",
+      "passed": true
+    },
+    {
+      "name": "Excel download is a real XLSX archive",
+      "passed": true
+    },
+    {
+      "name": "keyboard opens shared plan review before any sample move",
+      "passed": true
+    },
+    {
+      "name": "shared workflow transition animates height without replacing the workspace",
+      "passed": true
+    },
+    {
+      "name": "open destination browsing blocks applying the previous plan",
+      "passed": true
+    },
+    {
+      "name": "shared folder picker includes path input and excludes real folder creation",
+      "passed": true
+    },
+    {
+      "name": "shared path form blocks synthetic composing Enter",
+      "passed": true
+    },
+    {
+      "name": "shared path selection updates the destination and enables the plan",
+      "passed": true
+    },
+    {
+      "name": "picker cancellation keeps the destination and restores focus",
+      "passed": true
+    },
+    {
+      "name": "review at 390: no overflow",
+      "passed": true
+    },
+    {
+      "name": "explicit approval applies edited destination",
+      "passed": true
+    },
+    {
+      "name": "refresh restores the result without replay",
+      "passed": true
+    },
+    {
+      "name": "storage key is sample-specific, production storage sentinel remains",
+      "passed": true
+    },
+    {
+      "name": "another tab starts with separate unchanged sample state",
+      "passed": true
+    },
+    {
+      "name": "undo restores prior sample positions",
+      "passed": true
+    },
+    {
+      "name": "reset returns every sample to its initial state",
+      "passed": true
+    },
+    {
+      "name": "ambiguous sample blocks application until destination chosen",
+      "passed": true
+    },
+    {
+      "name": "choosing ambiguous destination enables application",
+      "passed": true
+    },
+    {
+      "name": "document preview remains available during review",
+      "passed": true
+    },
+    {
+      "name": "reduced motion skips workflow animations during a real phase change",
+      "passed": true
+    },
+    {
+      "name": "no real folder IO after all interactions",
+      "passed": true
+    },
+    {
+      "name": "production API returns no authenticated session",
+      "passed": true
+    },
+    {
+      "name": "production files remain protected",
+      "passed": true
+    },
+    {
+      "name": "unknown sample document is rejected",
+      "passed": true
+    },
+    {
+      "name": "invalid sample session cannot read assets",
+      "passed": true
+    },
+    {
+      "name": "no browser exception",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "visual": [
+    {
+      "width": 390,
+      "findings": [
+        {
+          "level": "FAIL",
+          "id": "no-title",
+          "width": 390,
+          "message": "The page has no visible h1.",
+          "fix": "Give the first screen a clear title in an h1 that says what this is (a name with what it does, the product with what it is for, the event with its date and place)."
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "findings": [
+        {
+          "level": "FAIL",
+          "id": "no-title",
+          "width": 768,
+          "message": "The page has no visible h1.",
+          "fix": "Give the first screen a clear title in an h1 that says what this is (a name with what it does, the product with what it is for, the event with its date and place)."
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "findings": [
+        {
+          "level": "FAIL",
+          "id": "no-title",
+          "width": 1440,
+          "message": "The page has no visible h1.",
+          "fix": "Give the first screen a clear title in an h1 that says what this is (a name with what it does, the product with what it is for, the event with its date and place)."
+        },
+        {
+          "level": "WARN",
+          "id": "hero-void",
+          "width": 1440,
+          "message": "40% of the first screen is one empty block (780×733px at 660,267).",
+          "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+        },
+        {
+          "level": "WARN",
+          "id": "unused-canvas",
+          "width": 1440,
+          "message": "The content stops 481px short of the right edge while it starts 0px from the sidebar.",
+          "fix": "Let the grid fill the canvas (columns in fr units), or centre a capped canvas with equal margins. A dead strip on one side reads as unfinished."
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "findings": [
+        {
+          "level": "FAIL",
+          "id": "no-title",
+          "width": 1920,
+          "message": "The page has no visible h1.",
+          "fix": "Give the first screen a clear title in an h1 that says what this is (a name with what it does, the product with what it is for, the event with its date and place)."
+        },
+        {
+          "level": "WARN",
+          "id": "hero-void",
+          "width": 1920,
+          "message": "46% of the first screen is one empty block (1200×733px at 720,267).",
+          "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+        },
+        {
+          "level": "WARN",
+          "id": "unused-canvas",
+          "width": 1920,
+          "message": "The content stops 961px short of the right edge while it starts 0px from the sidebar.",
+          "fix": "Let the grid fill the canvas (columns in fr units), or centre a capped canvas with equal margins. A dead strip on one side reads as unfinished."
+        }
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "name": "production get-session API",
+      "status": 200,
+      "unauthenticated": true
+    }
+  ]
+}

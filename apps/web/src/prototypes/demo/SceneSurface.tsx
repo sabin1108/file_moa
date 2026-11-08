@@ -14,15 +14,32 @@ export function sceneLayout(scene: SceneId) {
 export function SceneSurface({ headingId, ...props }: SceneProps & { headingId?: string }) {
   const Heading = headingId ? "h2" : "h1";
   const title = props.scene === "document" && props.documentName ? props.documentName : scenes[props.scene].title;
-  return <>
-    <header className={ui.surfaceHeader}>
-      <div>
-        <Heading id={headingId}>{title}</Heading>
-        {props.scene !== "document" && <p>{scenes[props.scene].description}</p>}
+  return (
+    <>
+      <header className={ui.surfaceHeader}>
+        <div>
+          <Heading id={headingId}>{title}</Heading>
+          {props.scene !== "document" && <p>{scenes[props.scene].description}</p>}
+        </div>
+        {props.dismiss && (
+          <DemoButton variant="ghost" aria-label="닫기" onClick={props.dismiss}>
+            <Icon name="close" size={18} />
+          </DemoButton>
+        )}
+      </header>
+      <div
+        className={ui.surfaceBody}
+        aria-live={
+          scenes[props.scene].group === "로딩과 작업 상태" || props.scene === "folder-connection"
+            ? undefined
+            : "polite"
+        }
+      >
+        <SceneBody {...props} />
       </div>
-      {props.dismiss && <DemoButton variant="ghost" aria-label="닫기" onClick={props.dismiss}><Icon name="close" size={18} /></DemoButton>}
-    </header>
-    <div className={ui.surfaceBody} aria-live={scenes[props.scene].group === "로딩과 작업 상태" || props.scene === "folder-connection" ? undefined : "polite"}><SceneBody {...props} /></div>
-    <footer className={ui.surfaceFooter}>디자인 시안 · 실제 파일 작업과 전송은 실행하지 않습니다.</footer>
-  </>;
+      <footer className={ui.surfaceFooter}>
+        디자인 시안 · 실제 파일 작업과 전송은 실행하지 않습니다.
+      </footer>
+    </>
+  );
 }

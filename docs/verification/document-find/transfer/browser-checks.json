@@ -1,0 +1,129 @@
+{
+  "at": "2026-11-08T04:51:01.678Z",
+  "condition": "real React/provider/session/Worker/OPFS with synthetic owner, permission and Action/provider transport; Next navigation shim",
+  "checks": [
+    {
+      "name": "composing Enter never starts read or transfer",
+      "passed": true
+    },
+    {
+      "name": "preparation has no provider call",
+      "passed": true
+    },
+    {
+      "name": "excerpt is independently hashed from actual Worker bytes",
+      "passed": true
+    },
+    {
+      "name": "consent does not send without the explicit button",
+      "passed": true
+    },
+    {
+      "name": "transfer button accepts keyboard focus",
+      "passed": true
+    },
+    {
+      "name": "native button Enter activates exactly one explicit transfer",
+      "passed": true
+    },
+    {
+      "name": "one explicit call receives only selected excerpts and browser owner",
+      "passed": true
+    },
+    {
+      "name": "success consumes consent and exposes evidence, held reasons and usage",
+      "passed": true
+    },
+    {
+      "name": "390: result has no page overflow",
+      "passed": true
+    },
+    {
+      "name": "768: result has no page overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: result has no page overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: result has no page overflow",
+      "passed": true
+    },
+    {
+      "name": "ten material detail toggles preserve result and never send again",
+      "passed": true
+    },
+    {
+      "name": "Provider keeps the result across route-like remounts without retransmit",
+      "passed": true
+    },
+    {
+      "name": "same-size external content change revokes snapshot/consent without an Action",
+      "passed": true
+    },
+    {
+      "name": "cancelled in-flight real disk recheck never starts an Action",
+      "passed": true
+    },
+    {
+      "name": "limit error has no automatic retry and needs fresh consent",
+      "passed": true
+    },
+    {
+      "name": "pending Action disables another send",
+      "passed": true
+    },
+    {
+      "name": "cancel drops late provider results and explains already consumed usage",
+      "passed": true
+    },
+    {
+      "name": "owner change clears pending state and discards late results",
+      "passed": true
+    },
+    {
+      "name": "F5 initializes state and never automatically resends",
+      "passed": true
+    },
+    {
+      "name": "no product writes or external requests (mocked provider transport)",
+      "passed": true,
+      "detail": {
+        "posts": 0,
+        "external": 0
+      }
+    },
+    {
+      "name": "no runtime errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "timings": [
+    {
+      "elapsedMs": 223,
+      "width": 1440
+    },
+    {
+      "operation": "recheck-and-mocked-action",
+      "elapsedMs": 95.81810000000041
+    },
+    {
+      "elapsedMs": 168,
+      "width": 1440
+    },
+    {
+      "elapsedMs": 157,
+      "width": 1440
+    },
+    {
+      "elapsedMs": 151,
+      "width": 1440
+    },
+    {
+      "elapsedMs": 154,
+      "width": 1440
+    }
+  ]
+}

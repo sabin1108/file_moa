@@ -1,0 +1,126 @@
+{
+  "checks": [
+    {
+      "name": "IME does not enter finding or start disk reads",
+      "passed": true
+    },
+    {
+      "name": "find intent asks year, date basis and around period before reading",
+      "passed": true
+    },
+    {
+      "name": "topic is an editable meeting term and no organization proposal is opened",
+      "passed": true
+    },
+    {
+      "name": "explicit around choice displays inclusive dates",
+      "passed": true
+    },
+    {
+      "name": "390: conditions do not overflow",
+      "passed": true
+    },
+    {
+      "name": "768: conditions do not overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: conditions do not overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: confirmed search action fits the first screen",
+      "passed": true
+    },
+    {
+      "name": "1920: conditions do not overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: confirmed search action fits the first screen",
+      "passed": true
+    },
+    {
+      "name": "actual Worker finds evidence beyond the old excerpt",
+      "passed": true
+    },
+    {
+      "name": "unknown/conflicting dates stay visible and an outside meeting is omitted",
+      "passed": true
+    },
+    {
+      "name": "invalid UTF8 marks partial results, and unsupported formats are disclosed",
+      "passed": true
+    },
+    {
+      "name": "390: results do not overflow",
+      "passed": true
+    },
+    {
+      "name": "390: result file rows keep content height",
+      "passed": true
+    },
+    {
+      "name": "768: results do not overflow",
+      "passed": true
+    },
+    {
+      "name": "768: result file rows keep content height",
+      "passed": true
+    },
+    {
+      "name": "1440: results do not overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: result file rows keep content height",
+      "passed": true
+    },
+    {
+      "name": "1920: results do not overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: result file rows keep content height",
+      "passed": true
+    },
+    {
+      "name": "result opens the existing read-only full document preview",
+      "passed": true
+    },
+    {
+      "name": "return restores focus to the selected result",
+      "passed": true
+    },
+    {
+      "name": "same owner navigation preserves search results without another query",
+      "passed": true
+    },
+    {
+      "name": "new query clears the previous preview and can search all dates",
+      "passed": true
+    },
+    {
+      "name": "cancelled disk work cannot publish late candidates",
+      "passed": true
+    },
+    {
+      "name": "owner change drops the search request and result",
+      "passed": true
+    },
+    {
+      "name": "zero model or external requests and zero source writes",
+      "passed": true
+    },
+    {
+      "name": "protected original sentinel is unchanged",
+      "passed": true
+    },
+    {
+      "name": "no component or Worker exceptions",
+      "passed": true
+    }
+  ],
+  "error": "AssertionError [ERR_ASSERTION]: App inspector must have no failing findings\n\n1 !== 0\n",
+  "text": "chatfilessettings소유자 전환\n본문으로 건너뛰기\n모아.\n폴더\n채팅\n폴더 연결\n설정\n나의 계정\n채팅\n시안 보관함\n계정\n채팅\n자료 폴더를 연결하세요\n\n폴더를 선택하면 왼쪽에서 구조를 확인할 수 있어요. 파일은 이 기기에 보관됩니다.\n\n폴더 연결"
+}

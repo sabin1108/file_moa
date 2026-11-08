@@ -1,0 +1,96 @@
+{
+  "at": "2026-11-07T09:18:19.642Z",
+  "datasetVersion": "request-v2",
+  "caseId": "korean-enter-input",
+  "intentId": "development",
+  "split": "development",
+  "reviewStatus": "unreviewed",
+  "corpusHash": "12630ded196c6f687a2fd781a524b096f2e346289de4c1e99dc7081cd6dc6980",
+  "policyHash": "f15de31e05d5ded8d0b6209ad1259fdd0aeee81e3e496c15280cc903447a9d93",
+  "promptHash": "3cda04b384bb26be3083bd7550f7f20672b9295f4c1ab0d339bd154e68cf6d6b",
+  "model": "gemini-3.5-flash-lite",
+  "scopeCount": 84,
+  "candidateIds": [
+    "business-developer-3",
+    "text-014",
+    "text-015",
+    "report-ambiguous",
+    "business-statistics-3",
+    "sample-pdf",
+    "text-005",
+    "business-research-3",
+    "business-developer-2",
+    "business-developer-4",
+    "business-xlsx-operations",
+    "text-001",
+    "text-013",
+    "report-1002",
+    "report-1005",
+    "report-1014",
+    "report-0908",
+    "report-1104",
+    "report-unknown",
+    "perf-inp",
+    "perf-longtask"
+  ],
+  "latencyMs": 6026,
+  "requests": [
+    {
+      "method": "countTokens",
+      "status": 200,
+      "latencyMs": 344,
+      "countedTokens": 2794
+    },
+    {
+      "method": "generateContent",
+      "status": 200,
+      "latencyMs": 2747,
+      "modelVersion": "gemini-3.5-flash-lite"
+    }
+  ],
+  "result": {
+    "ok": true,
+    "organization": {
+      "summary": "한국어 입력 중 엔터 전송 방지 및 폼 처리 규약과 관련된 문서를 입력 처리 폴더로 분류합니다.",
+      "matches": [
+        {
+          "documentId": "business-developer-3",
+          "destination": [
+            "입력 처리"
+          ],
+          "evidence": "한국어 조합 중 Enter는 전송하지 않고 Shift Enter는 줄바꿈으로 처리한다.",
+          "date": null
+        }
+      ],
+      "held": []
+    },
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 2794,
+      "outputTokens": 113,
+      "totalTokens": 2907
+    }
+  },
+  "rawSyntheticResponse": {
+    "summary": "한국어 입력 중 엔터 전송 방지 및 폼 처리 규약과 관련된 문서를 입력 처리 폴더로 분류합니다.",
+    "matches": [
+      {
+        "documentId": "business-developer-3",
+        "destination": [
+          "입력 처리"
+        ],
+        "evidence": "한국어 조합 중 Enter는 전송하지 않고 Shift Enter는 줄바꿈으로 처리한다.",
+        "date": null
+      }
+    ],
+    "held": []
+  },
+  "evaluation": {
+    "passed": true,
+    "violations": [],
+    "matchedIds": [
+      "business-developer-3"
+    ],
+    "heldIds": []
+  }
+}

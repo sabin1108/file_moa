@@ -1,0 +1,169 @@
+{
+  "at": "2026-11-07T05:06:14.903Z",
+  "buildId": "uVW8shuTbZfpEJB6xu0v_",
+  "latencyMs": 5664,
+  "requests": 1,
+  "state": {
+    "version": "1",
+    "phase": "review",
+    "selected": [
+      "perf-lcp",
+      "perf-inp",
+      "perf-network",
+      "perf-bundle"
+    ],
+    "locations": {
+      "text-001": null,
+      "sample-pdf": null,
+      "sample-xlsx": null,
+      "text-003": null,
+      "text-005": null,
+      "text-007": null,
+      "text-011": null,
+      "text-013": null,
+      "text-014": null,
+      "text-015": null,
+      "report-1002": "source-team",
+      "report-1005": "source-mail",
+      "report-1009": "source-team",
+      "report-1014": "source-download",
+      "report-1021": "source-team",
+      "report-1028": "source-mail",
+      "report-0908": "source-download",
+      "report-1104": "source-team",
+      "report-unknown": "source-mail",
+      "perf-lcp": "source-dev",
+      "perf-inp": "source-mail",
+      "perf-network": "source-download",
+      "perf-bundle": "source-dev",
+      "perf-longtask": "source-team",
+      "perf-titled-only": "source-personal",
+      "perf-hardware": "source-download",
+      "perf-intent-injection": "source-dev",
+      "receipt-1004": "source-personal",
+      "plan-1010": "source-team",
+      "recipe": "source-personal",
+      "meeting-1020": "source-team",
+      "learning-http": "source-dev",
+      "empty-note": "source-mail",
+      "report-ambiguous": "source-download"
+    },
+    "targets": {
+      "perf-lcp": "custom-1",
+      "perf-inp": "custom-1",
+      "perf-network": "custom-1",
+      "perf-bundle": "custom-1"
+    },
+    "ai": null,
+    "organization": {
+      "instruction": "웹사이트 성능 테스트 자료만 내용으로 찾아 성능 테스트 폴더에 모아 줘",
+      "candidateIds": [
+        "text-001",
+        "sample-pdf",
+        "sample-xlsx",
+        "text-003",
+        "text-005",
+        "text-007",
+        "text-011",
+        "text-013",
+        "text-014",
+        "text-015",
+        "report-1002",
+        "report-1005",
+        "report-1009",
+        "report-1014",
+        "report-1021",
+        "report-1028",
+        "report-0908",
+        "report-1104",
+        "report-unknown",
+        "perf-lcp",
+        "perf-inp",
+        "perf-network",
+        "perf-bundle",
+        "perf-longtask",
+        "perf-titled-only",
+        "perf-hardware",
+        "perf-intent-injection",
+        "receipt-1004",
+        "plan-1010",
+        "recipe",
+        "meeting-1020",
+        "learning-http",
+        "empty-note",
+        "report-ambiguous"
+      ],
+      "response": {
+        "summary": "웹사이트 성능 테스트 측정 결과가 포함된 문서를 선별하여 성능 테스트 폴더로 분류할 계획을 생성했습니다.",
+        "matches": [
+          {
+            "documentId": "perf-lcp",
+            "destination": [
+              "성능 테스트"
+            ],
+            "evidence": "2026-10-03 웹사이트 성능 테스트를 실행했다. Lighthouse로 LCP 2.8초, CLS 0.02를 측정했다.",
+            "date": null
+          },
+          {
+            "documentId": "perf-inp",
+            "destination": [
+              "성능 테스트"
+            ],
+            "evidence": "검색창 입력 지연을 웹사이트 성능 테스트에서 재현했다. INP는 310ms였고 긴 JavaScript 작업이 원인이었다.",
+            "date": null
+          },
+          {
+            "documentId": "perf-network",
+            "destination": [
+              "성능 테스트"
+            ],
+            "evidence": "웹사이트 성능 테스트 결과: Network waterfall에서 중복 API 요청과 큰 이미지 전송을 확인했다.",
+            "date": null
+          },
+          {
+            "documentId": "perf-bundle",
+            "destination": [
+              "성능 테스트"
+            ],
+            "evidence": "번들 분석으로 홈페이지 초기 JS를 240KiB 줄였다. 웹사이트 로딩 성능 테스트의 전후 LCP와 전송량을 동일 조건으로 비교했다.",
+            "date": null
+          }
+        ],
+        "held": [
+          {
+            "documentId": "perf-longtask",
+            "reason": "11월 측정 자료는 10월이나 일반 성능 테스트 범위와 분리 확인이 필요합니다."
+          }
+        ]
+      },
+      "model": "gemini-3.5-flash-lite",
+      "usage": {
+        "inputTokens": 3333,
+        "outputTokens": 391,
+        "totalTokens": 3724
+      },
+      "foldersBefore": []
+    },
+    "createdFolders": [
+      {
+        "id": "custom-1",
+        "label": "성능 테스트"
+      }
+    ],
+    "draft": "",
+    "messages": [
+      {
+        "id": "message-0-1794027969239",
+        "author": "user",
+        "text": "웹사이트 성능 테스트 자료만 내용으로 찾아 성능 테스트 폴더에 모아 줘"
+      },
+      {
+        "id": "answer-1-1794027974857",
+        "author": "assistant",
+        "text": "웹사이트 성능 테스트 측정 결과가 포함된 문서를 선별하여 성능 테스트 폴더로 분류할 계획을 생성했습니다."
+      }
+    ],
+    "lastApplied": null
+  },
+  "notice": null
+}

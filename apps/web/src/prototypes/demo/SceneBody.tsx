@@ -26,6 +26,17 @@ export function SceneBody(props: SceneProps) {
   if (["export", "export-ready", "delete-confirm", "deleted"].includes(props.scene)) return <DataScenes key={props.scene} {...props} />;
   if (["connect", "connected", "permission"].includes(props.scene)) return <ConnectScenes key={props.scene} {...props} />;
   if (["document", "transfer", "indexing"].includes(props.scene)) return <DocumentScenes key={props.scene} {...props} />;
-  if (["destination", "conflict", "move-progress", "move-result", "move-partial", "move-skipped", "copy-result"].includes(props.scene)) return <MoveScenes key={props.scene} {...props} />;
+  if (
+    [
+      "destination",
+      "conflict",
+      "move-progress",
+      "move-result",
+      "move-partial",
+      "move-skipped",
+      "copy-result",
+    ].includes(props.scene)
+  )
+    return <MoveScenes key={props.scene} {...props} />;
   return <RecoveryScenes key={props.scene} {...props} />;
 }

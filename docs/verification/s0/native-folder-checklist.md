@@ -22,4 +22,4 @@
 
 기록: 브라우저 버전, 시각, 각 단계 상태, 실제 허용/거절 조작, 새로고침/완전 재시작 구분. 오류 시 개인정보 없는 상태 코드만 남긴다. 원본 자료 본문·파일명을 보고서에 붙이지 않는다.
 
-Computer Use 스킬의 [SKILL.md](C:/Users/sabin/.codex/plugins/cache/openai-bundled/computer-use/26.1021.31345/skills/computer-use/SKILL.md)가 연결한 guidance.md에는 `Do not act on security or privacy permission requests.`가 명시되어 있다. 이 방식의 권한 창 조작은 사용자 직접 조작이 필요하며, 이를 피하려고 브라우저 보안 옵션을 끄거나 권한을 몰래 주입해 실제 검증으로 기록하지 않는다. 자동 회귀에서는 합성 권한 응답을 사용하고 그 범위를 별도로 표시한다.
+Computer Use 스킬의 [SKILL.md](%USERPROFILE%/.codex/plugins/cache/openai-bundled/computer-use/26.1021.31345/skills/computer-use/SKILL.md)가 연결한 guidance.md에는 `Do not act on security or privacy permission requests.`가 명시되어 있다. 이 방식의 권한 창 조작은 사용자 직접 조작이 필요하며, 이를 피하려고 브라우저 보안 옵션을 끄거나 권한을 몰래 주입해 실제 검증으로 기록하지 않는다. 자동 회귀에서는 합성 권한 응답을 사용하고 그 범위를 별도로 표시한다.

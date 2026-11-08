@@ -36,7 +36,13 @@ export async function beginSocialSignIn(form: FormData, headers: Headers, linkin
     const requestHeaders = new Headers(headers);
     requestHeaders.delete("content-length");
     requestHeaders.set("content-type", "application/json");
-    const response = await handleAuthRequest(new Request(`${origin}/api/auth/${linking ? "link-social" : "sign-in/social"}`, { method: "POST", headers: requestHeaders, body: JSON.stringify({ provider: provider.data, ...linking ? {} : { intent } }) }));
+    const response = await handleAuthRequest(
+      new Request(`${origin}/api/auth/${linking ? "link-social" : "sign-in/social"}`, {
+        method: "POST",
+        headers: requestHeaders,
+        body: JSON.stringify({ provider: provider.data, ...(linking ? {} : { intent }) }),
+      }),
+    );
     const data = z.object({ url: z.url().optional() }).safeParse(await response.clone().json());
     if (!response.ok || !data.success || !data.data.url) throw new Error("social-start-failed");
     const url = new URL(data.data.url);

@@ -1,0 +1,73 @@
+{
+  "checks": [
+    {
+      "name": "same shared conversation workspace and production menu labels",
+      "passed": true
+    },
+    {
+      "name": "84 documents with a closed materials drawer by default",
+      "passed": true
+    },
+    {
+      "name": "390: conversation has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "768: conversation has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: conversation has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: conversation has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "no request before consent",
+      "passed": true
+    },
+    {
+      "name": "ten panel toggles preserve composer identity and draft",
+      "passed": true
+    },
+    {
+      "name": "explicit request/scope consent enables send",
+      "passed": true
+    },
+    {
+      "name": "composing Enter never submits a request",
+      "passed": true
+    },
+    {
+      "name": "Shift+Enter inserts a newline without submitting",
+      "passed": true
+    },
+    {
+      "name": "editing intent invalidates previous consent",
+      "passed": true
+    },
+    {
+      "name": "sample tree uses shared folder/file rows and navigates nested folders",
+      "passed": true
+    },
+    {
+      "name": "reduced motion is honored",
+      "passed": true
+    },
+    {
+      "name": "zero API requests during browsing and composing",
+      "passed": true
+    },
+    {
+      "name": "zero real file picker or IndexedDB access",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ]
+}

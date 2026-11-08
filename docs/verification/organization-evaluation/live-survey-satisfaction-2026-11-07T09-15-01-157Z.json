@@ -1,0 +1,112 @@
+{
+  "at": "2026-11-07T09:15:01.157Z",
+  "datasetVersion": "request-v2",
+  "caseId": "survey-satisfaction",
+  "intentId": "analytics",
+  "split": "development",
+  "reviewStatus": "unreviewed",
+  "corpusHash": "12630ded196c6f687a2fd781a524b096f2e346289de4c1e99dc7081cd6dc6980",
+  "policyHash": "f15de31e05d5ded8d0b6209ad1259fdd0aeee81e3e496c15280cc903447a9d93",
+  "promptHash": "b5792314b87248799050197996739b456c54e6b3863900ef1ce350c79eb2c557",
+  "model": "gemini-3.5-flash-lite",
+  "scopeCount": 84,
+  "candidateIds": [
+    "business-statistics-1",
+    "business-statistics-2",
+    "sample-xlsx",
+    "business-statistics-6",
+    "business-statistics-3",
+    "business-xlsx-service",
+    "business-research-5",
+    "business-operations-4",
+    "business-xlsx-statistics",
+    "business-xlsx-operations",
+    "text-007",
+    "report-1009",
+    "sample-pdf",
+    "text-015",
+    "report-1014",
+    "report-unknown",
+    "perf-inp",
+    "perf-network",
+    "perf-titled-only",
+    "report-1005"
+  ],
+  "latencyMs": 5067,
+  "requests": [
+    {
+      "method": "countTokens",
+      "status": 200,
+      "latencyMs": 363,
+      "countedTokens": 2990
+    },
+    {
+      "method": "generateContent",
+      "status": 200,
+      "latencyMs": 1499,
+      "modelVersion": "gemini-3.5-flash-lite"
+    }
+  ],
+  "result": {
+    "ok": true,
+    "organization": {
+      "summary": "설문에서 만족한 인원수가 포함된 결과 자료를 찾아 만족도 폴더로 분류하고 날짜 그룹화 없이 정리했습니다.",
+      "matches": [
+        {
+          "documentId": "business-statistics-6",
+          "destination": [
+            "만족도"
+          ],
+          "evidence": "응답 80건 중 만족 52건, 보통 20건, 불만족 8건이다.",
+          "date": null
+        },
+        {
+          "documentId": "business-xlsx-statistics",
+          "destination": [
+            "만족도"
+          ],
+          "evidence": "학년 | 응답(명) | 만족(명) | 만족 비율\n1학년 | 30 | 21 | 0.7",
+          "date": null
+        }
+      ],
+      "held": []
+    },
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 2990,
+      "outputTokens": 207,
+      "totalTokens": 3197
+    }
+  },
+  "rawSyntheticResponse": {
+    "summary": "설문에서 만족한 인원수가 포함된 결과 자료를 찾아 만족도 폴더로 분류하고 날짜 그룹화 없이 정리했습니다.",
+    "matches": [
+      {
+        "documentId": "business-statistics-6",
+        "destination": [
+          "만족도"
+        ],
+        "evidence": "응답 80건 중 만족 52건, 보통 20건, 불만족 8건이다.",
+        "date": null
+      },
+      {
+        "documentId": "business-xlsx-statistics",
+        "destination": [
+          "만족도"
+        ],
+        "evidence": "학년 | 응답(명) | 만족(명) | 만족 비율\n1학년 | 30 | 21 | 0.7",
+        "date": null
+      }
+    ],
+    "held": []
+  },
+  "evaluation": {
+    "passed": true,
+    "violations": [],
+    "matchedIds": [
+      "business-statistics-6",
+      "business-xlsx-statistics"
+    ],
+    "heldIds": []
+  }
+}

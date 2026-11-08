@@ -1,5 +1,37 @@
 # 코드 읽기 안내 — 화면 진입부터 로컬 파일 읽기까지
 
+## 로컬 자료 찾기 — 2026-11-08
+
+LiveConversation.isFindRequest → DocumentFindController.start/조건 확인 → search/confirmFindQuery → session.findSourceDocuments/기존 snapshot → 공통 hash Worker의 전체 본문 근거 → 결과/기존 preview.open이다. 날짜 순수 함수를 정리와 공유하며 AI 전송용 DTO/파일 writer를 추가하지 않았다. [호출·반환·상태 읽기](reports/document-find-reading.md), [명세·검증·한계](verification/document-find/README.md).
+
+## 채팅 답변 연결 — 2026-11-08
+
+질문 생성 → 공통 composer의 replyDraft → preparation.updateReply/submitReply → 순수 parseOrganizationReply → 기존 검증과 applyAnswers → 질문 입력/대화 → 새 명시 전송이다. [실제 식·호출·반환](reports/organization-reply-reading.md), [지원 표현·검증·한계](verification/organization-reply/README.md). 최초 요청/상태/외부 접근/표시의 책임을 유지한다.
+
+## 대화 안 정리 실제 적용 — 2026-11-08
+
+`LiveConversation` → `ConversationWorkspace.interaction` → 기존 controller 상태를 받는 조건/질문/전송/제안/실행 표시다. `FileChangeComparison`과 순수 `buildComparisonTrees`는 일반 계획·managed 검토·AI·시안이 함께 쓴다. [실제 호출·반환 순서](reports/chat-first-live-reading.md), [검증·하이드레이션·한계](verification/chat-first-live/README.md). 아래 시안 절은 실제 연결 전의 기록이다.
+
+## 대화 중심 정리 개편 시안 — 2026-11-08 사용자 실제 사용 피드백
+
+`/preview/screens/chat-first` → `prototypes/organization/ChatFirstPrototype`에서 합성 자료 확인/질문/현재·도착 폴더/검토를 대화 안에 배치한다. 실제 AI/파일 기능은 미연결이다. 최신 [디자인 기준](../DESIGN.md), [명세](specs/chat-first-organization.md), [시안과 화면 검토](verification/chat-first-design/README.md). 기존 실제 controller/서버/원본 보호는 교체하지 않았다.
+
+## 정리 질문에서 실제 검토·실행까지 — 2026-11-08
+
+요청 → preparation/infer/read/reference → 명시 전송/검증 질문 → answer/동의 폐기 → 새 명시 전송 → execution.review/operation projection → 기존 managed dialog/버전 검사 → 기존 실행/보존/복구 순서다. [행동별 함수 흐름](reports/live-organization-completion-reading.md), [1~10 상태](verification/live-organization-completion/README.md). 빈 폴더 높이는 공통 frame의 workarea grid에서 수정했다.
+
+## 정식 AI 전송 경계 — 2026-11-08
+
+홈 페이지가 실제 `liveOrganizationAction` 참조를 채팅/자료 창에 전달한다. 명시 클릭 → controller.send → session.recheckSourceSnapshot → 선택 파일 Worker 재검사 → app/actions/live-ai → server/live-organization의 인증/Origin/입력/원자 예약 → sample과 공통 organization-generation/Gemini → 응답 검증 → 메모리 제안 표시다. [실제 식·호출·반환 순서](reports/live-ai-transfer-reading.md), [실행 근거·한계](verification/live-ai-transfer/README.md). 개인 실전송/파일 적용 완료 증거는 아니다.
+
+## 정식 채팅의 로컬 자료 준비 — 2026-11-07
+
+`LiveConversation`의 요청 입력/제출 → Provider가 소유한 `OrganizationPreparationController` → `FolderConnectionSession.inspectSourceSnapshot` → `source-snapshot`의 재귀 읽기 → 기존 `copy-hash` Worker의 텍스트/해시 처리 → controller의 후보·동의 상태 → `OrganizationPreparationPanel`/`OrganizationSnapshotView` 표시다. 범위·참고·목적지는 독립이며 같은 `DestinationFolderPicker`를 읽기 전용으로 재사용한다. 샘플의 후보 제한 함수를 shared로 승격했으며 이전 import 재export를 유지했다. [줄을 따라 읽기](reports/live-local-preparation-reading.md), [명세](specs/live-txt-md-consent.md), [검증](verification/live-local-preparation/README.md).
+
+## 사용자 행동과 실행 순서로 읽기 — 2026-11-07
+
+[코드_이해하기](코드_이해하기.md)는 로그인·폴더·계획·실행·복구·샘플 AI·설정을 22절로 따라 읽는 안내다. 실행되는 식/조건에서 호출 함수로 들어갔다가 반환값과 함께 화면으로 돌아온다. 함수/파일 목록보다 실제 동작 순서를 먼저 읽고 싶으면 이 문서에서 시작한다. 아래 날짜별 절은 당시 구현 단위의 기록이다.
+
 ## 이메일 인증 화면 읽기 — 2026-11-06
 
 1. `app/login`, `app/welcome`, `app/verify-email`, `app/forgot-password`, `app/reset-password`, `app/account`: 화면 조합·서버 query/세션 진입.
@@ -221,3 +253,10 @@ npm도 workspace를 지원하므로 pnpm이 필수인 것은 아니다. 이 저�
 [미리보기 검증 기록](verification/source-file-preview/README.md)에 red→green 기록, 실행 명령, 현재 결과와 미검증 범위를 모았다. [구조도 원본](diagrams/local-files.architecture.json)과 [생성 영수증](diagrams/local-files.delivery.json)은 9개 검사/오류0/경고0, [브라우저 영수증](diagrams/local-files.visual-check.json)은 별도 자동 검사 결과다.
 
 1440/2048px의 라이트·다크 캡처를 직접 확인했으며 겹침/잘림은 발견하지 못했다. 작은 보조 글자는 확대해서 읽도록 제공되며 파일별 상세는 이 문서를 사용한다. 구조도 본문은 한국어지만 도구의 고정 Viewer UI와 HTML lang은 영어로 생성된다. 모바일 구조도 조작·내보내기 전 형식은 이번 검증 범위가 아니다.
+# 샘플 대화 정리·실모델 평가 — 2026-11-07 후속
+
+최신 지침 v4/CO-012는 확정된 기간 밖 자료를 보류가 아닌 제외로 처리하고 제안 요약을 사용한다. [실패→재검증](verification/expectation-review/README.md)과 [정식 연결 초안](specs/live-txt-md-consent.md)을 먼저 읽는다. 아래 v3 설명은 도입 당시의 흐름이다.
+
+`app/actions/sample-ai.ts` → `server/sample-organization.ts`는 샘플 세션/Origin/동의/등록 자료와 DB 원자 한도를 확인한 뒤 공통 `generateGeminiJson`을 호출한다. 지침 v3은 날짜 키워드로 분기하지 않고 기간 필터·날짜별 정리·부정문을 독립 조건으로 제공한다. 결과는 기존 `shared/organization.ts`의 ID·인용·본문 날짜·상대 경로 검사 후 가상 변경 계획으로 전달한다. 개인 파일 AI는 이 경로에 연결하지 않았다.
+
+`tests/server/organization-live.checks.ts`는 명시 opt-in과 development 요청 하나만 허용한다. 현재 후보 함수와 `tests/sample-workspace/organization-evaluation.ts`의 판정기를 재사용하고 실제 DB/공급자 경계를 유지하며 해시·후보·토큰·시간·합성 응답을 기록한다. 정답·유보는 공급자 입력에 포함하지 않는다. 재현과 한계: [실모델 평가](verification/organization-evaluation/live-evaluation.md).

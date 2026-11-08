@@ -1,0 +1,51 @@
+{
+  "at": "2026-11-07T08:43:44.051Z",
+  "caseId": "october-reports",
+  "split": "development",
+  "reviewStatus": "unreviewed",
+  "corpusHash": "12630ded196c6f687a2fd781a524b096f2e346289de4c1e99dc7081cd6dc6980",
+  "policyHash": "022797f071447208353a7824a0a5fc63dcb80ad4f0b1b602bc25e89af6b98f10",
+  "promptHash": "",
+  "model": "gemini-3.5-flash-lite",
+  "scopeCount": 84,
+  "candidateIds": [
+    "report-1021",
+    "report-0908",
+    "report-ambiguous",
+    "report-1104",
+    "report-1002",
+    "report-1005",
+    "plan-1010",
+    "report-1009",
+    "report-1014",
+    "report-1028",
+    "receipt-1004",
+    "meeting-1020",
+    "report-unknown",
+    "business-research-4",
+    "perf-lcp",
+    "business-company-1",
+    "business-statistics-6",
+    "business-visits-1",
+    "business-operations-4",
+    "business-operations-6",
+    "business-company-2",
+    "business-company-3",
+    "recipe"
+  ],
+  "latencyMs": 72,
+  "requests": [],
+  "result": {
+    "ok": false,
+    "code": "unavailable"
+  },
+  "rawSyntheticResponse": null,
+  "evaluation": {
+    "passed": false,
+    "violations": [
+      "invalid-response"
+    ],
+    "matchedIds": [],
+    "heldIds": []
+  }
+}

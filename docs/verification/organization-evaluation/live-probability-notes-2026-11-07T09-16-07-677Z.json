@@ -1,0 +1,94 @@
+{
+  "at": "2026-11-07T09:16:07.677Z",
+  "datasetVersion": "request-v2",
+  "caseId": "probability-notes",
+  "intentId": "study",
+  "split": "development",
+  "reviewStatus": "unreviewed",
+  "corpusHash": "12630ded196c6f687a2fd781a524b096f2e346289de4c1e99dc7081cd6dc6980",
+  "policyHash": "f15de31e05d5ded8d0b6209ad1259fdd0aeee81e3e496c15280cc903447a9d93",
+  "promptHash": "0903988b818cfb560694674c159c28cdce65d26db5a2ba3f52cdb5955a2857cd",
+  "model": "gemini-3.5-flash-lite",
+  "scopeCount": 84,
+  "candidateIds": [
+    "business-study-4",
+    "learning-http",
+    "business-study-6",
+    "business-study-1",
+    "sample-xlsx",
+    "business-xlsx-study",
+    "text-007",
+    "business-study-3",
+    "business-developer-5",
+    "business-study-2",
+    "text-015",
+    "business-research-1",
+    "business-research-3",
+    "business-research-4",
+    "business-statistics-4",
+    "business-study-5",
+    "business-developer-2",
+    "text-001",
+    "report-1002"
+  ],
+  "latencyMs": 5775,
+  "requests": [
+    {
+      "method": "countTokens",
+      "status": 200,
+      "latencyMs": 311,
+      "countedTokens": 2958
+    },
+    {
+      "method": "generateContent",
+      "status": 200,
+      "latencyMs": 3359,
+      "modelVersion": "gemini-3.5-flash-lite"
+    }
+  ],
+  "result": {
+    "ok": true,
+    "organization": {
+      "summary": "조건부 확률과 독립 사건 개념을 설명하는 공부 자료를 확률 복습 폴더로 분류하고, 공부 시간표 관련 자료는 제외하였습니다.",
+      "matches": [
+        {
+          "documentId": "business-study-4",
+          "destination": [
+            "확률 복습"
+          ],
+          "evidence": "개인 확률 공부. 조건부 확률과 독립 사건을 구분한다. 주사위 두 번의 결과는 독립이지만 비복원 추출은 앞선 선택이 뒤의 확률에 영향을 준다.",
+          "date": null
+        }
+      ],
+      "held": []
+    },
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 2958,
+      "outputTokens": 145,
+      "totalTokens": 3103
+    }
+  },
+  "rawSyntheticResponse": {
+    "summary": "조건부 확률과 독립 사건 개념을 설명하는 공부 자료를 확률 복습 폴더로 분류하고, 공부 시간표 관련 자료는 제외하였습니다.",
+    "matches": [
+      {
+        "documentId": "business-study-4",
+        "destination": [
+          "확률 복습"
+        ],
+        "evidence": "개인 확률 공부. 조건부 확률과 독립 사건을 구분한다. 주사위 두 번의 결과는 독립이지만 비복원 추출은 앞선 선택이 뒤의 확률에 영향을 준다.",
+        "date": null
+      }
+    ],
+    "held": []
+  },
+  "evaluation": {
+    "passed": true,
+    "violations": [],
+    "matchedIds": [
+      "business-study-4"
+    ],
+    "heldIds": []
+  }
+}

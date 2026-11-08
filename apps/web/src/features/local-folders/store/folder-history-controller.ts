@@ -21,7 +21,17 @@ export type FolderHistoryState = Readonly<{
   copyInspection: CopyHistoryInspectionState | null;
   restoreInspection: RestoreInspectionState | null;
 }>;
-const initial: FolderHistoryState = { open: false, path: [], phase: "idle", result: null, issue: null, checkedAt: null, inspection: null, copyInspection: null, restoreInspection: null };
+const initial: FolderHistoryState = {
+  open: false,
+  path: [],
+  phase: "idle",
+  result: null,
+  issue: null,
+  checkedAt: null,
+  inspection: null,
+  copyInspection: null,
+  restoreInspection: null,
+};
 
 /** 팝업의 읽기 요청만 소유한다. 닫기/교체 후 늦은 응답은 게시하지 않는다. */
 export class FolderHistoryController {
@@ -117,7 +127,15 @@ export class FolderHistoryController {
       this.abort = null; this.publish({ ...this.state, copyInspection: { id, phase: "ready", result } });
     } catch (error) {
       if (generation !== this.generation) return;
-      this.abort = null; this.publish({ ...this.state, copyInspection: { id, phase: error instanceof Error && error.name === "AbortError" ? "cancelled" : "error", result: null } });
+      this.abort = null;
+      this.publish({
+        ...this.state,
+        copyInspection: {
+          id,
+          phase: error instanceof Error && error.name === "AbortError" ? "cancelled" : "error",
+          result: null,
+        },
+      });
     }
   };
 

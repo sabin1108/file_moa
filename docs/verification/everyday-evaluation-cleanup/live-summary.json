@@ -1,0 +1,102 @@
+{
+  "datasetVersion": "request-v2",
+  "expectationReview": "unreviewed",
+  "selectedRequests": 6,
+  "uniqueIntentGroups": 6,
+  "generationCalls": 6,
+  "inputTokens": 18146,
+  "outputTokens": 771,
+  "cases": [
+    {
+      "caseId": "company-expenses",
+      "intentId": "finance",
+      "source": "../organization-evaluation/live-company-expenses-2026-11-07T09-13-54-998Z.json",
+      "candidates": 19,
+      "matched": 1,
+      "held": 0,
+      "passed": true,
+      "latencyMs": 4864,
+      "usage": {
+        "inputTokens": 2986,
+        "outputTokens": 135,
+        "totalTokens": 3121
+      }
+    },
+    {
+      "caseId": "korean-enter-input",
+      "intentId": "development",
+      "source": "../organization-evaluation/live-korean-enter-input-2026-11-07T09-18-19-642Z.json",
+      "candidates": 21,
+      "matched": 1,
+      "held": 0,
+      "passed": true,
+      "latencyMs": 6026,
+      "usage": {
+        "inputTokens": 2794,
+        "outputTokens": 113,
+        "totalTokens": 2907
+      }
+    },
+    {
+      "caseId": "literature-review",
+      "intentId": "research",
+      "source": "../organization-evaluation/live-literature-review-2026-11-07T09-17-12-839Z.json",
+      "candidates": 17,
+      "matched": 1,
+      "held": 0,
+      "passed": true,
+      "latencyMs": 4447,
+      "usage": {
+        "inputTokens": 3321,
+        "outputTokens": 130,
+        "totalTokens": 3451
+      }
+    },
+    {
+      "caseId": "no-signed-contract",
+      "intentId": "safety",
+      "source": "../organization-evaluation/live-no-signed-contract-2026-11-07T09-19-26-456Z.json",
+      "candidates": 18,
+      "matched": 0,
+      "held": 0,
+      "passed": true,
+      "latencyMs": 6035,
+      "usage": {
+        "inputTokens": 3097,
+        "outputTokens": 41,
+        "totalTokens": 3138
+      }
+    },
+    {
+      "caseId": "probability-notes",
+      "intentId": "study",
+      "source": "../organization-evaluation/live-probability-notes-2026-11-07T09-16-07-677Z.json",
+      "candidates": 19,
+      "matched": 1,
+      "held": 0,
+      "passed": true,
+      "latencyMs": 5775,
+      "usage": {
+        "inputTokens": 2958,
+        "outputTokens": 145,
+        "totalTokens": 3103
+      }
+    },
+    {
+      "caseId": "survey-satisfaction",
+      "intentId": "analytics",
+      "source": "../organization-evaluation/live-survey-satisfaction-2026-11-07T09-15-01-157Z.json",
+      "candidates": 20,
+      "matched": 2,
+      "held": 0,
+      "passed": true,
+      "latencyMs": 5067,
+      "usage": {
+        "inputTokens": 2990,
+        "outputTokens": 207,
+        "totalTokens": 3197
+      }
+    }
+  ],
+  "totalTokens": 18917
+}

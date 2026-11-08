@@ -1,0 +1,20 @@
+{
+  "condition": "Fresh production build on local port 3035, public sample routes; no model actions or real folder reads.",
+  "results": [
+    {
+      "path": "/demo",
+      "heading": "채팅",
+      "consoleErrors": 0
+    },
+    {
+      "path": "/demo/files",
+      "heading": "내 파일",
+      "consoleErrors": 0
+    },
+    {
+      "path": "/demo/settings",
+      "heading": "설정",
+      "consoleErrors": 0
+    }
+  ]
+}

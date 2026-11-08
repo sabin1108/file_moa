@@ -1,0 +1,170 @@
+{
+  "condition": "Actual five prototype screens and 28 scenes rendered in Chromium with Next navigation shim; no authenticated route, state transition, real file or API claim.",
+  "results": [
+    {
+      "scenario": "chat",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "files",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "settings",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "login",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "welcome",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "folder-connection",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "startup",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "content-loading",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "answer-progress",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "action-feedback",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "session-recovery",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "file-issues",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "connect",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "connected",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "permission",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "document",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "transfer",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "indexing",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "destination",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "conflict",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "move-progress",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "move-result",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "move-skipped",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "move-partial",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "copy-result",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "search",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "empty",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "error",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "login-error",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "export",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "export-ready",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "delete-confirm",
+      "rendered": true,
+      "exceptions": 0
+    },
+    {
+      "scenario": "deleted",
+      "rendered": true,
+      "exceptions": 0
+    }
+  ]
+}

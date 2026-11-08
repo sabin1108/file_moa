@@ -1,0 +1,227 @@
+{
+  "at": "2026-11-07T05:11:42.186Z",
+  "buildId": "0ybMAmLCjLIo2IzSyeUAT",
+  "latencyMs": 5459,
+  "requests": 1,
+  "state": {
+    "version": "1",
+    "phase": "review",
+    "selected": [
+      "report-1002",
+      "report-1005",
+      "report-1009",
+      "report-1014",
+      "report-1021",
+      "report-1028"
+    ],
+    "locations": {
+      "text-001": null,
+      "sample-pdf": null,
+      "sample-xlsx": null,
+      "text-003": null,
+      "text-005": null,
+      "text-007": null,
+      "text-011": null,
+      "text-013": null,
+      "text-014": null,
+      "text-015": null,
+      "report-1002": "source-team",
+      "report-1005": "source-mail",
+      "report-1009": "source-team",
+      "report-1014": "source-download",
+      "report-1021": "source-team",
+      "report-1028": "source-mail",
+      "report-0908": "source-download",
+      "report-1104": "source-team",
+      "report-unknown": "source-mail",
+      "perf-lcp": "source-dev",
+      "perf-inp": "source-mail",
+      "perf-network": "source-download",
+      "perf-bundle": "source-dev",
+      "perf-longtask": "source-team",
+      "perf-titled-only": "source-personal",
+      "perf-hardware": "source-download",
+      "perf-intent-injection": "source-dev",
+      "receipt-1004": "source-personal",
+      "plan-1010": "source-team",
+      "recipe": "source-personal",
+      "meeting-1020": "source-team",
+      "learning-http": "source-dev",
+      "empty-note": "source-mail",
+      "report-ambiguous": "source-download"
+    },
+    "targets": {
+      "report-1002": "custom-1",
+      "report-1005": "custom-2",
+      "report-1009": "custom-3",
+      "report-1014": "custom-4",
+      "report-1021": "custom-5",
+      "report-1028": "custom-6"
+    },
+    "ai": null,
+    "organization": {
+      "instruction": "10월달 보고서를 본문 작성일 기준으로 날짜별로 정리해 줘",
+      "candidateIds": [
+        "text-001",
+        "sample-pdf",
+        "sample-xlsx",
+        "text-003",
+        "text-005",
+        "text-007",
+        "text-011",
+        "text-013",
+        "text-014",
+        "text-015",
+        "report-1002",
+        "report-1005",
+        "report-1009",
+        "report-1014",
+        "report-1021",
+        "report-1028",
+        "report-0908",
+        "report-1104",
+        "report-unknown",
+        "perf-lcp",
+        "perf-inp",
+        "perf-network",
+        "perf-bundle",
+        "perf-longtask",
+        "perf-titled-only",
+        "perf-hardware",
+        "perf-intent-injection",
+        "receipt-1004",
+        "plan-1010",
+        "recipe",
+        "meeting-1020",
+        "learning-http",
+        "empty-note",
+        "report-ambiguous"
+      ],
+      "response": {
+        "summary": "10월달 보고서(본문 작성일 기준) 문서들을 날짜별로 분류하여 정리했습니다.",
+        "matches": [
+          {
+            "documentId": "report-1002",
+            "destination": [
+              "보고서",
+              "2026-10-02"
+            ],
+            "evidence": "# 주간 보고서\n작성일: 2026-10-02\n이번 보고 기간에 문서 업로드 오류를 줄였다.",
+            "date": "2026-10-02"
+          },
+          {
+            "documentId": "report-1005",
+            "destination": [
+              "보고서",
+              "2026-10-05"
+            ],
+            "evidence": "보고서 작성일은 2026-10-05이다. 고객 문의 처리와 결제 오류 수정 현황을 정리했다.",
+            "date": "2026-10-05"
+          },
+          {
+            "documentId": "report-1009",
+            "destination": [
+              "보고서",
+              "2026-10-09"
+            ],
+            "evidence": "# 결과 보고서\n보고일: 2026-10-09\n신규 계정 연결과 기존 자료 보존 검토 결과를 보고한다.",
+            "date": "2026-10-09"
+          },
+          {
+            "documentId": "report-1014",
+            "destination": [
+              "보고서",
+              "2026-10-14"
+            ],
+            "evidence": "2026년 10월 14일 업무 보고서. 이번 주 주문 처리 지연 원인을 조사하고 개선안을 제출했다.",
+            "date": "2026-10-14"
+          },
+          {
+            "documentId": "report-1021",
+            "destination": [
+              "보고서",
+              "2026-10-21"
+            ],
+            "evidence": "# 월중 보고서\n정정된 작성일: 2026-10-21. 파일명 날짜는 이전 초안의 날짜다.",
+            "date": "2026-10-21"
+          },
+          {
+            "documentId": "report-1028",
+            "destination": [
+              "보고서",
+              "2026-10-28"
+            ],
+            "evidence": "# 운영 보고서\n보고 기준일: 2026-10-28\n재고 수량과 주문 누락 현황을 확인했다.",
+            "date": "2026-10-28"
+          }
+        ],
+        "held": [
+          {
+            "documentId": "report-0908",
+            "reason": "본문 작성일이 2026-09-08로 10월 보고서 대상에 해당하지 않음"
+          },
+          {
+            "documentId": "report-1104",
+            "reason": "작성일이 2026-11-04로 10월 보고 대상에 포함되지 않음"
+          },
+          {
+            "documentId": "report-unknown",
+            "reason": "날짜가 적혀 있지 않아 어떤 달의 보고서인지 확인할 수 없음"
+          },
+          {
+            "documentId": "report-ambiguous",
+            "reason": "작성일이 2026-10-12 또는 2026-11-12로 상충되어 날짜를 확정할 수 없음"
+          }
+        ]
+      },
+      "model": "gemini-3.5-flash-lite",
+      "usage": {
+        "inputTokens": 3258,
+        "outputTokens": 859,
+        "totalTokens": 4117
+      },
+      "foldersBefore": []
+    },
+    "createdFolders": [
+      {
+        "id": "custom-1",
+        "label": "보고서/2026-10-02"
+      },
+      {
+        "id": "custom-2",
+        "label": "보고서/2026-10-05"
+      },
+      {
+        "id": "custom-3",
+        "label": "보고서/2026-10-09"
+      },
+      {
+        "id": "custom-4",
+        "label": "보고서/2026-10-14"
+      },
+      {
+        "id": "custom-5",
+        "label": "보고서/2026-10-21"
+      },
+      {
+        "id": "custom-6",
+        "label": "보고서/2026-10-28"
+      }
+    ],
+    "draft": "",
+    "messages": [
+      {
+        "id": "message-0-1794028296727",
+        "author": "user",
+        "text": "10월달 보고서를 본문 작성일 기준으로 날짜별로 정리해 줘"
+      },
+      {
+        "id": "answer-1-1794028302136",
+        "author": "assistant",
+        "text": "10월달 보고서(본문 작성일 기준) 문서들을 날짜별로 분류하여 정리했습니다."
+      }
+    ],
+    "lastApplied": null
+  },
+  "notice": null
+}

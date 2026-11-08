@@ -133,7 +133,18 @@ export class ManagedFilesController {
       });
       if (sequence !== this.sequence) return;
       this.abort = null;
-      this.publish({ ...this.state, phase: result.phase === "completed" ? "completed" : result.phase === "cancelled" ? "cancelled" : "error", result, cancelling: false, issue: result.issue });
+      this.publish({
+        ...this.state,
+        phase:
+          result.phase === "completed"
+            ? "completed"
+            : result.phase === "cancelled"
+              ? "cancelled"
+              : "error",
+        result,
+        cancelling: false,
+        issue: result.issue,
+      });
     } catch (error) {
       if (sequence === this.sequence && error instanceof Error && error.message === "stale-connection-operation") { this.dispose(); return; }
       if (sequence === this.sequence) this.publish({ ...this.state, phase: "error", issue: managedIssue(error), cancelling: false });

@@ -1,0 +1,138 @@
+{
+  "at": "2026-11-07T09:34:37.884Z",
+  "datasetVersion": "request-v2",
+  "caseId": "october-performance-no-date-folders",
+  "intentId": "time",
+  "split": "development",
+  "reviewStatus": "unreviewed",
+  "corpusHash": "12630ded196c6f687a2fd781a524b096f2e346289de4c1e99dc7081cd6dc6980",
+  "policyHash": "f15de31e05d5ded8d0b6209ad1259fdd0aeee81e3e496c15280cc903447a9d93",
+  "promptHash": "8ee8ad7f7621242df15ae76f50715b3bb81cab1510963e7a19f528997f23c16d",
+  "model": "gemini-3.5-flash-lite",
+  "scopeCount": 84,
+  "candidateIds": [
+    "perf-lcp",
+    "business-developer-5",
+    "learning-http",
+    "perf-network",
+    "perf-bundle",
+    "report-0908",
+    "business-xlsx-service",
+    "report-1104",
+    "perf-inp",
+    "perf-longtask",
+    "perf-titled-only",
+    "report-ambiguous",
+    "report-1014",
+    "report-1021",
+    "perf-intent-injection",
+    "business-visits-6",
+    "business-developer-2",
+    "perf-hardware",
+    "business-xlsx-study",
+    "text-014",
+    "report-1002",
+    "report-1005"
+  ],
+  "latencyMs": 5219,
+  "requests": [
+    {
+      "method": "countTokens",
+      "status": 200,
+      "latencyMs": 336,
+      "countedTokens": 2722
+    },
+    {
+      "method": "generateContent",
+      "status": 200,
+      "latencyMs": 1814,
+      "modelVersion": "gemini-3.5-flash-lite"
+    }
+  ],
+  "result": {
+    "ok": true,
+    "organization": {
+      "summary": "10월에 실제 측정한 웹사이트 성능 자료를 필터링하여 성능 테스트 폴더로 분류하고, 날짜를 확정할 수 없거나 다른 달의 자료는 보류했습니다.",
+      "matches": [
+        {
+          "documentId": "perf-lcp",
+          "destination": [
+            "성능 테스트"
+          ],
+          "evidence": "2026-10-03 웹사이트 성능 테스트를 실행했다. Lighthouse로 LCP 2.8초, CLS 0.02를 측정했다.",
+          "date": null
+        }
+      ],
+      "held": [
+        {
+          "documentId": "perf-network",
+          "reason": "측정 월(10월)을 확인할 수 있는 날짜 정보가 본문에 없습니다."
+        },
+        {
+          "documentId": "perf-bundle",
+          "reason": "측정 월(10월)을 확인할 수 있는 날짜 정보가 본문에 없습니다."
+        },
+        {
+          "documentId": "perf-inp",
+          "reason": "측정 월(10월)을 확인할 수 있는 날짜 정보가 본문에 없습니다."
+        },
+        {
+          "documentId": "perf-longtask",
+          "reason": "2026년 11월 2일 자료로, 요청된 10월 기간에 해당하지 않습니다."
+        }
+      ]
+    },
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 2722,
+      "outputTokens": 334,
+      "totalTokens": 3056
+    }
+  },
+  "rawSyntheticResponse": {
+    "summary": "10월에 실제 측정한 웹사이트 성능 자료를 필터링하여 성능 테스트 폴더로 분류하고, 날짜를 확정할 수 없거나 다른 달의 자료는 보류했습니다.",
+    "matches": [
+      {
+        "documentId": "perf-lcp",
+        "destination": [
+          "성능 테스트"
+        ],
+        "evidence": "2026-10-03 웹사이트 성능 테스트를 실행했다. Lighthouse로 LCP 2.8초, CLS 0.02를 측정했다.",
+        "date": null
+      }
+    ],
+    "held": [
+      {
+        "documentId": "perf-network",
+        "reason": "측정 월(10월)을 확인할 수 있는 날짜 정보가 본문에 없습니다."
+      },
+      {
+        "documentId": "perf-bundle",
+        "reason": "측정 월(10월)을 확인할 수 있는 날짜 정보가 본문에 없습니다."
+      },
+      {
+        "documentId": "perf-inp",
+        "reason": "측정 월(10월)을 확인할 수 있는 날짜 정보가 본문에 없습니다."
+      },
+      {
+        "documentId": "perf-longtask",
+        "reason": "2026년 11월 2일 자료로, 요청된 10월 기간에 해당하지 않습니다."
+      }
+    ]
+  },
+  "evaluation": {
+    "passed": false,
+    "violations": [
+      "unexpected-hold:perf-longtask"
+    ],
+    "matchedIds": [
+      "perf-lcp"
+    ],
+    "heldIds": [
+      "perf-network",
+      "perf-bundle",
+      "perf-inp",
+      "perf-longtask"
+    ]
+  }
+}

@@ -199,7 +199,12 @@ export async function executeManagedOperation(prepared: PreparedManaged, signal:
           await archive.audit(hash, node.view.payload ? `${node.view.payload}.bin` : "directory");
           const parent = await openSourceDirectory(context.root, node.view.path.slice(0, -1), check);
           const name = node.view.path.at(-1)!;
-          await archive.write(`item-${String(index + 1).padStart(4, "0")}-source-removal-started.json`, new Blob([JSON.stringify({ operationId: state.id, action: "remove", path: node.view.path })]));
+          await archive.write(
+            `item-${String(index + 1).padStart(4, "0")}-source-removal-started.json`,
+            new Blob([
+              JSON.stringify({ operationId: state.id, action: "remove", path: node.view.path }),
+            ]),
+          );
           if (node.view.kind === "file") await sourceFile(node);
           else {
             const current = await parent.getDirectoryHandle(name, { create: false });
@@ -227,7 +232,12 @@ export async function executeManagedOperation(prepared: PreparedManaged, signal:
               if (!(error instanceof Error && error.name === "NotFoundError")) throw error;
             }
           }
-          await archive.write(`item-${String(index + 1).padStart(4, "0")}-source-removed.json`, new Blob([JSON.stringify({ operationId: state.id, action: "removed", path: node.view.path })]));
+          await archive.write(
+            `item-${String(index + 1).padStart(4, "0")}-source-removed.json`,
+            new Blob([
+              JSON.stringify({ operationId: state.id, action: "removed", path: node.view.path }),
+            ]),
+          );
           publish({ removed: state.removed + 1 });
         }
       }

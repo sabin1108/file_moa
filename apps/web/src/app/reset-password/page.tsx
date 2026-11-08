@@ -7,6 +7,15 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   await requireGuest();
   const token = (await searchParams).token;
 
-  return <AuthShell guest><GuestSessionObserver checkSessionAction={checkAuthSessionAction} /><AuthScreen operation="reset" action={resetAction} initialToken={typeof token === "string" && token.length <= 4096 ? token : ""} /></AuthShell>;
+  return (
+    <AuthShell guest>
+      <GuestSessionObserver checkSessionAction={checkAuthSessionAction} />
+      <AuthScreen
+        operation="reset"
+        action={resetAction}
+        initialToken={typeof token === "string" && token.length <= 4096 ? token : ""}
+      />
+    </AuthShell>
+  );
 }
 import { GuestSessionObserver } from "../../features/auth/components/GuestSessionObserver";

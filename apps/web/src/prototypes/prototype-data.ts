@@ -5,14 +5,6 @@ export const recentConversations = [
   { title: "나에게 맞는 공부 루틴", active: false },
 ];
 export const previousConversations = ["포트폴리오의 첫 문장", "자바스크립트 비동기 흐름"];
-export const sampleFolders = [
-  { name: "프론트엔드 공부", detail: "공부 노트", count: 8 },
-  { name: "포트폴리오", detail: "프로젝트 기록", count: 5 },
-];
-export const sourceDocuments = [
-  { name: "리액트 성능 향상.md", folder: "프론트엔드 공부", type: "MD", size: "2.4 KB", selected: true },
-  { name: "렌더링과 상태 관리.md", folder: "프론트엔드 공부", type: "MD", size: "1.8 KB", selected: false },
-];
 export const responseSteps = [
   { title: "측정하고, 필요한 부분부터", text: "Profiler로 자주 렌더링되는 컴포넌트를 살펴보세요. 느린 구간을 찾으면 무엇을 고칠지도 분명해져요.", source: 1 },
   { title: "상태는 사용하는 곳 가까이에", text: "입력창이 바뀔 때 전체 화면까지 다시 그릴 필요는 없어요. 상태를 필요한 컴포넌트 가까이에 두세요.", source: 2 },

@@ -18,6 +18,7 @@ type Props = {
   onConnect: () => void;
   onReconnect: () => void;
   onDisconnect: () => void;
+  compact?: boolean;
 };
 
 const statusLabels = {
@@ -26,7 +27,24 @@ const statusLabels = {
   connected: "연결됨",
 } as const;
 
-export function SourceFolderConnection({ view, disabled = false, onConnect, onReconnect, onDisconnect }: Props) {
+export function SourceFolderConnection({ view, disabled = false, onConnect, onReconnect, onDisconnect, compact = false }: Props) {
+  if (compact) return (
+    <section className={styles.compactConnection} aria-label="자료 폴더 연결">
+      {view.status !== "disconnected" && <span>{view.folderName}</span>}
+      <button
+        type="button"
+        className={actionClasses(view.status === "connected" ? "ghost" : "primary")}
+        disabled={disabled}
+        onClick={view.status === "needs-permission" ? onReconnect : onConnect}
+      >
+        {view.status === "disconnected"
+          ? "폴더 연결"
+          : view.status === "needs-permission"
+            ? "다시 연결"
+            : "다른 폴더 선택"}
+      </button>
+    </section>
+  );
   return <section className={styles.connection} aria-label="자료 폴더 연결">
     <SettingRow
       title={view.folderName ?? "연결한 폴더 없음"}

@@ -36,35 +36,107 @@ type Props = {
 export function SourceDocumentPreview({ state, folderName, headingRef, onClose, onRefresh, onCancel, onEdit }: Props) {
   const pending = state.phase === "loading";
   const { result, issue } = state;
-  return <DocumentWorkspace mode="preview" phase={state.phase} title={state.path?.at(-1) ?? "문서"} headingRef={headingRef}
-    back={<button type="button" className={actionClasses("secondary")} onClick={onClose}>목록으로 돌아가기</button>}
-    actions={<>
-        {onEdit && <button type="button" className={actionClasses("secondary")} disabled={state.phase !== "ready" || state.stale || !state.available} onClick={onEdit}>문서 편집</button>}
-        <button type="button" className={actionClasses("secondary")} disabled={!state.available || pending} onClick={onRefresh}>본문 새로고침</button>
-        {pending && <button type="button" className={actionClasses("secondary")} onClick={onCancel}>본문 읽기 취소</button>}
-    </>}
-    status={state.stale ? "이전에 읽은 본문" : "MD/TXT 원문"}
-    info={<>
-      <dl>
-        <div><dt>보관 위치</dt><dd>{[folderName, ...(state.path?.slice(0, -1) ?? [])].filter(Boolean).join(" / ")}</dd></div>
-        <div><dt>파일 크기</dt><dd>{result ? `${result.size.toLocaleString("ko-KR")} bytes` : "아직 읽지 못함"}</dd></div>
-        <div><dt>수정 시각</dt><dd>{result ? new Date(result.lastModified).toLocaleString("ko-KR") : "아직 읽지 못함"}</dd></div>
-        <div><dt>자료 사용</dt><dd>이 기기에서만 읽기 · 서버 전송 없음</dd></div>
-      </dl>
-      {state.stale && <p>이전에 읽은 파일의 정보입니다.</p>}
-    </>}
-    feedback={<>
-      {pending && <StatusNotice state="pending" title="파일 본문을 읽고 있어요." />}
-      {issue && <StatusNotice state={issue === "permission" || issue === "cancelled" ? "attention" : "error"} title={messages[issue]}
-        action={state.available && <button type="button" className={actionClasses("secondary")} onClick={onRefresh}>본문 다시 시도</button>} />}
-      {state.stale && result && <p>아래는 이전에 읽은 본문입니다. 현재 파일 내용과 다를 수 있어요.</p>}
-    </>}
-    footer="MD/TXT 원문 보기 · Markdown 서식과 링크는 텍스트로 표시합니다.">
-    <div aria-busy={pending}>
-      {/* 원문을 React 텍스트로 렌더링한다. HTML/Markdown 해석과 원격 리소스 요청을 만들지 않는다. */}
-      {result && <article className={styles.body} aria-label="문서 본문" tabIndex={0}>
-        {result.text === "" ? <p className={styles.empty}>내용이 없는 빈 파일이에요.</p> : result.text}
-      </article>}
-    </div>
-  </DocumentWorkspace>;
+  return (
+    <DocumentWorkspace
+      mode="preview"
+      phase={state.phase}
+      title={state.path?.at(-1) ?? "문서"}
+      headingRef={headingRef}
+      back={
+        <button type="button" className={actionClasses("secondary")} onClick={onClose}>
+          목록으로 돌아가기
+        </button>
+      }
+      actions={
+        <>
+          {onEdit && (
+            <button
+              type="button"
+              className={actionClasses("secondary")}
+              disabled={state.phase !== "ready" || state.stale || !state.available}
+              onClick={onEdit}
+            >
+              문서 편집
+            </button>
+          )}
+          <button
+            type="button"
+            className={actionClasses("secondary")}
+            disabled={!state.available || pending}
+            onClick={onRefresh}
+          >
+            본문 새로고침
+          </button>
+          {pending && (
+            <button type="button" className={actionClasses("secondary")} onClick={onCancel}>
+              본문 읽기 취소
+            </button>
+          )}
+        </>
+      }
+      status={state.stale ? "이전에 읽은 본문" : "MD/TXT 원문"}
+      info={
+        <>
+          <dl>
+            <div>
+              <dt>보관 위치</dt>
+              <dd>
+                {[folderName, ...(state.path?.slice(0, -1) ?? [])].filter(Boolean).join(" / ")}
+              </dd>
+            </div>
+            <div>
+              <dt>파일 크기</dt>
+              <dd>{result ? `${result.size.toLocaleString("ko-KR")} bytes` : "아직 읽지 못함"}</dd>
+            </div>
+            <div>
+              <dt>수정 시각</dt>
+              <dd>
+                {result ? new Date(result.lastModified).toLocaleString("ko-KR") : "아직 읽지 못함"}
+              </dd>
+            </div>
+            <div>
+              <dt>자료 사용</dt>
+              <dd>이 기기에서만 읽기 · 서버 전송 없음</dd>
+            </div>
+          </dl>
+          {state.stale && <p>이전에 읽은 파일의 정보입니다.</p>}
+        </>
+      }
+      feedback={
+        <>
+          {pending && <StatusNotice state="pending" title="파일 본문을 읽고 있어요." />}
+          {issue && (
+            <StatusNotice
+              state={issue === "permission" || issue === "cancelled" ? "attention" : "error"}
+              title={messages[issue]}
+              action={
+                state.available && (
+                  <button type="button" className={actionClasses("secondary")} onClick={onRefresh}>
+                    본문 다시 시도
+                  </button>
+                )
+              }
+            />
+          )}
+          {state.stale && result && (
+            <p>아래는 이전에 읽은 본문입니다. 현재 파일 내용과 다를 수 있어요.</p>
+          )}
+        </>
+      }
+      footer="MD/TXT 원문 보기 · Markdown 서식과 링크는 텍스트로 표시합니다."
+    >
+      <div aria-busy={pending}>
+        {/* 원문을 React 텍스트로 렌더링한다. HTML/Markdown 해석과 원격 리소스 요청을 만들지 않는다. */}
+        {result && (
+          <article className={styles.body} aria-label="문서 본문" tabIndex={0}>
+            {result.text === "" ? (
+              <p className={styles.empty}>내용이 없는 빈 파일이에요.</p>
+            ) : (
+              result.text
+            )}
+          </article>
+        )}
+      </div>
+    </DocumentWorkspace>
+  );
 }

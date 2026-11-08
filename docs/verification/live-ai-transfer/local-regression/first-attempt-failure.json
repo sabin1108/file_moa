@@ -1,0 +1,47 @@
+{
+  "condition": "Actual product components, session, Worker and IndexedDB with synthetic owner and Chromium OPFS; Next routing shim; no physical Windows folder/authenticated-route claim",
+  "checks": [
+    {
+      "name": "disconnected chat stays compact",
+      "passed": true
+    },
+    {
+      "name": "connecting does not read document bodies",
+      "passed": true
+    },
+    {
+      "name": "Korean composing Enter never starts preparation",
+      "passed": true
+    },
+    {
+      "name": "Shift+Enter keeps a newline",
+      "passed": true
+    },
+    {
+      "name": "missing scope asks before body I/O",
+      "passed": true
+    },
+    {
+      "name": "reference folder never narrows the whole scope",
+      "passed": true
+    },
+    {
+      "name": "folder choices do not offer creation or perform writes",
+      "passed": true
+    },
+    {
+      "name": "real Worker reads nested TXT/MD with no hidden history or PDF",
+      "passed": true
+    },
+    {
+      "name": "body words beyond the document beginning appear in the actual excerpt",
+      "passed": false
+    }
+  ],
+  "timings": [
+    {
+      "elapsedMs": 70,
+      "width": 1440
+    }
+  ]
+}

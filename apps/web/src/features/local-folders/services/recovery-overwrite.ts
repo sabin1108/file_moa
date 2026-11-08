@@ -23,7 +23,10 @@ export async function executeRecoveryOverwrite(root: FolderHandle, vault: Folder
   const receipt = structuredClone(backup);
   const capturedOwner = { ...owner };
   const id = crypto.randomUUID();
-  const items = snapshot.files.map((_file, index) => ({ itemId: `item-${String(index + 1).padStart(4, "0")}`, status: "not-run" as OverwriteExecution["items"][number]["status"] }));
+  const items = snapshot.files.map((_file, index) => ({
+    itemId: `item-${String(index + 1).padStart(4, "0")}`,
+    status: "not-run" as OverwriteExecution["items"][number]["status"],
+  }));
   let phase: OverwriteExecution["phase"] = "preparing";
   let issue: string | null = null;
   let journalComplete = false;

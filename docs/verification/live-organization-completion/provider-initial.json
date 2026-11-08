@@ -1,0 +1,61 @@
+{
+  "at": "2026-11-08T01:39:50.074Z",
+  "condition": "synthetic guard/session and public synthetic documents; real production quota store and Google countTokens/generation; not an authenticated user HTTP journey",
+  "phase": "initial",
+  "requestId": "1794101984267:46732008-5ba8-4efc-afc8-0467664d7a50",
+  "corpusHash": "df5a8587e937c20cae7ae20fcf2a22718bfe3d08e2d3ed2cb0035faf8c56043f",
+  "elapsedMs": 5807.1374,
+  "answers": [],
+  "result": {
+    "ok": true,
+    "organization": {
+      "summary": "성능 실측 자료를 날짜별로 정리하기 위한 검토할 자료를 찾았습니다. 날짜 의미 및 주제 분류에 대한 확인이 필요합니다.",
+      "matches": [],
+      "held": [
+        {
+          "documentId": "document-1",
+          "reason": "작성일과 검토 기준일 중 어떤 날짜를 기준으로 날짜별 정리를 적용해야 할지 확인이 필요합니다."
+        },
+        {
+          "documentId": "document-2",
+          "reason": "회사와 개인 주제가 섞여 있어 임의 분류가 불가능하므로 올바른 대상 폴더(destination) 결정을 위해 확인이 필요합니다."
+        }
+      ]
+    },
+    "questions": [
+      {
+        "documentId": "document-1",
+        "kind": "date",
+        "id": "document-1:date",
+        "reason": "작성일과 검토 기준일 중 어떤 날짜를 기준으로 날짜별 정리를 적용해야 할지 확인이 필요합니다.",
+        "dates": [
+          {
+            "id": "document-1-date-1",
+            "date": "2026-10-01",
+            "label": "작성일",
+            "evidence": "작성일: 2026-10-01"
+          },
+          {
+            "id": "document-1-date-2",
+            "date": "2026-10-15",
+            "label": "검토 기준일",
+            "evidence": "검토 기준일: 2026-10-15"
+          }
+        ]
+      },
+      {
+        "documentId": "document-2",
+        "kind": "destination",
+        "id": "document-2:destination",
+        "reason": "회사와 개인 주제가 섞여 있어 임의 분류가 불가능하므로 올바른 대상 폴더(destination) 결정을 위해 확인이 필요합니다.",
+        "dates": []
+      }
+    ],
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 1201,
+      "outputTokens": 225,
+      "totalTokens": 1426
+    }
+  }
+}

@@ -1,0 +1,2 @@
+# Fixture hashes include exact bytes and deliberate blank lines.
+tests/fixtures/classification/v1/** -text whitespace=-blank-at-eof

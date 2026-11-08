@@ -24,10 +24,43 @@ export function FileIssuesDemo() {
     const next = issueArea.current?.querySelector<HTMLButtonElement>("button");
     (next ?? usableArea.current)?.focus();
   }, [excluded]);
-  return <div className={styles.stack}>
-    <StatusNotice state={issues.length ? "attention" : "success"} title={issues.length ? `${issues.length}개 자료를 확인해 주세요` : "확인이 필요한 자료를 목록에서 제외했어요"} detail={`선택 ${usable.length + issues.length}개 · 사용 가능 ${usable.length}개 · 제외 ${excluded.length}개. 기기의 원본은 변경하지 않아요.`} />
-    {!!issues.length && <div ref={issueArea}><FileIssueList issues={issues.map(issue => ({ ...issue, action: <DemoButton aria-label={`${issue.name} 목록에서 제외`} onClick={() => setExcluded([...excluded, issue.id])}>목록에서 제외</DemoButton> }))} /></div>}
-    <section ref={usableArea} tabIndex={-1} aria-label="사용할 수 있는 자료"><h3>사용할 수 있는 자료</h3><FileSelection files={usable} /></section>
-    <div className={styles.right}><DemoButton disabled={!excluded.length} onClick={() => setExcluded([])}>제외 항목 다시 보기</DemoButton></div>
-  </div>;
+  return (
+    <div className={styles.stack}>
+      <StatusNotice
+        state={issues.length ? "attention" : "success"}
+        title={
+          issues.length
+            ? `${issues.length}개 자료를 확인해 주세요`
+            : "확인이 필요한 자료를 목록에서 제외했어요"
+        }
+        detail={`선택 ${usable.length + issues.length}개 · 사용 가능 ${usable.length}개 · 제외 ${excluded.length}개. 기기의 원본은 변경하지 않아요.`}
+      />
+      {!!issues.length && (
+        <div ref={issueArea}>
+          <FileIssueList
+            issues={issues.map(issue => ({
+              ...issue,
+              action: (
+                <DemoButton
+                  aria-label={`${issue.name} 목록에서 제외`}
+                  onClick={() => setExcluded([...excluded, issue.id])}
+                >
+                  목록에서 제외
+                </DemoButton>
+              ),
+            }))}
+          />
+        </div>
+      )}
+      <section ref={usableArea} tabIndex={-1} aria-label="사용할 수 있는 자료">
+        <h3>사용할 수 있는 자료</h3>
+        <FileSelection files={usable} />
+      </section>
+      <div className={styles.right}>
+        <DemoButton disabled={!excluded.length} onClick={() => setExcluded([])}>
+          제외 항목 다시 보기
+        </DemoButton>
+      </div>
+    </div>
+  );
 }

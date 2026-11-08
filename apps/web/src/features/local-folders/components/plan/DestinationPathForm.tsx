@@ -5,11 +5,12 @@ import { actionClasses } from "../../../../components/ui/action-classes";
 import { parsePastedFolderPath } from "../../lib/pasted-folder-path";
 import styles from "./destination-folder-picker.module.css";
 /** 직접 입력도 폴더 탐색 안에서 검증한다. 경로를 연 다음 명시적 폴더 선택을 거쳐 확정한다. */
-export function DestinationPathForm({ path, rootName, disabled, onOpen }: {
+export function DestinationPathForm({ path, rootName, disabled, onOpen, purpose = "목적지" }: {
   path: readonly string[];
   rootName: string;
   disabled: boolean;
   onOpen: (path: readonly string[]) => Promise<void>;
+  purpose?: string;
 }) {
   const [value, setValue] = useState([rootName, ...path].join("/"));
   const [invalid, setInvalid] = useState(false);
@@ -28,7 +29,7 @@ export function DestinationPathForm({ path, rootName, disabled, onOpen }: {
 
   return <form
     className={styles.pathForm}
-    aria-label="목적지 경로 직접 입력"
+    aria-label={`${purpose} 경로 직접 입력`}
     onSubmit={event => {
       event.preventDefault();
 

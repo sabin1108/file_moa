@@ -80,7 +80,18 @@ export async function checkAuthSessionAction(): Promise<{ available: boolean; se
   const requestHeaders = await headers();
   try {
     const value = await getAuthenticatedSession(requestHeaders);
-    return { available: true, session: value ? { user: { id: value.user.id, emailVerified: value.user.emailVerified }, session: { userId: value.session.userId, expiresAt: value.session.expiresAt.toISOString() } } : null };
+    return {
+      available: true,
+      session: value
+        ? {
+            user: { id: value.user.id, emailVerified: value.user.emailVerified },
+            session: {
+              userId: value.session.userId,
+              expiresAt: value.session.expiresAt.toISOString(),
+            },
+          }
+        : null,
+    };
   } catch {
     return { available: false, session: null };
   }

@@ -43,14 +43,13 @@
 .system button:disabled { opacity: 1; background: var(--panel); color: var(--muted); border-color: var(--border); }
 .system :is(input, select, textarea) { font: inherit; }
 .system input::placeholder { color: var(--muted); opacity: 1; }
-.workspace { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: 100dvh; }
+.workspace { display: grid; grid-template-columns: 240px minmax(0, 1fr); min-height: 100dvh; }
 .entryPreview { min-height: 100dvh; }
-.workspace > aside { background: var(--ground); border-right: 1px solid var(--border); }
 .main { min-width: 0; }
 .topbar { min-height: 64px; padding: 12px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 16px; background: var(--surface); }
 .topbar > span { font-size: var(--ui-font-body); color: var(--muted); }
 .topbar nav { display: flex; align-items: center; gap: var(--ui-space-2); }
-.topbar h1 { font-size: var(--ui-font-section); font-weight: 600; }
+.topbar h1 { font-size: var(--ui-font-section); font-weight: 600; flex-shrink: 0; white-space: nowrap; }
 .canvas { padding: var(--ui-space-8); }
 .fileCanvas { flex: 1; min-width: 0; background: var(--surface); }
 .fileSurface { width: 100%; min-width: 0; }

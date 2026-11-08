@@ -1,0 +1,58 @@
+{
+  "capturedAt": "2026-11-07T04:13:03.143Z",
+  "buildId": "c4-J-SrlVMCyjLi8j-f8z",
+  "latencyMs": 4283,
+  "actionRequests": 1,
+  "phase": "review",
+  "selected": [
+    "text-001",
+    "sample-pdf",
+    "sample-xlsx"
+  ],
+  "ai": {
+    "proposals": [
+      {
+        "documentId": "text-001",
+        "folderId": "meeting",
+        "reason": "주간 회의 내용으로 업무 회의 폴더에 적합합니다.",
+        "reviewRequired": false
+      },
+      {
+        "documentId": "sample-pdf",
+        "folderId": "meeting",
+        "reason": "참석자 인계 순서와 회의 관련 내용이 포함되어 있습니다.",
+        "reviewRequired": false
+      },
+      {
+        "documentId": "sample-xlsx",
+        "folderId": "learning",
+        "reason": "주간 학습 계획과 과목별 학습 시간표를 다루고 있습니다.",
+        "reviewRequired": false
+      }
+    ],
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 428,
+      "outputTokens": 182,
+      "totalTokens": 610
+    }
+  },
+  "targets": {
+    "text-001": "meeting",
+    "sample-pdf": "meeting",
+    "sample-xlsx": "learning"
+  },
+  "locations": {
+    "text-001": null,
+    "sample-pdf": null,
+    "sample-xlsx": null,
+    "text-003": null,
+    "text-005": null,
+    "text-007": null,
+    "text-011": null,
+    "text-013": null,
+    "text-014": null,
+    "text-015": null
+  },
+  "notice": null
+}

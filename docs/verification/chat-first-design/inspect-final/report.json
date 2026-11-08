@@ -1,0 +1,1279 @@
+{
+  "url": "http://127.0.0.1:6135/__chat-first",
+  "at": "2026-11-08T03:02:48.904Z",
+  "allow": [],
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900,
+      "load": "load",
+      "screens": 2,
+      "filled": [
+        0.88,
+        0.93
+      ],
+      "motion": {
+        "elements": 0,
+        "css": 0,
+        "transitions": 0,
+        "scripted": 0,
+        "videos": 0,
+        "playingVideos": 0
+      },
+      "metrics": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "page": {
+          "height": 1063,
+          "screens": 1.2,
+          "words": 95,
+          "img": 0,
+          "video": 0,
+          "canvas": 0,
+          "svg": 20,
+          "sections": 4,
+          "horizontalOverflow": 0,
+          "overflowCulprits": [],
+          "uiFragments": 0,
+          "uiAbuse": false,
+          "realPictures": 0,
+          "videoCount": 0,
+          "uiPictures": 0,
+          "pictureSamples": [],
+          "blendText": 0,
+          "sideScrollers": 0,
+          "brokenImages": [],
+          "emoji": [],
+          "videosNoPoster": 0
+        },
+        "hero": {
+          "text": "성능 자료 정리",
+          "words": 3,
+          "chars": 8,
+          "lines": 1,
+          "size": 18,
+          "vw": 1.3,
+          "font": "Malgun Gothic",
+          "weight": 600,
+          "tracking": 0,
+          "leading": 1.6,
+          "top": 24,
+          "tag": "h1",
+          "kind": "heading",
+          "align": "left",
+          "position": "left"
+        },
+        "h1": {
+          "text": "성능 자료 정리",
+          "words": 3,
+          "lines": 1,
+          "size": 18,
+          "font": "Malgun Gothic"
+        },
+        "headings": [],
+        "headingSummary": {
+          "count": 0,
+          "maxLines": 0,
+          "over2Lines": 0,
+          "statements": 0,
+          "centered": 0,
+          "medianWords": null,
+          "mixedFontHeadings": 0
+        },
+        "type": {
+          "families": [
+            {
+              "family": "Malgun Gothic",
+              "share": 1,
+              "mono": false
+            }
+          ],
+          "familyCount": 1,
+          "sizes": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            18,
+            20,
+            27
+          ],
+          "sizeCount": 8,
+          "notLoaded": [],
+          "body": {
+            "font": "Malgun Gothic",
+            "size": 13,
+            "leading": 1.8,
+            "weight": 400,
+            "tracking": 0,
+            "contrast": 5.8
+          },
+          "measureChars": 145,
+          "max": {
+            "size": 27,
+            "vw": 1.9,
+            "font": "Malgun Gothic",
+            "text": "모아"
+          },
+          "monoShare": 0,
+          "monoProseShare": 0,
+          "monoFamilies": [],
+          "monoSamples": [],
+          "microLabels": 0,
+          "microLabelShare": 0,
+          "microSamples": [],
+          "upperShare": 0.29,
+          "centerShare": 0,
+          "smallText": 1
+        },
+        "eyebrows": [],
+        "numbered": [],
+        "color": {
+          "bodyBg": "#e4e8e6",
+          "bodyBgHsl": {
+            "h": 150,
+            "s": 0.08,
+            "l": 0.9
+          },
+          "dark": false,
+          "sectionBgs": [
+            {
+              "color": "#edf0ee",
+              "top": 0,
+              "hsl": {
+                "h": 140,
+                "s": 0.09,
+                "l": 0.94
+              }
+            },
+            {
+              "color": "#f8faf8",
+              "top": 0,
+              "hsl": {
+                "h": 120,
+                "s": 0.17,
+                "l": 0.98
+              }
+            }
+          ],
+          "textColors": [
+            {
+              "color": "#52616b",
+              "share": 0.55
+            },
+            {
+              "color": "#253745",
+              "share": 0.45
+            }
+          ],
+          "button": {
+            "bg": "#f1f4f2",
+            "hsl": {
+              "h": 140,
+              "s": 0.12,
+              "l": 0.95
+            },
+            "fg": "#52616b"
+          },
+          "lowContrast": []
+        },
+        "buttons": {
+          "count": 4,
+          "inHero": 4,
+          "radius": 6,
+          "height": 44,
+          "withShadow": 0,
+          "withGradient": 0,
+          "mono": 0,
+          "upper": 0,
+          "heroLabels": [
+            "새 대화",
+            "질문부터 보기",
+            "기준 바꾸기",
+            "방식을 선택해 주세요"
+          ]
+        },
+        "surfaces": {
+          "shadowStatic": 0,
+          "shadowOverlay": 0,
+          "shadowSamples": [],
+          "gradients": 0,
+          "scrims": 0,
+          "gradientSamples": [],
+          "gradientText": 0,
+          "hairlines": 4,
+          "hairlineSamples": [
+            "aside._sidebar_1jguu_1 240px",
+            "header._header_10ntg_10 1200px",
+            "section 476px",
+            "section 476px"
+          ],
+          "outlinedBoxes": 1,
+          "dashed": 0,
+          "blurred": 0,
+          "roundedBoxes": 1,
+          "boxRadius": 8,
+          "squareMedia": 0,
+          "roundedMedia": 0,
+          "mediaRadius": 0,
+          "textShadow": 0,
+          "cardRows": []
+        },
+        "heroMedia": [],
+        "nav": {
+          "links": 0,
+          "fixed": true,
+          "height": 900,
+          "floatingPill": false,
+          "blur": false
+        },
+        "fontsLoaded": []
+      },
+      "layout": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "pageH": 1063,
+        "margins": {
+          "left": 26,
+          "right": 45
+        },
+        "sections": [
+          {
+            "sel": "div._thread_10ntg_40",
+            "tag": "div",
+            "top": 114,
+            "height": 781,
+            "words": 63,
+            "media": 0,
+            "middle": 54,
+            "heading": {
+              "text": "이렇게 모으면 어떨까요?",
+              "size": 20,
+              "tag": "h2"
+            },
+            "left": 352,
+            "right": 112,
+            "textLeft": 352,
+            "textRight": 125,
+            "fullBleed": false,
+            "footer": false,
+            "hero": true,
+            "continues": false,
+            "pinned": false
+          },
+          {
+            "sel": "footer._composer_10ntg_273",
+            "tag": "footer",
+            "top": 895,
+            "height": 168,
+            "words": 12,
+            "media": 0,
+            "middle": 12,
+            "heading": null,
+            "left": 352,
+            "right": 125,
+            "textLeft": 352,
+            "textRight": 734,
+            "fullBleed": false,
+            "footer": true,
+            "hero": false,
+            "continues": false,
+            "pinned": false
+          }
+        ],
+        "gaps": [],
+        "h1s": [
+          {
+            "text": "성능 자료 정리",
+            "size": 18,
+            "top": 24,
+            "firstScreen": true
+          }
+        ],
+        "edgeText": [],
+        "edges": [
+          {
+            "x": 352,
+            "n": 2
+          },
+          {
+            "x": 368,
+            "n": 2
+          },
+          {
+            "x": 308,
+            "n": 1
+          },
+          {
+            "x": 852,
+            "n": 1
+          }
+        ],
+        "leftBlocks": 6,
+        "bodySize": 13,
+        "stage": false,
+        "explains": false,
+        "slivers": [],
+        "voidShare": 0.15,
+        "voidBox": {
+          "x": 1080,
+          "y": 360,
+          "w": 360,
+          "h": 540
+        }
+      },
+      "app": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "dark": false,
+        "ground": "#e4e8e6",
+        "sidebar": {
+          "w": 240,
+          "tag": "aside",
+          "links": 5,
+          "share": 0.17
+        },
+        "topbar": {
+          "h": 77
+        },
+        "canvas": {
+          "left": 68,
+          "right": 45
+        },
+        "hero": {
+          "text": "성능 자료 정리",
+          "words": 3,
+          "chars": 8,
+          "lines": 1,
+          "size": 18,
+          "vw": 1.3,
+          "font": "Malgun Gothic",
+          "weight": 600,
+          "tracking": 0,
+          "leading": 1.6,
+          "top": 24,
+          "tag": "h1",
+          "kind": "heading",
+          "align": "left",
+          "position": "left"
+        },
+        "charts": 0,
+        "layout": {
+          "panels": 2,
+          "firstScreen": 2,
+          "ragged": [],
+          "voids": []
+        },
+        "tiles": 0,
+        "panels": {
+          "count": 4,
+          "radii": [
+            [
+              0,
+              4
+            ]
+          ],
+          "heavyBorders": 0,
+          "borderSamples": [],
+          "heavyShadows": 0,
+          "softShadows": 0,
+          "shadowSamples": [],
+          "glass": 0
+        },
+        "chips": {
+          "count": 0,
+          "hues": 0,
+          "samples": []
+        },
+        "numbers": {
+          "cells": 0,
+          "leftAligned": 0,
+          "figures": 0,
+          "tabularShare": null,
+          "kpiMax": null
+        },
+        "rows": null,
+        "chartHues": 0,
+        "placeholders": [],
+        "type": {
+          "under13": 0.08,
+          "tiny": 0,
+          "tinySamples": [],
+          "sizes": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            18,
+            20,
+            27
+          ]
+        },
+        "title": {
+          "text": "성능 자료 정리",
+          "size": 18,
+          "top": 24
+        },
+        "colourShare": 0
+      },
+      "consoleErrors": []
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "load": "load",
+      "screens": 2,
+      "filled": [
+        0.86,
+        0.91
+      ],
+      "motion": {
+        "elements": 0,
+        "css": 0,
+        "transitions": 0,
+        "scripted": 0,
+        "videos": 0,
+        "playingVideos": 0
+      },
+      "metrics": {
+        "viewport": {
+          "w": 768,
+          "h": 1024
+        },
+        "page": {
+          "height": 1043,
+          "screens": 1,
+          "words": 86,
+          "img": 0,
+          "video": 0,
+          "canvas": 0,
+          "svg": 20,
+          "sections": 4,
+          "horizontalOverflow": 0,
+          "overflowCulprits": [],
+          "uiFragments": 0,
+          "uiAbuse": false,
+          "realPictures": 0,
+          "videoCount": 0,
+          "uiPictures": 0,
+          "pictureSamples": [],
+          "blendText": 0,
+          "sideScrollers": 0,
+          "brokenImages": [],
+          "emoji": [],
+          "videosNoPoster": 0
+        },
+        "hero": {
+          "text": "성능 자료 정리",
+          "words": 3,
+          "chars": 8,
+          "lines": 1,
+          "size": 16,
+          "vw": 2.1,
+          "font": "Malgun Gothic",
+          "weight": 600,
+          "tracking": 0,
+          "leading": 1.6,
+          "top": 21,
+          "tag": "h1",
+          "kind": "heading",
+          "align": "left",
+          "position": "left"
+        },
+        "h1": {
+          "text": "성능 자료 정리",
+          "words": 3,
+          "lines": 1,
+          "size": 16,
+          "font": "Malgun Gothic"
+        },
+        "headings": [],
+        "headingSummary": {
+          "count": 0,
+          "maxLines": 0,
+          "over2Lines": 0,
+          "statements": 0,
+          "centered": 0,
+          "medianWords": null,
+          "mixedFontHeadings": 0
+        },
+        "type": {
+          "families": [
+            {
+              "family": "Malgun Gothic",
+              "share": 1,
+              "mono": false
+            }
+          ],
+          "familyCount": 1,
+          "sizes": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            20
+          ],
+          "sizeCount": 6,
+          "notLoaded": [],
+          "body": {
+            "font": "Malgun Gothic",
+            "size": 13,
+            "leading": 1.8,
+            "weight": 400,
+            "tracking": 0,
+            "contrast": 5.8
+          },
+          "measureChars": 108,
+          "max": {
+            "size": 20,
+            "vw": 2.6,
+            "font": "Malgun Gothic",
+            "text": "이렇게 모으면 어떨까요?"
+          },
+          "monoShare": 0,
+          "monoProseShare": 0,
+          "monoFamilies": [],
+          "monoSamples": [],
+          "microLabels": 0,
+          "microLabelShare": 0,
+          "microSamples": [],
+          "upperShare": 0.3,
+          "centerShare": 0,
+          "smallText": 1
+        },
+        "eyebrows": [],
+        "numbered": [],
+        "color": {
+          "bodyBg": "#e4e8e6",
+          "bodyBgHsl": {
+            "h": 150,
+            "s": 0.08,
+            "l": 0.9
+          },
+          "dark": false,
+          "sectionBgs": [
+            {
+              "color": "#edf0ee",
+              "top": 0,
+              "hsl": {
+                "h": 140,
+                "s": 0.09,
+                "l": 0.94
+              }
+            },
+            {
+              "color": "#f8faf8",
+              "top": 0,
+              "hsl": {
+                "h": 120,
+                "s": 0.17,
+                "l": 0.98
+              }
+            }
+          ],
+          "textColors": [
+            {
+              "color": "#52616b",
+              "share": 0.56
+            },
+            {
+              "color": "#253745",
+              "share": 0.44
+            }
+          ],
+          "button": {
+            "bg": "#f1f4f2",
+            "hsl": {
+              "h": 140,
+              "s": 0.12,
+              "l": 0.95
+            },
+            "fg": "#52616b"
+          },
+          "lowContrast": []
+        },
+        "buttons": {
+          "count": 3,
+          "inHero": 3,
+          "radius": 6,
+          "height": 44,
+          "withShadow": 0,
+          "withGradient": 0,
+          "mono": 0,
+          "upper": 0,
+          "heroLabels": [
+            "질문부터 보기",
+            "기준 바꾸기",
+            "방식을 선택해 주세요"
+          ]
+        },
+        "surfaces": {
+          "shadowStatic": 0,
+          "shadowOverlay": 0,
+          "shadowSamples": [],
+          "gradients": 0,
+          "scrims": 0,
+          "gradientSamples": [],
+          "gradientText": 0,
+          "hairlines": 3,
+          "hairlineSamples": [
+            "header._header_10ntg_10 768px",
+            "section 360px",
+            "section 360px"
+          ],
+          "outlinedBoxes": 1,
+          "dashed": 0,
+          "blurred": 0,
+          "roundedBoxes": 1,
+          "boxRadius": 8,
+          "squareMedia": 0,
+          "roundedMedia": 0,
+          "mediaRadius": 0,
+          "textShadow": 0,
+          "cardRows": []
+        },
+        "heroMedia": [],
+        "nav": {
+          "links": 0,
+          "fixed": true,
+          "height": 0,
+          "floatingPill": false,
+          "blur": false
+        },
+        "fontsLoaded": []
+      },
+      "layout": {
+        "viewport": {
+          "w": 768,
+          "h": 1024
+        },
+        "pageH": 1043,
+        "margins": {
+          "left": 16,
+          "right": 16
+        },
+        "sections": [
+          {
+            "sel": "div._thread_10ntg_40",
+            "tag": "div",
+            "top": 106,
+            "height": 773,
+            "words": 62,
+            "media": 0,
+            "middle": 0,
+            "heading": {
+              "text": "이렇게 모으면 어떨까요?",
+              "size": 20,
+              "tag": "h2"
+            },
+            "left": 16,
+            "right": 16,
+            "textLeft": 16,
+            "textRight": 29,
+            "fullBleed": false,
+            "footer": false,
+            "hero": true,
+            "continues": false,
+            "pinned": false
+          },
+          {
+            "sel": "footer._composer_10ntg_273",
+            "tag": "footer",
+            "top": 879,
+            "height": 164,
+            "words": 12,
+            "media": 0,
+            "middle": 12,
+            "heading": null,
+            "left": 16,
+            "right": 29,
+            "textLeft": 16,
+            "textRight": 398,
+            "fullBleed": false,
+            "footer": true,
+            "hero": false,
+            "continues": false,
+            "pinned": false
+          }
+        ],
+        "gaps": [],
+        "h1s": [
+          {
+            "text": "성능 자료 정리",
+            "size": 16,
+            "top": 21,
+            "firstScreen": true
+          }
+        ],
+        "edgeText": [],
+        "edges": [
+          {
+            "x": 16,
+            "n": 2
+          },
+          {
+            "x": 32,
+            "n": 2
+          },
+          {
+            "x": 48,
+            "n": 1
+          },
+          {
+            "x": 392,
+            "n": 1
+          }
+        ],
+        "leftBlocks": 6,
+        "bodySize": 13,
+        "stage": false,
+        "explains": false,
+        "slivers": [],
+        "voidShare": 0,
+        "voidBox": null
+      },
+      "app": {
+        "viewport": {
+          "w": 768,
+          "h": 1024
+        },
+        "dark": false,
+        "ground": "#e4e8e6",
+        "sidebar": null,
+        "topbar": {
+          "h": 69
+        },
+        "canvas": {
+          "left": 16,
+          "right": 16
+        },
+        "hero": {
+          "text": "성능 자료 정리",
+          "words": 3,
+          "chars": 8,
+          "lines": 1,
+          "size": 16,
+          "vw": 2.1,
+          "font": "Malgun Gothic",
+          "weight": 600,
+          "tracking": 0,
+          "leading": 1.6,
+          "top": 21,
+          "tag": "h1",
+          "kind": "heading",
+          "align": "left",
+          "position": "left"
+        },
+        "charts": 0,
+        "layout": {
+          "panels": 2,
+          "firstScreen": 2,
+          "ragged": [],
+          "voids": [
+            {
+              "gap": 126,
+              "at": 644,
+              "panel": "현재"
+            }
+          ]
+        },
+        "tiles": 0,
+        "panels": {
+          "count": 2,
+          "radii": [
+            [
+              0,
+              2
+            ]
+          ],
+          "heavyBorders": 0,
+          "borderSamples": [],
+          "heavyShadows": 0,
+          "softShadows": 0,
+          "shadowSamples": [],
+          "glass": 0
+        },
+        "chips": {
+          "count": 0,
+          "hues": 0,
+          "samples": []
+        },
+        "numbers": {
+          "cells": 0,
+          "leftAligned": 0,
+          "figures": 0,
+          "tabularShare": null,
+          "kpiMax": null
+        },
+        "rows": null,
+        "chartHues": 0,
+        "placeholders": [],
+        "type": {
+          "under13": 0.09,
+          "tiny": 0,
+          "tinySamples": [],
+          "sizes": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            20,
+            27
+          ]
+        },
+        "title": {
+          "text": "성능 자료 정리",
+          "size": 16,
+          "top": 21
+        },
+        "colourShare": 0.001
+      },
+      "consoleErrors": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "load": "load",
+      "screens": 2,
+      "filled": [
+        0.86,
+        0.79
+      ],
+      "motion": {
+        "elements": 0,
+        "css": 0,
+        "transitions": 0,
+        "scripted": 0,
+        "videos": 0,
+        "playingVideos": 0
+      },
+      "metrics": {
+        "viewport": {
+          "w": 390,
+          "h": 844
+        },
+        "page": {
+          "height": 1160,
+          "screens": 1.4,
+          "words": 85,
+          "img": 0,
+          "video": 0,
+          "canvas": 0,
+          "svg": 20,
+          "sections": 4,
+          "horizontalOverflow": 0,
+          "overflowCulprits": [],
+          "uiFragments": 0,
+          "uiAbuse": false,
+          "realPictures": 0,
+          "videoCount": 0,
+          "uiPictures": 0,
+          "pictureSamples": [],
+          "blendText": 0,
+          "sideScrollers": 0,
+          "brokenImages": [],
+          "emoji": [],
+          "videosNoPoster": 0
+        },
+        "hero": {
+          "text": "성능 자료 정리",
+          "words": 3,
+          "chars": 8,
+          "lines": 1,
+          "size": 16,
+          "vw": 4.1,
+          "font": "Malgun Gothic",
+          "weight": 600,
+          "tracking": 0,
+          "leading": 1.6,
+          "top": 21,
+          "tag": "h1",
+          "kind": "heading",
+          "align": "left",
+          "position": "left"
+        },
+        "h1": {
+          "text": "성능 자료 정리",
+          "words": 3,
+          "lines": 1,
+          "size": 16,
+          "font": "Malgun Gothic"
+        },
+        "headings": [],
+        "headingSummary": {
+          "count": 0,
+          "maxLines": 0,
+          "over2Lines": 0,
+          "statements": 0,
+          "centered": 0,
+          "medianWords": null,
+          "mixedFontHeadings": 0
+        },
+        "type": {
+          "families": [
+            {
+              "family": "Malgun Gothic",
+              "share": 1,
+              "mono": false
+            }
+          ],
+          "familyCount": 1,
+          "sizes": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            18
+          ],
+          "sizeCount": 6,
+          "notLoaded": [],
+          "body": {
+            "font": "Malgun Gothic",
+            "size": 13,
+            "leading": 1.8,
+            "weight": 400,
+            "tracking": 0,
+            "contrast": 5.8
+          },
+          "measureChars": 50,
+          "max": {
+            "size": 18,
+            "vw": 4.6,
+            "font": "Malgun Gothic",
+            "text": "이렇게 모으면 어떨까요?"
+          },
+          "monoShare": 0,
+          "monoProseShare": 0,
+          "monoFamilies": [],
+          "monoSamples": [],
+          "microLabels": 0,
+          "microLabelShare": 0,
+          "microSamples": [],
+          "upperShare": 0.31,
+          "centerShare": 0,
+          "smallText": 1
+        },
+        "eyebrows": [],
+        "numbered": [],
+        "color": {
+          "bodyBg": "#e4e8e6",
+          "bodyBgHsl": {
+            "h": 150,
+            "s": 0.08,
+            "l": 0.9
+          },
+          "dark": false,
+          "sectionBgs": [
+            {
+              "color": "#edf0ee",
+              "top": 0,
+              "hsl": {
+                "h": 140,
+                "s": 0.09,
+                "l": 0.94
+              }
+            },
+            {
+              "color": "#f8faf8",
+              "top": 0,
+              "hsl": {
+                "h": 120,
+                "s": 0.17,
+                "l": 0.98
+              }
+            }
+          ],
+          "textColors": [
+            {
+              "color": "#52616b",
+              "share": 0.58
+            },
+            {
+              "color": "#253745",
+              "share": 0.42
+            }
+          ],
+          "button": {
+            "bg": "#f1f4f2",
+            "hsl": {
+              "h": 140,
+              "s": 0.12,
+              "l": 0.95
+            },
+            "fg": "#52616b"
+          },
+          "lowContrast": []
+        },
+        "buttons": {
+          "count": 4,
+          "inHero": 4,
+          "radius": 6,
+          "height": 44,
+          "withShadow": 0,
+          "withGradient": 0,
+          "mono": 0,
+          "upper": 0,
+          "heroLabels": [
+            "질문부터 보기",
+            "기준 바꾸기",
+            "방식을 선택해 주세요",
+            "도착 구조"
+          ]
+        },
+        "surfaces": {
+          "shadowStatic": 0,
+          "shadowOverlay": 0,
+          "shadowSamples": [],
+          "gradients": 0,
+          "scrims": 0,
+          "gradientSamples": [],
+          "gradientText": 0,
+          "hairlines": 3,
+          "hairlineSamples": [
+            "header._header_10ntg_10 390px",
+            "div._comparisonTabs_10ntg_96 358px",
+            "section 358px"
+          ],
+          "outlinedBoxes": 1,
+          "dashed": 0,
+          "blurred": 0,
+          "roundedBoxes": 2,
+          "boxRadius": 16,
+          "squareMedia": 0,
+          "roundedMedia": 0,
+          "mediaRadius": 0,
+          "textShadow": 0,
+          "cardRows": []
+        },
+        "heroMedia": [],
+        "nav": {
+          "links": 0,
+          "fixed": true,
+          "height": 0,
+          "floatingPill": false,
+          "blur": false
+        },
+        "fontsLoaded": []
+      },
+      "layout": {
+        "viewport": {
+          "w": 390,
+          "h": 844
+        },
+        "pageH": 1160,
+        "margins": {
+          "left": 16,
+          "right": 16
+        },
+        "sections": [
+          {
+            "sel": "div._thread_10ntg_40",
+            "tag": "div",
+            "top": 106,
+            "height": 890,
+            "words": 61,
+            "media": 0,
+            "middle": 0,
+            "heading": {
+              "text": "이렇게 모으면 어떨까요?",
+              "size": 18,
+              "tag": "h2"
+            },
+            "left": 16,
+            "right": 16,
+            "textLeft": 16,
+            "textRight": 29,
+            "fullBleed": false,
+            "footer": false,
+            "hero": true,
+            "continues": false,
+            "pinned": false
+          },
+          {
+            "sel": "footer._composer_10ntg_273",
+            "tag": "footer",
+            "top": 996,
+            "height": 164,
+            "words": 12,
+            "media": 0,
+            "middle": 0,
+            "heading": null,
+            "left": 16,
+            "right": 20,
+            "textLeft": 16,
+            "textRight": 20,
+            "fullBleed": false,
+            "footer": true,
+            "hero": false,
+            "continues": false,
+            "pinned": false
+          }
+        ],
+        "gaps": [],
+        "h1s": [
+          {
+            "text": "성능 자료 정리",
+            "size": 16,
+            "top": 21,
+            "firstScreen": true
+          }
+        ],
+        "edgeText": [],
+        "edges": [
+          {
+            "x": 16,
+            "n": 2
+          },
+          {
+            "x": 32,
+            "n": 2
+          },
+          {
+            "x": 48,
+            "n": 1
+          }
+        ],
+        "leftBlocks": 5,
+        "bodySize": 13,
+        "stage": false,
+        "explains": false,
+        "slivers": [],
+        "voidShare": 0,
+        "voidBox": null
+      },
+      "app": {
+        "viewport": {
+          "w": 390,
+          "h": 844
+        },
+        "dark": false,
+        "ground": "#e4e8e6",
+        "sidebar": null,
+        "topbar": {
+          "h": 69
+        },
+        "canvas": {
+          "left": 16,
+          "right": 16
+        },
+        "hero": {
+          "text": "성능 자료 정리",
+          "words": 3,
+          "chars": 8,
+          "lines": 1,
+          "size": 16,
+          "vw": 4.1,
+          "font": "Malgun Gothic",
+          "weight": 600,
+          "tracking": 0,
+          "leading": 1.6,
+          "top": 21,
+          "tag": "h1",
+          "kind": "heading",
+          "align": "left",
+          "position": "left"
+        },
+        "charts": 0,
+        "layout": {
+          "panels": 1,
+          "firstScreen": 1,
+          "ragged": [],
+          "voids": []
+        },
+        "tiles": 0,
+        "panels": {
+          "count": 1,
+          "radii": [
+            [
+              16,
+              1
+            ]
+          ],
+          "heavyBorders": 0,
+          "borderSamples": [],
+          "heavyShadows": 0,
+          "softShadows": 0,
+          "shadowSamples": [],
+          "glass": 0
+        },
+        "chips": {
+          "count": 0,
+          "hues": 0,
+          "samples": []
+        },
+        "numbers": {
+          "cells": 0,
+          "leftAligned": 0,
+          "figures": 0,
+          "tabularShare": null,
+          "kpiMax": null
+        },
+        "rows": null,
+        "chartHues": 0,
+        "placeholders": [],
+        "type": {
+          "under13": 0.09,
+          "tiny": 0,
+          "tinySamples": [],
+          "sizes": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            18,
+            27
+          ]
+        },
+        "title": {
+          "text": "성능 자료 정리",
+          "size": 16,
+          "top": 21
+        },
+        "colourShare": 0
+      },
+      "consoleErrors": []
+    }
+  ],
+  "findings": [],
+  "images": [
+    {
+      "viewport": "desktop",
+      "width": 1440,
+      "fold": "PROJECT_ROOT\\docs\\verification\\chat-first-design\\inspect-final\\desktop-fold.jpg",
+      "pages": [
+        "PROJECT_ROOT\\docs\\verification\\chat-first-design\\inspect-final\\desktop-page-01.jpg"
+      ],
+      "film": []
+    },
+    {
+      "viewport": "tablet",
+      "width": 768,
+      "fold": "PROJECT_ROOT\\docs\\verification\\chat-first-design\\inspect-final\\tablet-fold.jpg",
+      "pages": [
+        "PROJECT_ROOT\\docs\\verification\\chat-first-design\\inspect-final\\tablet-page-01.jpg"
+      ],
+      "film": []
+    },
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "fold": "PROJECT_ROOT\\docs\\verification\\chat-first-design\\inspect-final\\mobile-fold.jpg",
+      "pages": [
+        "PROJECT_ROOT\\docs\\verification\\chat-first-design\\inspect-final\\mobile-page-01.jpg"
+      ],
+      "film": []
+    }
+  ]
+}

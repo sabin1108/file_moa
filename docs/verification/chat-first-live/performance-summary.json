@@ -1,0 +1,180 @@
+{
+  "beforeBuild": "9ekZvaPo7bZS0QrYDy-a4",
+  "afterBuild": "CydLoWSShzQgTYL4jWE3b",
+  "beforeBytes": 1656861,
+  "afterBytes": 1667791,
+  "deltaBytes": 10930,
+  "rows": [
+    {
+      "route": "/login",
+      "widths": [
+        {
+          "width": 390,
+          "n": 3,
+          "beforeLcp": 116,
+          "afterLcp": 100,
+          "maxCls": 0
+        },
+        {
+          "width": 1440,
+          "n": 3,
+          "beforeLcp": 68,
+          "afterLcp": 92,
+          "maxCls": 0
+        }
+      ]
+    },
+    {
+      "route": "/welcome",
+      "widths": [
+        {
+          "width": 390,
+          "n": 3,
+          "beforeLcp": 120,
+          "afterLcp": 80,
+          "maxCls": 0
+        },
+        {
+          "width": 1440,
+          "n": 3,
+          "beforeLcp": 88,
+          "afterLcp": 84,
+          "maxCls": 0
+        }
+      ]
+    },
+    {
+      "route": "/forgot-password",
+      "widths": [
+        {
+          "width": 390,
+          "n": 3,
+          "beforeLcp": 76,
+          "afterLcp": 72,
+          "maxCls": 0
+        },
+        {
+          "width": 1440,
+          "n": 3,
+          "beforeLcp": 80,
+          "afterLcp": 84,
+          "maxCls": 0
+        }
+      ]
+    },
+    {
+      "route": "/reset-password",
+      "widths": [
+        {
+          "width": 390,
+          "n": 3,
+          "beforeLcp": 104,
+          "afterLcp": 112,
+          "maxCls": 0
+        },
+        {
+          "width": 1440,
+          "n": 3,
+          "beforeLcp": 108,
+          "afterLcp": 124,
+          "maxCls": 0
+        }
+      ]
+    },
+    {
+      "route": "/verify-email",
+      "widths": [
+        {
+          "width": 390,
+          "n": 3,
+          "beforeLcp": 108,
+          "afterLcp": 84,
+          "maxCls": 0
+        },
+        {
+          "width": 1440,
+          "n": 3,
+          "beforeLcp": 104,
+          "afterLcp": 104,
+          "maxCls": 0
+        }
+      ]
+    },
+    {
+      "route": "/files",
+      "widths": [
+        {
+          "width": 390,
+          "n": 3,
+          "beforeLcp": 88,
+          "afterLcp": 92,
+          "maxCls": 0
+        },
+        {
+          "width": 1440,
+          "n": 3,
+          "beforeLcp": 88,
+          "afterLcp": 88,
+          "maxCls": 0
+        }
+      ]
+    },
+    {
+      "route": "/demo",
+      "widths": [
+        {
+          "width": 390,
+          "n": 3,
+          "beforeLcp": 68,
+          "afterLcp": 88,
+          "maxCls": 0
+        },
+        {
+          "width": 1440,
+          "n": 3,
+          "beforeLcp": 68,
+          "afterLcp": 80,
+          "maxCls": 0
+        }
+      ]
+    },
+    {
+      "route": "/demo/files",
+      "widths": [
+        {
+          "width": 390,
+          "n": 3,
+          "beforeLcp": 92,
+          "afterLcp": 88,
+          "maxCls": 0
+        },
+        {
+          "width": 1440,
+          "n": 3,
+          "beforeLcp": 84,
+          "afterLcp": 140,
+          "maxCls": 0
+        }
+      ]
+    },
+    {
+      "route": "/demo/settings",
+      "widths": [
+        {
+          "width": 390,
+          "n": 3,
+          "beforeLcp": 76,
+          "afterLcp": 72,
+          "maxCls": 0
+        },
+        {
+          "width": 1440,
+          "n": 3,
+          "beforeLcp": 72,
+          "afterLcp": 72,
+          "maxCls": 0
+        }
+      ]
+    }
+  ]
+}

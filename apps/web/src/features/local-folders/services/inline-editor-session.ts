@@ -105,7 +105,13 @@ export class InlineEditorSession {
           const history = await parent.getDirectoryHandle(".moa-history", { create: false });
           const pair = await BackupDirectory.open(history, `moa-managed-${proof.backupId}`, check, async () => {
             const latest = await openSourceDirectory(proof.context.root, archive.manifest.historyParent, check);
-            if (!await latest.isSameEntry(parent) || !await history.isSameEntry(await latest.getDirectoryHandle(".moa-history", { create: false }))) throw Error("managed-record-changed");
+            if (
+              !(await latest.isSameEntry(parent)) ||
+              !(await history.isSameEntry(
+                await latest.getDirectoryHandle(".moa-history", { create: false }),
+              ))
+            )
+              throw Error("managed-record-changed");
           });
           let entries = 0;
           const directory = await proof.context.vault.getDirectoryHandle(`moa-managed-${proof.backupId}`, { create: false });

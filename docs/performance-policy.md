@@ -1,5 +1,19 @@
 # 사이트 전체 성능 측정 정책
 
+최신 설정 캐시 실제 사용자 비교: [이전 조회 방식 복원 vs 현재의 80개 화면 준비 표본](verification/settings-cache-timing/measurement-20261108-v2/report.md). 반복 설정 중앙값 1.541→0.675초, 56.2% 감소. 초기 작업 공간+첫 설정 합계는 6.852→6.927초로 거의 같음. 정확한 옛 빌드·운영 Vercel·사용자 집단의 성능으로 해석하지 않는다.
+
+OpenAI 공급자 추가 당시: [정적 산출물 비교와 한계](verification/openai-provider/README.md). 전체 JS/CSS +657바이트. 모델 지연과 비용 차이는 미측정이다. 설정 지연은 위 후속 기록을 따른다.
+
+최신 로컬 TXT·MD 찾기: [전후54+54 guest 관측](verification/document-find/performance.md). JS/CSS +27,789 bytes, 관측 CLS0. Worker/OPFS 검색과 production bootstrap은 별도 확인했고 실제 인증 검색/field INP/대용량 실디스크는 미측정이다.
+
+최신 로컬 채팅 답변 연결: [전후54+54 guest 관측](verification/organization-reply/performance.md). 로딩 표본과 답변 정확도 검사를 구분하며 실제 인증 정리/field INP/실디스크/물리 IME로 확대하지 않는다.
+
+최신 대화 안 정리·공통 비교: [전후54+54 guest 관측](verification/chat-first-live/performance.md). 정적 JS/CSS +10,930 bytes, 관측 CLS0. 실제 인증 정리·실디스크·field INP는 미측정이다.
+
+최신 정리 질문·기존 실행 연결과 빈 상태 높이 수정: [2026-11-08 전후54+54 guest 및 실제 합성 공급자2회](verification/live-organization-completion/performance.md). 전체 정적 JS/CSS +42,075 bytes, 관측 CLS0. 인증된 Windows 전체 여정·field INP의 근거는 아니다.
+
+최신 정식 전송 경계: [2026-11-08 전후54+54 guest/redirect와 대체 공급자 새 흐름](verification/live-ai-transfer/performance.md). 정적 JS/CSS +6,736 bytes(6.6KiB), CLS 관측0. 실제 인증 경로/모델 지연/field INP로 확대하지 않는다.
+
 최신 카카오 일시 제외: [두 공급자 UI와 기존 인증 경로36표본](verification/kakao-disabled/README.md). 활성 등록과 역사적 계정/세션 보존을 나누어 검증했고 로컬 lab 표본은 실사용 성능으로 확대하지 않는다.
 
 최신 가입 후 이름·문서 바탕: [기존 인증 경로36표본](verification/signup-profile-and-loading/performance.md). 검은 canvas 재현/초기 스타일 검사와 로딩 성능 표본을 구분하며 실제 사용자 GPU·INP 측정으로 확대하지 않는다.
@@ -45,6 +59,9 @@
 사용자 요구 반영: 2026-10-24. 성능은 채팅 응답뿐 아니라 사이트 전체의 로딩, 상호작용, 리소스, 메모리, 네트워크와 서버 비용을 포함한다.
 
 ## 측정 시점
+
+최신 정식 TXT/MD 로컬 준비: [2026-11-07 범위·발췌·동의 준비](verification/live-local-preparation/performance.md). 전후 guest/샘플9경로54+54표본과 새 합성 OPFS 준비4표본을 구분한다. 인증된 실제 정식 경로·실디스크·실사용 INP 측정은 아니다.
+
 - 정적 디자인 프로토타입: 성능/기능 테스트 대상에서 제외한다. 타입·린트·빌드와 화면 확인만 한다. 기존 Lighthouse 보고서는 과거 정적 시안의 기록이며 현재 제품 성능이 아니다.
 - 첫 실제 기능: 구현과 함께 명세·작은 정답셋을 마련하고 동작 가능한 시점에 최초 성능 기준선을 기록한다. 모든 기능이 완성될 때까지 미루지 않는다.
 - 기능 추가/공통 코드 변경: 영향을 받는 기존 흐름을 같은 조건으로 재측정하고 새 흐름은 별도 기준선을 만든다.
@@ -93,7 +110,7 @@ Lighthouse의 TBT는 INP 측정값이 아니다. Performance API로 계산한 �
 
 ## 포트폴리오에서 채택한 기록 방식
 참고: 사용자 제공 해준이 포폴.pdf, 6쪽(초기 로딩 병목과 개선), 10쪽(배포 빌드 성능/테스트).
-원본: C:/Users/sabin/Desktop/임시 c드라이브 파일/포트폴리오/학습용/해준이 포폴.pdf.
+원본: %USERPROFILE%/Desktop/임시 c드라이브 파일/포트폴리오/학습용/해준이 포폴.pdf.
 채택할 것은 문제 → 조건 → 병목 증거 → 변경 → 동일 조건 전후 수치 → 한계의 연결이다.
 PDF의 번들/이미지 크기와 경로별 로딩 지표 기록 방식을 참고한다. 해당 프로젝트의 점수·개선율을 이 프로젝트 목표나 실측으로 복사하지 않는다. PDF 보고 수치는 여기서 재현한 결과가 아니며 원시 로그는 확인하지 못했다.
 
@@ -103,3 +120,6 @@ PDF의 번들/이미지 크기와 경로별 로딩 지표 기록 방식을 참�
 - 서버 부하 단계 참고: https://grafana.com/docs/k6/latest/testing-guides/test-types/
 - 전후 기록 양식: performance-record-template.md
 - 테스트 자료·규모: testing-strategy.md
+# 2026-11-08 설정 표시 데이터 캐시
+
+[검증](verification/settings-display-cache/README.md): 실제 Next Data Cache와 기본 메모리 backend에 합성 인증·DB를 연결해 초기 준비와 다음 요청의 표시 getter 재사용을 확인했다. 실제 PostgreSQL SQL 수, 사용자 로그인 상태의 설정 대기 시간·서버 비용은 미측정이다. production 산출물 전후 JS/CSS는 1,700,147 bytes/42파일로 동일하다. 전체 1,059개와 production guest/샘플 브라우저 10개 검사를 사용자별 실제 성능 측정으로 확대하지 않는다. 초기 준비를 기다리는 비용과 다음 방문의 cache hit 이점을 함께 비교하며, 개발 컴파일 시간은 운영 지연과 분리한다.

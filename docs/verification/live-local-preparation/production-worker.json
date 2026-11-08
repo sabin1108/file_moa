@@ -1,0 +1,29 @@
+{
+  "condition": "Final Next production static Worker bootstrap; synthetic File input; not a full authenticated route or physical disk check",
+  "buildId": "ezRMm0o4DVd0puRdXx7z3",
+  "bootstrap": {
+    "entry": "static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+    "chunks": [
+      "static/chunks/13738dyo8lu_y.js",
+      "static/chunks/turbopack-0f_v03a1jkncc.js",
+      "static/chunks/turbopack-2c3mg3r-05n1w.js"
+    ]
+  },
+  "result": {
+    "hash": {
+      "sha256": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+      "size": 3
+    },
+    "snapshot": {
+      "sha256": "02a86930da277e604373d379a6f79c6f0579480d36179a517c05b8854ff46cb5",
+      "size": 5017,
+      "excerpt": "앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 LCP 성능 실측",
+      "excerptHash": "5f6a59cddfcbf9ed95fcd22916a83032648a99f4214dd0e1ba80c74c07d19f94"
+    },
+    "invalid": {
+      "sha256": "eddf68639913a3cb8331cdfe7f87559e0beccf2c289c0d90ac4d89b3204004f8",
+      "size": 2,
+      "issue": "invalid-utf8"
+    }
+  }
+}

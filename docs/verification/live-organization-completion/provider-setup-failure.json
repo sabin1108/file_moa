@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-08T01:38:11.356Z",
+  "condition": "synthetic guard/session and public synthetic documents; real production quota store and Google countTokens/generation; not an authenticated user HTTP journey",
+  "phase": "initial",
+  "requestId": "1794101891349:c3b40c72-dcae-4436-bc54-7ed4d1a9ee1e",
+  "corpusHash": "df5a8587e937c20cae7ae20fcf2a22718bfe3d08e2d3ed2cb0035faf8c56043f",
+  "elapsedMs": 6.159899999999993,
+  "answers": [],
+  "result": {
+    "ok": false,
+    "code": "unavailable"
+  }
+}

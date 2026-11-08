@@ -16,11 +16,37 @@ export function AnswerStatus({ phase, text, sources = [], action }: {
   phase: AnswerPhase; text: string; sources?: readonly string[]; action?: ReactNode;
 }) {
   const state = phases[phase];
-  return <section className={styles.answer} aria-label="AI 답변">
-    <StatusNotice state={state.tone} title={state.title} detail={!text && (phase === "stopped" || phase === "error") ? "아직 받은 답변이 없어요. 다시 요청할 수 있어요." : state.detail} action={action} />
-    <article className={styles.answerText} aria-label="답변 내용" aria-live="off" data-writing={phase === "writing" || undefined}>
-      {text ? <p>{text}</p> : <p className={styles.emptyAnswer}>답변이 도착하면 이곳에 표시됩니다.</p>}
-    </article>
-    {!!sources.length && <ul className={styles.sources} aria-label="참고 자료">{sources.map(source => <li key={source}>{source}</li>)}</ul>}
-  </section>;
+  return (
+    <section className={styles.answer} aria-label="AI 답변">
+      <StatusNotice
+        state={state.tone}
+        title={state.title}
+        detail={
+          !text && (phase === "stopped" || phase === "error")
+            ? "아직 받은 답변이 없어요. 다시 요청할 수 있어요."
+            : state.detail
+        }
+        action={action}
+      />
+      <article
+        className={styles.answerText}
+        aria-label="답변 내용"
+        aria-live="off"
+        data-writing={phase === "writing" || undefined}
+      >
+        {text ? (
+          <p>{text}</p>
+        ) : (
+          <p className={styles.emptyAnswer}>답변이 도착하면 이곳에 표시됩니다.</p>
+        )}
+      </article>
+      {!!sources.length && (
+        <ul className={styles.sources} aria-label="참고 자료">
+          {sources.map(source => (
+            <li key={source}>{source}</li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
 }

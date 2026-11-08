@@ -8,6 +8,7 @@ import { getAuth } from "./auth";
 import { socialProviderConfiguration } from "./social-providers";
 import { beginSocialSignIn } from "./auth-social";
 import { createAuthRateLimiter } from "./auth-rate-limit";
+import { expireSettingsDisplay } from "./settings-cache-policy";
 
 let limiter: ReturnType<typeof createAuthRateLimiter> | undefined;
 
@@ -20,17 +21,26 @@ function usableMethods(userId: string, enabledOnly = false) {
 export async function readAccountLoginSettings(headers: Headers): Promise<AccountLoginSettings> {
   const session = await getAuthenticatedSession(headers);
   if (!session) throw new Error("로그인이 필요합니다.");
-  const methods = await getDatabase().account.findMany({ where: usableMethods(session.user.id), select: { providerId: true } });
+  return accountLoginDisplay(session.user);
+}
+
+export async function readAccountLoginSettingsForUser(userId: string): Promise<AccountLoginSettings> {
+  const user = await getDatabase().user.findUniqueOrThrow({ where: { id: userId }, select: { id: true, name: true, email: true } });
+  return accountLoginDisplay(user);
+}
+
+async function accountLoginDisplay(user: { id: string; name: string; email: string }): Promise<AccountLoginSettings> {
+  const methods = await getDatabase().account.findMany({ where: usableMethods(user.id), select: { providerId: true } });
   const configured = socialProviderConfiguration();
   return {
-    name: session.user.name, email: session.user.email, hasPassword: methods.some(method => method.providerId === "credential"),
+    name: user.name, email: user.email, hasPassword: methods.some(method => method.providerId === "credential"),
     providers: socialProviders.filter(id => configured[id] || methods.some(method => method.providerId === id))
       .map(id => ({ id, connected: methods.some(method => method.providerId === id), available: !!configured[id] })),
   };
 }
 
 async function unlink(userId: string, provider: SocialProvider): Promise<AuthFormState> {
-  return getDatabase().$transaction(async transaction => {
+  const state = await getDatabase().$transaction(async (transaction): Promise<AuthFormState> => {
     // All application unlink operations serialize per user so concurrent removals retain a login method.
     await transaction.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`moa-auth-methods:${userId}`}, 0))`;
     const remaining = await transaction.account.count({ where: { ...usableMethods(userId, true), NOT: { providerId: provider } } });
@@ -38,6 +48,8 @@ async function unlink(userId: string, provider: SocialProvider): Promise<AuthFor
     await transaction.account.deleteMany({ where: { userId, providerId: provider } });
     return { status: "success", message: "소셜 계정 연결을 해제했습니다." };
   });
+  if (state.status === "success") expireSettingsDisplay(userId);
+  return state;
 }
 
 export async function manageSocialAccount(data: FormData, headers: Headers): Promise<{ state: AuthFormState; response?: Response; url?: string }> {
@@ -49,7 +61,12 @@ export async function manageSocialAccount(data: FormData, headers: Headers): Pro
   if (!session) return { state: { status: "error", message: "로그인한 뒤 다시 시도해 주세요." } };
   if (Date.now() - session.session.createdAt.getTime() > 86_400_000) return { state: { status: "error", message: "로그인 수단을 변경하려면 계정 화면에서 로그아웃한 뒤 다시 로그인해 주세요." } };
   limiter ??= createAuthRateLimiter(getDatabase, process.env.BETTER_AUTH_SECRET!);
-  if (!(await limiter.consume(`account-settings:${session.user.id}`, { window: 60, max: 10 })).allowed) return { state: { status: "error", message: "요청이 많습니다. 잠시 기다린 뒤 다시 시도해 주세요." } };
+  if (
+    !(await limiter.consume(`account-settings:${session.user.id}`, { window: 60, max: 10 })).allowed
+  )
+    return {
+      state: { status: "error", message: "요청이 많습니다. 잠시 기다린 뒤 다시 시도해 주세요." },
+    };
   if (input.data.operation === "link") return beginSocialSignIn(data, headers, true);
   return { state: await unlink(session.user.id, input.data.provider) };
 }

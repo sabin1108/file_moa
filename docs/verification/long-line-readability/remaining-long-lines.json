@@ -1,0 +1,26 @@
+[
+  {
+    "path": "apps/web/src/server/sample-organization.ts",
+    "lines": 1,
+    "max": 246,
+    "examples": [
+      {
+        "line": 46,
+        "length": 246,
+        "text": "                  ? \"The user asked for REPORTS. A dated observation, measurement, note, meeting or "
+      }
+    ]
+  },
+  {
+    "path": "apps/web/src/features/local-folders/services/recovery-backup-storage.ts",
+    "lines": 1,
+    "max": 205,
+    "examples": [
+      {
+        "line": 57,
+        "length": 205,
+        "text": "      !/^(?:prepared|stopped|item-\\d{4}-(?:verified|target-started|target-verified|source-removal-st"
+      }
+    ]
+  }
+]

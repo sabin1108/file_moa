@@ -76,11 +76,11 @@ describe("plan destination folder picker", () => {
       read.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
       const pending = plan.browseDestination(); const signal = read.mock.calls.at(-1)![1];
       plan.chooseDestination(); expect(picker.getSnapshot().open).toBe(true);
-      if (action === "close") plan.close(); else if (action === "selection") listing.clearSelection(); else plan.setDestination("手入力");
+      if (action === "close") plan.close(); else if (action === "selection") listing.clearSelection(); else plan.setDestination("직접 입력");
       expect(signal.aborted).toBe(true);
       finish({ path: [], entries: [], truncated: false }); await pending;
       expect(picker.getSnapshot()).toMatchObject({ open: false, result: null });
-      if (action === "edit") expect(plan.getSnapshot().destination).toBe("手入力");
+      if (action === "edit") expect(plan.getSnapshot().destination).toBe("직접 입력");
     }
   });
   it("DEST-005 permission loss closes both picker and plan through the common permission boundary", async () => {

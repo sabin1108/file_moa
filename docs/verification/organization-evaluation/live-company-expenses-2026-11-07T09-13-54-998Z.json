@@ -1,0 +1,94 @@
+{
+  "at": "2026-11-07T09:13:54.998Z",
+  "datasetVersion": "request-v2",
+  "caseId": "company-expenses",
+  "intentId": "finance",
+  "split": "development",
+  "reviewStatus": "unreviewed",
+  "corpusHash": "12630ded196c6f687a2fd781a524b096f2e346289de4c1e99dc7081cd6dc6980",
+  "policyHash": "f15de31e05d5ded8d0b6209ad1259fdd0aeee81e3e496c15280cc903447a9d93",
+  "promptHash": "bf04bf0994a752d61d3fbc379baaf085ca7078b561d8b71755154eb888269323",
+  "model": "gemini-3.5-flash-lite",
+  "scopeCount": 84,
+  "candidateIds": [
+    "business-company-2",
+    "text-003",
+    "business-study-1",
+    "business-study-2",
+    "business-xlsx-budget",
+    "business-xlsx-study",
+    "text-005",
+    "text-013",
+    "text-014",
+    "text-015",
+    "perf-titled-only",
+    "perf-intent-injection",
+    "learning-http",
+    "business-company-1",
+    "business-company-3",
+    "business-company-4",
+    "business-company-5",
+    "business-company-6",
+    "business-research-1"
+  ],
+  "latencyMs": 4864,
+  "requests": [
+    {
+      "method": "countTokens",
+      "status": 200,
+      "latencyMs": 303,
+      "countedTokens": 2986
+    },
+    {
+      "method": "generateContent",
+      "status": 200,
+      "latencyMs": 1464,
+      "modelVersion": "gemini-3.5-flash-lite"
+    }
+  ],
+  "result": {
+    "ok": true,
+    "organization": {
+      "summary": "인건비와 임차료 등의 실제 회사 지출 내역이 포함된 문서를 비용 폴더로 분류하고 예산 계획 등은 제외했습니다.",
+      "matches": [
+        {
+          "documentId": "business-company-2",
+          "destination": [
+            "비용"
+          ],
+          "evidence": "가상기업A 8월 비용은 인건비 3200만원, 임차료 800만원, 배송비 420만원이다.",
+          "date": null
+        }
+      ],
+      "held": []
+    },
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 2986,
+      "outputTokens": 135,
+      "totalTokens": 3121
+    }
+  },
+  "rawSyntheticResponse": {
+    "summary": "인건비와 임차료 등의 실제 회사 지출 내역이 포함된 문서를 비용 폴더로 분류하고 예산 계획 등은 제외했습니다.",
+    "matches": [
+      {
+        "documentId": "business-company-2",
+        "destination": [
+          "비용"
+        ],
+        "evidence": "가상기업A 8월 비용은 인건비 3200만원, 임차료 800만원, 배송비 420만원이다.",
+        "date": null
+      }
+    ],
+    "held": []
+  },
+  "evaluation": {
+    "passed": true,
+    "violations": [],
+    "matchedIds": [
+      "business-company-2"
+    ],
+    "heldIds": []
+  }
+}

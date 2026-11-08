@@ -1,0 +1,174 @@
+{
+  "buildId": "6KuNxfx08cg8eEG7iOsHH",
+  "totalBytes": 1700147,
+  "files": [
+    {
+      "path": "apps\\web\\.next\\static\\6KuNxfx08cg8eEG7iOsHH\\_buildManifest.js",
+      "bytes": 219
+    },
+    {
+      "path": "apps\\web\\.next\\static\\6KuNxfx08cg8eEG7iOsHH\\_clientMiddlewareManifest.js",
+      "bytes": 395
+    },
+    {
+      "path": "apps\\web\\.next\\static\\6KuNxfx08cg8eEG7iOsHH\\_ssgManifest.js",
+      "bytes": 80
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\0784w-69wjsjz.js",
+      "bytes": 26866
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\084vgr4r9-4bd.js",
+      "bytes": 28839
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\0cjy34i1tuf58.css",
+      "bytes": 101288
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\0cz1d0mv5g_q7.js",
+      "bytes": 112594
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\0m9bo34dbbubu.js",
+      "bytes": 20348
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\0mgpo6qt5i4h1.js",
+      "bytes": 36093
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\0pgfjvd_dplko.js",
+      "bytes": 39489
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\0sd1hib_pqbk-.js",
+      "bytes": 47880
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\11mokivg_zd9g.js",
+      "bytes": 58468
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\11svsta4nq840.js",
+      "bytes": 1090
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\14ozqp-k7e4_n.js",
+      "bytes": 12631
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\150wrn_tppatz.js",
+      "bytes": 42140
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\151pnbnqg5b-z.js",
+      "bytes": 26248
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\182w35pdlk0yk.js",
+      "bytes": 229594
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\1b-xl7fxsb8l8.js",
+      "bytes": 210813
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\1mei04gfi74e2.js",
+      "bytes": 65041
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\1qn1qmpzt2409.js",
+      "bytes": 18433
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\1u-4y4pp_da2l.js",
+      "bytes": 30066
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\1u_w0q4-pxaoz.js",
+      "bytes": 8723
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\22695potzbl16.js",
+      "bytes": 3950
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\2aew06akofnx4.css",
+      "bytes": 2051
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\2e2j8szex5zw3.js",
+      "bytes": 113108
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\2m5ql035wdutc.js",
+      "bytes": 13486
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\2m7y6j8mrv0se.js",
+      "bytes": 49612
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\2w_3el1f26d74.js",
+      "bytes": 6012
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\3-suufau-a81b.js",
+      "bytes": 159223
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\32xbud2sk-q59.js",
+      "bytes": 34975
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\33eyf3tjre1kl.js",
+      "bytes": 13491
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\3ceud8lu10c9l.js",
+      "bytes": 10057
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\3f28gahse0hty.js",
+      "bytes": 9770
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\3fubhqqgz62l2.js",
+      "bytes": 24841
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\3h5jvyhiq8lpf.js",
+      "bytes": 19344
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\3mrdjk1pgv3ua.js",
+      "bytes": 13830
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\3t_e8r7y1bprc.css",
+      "bytes": 18022
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\428-01q769njc.js",
+      "bytes": 43220
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\42iuu_z2uh-zy.js",
+      "bytes": 35447
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\turbopack-1n9vvvxrqwbia.js",
+      "bytes": 188
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\turbopack-2c3mg3r-05n1w.js",
+      "bytes": 11255
+    },
+    {
+      "path": "apps\\web\\.next\\static\\chunks\\turbopack-worker-1hrsqshz0gfey.js",
+      "bytes": 927
+    }
+  ]
+}

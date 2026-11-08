@@ -23,11 +23,20 @@ export function RecoveryBackupView({ controller, state, inspect, folderName, vau
   const running = state.phase === "running";
   const finished = state.result !== null && !running;
   return (
-    <section className={styles.inspection} aria-label="충돌 파일 복구 사본" data-backup-phase={state.phase}>
+    <section
+      className={styles.inspection}
+      aria-label="충돌 파일 복구 사본"
+      data-backup-phase={state.phase}
+    >
       <h3>기존 파일의 복구 사본</h3>
-      <p>같은 이름의 기존 목적지 파일을 별도 복구 보관함에 보관합니다. 새 파일과 기존 목적지 파일은 그대로 유지됩니다.</p>
+      <p>
+        같은 이름의 기존 목적지 파일을 별도 복구 보관함에 보관합니다. 새 파일과 기존 목적지 파일은
+        그대로 유지됩니다.
+      </p>
       {!controller.available() && <p className={styles.note}>{issues.connection}</p>}
-      {state.phase === "inspecting" && <p role="status">새 파일과 기존 파일의 내용·변경 여부를 확인하고 있습니다…</p>}
+      {state.phase === "inspecting" && (
+        <p role="status">새 파일과 기존 파일의 내용·변경 여부를 확인하고 있습니다…</p>
+      )}
       {state.issue && <StatusNotice state="attention" title={issues[state.issue]} />}
       {state.report && (
         <ol className={styles.rows} aria-label="백업할 기존 파일 비교">
@@ -48,47 +57,100 @@ export function RecoveryBackupView({ controller, state, inspect, folderName, vau
                     <dd>{file.target.size.toLocaleString("ko-KR")} bytes</dd>
                   </div>
                 </dl>
-                <p>{file.source.sha256 === file.target.sha256 ? "두 파일의 내용이 같습니다." : "두 파일의 내용이 다릅니다."}</p>
-                {outcome && <p>
-                  {outcome.status === "verified" && <Icon name="check" size={16} />}
-                  {statuses[outcome.status]}
-                </p>}
+                <p>
+                  {file.source.sha256 === file.target.sha256
+                    ? "두 파일의 내용이 같습니다."
+                    : "두 파일의 내용이 다릅니다."}
+                </p>
+                {outcome && (
+                  <p>
+                    {outcome.status === "verified" && <Icon name="check" size={16} />}
+                    {statuses[outcome.status]}
+                  </p>
+                )}
               </li>
             );
           })}
         </ol>
       )}
-      {state.phase === "ready" && <p>검사한 기존 파일 {state.report?.files.length}개의 복구 사본을 만듭니다. 보관 기간은 아직 정하지 않았으며 자동 삭제하지 않습니다.</p>}
-      {running && <p role="status">{state.cancelling ? "중단 요청을 처리하고 있습니다. 파일별 결과를 확인할 때까지 기다려 주세요." : "복구 사본을 저장하고 다시 읽어 검증하고 있습니다…"}</p>}
-      {finished && <StatusNotice
-        state={state.phase === "completed" ? "success" : "attention"}
-        title={state.phase === "completed" ? "복구 사본을 만들고 검증했습니다. 기존 파일은 그대로입니다." : state.phase === "cancelled" ? "백업을 중단했습니다. 파일별 결과를 확인해 주세요." : "백업을 완료하지 못했습니다. 파일별 결과를 확인해 주세요."}
-        detail={!state.result?.journalComplete ? "작업 기록도 완전히 확인하지 못했습니다. 보관함에 일부 폴더나 파일이 남아 있을 수 있습니다." : undefined}
-      />}
+      {state.phase === "ready" && (
+        <p>
+          검사한 기존 파일 {state.report?.files.length}개의 복구 사본을 만듭니다. 보관 기간은 아직
+          정하지 않았으며 자동 삭제하지 않습니다.
+        </p>
+      )}
+      {running && (
+        <p role="status">
+          {state.cancelling
+            ? "중단 요청을 처리하고 있습니다. 파일별 결과를 확인할 때까지 기다려 주세요."
+            : "복구 사본을 저장하고 다시 읽어 검증하고 있습니다…"}
+        </p>
+      )}
+      {finished && (
+        <StatusNotice
+          state={state.phase === "completed" ? "success" : "attention"}
+          title={
+            state.phase === "completed"
+              ? "복구 사본을 만들고 검증했습니다. 기존 파일은 그대로입니다."
+              : state.phase === "cancelled"
+                ? "백업을 중단했습니다. 파일별 결과를 확인해 주세요."
+                : "백업을 완료하지 못했습니다. 파일별 결과를 확인해 주세요."
+          }
+          detail={
+            !state.result?.journalComplete
+              ? "작업 기록도 완전히 확인하지 못했습니다. 보관함에 일부 폴더나 파일이 남아 있을 수 있습니다."
+              : undefined
+          }
+        />
+      )}
       <div className={styles.actions}>
-        {state.phase === "completed" && state.result?.journalComplete && <button type="button" className={actionClasses("primary")} onClick={controller.confirmOverwrite}>덮어쓰기 검토</button>}
-        {state.phase === "idle" && <button
-          type="button"
-          className={actionClasses("secondary")}
-          disabled={disabled || !controller.available()}
-          onClick={() => { void inspect(); }}
-        >충돌 파일 검사</button>}
-        {state.phase === "ready" && <button
-          type="button"
-          className={actionClasses("primary")}
-          onClick={() => { void controller.start(); }}
-        >기존 파일의 복구 사본 만들기</button>}
-        {(state.phase === "inspecting" || running) && <button
-          type="button"
-          className={actionClasses("secondary")}
-          disabled={state.cancelling}
-          onClick={controller.cancel}
-        >{running ? "백업 중단" : "충돌 검사 취소"}</button>}
-        {state.phase !== "idle" && !running && state.phase !== "inspecting" && <button
-          type="button"
-          className={actionClasses("secondary")}
-          onClick={controller.reset}
-        >계획으로 돌아가기</button>}
+        {state.phase === "completed" && state.result?.journalComplete && (
+          <button
+            type="button"
+            className={actionClasses("primary")}
+            onClick={controller.confirmOverwrite}
+          >
+            덮어쓰기 검토
+          </button>
+        )}
+        {state.phase === "idle" && (
+          <button
+            type="button"
+            className={actionClasses("secondary")}
+            disabled={disabled || !controller.available()}
+            onClick={() => {
+              void inspect();
+            }}
+          >
+            충돌 파일 검사
+          </button>
+        )}
+        {state.phase === "ready" && (
+          <button
+            type="button"
+            className={actionClasses("primary")}
+            onClick={() => {
+              void controller.start();
+            }}
+          >
+            기존 파일의 복구 사본 만들기
+          </button>
+        )}
+        {(state.phase === "inspecting" || running) && (
+          <button
+            type="button"
+            className={actionClasses("secondary")}
+            disabled={state.cancelling}
+            onClick={controller.cancel}
+          >
+            {running ? "백업 중단" : "충돌 검사 취소"}
+          </button>
+        )}
+        {state.phase !== "idle" && !running && state.phase !== "inspecting" && (
+          <button type="button" className={actionClasses("secondary")} onClick={controller.reset}>
+            계획으로 돌아가기
+          </button>
+        )}
       </div>
     </section>
   );

@@ -1,0 +1,414 @@
+{
+  "at": "2026-11-08T03:04:07.179Z",
+  "condition": "Synthetic design-only fixture; visual states and geometry, no functional, provider, authentication or filesystem validation",
+  "observations": [
+    {
+      "width": 390,
+      "state": "plan",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이렇게 모으면 어떨까요?"
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "방식을 선택해 주세요",
+          "bottom": 523.78125,
+          "viewport": 844
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "state": "copy",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이렇게 모으면 어떨까요?"
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "복사 내용 검토",
+          "bottom": 523.78125,
+          "viewport": 844
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "state": "move",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이렇게 모으면 어떨까요?"
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "이동 내용 검토",
+          "bottom": 523.78125,
+          "viewport": 844
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "state": "review",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이동할 내용을 확인해 주세요."
+      ],
+      "smallControls": 0,
+      "primaryButtons": []
+    },
+    {
+      "width": 390,
+      "state": "questions",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "두 가지만 정하면 정리 모습을 보여드릴게요."
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "정리 모습 보기",
+          "bottom": 708.140625,
+          "viewport": 844
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "state": "materials",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "자료 2개를 찾았어요."
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "이 자료로 제안 보기",
+          "bottom": 606.578125,
+          "viewport": 844
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "state": "plan",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이렇게 모으면 어떨까요?"
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "방식을 선택해 주세요",
+          "bottom": 484.59375,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "state": "copy",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이렇게 모으면 어떨까요?"
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "복사 내용 검토",
+          "bottom": 484.59375,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "state": "move",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이렇게 모으면 어떨까요?"
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "이동 내용 검토",
+          "bottom": 484.59375,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "state": "review",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이동할 내용을 확인해 주세요."
+      ],
+      "smallControls": 0,
+      "primaryButtons": []
+    },
+    {
+      "width": 768,
+      "state": "questions",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "두 가지만 정하면 정리 모습을 보여드릴게요."
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "정리 모습 보기",
+          "bottom": 624.953125,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "state": "materials",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "자료 2개를 찾았어요."
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "이 자료로 제안 보기",
+          "bottom": 552.1875,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "state": "plan",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이렇게 모으면 어떨까요?"
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "방식을 선택해 주세요",
+          "bottom": 492.59375,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "state": "copy",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이렇게 모으면 어떨까요?"
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "복사 내용 검토",
+          "bottom": 492.59375,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "state": "move",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이렇게 모으면 어떨까요?"
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "이동 내용 검토",
+          "bottom": 492.59375,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "state": "review",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이동할 내용을 확인해 주세요."
+      ],
+      "smallControls": 0,
+      "primaryButtons": []
+    },
+    {
+      "width": 1440,
+      "state": "questions",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "두 가지만 정하면 정리 모습을 보여드릴게요."
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "정리 모습 보기",
+          "bottom": 632.953125,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "state": "materials",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "자료 2개를 찾았어요."
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "이 자료로 제안 보기",
+          "bottom": 560.1875,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "state": "plan",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이렇게 모으면 어떨까요?"
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "방식을 선택해 주세요",
+          "bottom": 492.59375,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "state": "copy",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이렇게 모으면 어떨까요?"
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "복사 내용 검토",
+          "bottom": 492.59375,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "state": "move",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이렇게 모으면 어떨까요?"
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "이동 내용 검토",
+          "bottom": 492.59375,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "state": "review",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "이동할 내용을 확인해 주세요."
+      ],
+      "smallControls": 0,
+      "primaryButtons": []
+    },
+    {
+      "width": 1920,
+      "state": "questions",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "두 가지만 정하면 정리 모습을 보여드릴게요."
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "정리 모습 보기",
+          "bottom": 632.953125,
+          "viewport": 1000
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "state": "materials",
+      "menuOverlapsConversation": false,
+      "horizontalOverflow": false,
+      "headings": [
+        "성능 자료 정리",
+        "자료 2개를 찾았어요."
+      ],
+      "smallControls": 0,
+      "primaryButtons": [
+        {
+          "text": "이 자료로 제안 보기",
+          "bottom": 560.1875,
+          "viewport": 1000
+        }
+      ]
+    }
+  ]
+}

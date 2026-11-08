@@ -1,0 +1,147 @@
+{
+  "at": "2026-11-08T04:13:21.674Z",
+  "checks": [
+    {
+      "name": "actual recovery vault created and verified through existing settings",
+      "passed": true
+    },
+    {
+      "name": "390: preparation stays in the conversation without a material dialog or horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "768: preparation stays in the conversation without a material dialog or horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: preparation stays in the conversation without a material dialog or horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: preparation stays in the conversation without a material dialog or horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "natural language resolves root scope, separate reference and destination without a scope wizard",
+      "passed": true
+    },
+    {
+      "name": "confirmed reference metadata contains directories, not file names or bodies",
+      "passed": true
+    },
+    {
+      "name": "date and mixed documents are grouped at the end, with generated evidence-based date labels",
+      "passed": true
+    },
+    {
+      "name": "unanswered questions cannot obtain a new transmission consent",
+      "passed": true
+    },
+    {
+      "name": "questions switch the shared composer to an empty reply draft",
+      "passed": true
+    },
+    {
+      "name": "unsupported clause leaves every answer and first proposal intact",
+      "passed": true
+    },
+    {
+      "name": "reply draft survives navigation without replacing the original instruction",
+      "passed": true
+    },
+    {
+      "name": "composing Enter cannot submit a reply or transmit",
+      "passed": true
+    },
+    {
+      "name": "one chat reply fills both existing controls and clears its draft",
+      "passed": true
+    },
+    {
+      "name": "answers invalidate old proposal without auto-generation",
+      "passed": true
+    },
+    {
+      "name": "explicit new analysis carries grounded answers and confirmed reference tree",
+      "passed": true
+    },
+    {
+      "name": "answered date criteria remain editable without being asked again",
+      "passed": true
+    },
+    {
+      "name": "projection yields two source/destination batches without file writes",
+      "passed": true
+    },
+    {
+      "name": "390: review has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "mobile comparison switches to current paths without changing the plan",
+      "passed": true
+    },
+    {
+      "name": "mobile arrival comparison is reachable by keyboard",
+      "passed": true
+    },
+    {
+      "name": "768: review has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: review has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: review has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "existing managed review focuses cancel and needs separate execution",
+      "passed": true
+    },
+    {
+      "name": "AI projection executes real verified copy while retaining the original",
+      "passed": true
+    },
+    {
+      "name": "completed batches cannot be executed twice",
+      "passed": true
+    },
+    {
+      "name": "same plan reuses real preserved move and removes only its verified source",
+      "passed": true
+    },
+    {
+      "name": "actual copy and move archives are discoverable using existing recovery UI",
+      "passed": true
+    },
+    {
+      "name": "preserved AI move is restored as a verified new item",
+      "passed": true
+    },
+    {
+      "name": "same-size changed source blocks plan approval and all old batches without a write",
+      "passed": true
+    },
+    {
+      "name": "bulk clear retains selection tools and the last individual uncheck exits",
+      "passed": true
+    },
+    {
+      "name": "individual final uncheck actually closes selection tools",
+      "passed": true
+    },
+    {
+      "name": "protected original sentinel remains unchanged",
+      "passed": true
+    },
+    {
+      "name": "no external requests and no component exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "condition": "real app controller/session/Worker/OPFS/managed engine/vault/recovery with synthetic owner/permissions/provider and Next navigation shim"
+}

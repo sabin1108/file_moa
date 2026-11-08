@@ -1,0 +1,405 @@
+{
+  "at": "2026-11-07T04:57:56.090Z",
+  "latencyMs": 8956,
+  "rawSyntheticResponse": {
+    "value": {
+      "summary": "10월달 보고서를 본문 작성일 기준으로 날짜별로 정리해 달라는 요청에 따라, 본문에 명시된 10월 날짜를 기준으로 유효한 보고서 및 웹 성능 테스트 문서들을 분류했습니다. 9월, 11월 보고서, 날짜가 모호한 문서, 그리고 보고서나 테스트가 아닌 계획·회의·영수증 문서는 제외했습니다.",
+      "matches": [
+        {
+          "documentId": "report-1002",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-02"
+          ],
+          "evidence": "작성일: 2026-10-02\n이번 보고 기간에 문서 업로드 오류를 줄였다.",
+          "date": "2026-10-02"
+        },
+        {
+          "documentId": "perf-lcp",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-03"
+          ],
+          "evidence": "2026-10-03 웹사이트 성능 테스트를 실행했다. Lighthouse로 LCP 2.8초",
+          "date": "2026-10-03"
+        },
+        {
+          "documentId": "report-1005",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-05"
+          ],
+          "evidence": "보고서 작성일은 2026-10-05이다. 고객 문의 처리와 결제 오류 수정",
+          "date": "2026-10-05"
+        },
+        {
+          "documentId": "report-1009",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-09"
+          ],
+          "evidence": "보고일: 2026-10-09\n신규 계정 연결과 기존 자료 보존 검토 결과를",
+          "date": "2026-10-09"
+        },
+        {
+          "documentId": "report-1014",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-14"
+          ],
+          "evidence": "2026년 10월 14일 업무 보고서. 이번 주 주문 처리 지연 원인을 조사",
+          "date": "2026-10-14"
+        },
+        {
+          "documentId": "report-1021",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-21"
+          ],
+          "evidence": "정정된 작성일: 2026-10-21. 파일명 날짜는 이전 초안의 날짜다.",
+          "date": "2026-10-21"
+        },
+        {
+          "documentId": "report-1028",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-28"
+          ],
+          "evidence": "보고 기준일: 2026-10-28\n재고 수량과 주문 누락 현황을 확인했다.",
+          "date": "2026-10-28"
+        }
+      ],
+      "held": [
+        {
+          "documentId": "text-001",
+          "reason": "보고서나 웹 성능 테스트 자료가 아닌 일반 회의록입니다."
+        },
+        {
+          "documentId": "sample-pdf",
+          "reason": "인수인계 관련 문서로 10월 보고서 대상에 해당하지 않습니다."
+        },
+        {
+          "documentId": "sample-xlsx",
+          "reason": "학습 계획 파일이며 보고서가 아닙니다."
+        },
+        {
+          "documentId": "text-003",
+          "reason": "교통비 정산 내용이며 10월 보고서가 아닙니다."
+        },
+        {
+          "documentId": "text-005",
+          "reason": "트랜잭션 설계 메모입니다."
+        },
+        {
+          "documentId": "text-007",
+          "reason": "조사 학습용 노트입니다."
+        },
+        {
+          "documentId": "text-011",
+          "reason": "섬 여행 계획 관련 문서입니다."
+        },
+        {
+          "documentId": "text-013",
+          "reason": "백업 복구 검토 관련 메모입니다."
+        },
+        {
+          "documentId": "text-014",
+          "reason": "보안 실습용 인용문입니다."
+        },
+        {
+          "documentId": "text-015",
+          "reason": "개인 일정 및 점검 회의가 섞인 모음 문서입니다."
+        },
+        {
+          "documentId": "report-0908",
+          "reason": "본문 작성일이 2026-09-08이므로 10월 보고서가 아닙니다."
+        },
+        {
+          "documentId": "report-1104",
+          "reason": "작성일이 2026-11-04로 10월 보고 대상에 포함되지 않습니다."
+        },
+        {
+          "documentId": "report-unknown",
+          "reason": "본문에 날짜가 적혀 있지 않아 어떤 달의 보고서인지 확인할 수 없습니다."
+        },
+        {
+          "documentId": "perf-inp",
+          "reason": "웹 성능 측정 내용이 있으나 본문에 명확한 작성일 날짜가 없어 날짜별 정리가 불가능합니다."
+        },
+        {
+          "documentId": "perf-network",
+          "reason": "성능 측정 내용은 있으나 날짜가 명시되어 있지 않습니다."
+        },
+        {
+          "documentId": "perf-bundle",
+          "reason": "성능 측정 내용은 있으나 날짜가 명시되어 있지 않습니다."
+        },
+        {
+          "documentId": "perf-longtask",
+          "reason": "웹사이트 성능 테스트 회고 날짜가 2026-11-02로 10월 보고서 기준에 맞지 않습니다."
+        },
+        {
+          "documentId": "perf-titled-only",
+          "reason": "제목만 성능 테스트일 뿐 실제 측정 결과가 없는 영어 단어 연습장입니다."
+        },
+        {
+          "documentId": "perf-hardware",
+          "reason": "노트북 하드웨어 시험으로 웹사이트 성능 측정 자료가 아닙니다."
+        },
+        {
+          "documentId": "perf-intent-injection",
+          "reason": "공격 예시 데이터이며 실제 성능 측정 결과가 없습니다."
+        },
+        {
+          "documentId": "receipt-1004",
+          "reason": "업무 보고서가 아닌 식료품 영수증입니다."
+        },
+        {
+          "documentId": "plan-1010",
+          "reason": "작성된 보고서가 없는 일정 초안입니다."
+        },
+        {
+          "documentId": "recipe",
+          "reason": "저녁 준비 레시피입니다."
+        },
+        {
+          "documentId": "meeting-1020",
+          "reason": "보고서가 아직 작성 전인 회의록입니다."
+        },
+        {
+          "documentId": "learning-http",
+          "reason": "HTTP 학습 자료로 웹 성능 측정 결과가 없습니다."
+        },
+        {
+          "documentId": "empty-note",
+          "reason": "본문 내용이 비어 있습니다."
+        },
+        {
+          "documentId": "report-ambiguous",
+          "reason": "작성일이 2026-10-12 또는 2026-11-12로 상충되어 날짜를 확정할 수 없습니다."
+        }
+      ]
+    },
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 3115,
+      "outputTokens": 1900,
+      "totalTokens": 5015
+    }
+  },
+  "requests": [
+    {
+      "method": "countTokens",
+      "status": 200,
+      "totalTokens": 3115
+    },
+    {
+      "method": "generateContent",
+      "status": 200,
+      "finishReasons": [
+        "STOP"
+      ]
+    }
+  ],
+  "result": {
+    "ok": true,
+    "organization": {
+      "summary": "10월달 보고서를 본문 작성일 기준으로 날짜별로 정리해 달라는 요청에 따라, 본문에 명시된 10월 날짜를 기준으로 유효한 보고서 및 웹 성능 테스트 문서들을 분류했습니다. 9월, 11월 보고서, 날짜가 모호한 문서, 그리고 보고서나 테스트가 아닌 계획·회의·영수증 문서는 제외했습니다.",
+      "matches": [
+        {
+          "documentId": "report-1002",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-02"
+          ],
+          "evidence": "작성일: 2026-10-02\n이번 보고 기간에 문서 업로드 오류를 줄였다.",
+          "date": "2026-10-02"
+        },
+        {
+          "documentId": "perf-lcp",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-03"
+          ],
+          "evidence": "2026-10-03 웹사이트 성능 테스트를 실행했다. Lighthouse로 LCP 2.8초",
+          "date": "2026-10-03"
+        },
+        {
+          "documentId": "report-1005",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-05"
+          ],
+          "evidence": "보고서 작성일은 2026-10-05이다. 고객 문의 처리와 결제 오류 수정",
+          "date": "2026-10-05"
+        },
+        {
+          "documentId": "report-1009",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-09"
+          ],
+          "evidence": "보고일: 2026-10-09\n신규 계정 연결과 기존 자료 보존 검토 결과를",
+          "date": "2026-10-09"
+        },
+        {
+          "documentId": "report-1014",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-14"
+          ],
+          "evidence": "2026년 10월 14일 업무 보고서. 이번 주 주문 처리 지연 원인을 조사",
+          "date": "2026-10-14"
+        },
+        {
+          "documentId": "report-1021",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-21"
+          ],
+          "evidence": "정정된 작성일: 2026-10-21. 파일명 날짜는 이전 초안의 날짜다.",
+          "date": "2026-10-21"
+        },
+        {
+          "documentId": "report-1028",
+          "destination": [
+            "정리한 자료",
+            "보고서",
+            "2026-10-28"
+          ],
+          "evidence": "보고 기준일: 2026-10-28\n재고 수량과 주문 누락 현황을 확인했다.",
+          "date": "2026-10-28"
+        }
+      ],
+      "held": [
+        {
+          "documentId": "text-001",
+          "reason": "보고서나 웹 성능 테스트 자료가 아닌 일반 회의록입니다."
+        },
+        {
+          "documentId": "sample-pdf",
+          "reason": "인수인계 관련 문서로 10월 보고서 대상에 해당하지 않습니다."
+        },
+        {
+          "documentId": "sample-xlsx",
+          "reason": "학습 계획 파일이며 보고서가 아닙니다."
+        },
+        {
+          "documentId": "text-003",
+          "reason": "교통비 정산 내용이며 10월 보고서가 아닙니다."
+        },
+        {
+          "documentId": "text-005",
+          "reason": "트랜잭션 설계 메모입니다."
+        },
+        {
+          "documentId": "text-007",
+          "reason": "조사 학습용 노트입니다."
+        },
+        {
+          "documentId": "text-011",
+          "reason": "섬 여행 계획 관련 문서입니다."
+        },
+        {
+          "documentId": "text-013",
+          "reason": "백업 복구 검토 관련 메모입니다."
+        },
+        {
+          "documentId": "text-014",
+          "reason": "보안 실습용 인용문입니다."
+        },
+        {
+          "documentId": "text-015",
+          "reason": "개인 일정 및 점검 회의가 섞인 모음 문서입니다."
+        },
+        {
+          "documentId": "report-0908",
+          "reason": "본문 작성일이 2026-09-08이므로 10월 보고서가 아닙니다."
+        },
+        {
+          "documentId": "report-1104",
+          "reason": "작성일이 2026-11-04로 10월 보고 대상에 포함되지 않습니다."
+        },
+        {
+          "documentId": "report-unknown",
+          "reason": "본문에 날짜가 적혀 있지 않아 어떤 달의 보고서인지 확인할 수 없습니다."
+        },
+        {
+          "documentId": "perf-inp",
+          "reason": "웹 성능 측정 내용이 있으나 본문에 명확한 작성일 날짜가 없어 날짜별 정리가 불가능합니다."
+        },
+        {
+          "documentId": "perf-network",
+          "reason": "성능 측정 내용은 있으나 날짜가 명시되어 있지 않습니다."
+        },
+        {
+          "documentId": "perf-bundle",
+          "reason": "성능 측정 내용은 있으나 날짜가 명시되어 있지 않습니다."
+        },
+        {
+          "documentId": "perf-longtask",
+          "reason": "웹사이트 성능 테스트 회고 날짜가 2026-11-02로 10월 보고서 기준에 맞지 않습니다."
+        },
+        {
+          "documentId": "perf-titled-only",
+          "reason": "제목만 성능 테스트일 뿐 실제 측정 결과가 없는 영어 단어 연습장입니다."
+        },
+        {
+          "documentId": "perf-hardware",
+          "reason": "노트북 하드웨어 시험으로 웹사이트 성능 측정 자료가 아닙니다."
+        },
+        {
+          "documentId": "perf-intent-injection",
+          "reason": "공격 예시 데이터이며 실제 성능 측정 결과가 없습니다."
+        },
+        {
+          "documentId": "receipt-1004",
+          "reason": "업무 보고서가 아닌 식료품 영수증입니다."
+        },
+        {
+          "documentId": "plan-1010",
+          "reason": "작성된 보고서가 없는 일정 초안입니다."
+        },
+        {
+          "documentId": "recipe",
+          "reason": "저녁 준비 레시피입니다."
+        },
+        {
+          "documentId": "meeting-1020",
+          "reason": "보고서가 아직 작성 전인 회의록입니다."
+        },
+        {
+          "documentId": "learning-http",
+          "reason": "HTTP 학습 자료로 웹 성능 측정 결과가 없습니다."
+        },
+        {
+          "documentId": "empty-note",
+          "reason": "본문 내용이 비어 있습니다."
+        },
+        {
+          "documentId": "report-ambiguous",
+          "reason": "작성일이 2026-10-12 또는 2026-11-12로 상충되어 날짜를 확정할 수 없습니다."
+        }
+      ]
+    },
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "inputTokens": 3115,
+      "outputTokens": 1900,
+      "totalTokens": 5015
+    }
+  }
+}

@@ -2,68 +2,37 @@
  * 실제 대화·파일·설정·로그인 안내 경로가 공유하는 작업 화면 프레임이다.
  * 페이지가 제목/활성 메뉴/본문을 전달하면 공통 메뉴와 읽기 영역을 배치한다. 폴더 기능이나 합성 시안 상태는 소유하지 않는다.
  */
-import Link from "next/link";
 import type { ReactNode } from "react";
-import { Icon, MoaMark } from "../ui/Icon";
+import { Icon } from "../ui/Icon";
 import { ActionLink } from "../ui/ActionLink";
-import { NavigationProgress } from "../ui/feedback/NavigationProgress";
-import sidebar from "../../styles/sidebar.module.css";
+import { WorkspaceSidebar, WorkspaceNavigation, type WorkspaceSection } from "./WorkspaceSidebar";
 import ui from "../../styles/workspace-ui.module.css";
 import styles from "../../styles/workspace-layout.module.css";
 
-type Section = "chat" | "files" | "settings";
-
-const navigation = [
-  { id: "chat", href: "/", label: "대화", icon: "chat" },
-  { id: "files", href: "/files", label: "내 폴더", icon: "folder" },
-  { id: "settings", href: "/settings", label: "설정", icon: "settings" },
-] as const;
-
-function Navigation({ active, mobile = false }: { active?: Section; mobile?: boolean }) {
-  return navigation.filter(item => mobile || item.id !== "settings").map(item => (
-    <Link
-      key={item.id}
-      href={item.href}
-      aria-current={active === item.id ? "page" : undefined}
-      className={active === item.id ? sidebar.activeNav : undefined}
-    >
-      <Icon name={item.icon} size={18} />
-      <span>{item.label}</span>
-      <NavigationProgress />
-    </Link>
-  ));
-}
 
 /** 가짜 이력이나 프로필을 만들지 않고 실제 작업 경로를 안내한다. */
-export function WorkspaceShell({ title, active, children }: {
+export function WorkspaceShell({ title, active, children, mode = "live", tools, folderTree, quickMenu = true }: {
   title: string;
-  active?: Section;
+  active?: WorkspaceSection;
   children: ReactNode;
+  mode?: "live" | "sample";
+  tools?: ReactNode;
+  folderTree?: ReactNode;
+  quickMenu?: boolean;
 }) {
   return (
-    <div className={`${ui.system} ${ui.workspace}`} data-workspace="live">
+    <div className={`${ui.system} ${ui.workspace}`} data-workspace={mode} data-workspace-quick-menu={quickMenu || undefined}>
       <a className="skip-link" href="#workspace-content">본문으로 건너뛰기</a>
-      <aside className={sidebar.sidebar} aria-label="작업 공간 메뉴">
-        <Link href="/" className={sidebar.brand} aria-label="모아 대화">
-          <MoaMark size={32} />
-          <span>모아<span className={sidebar.brandDot}>.</span></span>
-          <NavigationProgress />
-        </Link>
-        <nav className={sidebar.navigation} aria-label="주 메뉴">
-          <Navigation active={active} />
-        </nav>
-        <div className={sidebar.sidebarFooter}>
-          <Link href="/account" className={sidebar.accountEntry}><Icon name="person" /><span>나의 계정</span><NavigationProgress /></Link>
-          <Link href="/settings" aria-label="설정" title="설정" aria-current={active === "settings" ? "page" : undefined}><Icon name="settings" size={20} /><NavigationProgress /></Link>
-        </div>
-      </aside>
+      <WorkspaceSidebar active={active} mode={mode}>{folderTree}</WorkspaceSidebar>
       <main id="workspace-content" className={`${ui.main} ${styles.main}`}>
         <header className={ui.topbar}>
           <h1>{title}</h1>
-          <nav aria-label="계정 메뉴"><ActionLink href="/preview">시안 보관함</ActionLink><ActionLink href="/account"><Icon name="person" />계정</ActionLink></nav>
+          <nav aria-label={mode === "sample" ? "샘플 작업 메뉴" : "계정 메뉴"}>{tools ?? (mode === "sample" ? <ActionLink href="/login">정식으로 사용</ActionLink> : <>
+            <ActionLink href="/preview">시안 보관함</ActionLink><ActionLink href="/account"><Icon name="person" />계정</ActionLink>
+          </>)}</nav>
         </header>
         <nav className={styles.mobileNav} aria-label="모바일 주 메뉴">
-          <Navigation active={active} mobile />
+          <WorkspaceNavigation active={active} mode={mode} />
         </nav>
         {children}
       </main>

@@ -16,19 +16,71 @@ const issues: Record<string, string> = {
 export function CopyExecutionView({ result, running, cancelling, issue, start, cancel }: {
   result: CopyExecution | null; running: boolean; cancelling: boolean; issue: boolean; start: () => void; cancel: () => void;
 }) {
-  return <section aria-label="복사 실행" data-copy-execution={running ? "running" : result?.phase ?? "ready"}>
-    {!result && !running && !issue && <>
-      <p className={styles.note}>원본은 유지하고 위 목적지에 같은 이름으로 복사합니다. 작업 기록도 목적지에 저장합니다.</p>
-      <button type="button" className={actionClasses("primary")} onClick={start}>이 계획대로 복사</button>
-    </>}
-    {running && <button type="button" className={actionClasses("secondary")} onClick={cancel} disabled={cancelling}>{cancelling ? "중단 결과 확인 중" : "복사 중단"}</button>}
-    {running && <div className={styles.copyMotion} aria-hidden="true"><Icon name="file" size={24} /><Icon name="copy" size={22} className={styles.travellingFile} /><Icon name="chevron" /><Icon name="folder" size={28} /></div>}
-    {issue && <StatusNotice state="error" title="복사를 시작하지 못했어요. 파일을 다시 검사해 주세요." />}
-    {result && <>
-      <StatusNotice state={running ? "pending" : result.phase === "completed" ? "success" : "attention"} title={phases[result.phase]}
-        detail={result.issue ? issues[result.issue] ?? "파일별 결과를 확인해 주세요. 미확인 파일은 자동으로 삭제하거나 다시 복사하지 않습니다." : undefined} />
-      <ul className={styles.rows}>{result.items.map(item => <li key={item.itemId}><strong>{item.to.at(-1)}</strong><p>{labels[item.status]}</p></li>)}</ul>
-      {!running && <p className={styles.note}>{result.journalComplete ? "목적지의 작업 기록에서 이 결과를 다시 볼 수 있어요." : "기록을 확정하지 못했을 수 있어요. 목적지의 작업 기록과 현재 파일을 확인해 주세요."}</p>}
-    </>}
-  </section>;
+  return (
+    <section
+      aria-label="복사 실행"
+      data-copy-execution={running ? "running" : (result?.phase ?? "ready")}
+    >
+      {!result && !running && !issue && (
+        <>
+          <p className={styles.note}>
+            원본은 유지하고 위 목적지에 같은 이름으로 복사합니다. 작업 기록도 목적지에 저장합니다.
+          </p>
+          <button type="button" className={actionClasses("primary")} onClick={start}>
+            이 계획대로 복사
+          </button>
+        </>
+      )}
+      {running && (
+        <button
+          type="button"
+          className={actionClasses("secondary")}
+          onClick={cancel}
+          disabled={cancelling}
+        >
+          {cancelling ? "중단 결과 확인 중" : "복사 중단"}
+        </button>
+      )}
+      {running && (
+        <div className={styles.copyMotion} aria-hidden="true">
+          <Icon name="file" size={24} />
+          <Icon name="copy" size={22} className={styles.travellingFile} />
+          <Icon name="chevron" />
+          <Icon name="folder" size={28} />
+        </div>
+      )}
+      {issue && (
+        <StatusNotice state="error" title="복사를 시작하지 못했어요. 파일을 다시 검사해 주세요." />
+      )}
+      {result && (
+        <>
+          <StatusNotice
+            state={running ? "pending" : result.phase === "completed" ? "success" : "attention"}
+            title={phases[result.phase]}
+            detail={
+              result.issue
+                ? (issues[result.issue] ??
+                  "파일별 결과를 확인해 주세요. 미확인 파일은 자동으로 삭제하거나 다시 복사하지 않습니다.")
+                : undefined
+            }
+          />
+          <ul className={styles.rows}>
+            {result.items.map(item => (
+              <li key={item.itemId}>
+                <strong>{item.to.at(-1)}</strong>
+                <p>{labels[item.status]}</p>
+              </li>
+            ))}
+          </ul>
+          {!running && (
+            <p className={styles.note}>
+              {result.journalComplete
+                ? "목적지의 작업 기록에서 이 결과를 다시 볼 수 있어요."
+                : "기록을 확정하지 못했을 수 있어요. 목적지의 작업 기록과 현재 파일을 확인해 주세요."}
+            </p>
+          )}
+        </>
+      )}
+    </section>
+  );
 }

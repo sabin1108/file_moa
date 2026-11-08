@@ -30,7 +30,23 @@ const paths = {
 export type IconName = keyof typeof paths;
 
 export function Icon({ name, size = 18, className, style }: { name: IconName; size?: number; className?: string; style?: CSSProperties }) {
-  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.55" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className} style={style}><path d={paths[name]} /></svg>;
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.55"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+      style={style}
+    >
+      <path d={paths[name]} />
+    </svg>
+  );
 }
 
 export function MoaMark({ size = 30 }: { size?: number }) {

@@ -14,7 +14,7 @@ async function setup() {
 }
 
 describe("current-folder file selection", () => {
-  it("SELECT-024 enters on first selection and exits on last uncheck or clear all", async () => {
+  it("SELECT-024 exits on last individual uncheck and keeps bulk-clear mode", async () => {
     const { controller } = await setup();
     controller.toggleSelection("a.md");
     expect(controller.getSnapshot().selectionOpen).toBe(true);
@@ -23,9 +23,9 @@ describe("current-folder file selection", () => {
     controller.toggleSelection("b.pdf");
     expect(controller.getSnapshot()).toMatchObject({ selectionOpen: false, selectedNames: [] });
     controller.selectAll(); controller.clearSelection();
-    expect(controller.getSnapshot()).toMatchObject({ selectionOpen: false, selectedNames: [] });
+    expect(controller.getSnapshot()).toMatchObject({ selectionOpen: true, selectedNames: [] });
     controller.selectAll(); controller.clearVisibleSelection();
-    expect(controller.getSnapshot().selectionOpen).toBe(false);
+    expect(controller.getSnapshot().selectionOpen).toBe(true);
   });
   it("SELECT-001 toggles visible files and folders, never unknown names", async () => {
     const { controller, read } = await setup();

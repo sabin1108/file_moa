@@ -1,0 +1,613 @@
+{
+  "version": "business-v1",
+  "seed": "manual-business-v1",
+  "provenance": "Original synthetic documents; no external/private data; no evaluation answers",
+  "spreadsheets": [
+    {
+      "id": "business-xlsx-sales",
+      "name": "채널별 매출.xlsx",
+      "sha256": "d9f97604232ad95ce0cf27b87670b3deb4710d4cf25a6e2aeae32cb4cc957f54",
+      "rows": [
+        [
+          "채널",
+          "매출(만원)",
+          "원가(만원)",
+          "이익(만원)"
+        ],
+        [
+          "온라인",
+          8400,
+          5100,
+          3300
+        ],
+        [
+          "오프라인",
+          6100,
+          3900,
+          2200
+        ],
+        [
+          "도매",
+          4200,
+          3100,
+          1100
+        ],
+        [
+          "합계",
+          18700,
+          12100,
+          6600
+        ]
+      ],
+      "totalFormula": "=B9-C9"
+    },
+    {
+      "id": "business-xlsx-visits",
+      "name": "방문과 구매.xlsx",
+      "sha256": "88110bd59180ac3ff9dacd7b0b07b90fb301d375a3a65d4c34ef4e85cc97792d",
+      "rows": [
+        [
+          "유입",
+          "방문(세션)",
+          "구매(건)",
+          "전환율"
+        ],
+        [
+          "검색",
+          1200,
+          60,
+          0.05
+        ],
+        [
+          "직접",
+          650,
+          39,
+          0.06
+        ],
+        [
+          "소셜",
+          420,
+          21,
+          0.05
+        ],
+        [
+          "합계",
+          2270,
+          120,
+          0.05286343612334802
+        ]
+      ],
+      "totalFormula": "=C9/B9"
+    },
+    {
+      "id": "business-xlsx-statistics",
+      "name": "학년별 설문.xlsx",
+      "sha256": "2d5e5549c6bdac5d4c2fccbf6e197858eb280189657d79b2e98142fdcdab25b9",
+      "rows": [
+        [
+          "학년",
+          "응답(명)",
+          "만족(명)",
+          "만족 비율"
+        ],
+        [
+          "1학년",
+          30,
+          21,
+          0.7
+        ],
+        [
+          "2학년",
+          28,
+          18,
+          0.6428571428571429
+        ],
+        [
+          "3학년",
+          22,
+          13,
+          0.5909090909090909
+        ],
+        [
+          "합계",
+          80,
+          52,
+          0.65
+        ]
+      ],
+      "totalFormula": "=C9/B9"
+    },
+    {
+      "id": "business-xlsx-study",
+      "name": "과목별 공부 시간.xlsx",
+      "sha256": "43dd4a74eb224ec751dd78d5625b4202d11ad2bafb150839feeb3a9aedb82ad4",
+      "rows": [
+        [
+          "과목",
+          "목표(시간)",
+          "실제(시간)",
+          "부족(시간)"
+        ],
+        [
+          "운영체제",
+          3,
+          2.5,
+          0.5
+        ],
+        [
+          "영어",
+          2,
+          2,
+          0
+        ],
+        [
+          "확률",
+          3,
+          2,
+          1
+        ],
+        [
+          "합계",
+          8,
+          6.5,
+          1.5
+        ]
+      ],
+      "totalFormula": "=B9-C9"
+    },
+    {
+      "id": "business-xlsx-research",
+      "name": "연구 진행 현황.xlsx",
+      "sha256": "844eec31b07fa93d1c78fa840fc58d3a7a9ec64816edde738cd19a33625ef8d2",
+      "rows": [
+        [
+          "단계",
+          "계획(건)",
+          "완료(건)",
+          "진행률"
+        ],
+        [
+          "문헌검토",
+          12,
+          9,
+          0.75
+        ],
+        [
+          "모의실험",
+          6,
+          4,
+          0.6666666666666666
+        ],
+        [
+          "표검토",
+          8,
+          3,
+          0.375
+        ],
+        [
+          "합계",
+          26,
+          16,
+          0.6153846153846154
+        ]
+      ],
+      "totalFormula": "=C9/B9"
+    },
+    {
+      "id": "business-xlsx-operations",
+      "name": "문의 처리 통계.xlsx",
+      "sha256": "45dc11b29d6b27b705d30549de678a4c569ea2df2926b0c6edbccb15fa37d01d",
+      "rows": [
+        [
+          "유형",
+          "접수(건)",
+          "해결(건)",
+          "해결률"
+        ],
+        [
+          "배송",
+          72,
+          60,
+          0.8333333333333334
+        ],
+        [
+          "결제",
+          54,
+          48,
+          0.8888888888888888
+        ],
+        [
+          "계정",
+          36,
+          30,
+          0.8333333333333334
+        ],
+        [
+          "합계",
+          162,
+          138,
+          0.8518518518518519
+        ]
+      ],
+      "totalFormula": "=C9/B9"
+    },
+    {
+      "id": "business-xlsx-budget",
+      "name": "부서별 예산.xlsx",
+      "sha256": "8ceb51fcf24117de957bcb6f7c2e08d107ab17a18375bdfb5672cb3e04d84763",
+      "rows": [
+        [
+          "부서",
+          "예산(만원)",
+          "집행(만원)",
+          "잔액(만원)"
+        ],
+        [
+          "교육",
+          450,
+          320,
+          130
+        ],
+        [
+          "개발",
+          1200,
+          960,
+          240
+        ],
+        [
+          "운영",
+          800,
+          700,
+          100
+        ],
+        [
+          "합계",
+          2450,
+          1980,
+          470
+        ]
+      ],
+      "totalFormula": "=B9-C9"
+    },
+    {
+      "id": "business-xlsx-service",
+      "name": "웹서비스 오류 집계.xlsx",
+      "sha256": "1abf920cfcf28728449c503fa1570a6c68448a56249b24ded7b3ddc1806b3db2",
+      "rows": [
+        [
+          "구간",
+          "요청(건)",
+          "오류(건)",
+          "오류율"
+        ],
+        [
+          "로그인",
+          2400,
+          12,
+          0.005
+        ],
+        [
+          "목록",
+          3800,
+          19,
+          0.005
+        ],
+        [
+          "검색",
+          1600,
+          16,
+          0.01
+        ],
+        [
+          "합계",
+          7800,
+          47,
+          0.006025641025641026
+        ]
+      ],
+      "totalFormula": "=C9/B9"
+    }
+  ],
+  "documents": [
+    {
+      "id": "business-company-1",
+      "name": "분기 영업 요약.md",
+      "format": "md",
+      "sha256": "cdd63972211eb288bf66060a0a73479444a0488300f2cebe48354c9ada14c1a7"
+    },
+    {
+      "id": "business-company-2",
+      "name": "월별 비용 메모.txt",
+      "format": "txt",
+      "sha256": "e493c486846922843409aa10a250a0d701d074bafe12ce61f6974f3f695f1b54"
+    },
+    {
+      "id": "business-company-3",
+      "name": "재고 수불 기록.md",
+      "format": "md",
+      "sha256": "decb2af3ae473ba4ac21d0e4deb5004d21eea32fa89df0c77f99f84a3c0724e3"
+    },
+    {
+      "id": "business-company-4",
+      "name": "채권 확인.txt",
+      "format": "txt",
+      "sha256": "1c4f3bd72af12bbde8c176d4edb8b40fe97f227ea801c8eff16cd95dd2ac414f"
+    },
+    {
+      "id": "business-company-5",
+      "name": "채널 변경안.md",
+      "format": "md",
+      "sha256": "cc1984b64a55a64abce2beeb040a91610ef41c3109ac2b99724fc042d3713ec7"
+    },
+    {
+      "id": "business-company-6",
+      "name": "반품 원인 분류.txt",
+      "format": "txt",
+      "sha256": "9ed45af33aa5960ac3aa9838239807b4f5bb7e61e647ec80943830c59d7ebc5d"
+    },
+    {
+      "id": "business-research-1",
+      "name": "학기말 연구 초록.md",
+      "format": "md",
+      "sha256": "02870daab48a40a8a90cbfde4f41651df44bbd63aa02b528d84bddbbc045d36b"
+    },
+    {
+      "id": "business-research-2",
+      "name": "선행 연구 정리.txt",
+      "format": "txt",
+      "sha256": "2d0cff28d09773a6acee35db67c591c3e1111cdd6d37b940dbe4a678ed2a69d7"
+    },
+    {
+      "id": "business-research-3",
+      "name": "실험 설계 초안.md",
+      "format": "md",
+      "sha256": "afd8f5b8477aa0a5acb35d960ac148e0b8c15f5151076bee00ce86eef97b500d"
+    },
+    {
+      "id": "business-research-4",
+      "name": "졸업 보고서 구성.txt",
+      "format": "txt",
+      "sha256": "360fc2150c1e03e2d7ea3e04edba7880f59fdf50678683f859d09fdb6ef8938d"
+    },
+    {
+      "id": "business-research-5",
+      "name": "연구실 회의 기록.md",
+      "format": "md",
+      "sha256": "a41d2649a1e94cf7146f85ca2dc8625e46efcc3118c982b8fcd144a9b295c9e5"
+    },
+    {
+      "id": "business-research-6",
+      "name": "논문 제출 점검.txt",
+      "format": "txt",
+      "sha256": "7dee56c89f9b7b741e7b427a64db22a24ef0b19e087350df041d980c28e8bf90"
+    },
+    {
+      "id": "business-statistics-1",
+      "name": "표본 조사 설계.md",
+      "format": "md",
+      "sha256": "fef0a02327af7aa389347eba87cb7edfe0ece712ec823f5f135abb960969ea94"
+    },
+    {
+      "id": "business-statistics-2",
+      "name": "기초 통계 계산.txt",
+      "format": "txt",
+      "sha256": "5297577b746f4f8709d125fb09b5f6deb1b355b707f073f12937335a41a1d079"
+    },
+    {
+      "id": "business-statistics-3",
+      "name": "결측 처리 규칙.md",
+      "format": "md",
+      "sha256": "7f559997b922549c707b0b7ea36cde2f167c13e1c85887568185bf3777f09e59"
+    },
+    {
+      "id": "business-statistics-4",
+      "name": "상관 해석 메모.txt",
+      "format": "txt",
+      "sha256": "4ff1000a9bb599289a974f38af896a0fa38b6e277eaca578ca1dca1da68f7aec"
+    },
+    {
+      "id": "business-statistics-5",
+      "name": "지표 정의서.md",
+      "format": "md",
+      "sha256": "cf64ec2b92bf0df9137f6e11723dbc8ecc476abd79235316bf1a54bc9f6bbb54"
+    },
+    {
+      "id": "business-statistics-6",
+      "name": "조사 결과 보고.txt",
+      "format": "txt",
+      "sha256": "4a98e6c17a5677fb89058360f9816be4b1ee414e313b27c4851aa072630602a0"
+    },
+    {
+      "id": "business-visits-1",
+      "name": "주간 유입 분석.md",
+      "format": "md",
+      "sha256": "e2576d407f664b95a5e8cd953f7dc393fd4dd6e33d84413247dda2aac209c8df"
+    },
+    {
+      "id": "business-visits-2",
+      "name": "전환 퍼널 정의.txt",
+      "format": "txt",
+      "sha256": "d1653cc52f30d0a8fbe1ee9e3fc88601d2008f69727c69da61a2db6898ab130d"
+    },
+    {
+      "id": "business-visits-3",
+      "name": "캠페인 회고.md",
+      "format": "md",
+      "sha256": "821bad6fa55ba157d95c0d449ae8e667cdf09e9e4f977bf1a73c796297b935ce"
+    },
+    {
+      "id": "business-visits-4",
+      "name": "방문수 집계 규칙.txt",
+      "format": "txt",
+      "sha256": "65869439a81af947e365b80be84cfde6831f3f5e829a4ea9e0f0b231106adf07"
+    },
+    {
+      "id": "business-visits-5",
+      "name": "유입 경로 점검.md",
+      "format": "md",
+      "sha256": "ef9b6c3c973f0d9ed0fe278f949e9e08dedd5e3e28fdb5082ccc2389d689ef64"
+    },
+    {
+      "id": "business-visits-6",
+      "name": "방문 분석 인수인계.txt",
+      "format": "txt",
+      "sha256": "ee7fde20e8334abec57681ff7f40ae686aec27e0071627f52a57d99c0591150a"
+    },
+    {
+      "id": "business-study-1",
+      "name": "운영체제 복습.md",
+      "format": "md",
+      "sha256": "17ddc878aa3457522a34d89f3dc28e319d3730aec984bced1b505e6635c9a249"
+    },
+    {
+      "id": "business-study-2",
+      "name": "자료구조 과제.txt",
+      "format": "txt",
+      "sha256": "fc9fb524277647546a430d77cb7ada55f20e195e80dfb0edf41d888bccec511c"
+    },
+    {
+      "id": "business-study-3",
+      "name": "영어 학습 기록.md",
+      "format": "md",
+      "sha256": "37fbea6cd14400140a82336e385b7cb51d2102bb428f488f670c752a1e8fb2d1"
+    },
+    {
+      "id": "business-study-4",
+      "name": "확률 강의 필기.txt",
+      "format": "txt",
+      "sha256": "1d22dff074b9965ae3b8b779b00a6c01b4d9a36b647be479a35d5cf645b70281"
+    },
+    {
+      "id": "business-study-5",
+      "name": "자격시험 오답.md",
+      "format": "md",
+      "sha256": "8bb2876b7794cfff8828b0a507cc12445c7453c352d32e7cffaf1f22509969ef"
+    },
+    {
+      "id": "business-study-6",
+      "name": "학습 계획 조정.txt",
+      "format": "txt",
+      "sha256": "95b174540f783086d3d8e4b1c73fef73b7e1df11521c91bed4eeee56c8007169"
+    },
+    {
+      "id": "business-developer-1",
+      "name": "라우팅 메모.md",
+      "format": "md",
+      "sha256": "79c28052f459e79386ae329e050490c621224f617ae29f502395b73bbdb91e65"
+    },
+    {
+      "id": "business-developer-2",
+      "name": "접근성 점검표.txt",
+      "format": "txt",
+      "sha256": "b88b74417ab909a79ed9a3f78d776a293b659bdfbd49398f9275e0503a03e271"
+    },
+    {
+      "id": "business-developer-3",
+      "name": "폼 처리 규약.md",
+      "format": "md",
+      "sha256": "b4c8d24f7b7671d3175fb19437379753b105ebfd18c3b17615f2fdd394f8d463"
+    },
+    {
+      "id": "business-developer-4",
+      "name": "API 응답 설명.txt",
+      "format": "txt",
+      "sha256": "677aaff1950513d45b162fffc63bc8edf728a2d9e7f31f882fecd0b5de0b602b"
+    },
+    {
+      "id": "business-developer-5",
+      "name": "성능 지표 공부.md",
+      "format": "md",
+      "sha256": "4dcac6d11ff1879e999e8b658aa3774efab2506ffe4807fa7c999e23145b23db"
+    },
+    {
+      "id": "business-developer-6",
+      "name": "컴포넌트 계약.txt",
+      "format": "txt",
+      "sha256": "d489415dc7e572b2e19510c962c40c210a16f9fa6063e24f497f154b95871035"
+    },
+    {
+      "id": "business-operations-1",
+      "name": "입사 안내.md",
+      "format": "md",
+      "sha256": "c4f1443bfcce7b0b9a511f87496cb0dc0a8602f478916b7d7376a68c25f1adbf"
+    },
+    {
+      "id": "business-operations-2",
+      "name": "고객 지원 집계.txt",
+      "format": "txt",
+      "sha256": "481991f1200e67b0fbaf60f06fb89cf17fc9cb1d34818cdd3b5abcff308871a5"
+    },
+    {
+      "id": "business-operations-3",
+      "name": "공급 일정.md",
+      "format": "md",
+      "sha256": "4f2d96aea7d9985c392df4fd28c912f4a014b2a4073f66bcebb2a5b32902dd44"
+    },
+    {
+      "id": "business-operations-4",
+      "name": "학교 행사 운영.txt",
+      "format": "txt",
+      "sha256": "9fc38623ceaf057f8bb5ef3ff12c90a0dc3fec0e5d3af98d639eaaa7d7cd254f"
+    },
+    {
+      "id": "business-operations-5",
+      "name": "팀 업무 인계.md",
+      "format": "md",
+      "sha256": "3878afccca20c3bf4dfa712f621deeaf9e2c37206a659bfa1f77382a30b19b77"
+    },
+    {
+      "id": "business-operations-6",
+      "name": "회의와 결정.txt",
+      "format": "txt",
+      "sha256": "5dd9205d61faac389d358b4691a6d2dcfa3325f75ecda69a50afd4d79feb0e94"
+    },
+    {
+      "id": "business-xlsx-sales",
+      "name": "채널별 매출.xlsx",
+      "format": "xlsx",
+      "sha256": "d9f97604232ad95ce0cf27b87670b3deb4710d4cf25a6e2aeae32cb4cc957f54"
+    },
+    {
+      "id": "business-xlsx-visits",
+      "name": "방문과 구매.xlsx",
+      "format": "xlsx",
+      "sha256": "88110bd59180ac3ff9dacd7b0b07b90fb301d375a3a65d4c34ef4e85cc97792d"
+    },
+    {
+      "id": "business-xlsx-statistics",
+      "name": "학년별 설문.xlsx",
+      "format": "xlsx",
+      "sha256": "2d5e5549c6bdac5d4c2fccbf6e197858eb280189657d79b2e98142fdcdab25b9"
+    },
+    {
+      "id": "business-xlsx-study",
+      "name": "과목별 공부 시간.xlsx",
+      "format": "xlsx",
+      "sha256": "43dd4a74eb224ec751dd78d5625b4202d11ad2bafb150839feeb3a9aedb82ad4"
+    },
+    {
+      "id": "business-xlsx-research",
+      "name": "연구 진행 현황.xlsx",
+      "format": "xlsx",
+      "sha256": "844eec31b07fa93d1c78fa840fc58d3a7a9ec64816edde738cd19a33625ef8d2"
+    },
+    {
+      "id": "business-xlsx-operations",
+      "name": "문의 처리 통계.xlsx",
+      "format": "xlsx",
+      "sha256": "45dc11b29d6b27b705d30549de678a4c569ea2df2926b0c6edbccb15fa37d01d"
+    },
+    {
+      "id": "business-xlsx-budget",
+      "name": "부서별 예산.xlsx",
+      "format": "xlsx",
+      "sha256": "8ceb51fcf24117de957bcb6f7c2e08d107ab17a18375bdfb5672cb3e04d84763"
+    },
+    {
+      "id": "business-xlsx-service",
+      "name": "웹서비스 오류 집계.xlsx",
+      "format": "xlsx",
+      "sha256": "1abf920cfcf28728449c503fa1570a6c68448a56249b24ded7b3ddc1806b3db2"
+    }
+  ]
+}

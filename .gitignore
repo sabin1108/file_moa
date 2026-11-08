@@ -14,3 +14,8 @@ test-results/
 playwright-report/
 apps/web/generated/prisma/
 
+# 실제 로컬 디스크 관측 원자료는 공개 요약과 분리해 보관합니다.
+/docs/verification/live-organization-completion/manual-*.json
+# 측정 준비 중 생성된 미완료 초안입니다. 완료 기록은 v2에 보존합니다.
+/docs/verification/settings-cache-timing/measurement-20261108/
+

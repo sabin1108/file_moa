@@ -9,7 +9,17 @@ import type { CheckAuthSessionAction } from "../../../shared/auth-contract";
 import { clearSignupDraft } from "../lib/signup-flow";
 import { PageLoading } from "../../../components/ui/feedback/PageLoading";
 
-export function SessionBoundary({ userId, initialExpiresAt, children, checkSessionAction }: { userId: string; initialExpiresAt: string; children: ReactNode; checkSessionAction: CheckAuthSessionAction }) {
+export function SessionBoundary({
+  userId,
+  initialExpiresAt,
+  children,
+  checkSessionAction,
+}: {
+  userId: string;
+  initialExpiresAt: string;
+  children: ReactNode;
+  checkSessionAction: CheckAuthSessionAction;
+}) {
   const router = useRouter();
   // The server guard already verified this identity and expiry before rendering the boundary.
   const [active, setActive] = useState(true);
@@ -45,44 +55,87 @@ export function SessionBoundary({ userId, initialExpiresAt, children, checkSessi
         setActive(true);
         setFailed(false);
         clearSignupDraft();
-        if (!announced) { announced = true; announceAuthSessionChange(false, userId); }
+        if (!announced) {
+          announced = true;
+          announceAuthSessionChange(false, userId);
+        }
         clearTimeout(expiry);
-        expiry = setTimeout(() => { revoke(); void check(true, true); }, Math.min(until - Date.now(), 2_147_000_000));
+        expiry = setTimeout(
+          () => {
+            revoke();
+            void check(true, true);
+          },
+          Math.min(until - Date.now(), 2_147_000_000),
+        );
       } catch {
         if (current !== sequence) return;
         revoke();
         setFailed(true);
       } finally {
-        if (current === sequence) { pending = false; setChecking(false); }
+        if (current === sequence) {
+          pending = false;
+          setChecking(false);
+        }
       }
     };
-    const changed = () => { revoke(); void check(true, true); };
-    const visible = () => { if (document.visibilityState === "visible") void check(false); };
+    const changed = () => {
+      revoke();
+      void check(true, true);
+    };
+    const visible = () => {
+      if (document.visibilityState === "visible") void check(false);
+    };
     const signal = (value: { id?: string; userId?: string; source?: string }) => {
-      if (value.source === authSessionSource() || value.id && value.id === lastSignal) return;
+      if (value.source === authSessionSource() || (value.id && value.id === lastSignal)) return;
       lastSignal = value.id;
       if (value.userId === userId) void check(false);
       else changed();
     };
     const storage = (event: StorageEvent) => {
       if (event.key !== AUTH_SESSION_STORAGE_KEY) return;
-      try { signal(JSON.parse(event.newValue ?? "null") ?? {}); } catch { changed(); }
+      try {
+        signal(JSON.parse(event.newValue ?? "null") ?? {});
+      } catch {
+        changed();
+      }
     };
-    const hidden = () => { ++sequence; pending = false; revoke(); setChecking(true); };
-    const channel = typeof BroadcastChannel === "undefined" ? undefined : new BroadcastChannel(AUTH_SESSION_CHANGED);
-    if (channel) channel.onmessage = event => { if (event.data?.type === "changed") signal(event.data); };
+    const hidden = () => {
+      ++sequence;
+      pending = false;
+      revoke();
+      setChecking(true);
+    };
+    const channel =
+      typeof BroadcastChannel === "undefined"
+        ? undefined
+        : new BroadcastChannel(AUTH_SESSION_CHANGED);
+    if (channel)
+      channel.onmessage = event => {
+        if (event.data?.type === "changed") signal(event.data);
+      };
     window.addEventListener(AUTH_SESSION_CHANGED, changed);
     window.addEventListener("storage", storage);
     window.addEventListener("focus", visible);
     window.addEventListener("pageshow", visible);
     window.addEventListener("pagehide", hidden);
     document.addEventListener("visibilitychange", visible);
-    const timer = setInterval(() => { if (document.visibilityState === "visible") void check(false); }, 30_000);
+    const timer = setInterval(() => {
+      if (document.visibilityState === "visible") void check(false);
+    }, 30_000);
     const initialUntil = Date.parse(initialExpiresAt);
     if (Number.isFinite(initialUntil) && initialUntil > Date.now()) {
-      expiry = setTimeout(() => { revoke(); void check(true, true); }, Math.min(initialUntil - Date.now(), 2_147_000_000));
+      expiry = setTimeout(
+        () => {
+          revoke();
+          void check(true, true);
+        },
+        Math.min(initialUntil - Date.now(), 2_147_000_000),
+      );
       void check(false);
-    } else { revoke(); void check(true, true); }
+    } else {
+      revoke();
+      void check(true, true);
+    }
     return () => {
       ++sequence;
       clearTimeout(expiry);
@@ -98,9 +151,29 @@ export function SessionBoundary({ userId, initialExpiresAt, children, checkSessi
     };
   }, [router, userId, initialExpiresAt, checkSessionAction]);
 
-  return <>
-    {(checking || !active && !failed) && <PageLoading message={checking ? "로그인 상태를 확인하고 있어요." : "로그인 화면으로 이동하고 있어요."} />}
-    {failed && <StatusNotice state="error" title="로그인 상태를 확인하지 못했습니다." detail="연결을 확인한 뒤 화면을 새로고침해 주세요." />}
-    {active && <div inert={checking} aria-hidden={checking || undefined} style={checking ? { visibility: "hidden" } : undefined}>{children}</div>}
-  </>;
+  return (
+    <>
+      {(checking || (!active && !failed)) && (
+        <PageLoading
+          message={checking ? "로그인 상태를 확인하고 있어요." : "로그인 화면으로 이동하고 있어요."}
+        />
+      )}
+      {failed && (
+        <StatusNotice
+          state="error"
+          title="로그인 상태를 확인하지 못했습니다."
+          detail="연결을 확인한 뒤 화면을 새로고침해 주세요."
+        />
+      )}
+      {active && (
+        <div
+          inert={checking}
+          aria-hidden={checking || undefined}
+          style={checking ? { visibility: "hidden" } : undefined}
+        >
+          {children}
+        </div>
+      )}
+    </>
+  );
 }

@@ -1,0 +1,107 @@
+{
+  "checks": [
+    {
+      "name": "same shared conversation workspace and production menu labels",
+      "passed": true
+    },
+    {
+      "name": "34 documents are available in nested sample folders",
+      "passed": true
+    },
+    {
+      "name": "390: conversation has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "768: conversation has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: conversation has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: conversation has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "no request before consent",
+      "passed": true
+    },
+    {
+      "name": "ten panel toggles preserve composer identity and draft",
+      "passed": true
+    },
+    {
+      "name": "explicit request/scope consent enables send",
+      "passed": true
+    },
+    {
+      "name": "composing Enter never submits a request",
+      "passed": true
+    },
+    {
+      "name": "actual content-grounded Gemini plan reaches review",
+      "passed": true
+    },
+    {
+      "name": "model matches the intended content-only document IDs",
+      "passed": true,
+      "detail": [
+        "perf-lcp",
+        "perf-inp",
+        "perf-network",
+        "perf-bundle",
+        "perf-longtask"
+      ]
+    },
+    {
+      "name": "original positions stay unchanged before explicit approval",
+      "passed": true
+    },
+    {
+      "name": "request and composer remain mounted during plan changes",
+      "passed": true
+    },
+    {
+      "name": "exactly one model Action and no automatic retries",
+      "passed": true
+    },
+    {
+      "name": "only matched documents move after approval",
+      "passed": true
+    },
+    {
+      "name": "refresh keeps chat and results without model replay",
+      "passed": true
+    },
+    {
+      "name": "undo restores positions and removes newly proposed folders",
+      "passed": true
+    },
+    {
+      "name": "zero sample access to real folder APIs",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "result": {
+    "latencyMs": 5607,
+    "usage": {
+      "inputTokens": 3188,
+      "outputTokens": 540,
+      "totalTokens": 3728
+    },
+    "selected": [
+      "perf-lcp",
+      "perf-inp",
+      "perf-network",
+      "perf-bundle",
+      "perf-longtask"
+    ]
+  }
+}

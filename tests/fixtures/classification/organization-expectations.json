@@ -1,0 +1,136 @@
+{
+  "version": "1",
+  "provenance": "original synthetic documents; expectations are unreviewed assistant drafts",
+  "seed": "organization-2026-11-07-v1",
+  "scenarios": [
+    {
+      "instruction": "10월달 보고서를 본문 작성일 기준으로 날짜별로 정리해 줘",
+      "matchedIds": [
+        "report-1002",
+        "report-1005",
+        "report-1009",
+        "report-1014",
+        "report-1021",
+        "report-1028"
+      ],
+      "heldIds": [
+        "report-unknown",
+        "report-ambiguous"
+      ]
+    },
+    {
+      "instruction": "웹사이트 성능 테스트 자료만 내용으로 찾아 성능 테스트 폴더에 모아 줘",
+      "matchedIds": [
+        "perf-lcp",
+        "perf-inp",
+        "perf-network",
+        "perf-bundle",
+        "perf-longtask"
+      ],
+      "excludedIds": [
+        "perf-titled-only",
+        "perf-hardware",
+        "perf-intent-injection",
+        "learning-http"
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "report-1002",
+      "expectedContentDate": "2026-10-02"
+    },
+    {
+      "id": "report-1005",
+      "expectedContentDate": "2026-10-05"
+    },
+    {
+      "id": "report-1009",
+      "expectedContentDate": "2026-10-09"
+    },
+    {
+      "id": "report-1014",
+      "expectedContentDate": "2026-10-14"
+    },
+    {
+      "id": "report-1021",
+      "expectedContentDate": "2026-10-21"
+    },
+    {
+      "id": "report-1028",
+      "expectedContentDate": "2026-10-28"
+    },
+    {
+      "id": "report-0908",
+      "expectedContentDate": "2026-09-08"
+    },
+    {
+      "id": "report-1104",
+      "expectedContentDate": "2026-11-04"
+    },
+    {
+      "id": "report-unknown",
+      "expectedContentDate": null
+    },
+    {
+      "id": "perf-lcp",
+      "expectedContentDate": "2026-10-03"
+    },
+    {
+      "id": "perf-inp",
+      "expectedContentDate": null
+    },
+    {
+      "id": "perf-network",
+      "expectedContentDate": null
+    },
+    {
+      "id": "perf-bundle",
+      "expectedContentDate": null
+    },
+    {
+      "id": "perf-longtask",
+      "expectedContentDate": "2026-11-02"
+    },
+    {
+      "id": "perf-titled-only",
+      "expectedContentDate": null
+    },
+    {
+      "id": "perf-hardware",
+      "expectedContentDate": null
+    },
+    {
+      "id": "perf-intent-injection",
+      "expectedContentDate": null
+    },
+    {
+      "id": "receipt-1004",
+      "expectedContentDate": "2026-10-04"
+    },
+    {
+      "id": "plan-1010",
+      "expectedContentDate": "2026-10-10"
+    },
+    {
+      "id": "recipe",
+      "expectedContentDate": null
+    },
+    {
+      "id": "meeting-1020",
+      "expectedContentDate": "2026-10-20"
+    },
+    {
+      "id": "learning-http",
+      "expectedContentDate": null
+    },
+    {
+      "id": "empty-note",
+      "expectedContentDate": null
+    },
+    {
+      "id": "report-ambiguous",
+      "expectedContentDate": null
+    }
+  ]
+}

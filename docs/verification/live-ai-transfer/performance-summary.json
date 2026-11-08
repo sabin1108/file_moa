@@ -1,0 +1,403 @@
+{
+  "at": "2026-11-08T00:53:42.833Z",
+  "beforeBuild": "ezRMm0o4DVd0puRdXx7z3",
+  "afterBuild": "K0pIR9TcwuM-X5KNqcRgc",
+  "beforeStaticBytes": 1592204,
+  "afterStaticBytes": 1598940,
+  "deltaStaticBytes": 6736,
+  "condition": "local production, unauthenticated guest routes (files redirects to login), no throttling, new target per sample, shared browser HTTP cache",
+  "rows": [
+    {
+      "route": "/login",
+      "width": 390,
+      "beforeFinalPaths": [
+        "/login"
+      ],
+      "afterFinalPaths": [
+        "/login"
+      ],
+      "beforeLcpMs": 92,
+      "afterLcpMs": 60,
+      "beforeTransferBytes": 3712,
+      "afterTransferBytes": 3716,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 18,
+      "afterRequests": 18,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/login",
+      "width": 1440,
+      "beforeFinalPaths": [
+        "/login"
+      ],
+      "afterFinalPaths": [
+        "/login"
+      ],
+      "beforeLcpMs": 76,
+      "afterLcpMs": 72,
+      "beforeTransferBytes": 3709,
+      "afterTransferBytes": 3713,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 18,
+      "afterRequests": 18,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/welcome",
+      "width": 390,
+      "beforeFinalPaths": [
+        "/welcome"
+      ],
+      "afterFinalPaths": [
+        "/welcome"
+      ],
+      "beforeLcpMs": 60,
+      "afterLcpMs": 64,
+      "beforeTransferBytes": 3228,
+      "afterTransferBytes": 3227,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 17,
+      "afterRequests": 17,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/welcome",
+      "width": 1440,
+      "beforeFinalPaths": [
+        "/welcome"
+      ],
+      "afterFinalPaths": [
+        "/welcome"
+      ],
+      "beforeLcpMs": 76,
+      "afterLcpMs": 76,
+      "beforeTransferBytes": 3226,
+      "afterTransferBytes": 3230,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 17,
+      "afterRequests": 17,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/forgot-password",
+      "width": 390,
+      "beforeFinalPaths": [
+        "/forgot-password"
+      ],
+      "afterFinalPaths": [
+        "/forgot-password"
+      ],
+      "beforeLcpMs": 48,
+      "afterLcpMs": 52,
+      "beforeTransferBytes": 1546,
+      "afterTransferBytes": 1548,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 14,
+      "afterRequests": 14,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/forgot-password",
+      "width": 1440,
+      "beforeFinalPaths": [
+        "/forgot-password"
+      ],
+      "afterFinalPaths": [
+        "/forgot-password"
+      ],
+      "beforeLcpMs": 52,
+      "afterLcpMs": 80,
+      "beforeTransferBytes": 1546,
+      "afterTransferBytes": 1549,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 14,
+      "afterRequests": 14,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/reset-password",
+      "width": 390,
+      "beforeFinalPaths": [
+        "/reset-password"
+      ],
+      "afterFinalPaths": [
+        "/reset-password"
+      ],
+      "beforeLcpMs": 84,
+      "afterLcpMs": 76,
+      "beforeTransferBytes": 3107,
+      "afterTransferBytes": 3112,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 16,
+      "afterRequests": 16,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/reset-password",
+      "width": 1440,
+      "beforeFinalPaths": [
+        "/reset-password"
+      ],
+      "afterFinalPaths": [
+        "/reset-password"
+      ],
+      "beforeLcpMs": 100,
+      "afterLcpMs": 84,
+      "beforeTransferBytes": 3107,
+      "afterTransferBytes": 3111,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 16,
+      "afterRequests": 16,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/verify-email",
+      "width": 390,
+      "beforeFinalPaths": [
+        "/verify-email"
+      ],
+      "afterFinalPaths": [
+        "/verify-email"
+      ],
+      "beforeLcpMs": 64,
+      "afterLcpMs": 76,
+      "beforeTransferBytes": 3607,
+      "afterTransferBytes": 3609,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 17,
+      "afterRequests": 17,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/verify-email",
+      "width": 1440,
+      "beforeFinalPaths": [
+        "/verify-email"
+      ],
+      "afterFinalPaths": [
+        "/verify-email"
+      ],
+      "beforeLcpMs": 68,
+      "afterLcpMs": 92,
+      "beforeTransferBytes": 3607,
+      "afterTransferBytes": 3609,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 17,
+      "afterRequests": 17,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/files",
+      "width": 390,
+      "beforeFinalPaths": [
+        "/login"
+      ],
+      "afterFinalPaths": [
+        "/login"
+      ],
+      "beforeLcpMs": 68,
+      "afterLcpMs": 80,
+      "beforeTransferBytes": 3713,
+      "afterTransferBytes": 3714,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 18,
+      "afterRequests": 18,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/files",
+      "width": 1440,
+      "beforeFinalPaths": [
+        "/login"
+      ],
+      "afterFinalPaths": [
+        "/login"
+      ],
+      "beforeLcpMs": 56,
+      "afterLcpMs": 88,
+      "beforeTransferBytes": 3711,
+      "afterTransferBytes": 3714,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 18,
+      "afterRequests": 18,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/demo",
+      "width": 390,
+      "beforeFinalPaths": [
+        "/demo"
+      ],
+      "afterFinalPaths": [
+        "/demo"
+      ],
+      "beforeLcpMs": 72,
+      "afterLcpMs": 112,
+      "beforeTransferBytes": 4700,
+      "afterTransferBytes": 4702,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 20,
+      "afterRequests": 20,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/demo",
+      "width": 1440,
+      "beforeFinalPaths": [
+        "/demo"
+      ],
+      "afterFinalPaths": [
+        "/demo"
+      ],
+      "beforeLcpMs": 68,
+      "afterLcpMs": 88,
+      "beforeTransferBytes": 4698,
+      "afterTransferBytes": 4706,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 20,
+      "afterRequests": 20,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/demo/files",
+      "width": 390,
+      "beforeFinalPaths": [
+        "/demo/files"
+      ],
+      "afterFinalPaths": [
+        "/demo/files"
+      ],
+      "beforeLcpMs": 60,
+      "afterLcpMs": 64,
+      "beforeTransferBytes": 0,
+      "afterTransferBytes": 0,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 14,
+      "afterRequests": 14,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/demo/files",
+      "width": 1440,
+      "beforeFinalPaths": [
+        "/demo/files"
+      ],
+      "afterFinalPaths": [
+        "/demo/files"
+      ],
+      "beforeLcpMs": 72,
+      "afterLcpMs": 72,
+      "beforeTransferBytes": 3127,
+      "afterTransferBytes": 3130,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 18,
+      "afterRequests": 18,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/demo/settings",
+      "width": 390,
+      "beforeFinalPaths": [
+        "/demo/settings"
+      ],
+      "afterFinalPaths": [
+        "/demo/settings"
+      ],
+      "beforeLcpMs": 40,
+      "afterLcpMs": 44,
+      "beforeTransferBytes": 4689,
+      "afterTransferBytes": 4693,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 16,
+      "afterRequests": 16,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    },
+    {
+      "route": "/demo/settings",
+      "width": 1440,
+      "beforeFinalPaths": [
+        "/demo/settings"
+      ],
+      "afterFinalPaths": [
+        "/demo/settings"
+      ],
+      "beforeLcpMs": 56,
+      "afterLcpMs": 44,
+      "beforeTransferBytes": 4685,
+      "afterTransferBytes": 4690,
+      "beforeJsBytes": 0,
+      "afterJsBytes": 0,
+      "beforeRequests": 16,
+      "afterRequests": 16,
+      "beforeMaxCls": 0,
+      "afterMaxCls": 0
+    }
+  ],
+  "interactionSamples": [
+    {
+      "elapsedMs": 102,
+      "width": 1440
+    },
+    {
+      "operation": "recheck-and-mocked-action",
+      "elapsedMs": 77.8445999999999
+    },
+    {
+      "elapsedMs": 383,
+      "width": 1440
+    },
+    {
+      "elapsedMs": 90,
+      "width": 1440
+    },
+    {
+      "elapsedMs": 93,
+      "width": 1440
+    },
+    {
+      "elapsedMs": 93,
+      "width": 1440
+    }
+  ],
+  "limitations": [
+    "n=3 shared-cache local guest routes; not authenticated UI/real-user speed evidence",
+    "requested route /files redirects to login; /demo* redirects to /demo/start without a sample session",
+    "recheck+Action timing uses synthetic OPFS, owner/permission and provider transport; not model latency",
+    "No field INP, physical IME, Windows disk, long-run memory trend or database contention measurement"
+  ]
+}

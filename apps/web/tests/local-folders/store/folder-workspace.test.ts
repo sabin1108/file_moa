@@ -7,7 +7,7 @@ describe("folder workspace state", () => {
   it("cancel selection clears hidden search selections and closes tools without reading", async () => {
     const read = vi.fn(async (path: readonly string[]) => ({ path, entries: [{ name: "a.md", kind: "file" as const }, { name: "b.txt", kind: "file" as const }], truncated: false }));
     const listing = new SourceListingController(read, vi.fn()); listing.reset(true); await listing.open([]);
-    listing.selectAll(); listing.setQuery("a"); listing.clearSelection();
+    listing.selectAll(); listing.setQuery("a"); listing.exitSelection();
     expect(listing.getSnapshot()).toMatchObject({ selectionOpen: false, selectedNames: [], query: "a" });
     expect(read).toHaveBeenCalledTimes(1);
   });

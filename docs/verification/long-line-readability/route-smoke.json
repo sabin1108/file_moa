@@ -1,0 +1,29 @@
+{
+  "condition": "Fresh local production build; guest login and public sample routes; no login submission, model generation or personal folder reads.",
+  "results": [
+    {
+      "path": "/login",
+      "heading": "모아 로그인",
+      "consoleErrors": 0,
+      "overflow": false
+    },
+    {
+      "path": "/demo",
+      "heading": "채팅",
+      "consoleErrors": 0,
+      "overflow": false
+    },
+    {
+      "path": "/demo/files",
+      "heading": "내 파일",
+      "consoleErrors": 0,
+      "overflow": false
+    },
+    {
+      "path": "/demo/settings",
+      "heading": "설정",
+      "consoleErrors": 0,
+      "overflow": false
+    }
+  ]
+}

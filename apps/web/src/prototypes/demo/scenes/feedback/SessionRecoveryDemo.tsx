@@ -17,10 +17,39 @@ export function SessionRecoveryDemo() {
   const [phase, setPhase] = useState<keyof typeof states>("expired");
   const [draft, setDraft] = useState("지금까지 정리한 내용을 바탕으로 다음 공부 계획을 세워줘.");
   const state = states[phase];
-  return <div className={styles.stack}>
-    <StatusNotice state={state.tone} title={state.title} detail={state.detail} action={phase !== "ready" ? <DemoButton onClick={() => setPhase("ready")}>{phase === "leaving" ? "계속 작성" : phase === "expired" ? "재로그인 완료 예시" : "연결 복구 예시"}</DemoButton> : undefined} />
-    <label className={styles.field}>작성 중인 메시지<textarea rows={5} value={draft} onChange={event => setDraft(event.target.value)} /></label>
-    <div className={styles.toolbar}><p className={styles.helper}>초안은 이 시안을 여는 동안만 유지됩니다.</p><DemoButton variant="primary" disabled={phase !== "ready" || !draft.trim()} onClick={() => setPhase("offline")}>전송 실패 예시</DemoButton></div>
-    <ScenarioControls value={phase} options={options} onChange={setPhase} />
-  </div>;
+  return (
+    <div className={styles.stack}>
+      <StatusNotice
+        state={state.tone}
+        title={state.title}
+        detail={state.detail}
+        action={
+          phase !== "ready" ? (
+            <DemoButton onClick={() => setPhase("ready")}>
+              {phase === "leaving"
+                ? "계속 작성"
+                : phase === "expired"
+                  ? "재로그인 완료 예시"
+                  : "연결 복구 예시"}
+            </DemoButton>
+          ) : undefined
+        }
+      />
+      <label className={styles.field}>
+        작성 중인 메시지
+        <textarea rows={5} value={draft} onChange={event => setDraft(event.target.value)} />
+      </label>
+      <div className={styles.toolbar}>
+        <p className={styles.helper}>초안은 이 시안을 여는 동안만 유지됩니다.</p>
+        <DemoButton
+          variant="primary"
+          disabled={phase !== "ready" || !draft.trim()}
+          onClick={() => setPhase("offline")}
+        >
+          전송 실패 예시
+        </DemoButton>
+      </div>
+      <ScenarioControls value={phase} options={options} onChange={setPhase} />
+    </div>
+  );
 }

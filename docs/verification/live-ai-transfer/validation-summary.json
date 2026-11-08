@@ -1,0 +1,45 @@
+{
+  "at": "2026-11-08T00:54:01.534Z",
+  "mode": "solo; native executor launch failed before work",
+  "buildId": "K0pIR9TcwuM-X5KNqcRgc",
+  "verification": {
+    "unitTests": 978,
+    "testFiles": 97,
+    "command": "pnpm exec vitest run --maxWorkers=2",
+    "typecheck": true,
+    "lint": true,
+    "staticBuildPages": 52,
+    "serverBoundary": 21,
+    "featureBoundaryWeb": 25,
+    "domainBoundary": 6,
+    "layoutChecks": 3,
+    "liveBrowserChecks": 23,
+    "localBrowserRegression": 28,
+    "productionActionRejections": 2,
+    "productionWorkerCases": 3,
+    "documentLinks": 411
+  },
+  "sourceSha256": {
+    "apps/web/src/shared/source-snapshot.ts": "b4a4126bf76e076b0818f0f0413d187e02fc9c2dcd40fffd358b09f8ee047d73",
+    "apps/web/src/shared/live-organization.ts": "81f30022db528e70b79ac274526ae75818d2b550726754697287924d6351f4a6",
+    "apps/web/src/shared/organization.ts": "01790119f0cde5515471ea7d79d59c48cc07f7c5f165b25e63f354230a0f52f2",
+    "apps/web/src/server/live-organization.ts": "8fa5799fe907e73a169bb90189d82a8a488c3c42928abcc64f1696fe632dd5bc",
+    "apps/web/src/server/organization-generation.ts": "bb35d331281d7b95d43a406c9cd88e9f68bf990082cdfb31d19349ca2a5cd9f3",
+    "apps/web/src/server/sample-organization.ts": "c630667321cebbfac0dd7a8317a84c1cf78f4cfe59b69d1aa62be7e3b6186eac",
+    "apps/web/src/app/actions/live-ai.ts": "9e0b8c55a84046b31ee9746e76fa3f659e859fa041d035af10c0c1a98ad6b8c5",
+    "apps/web/src/app/(workspace)/page.tsx": "28debc7941b4066e576ecc7f854a62147c00aafe37cd260afee3cb2cb4fd5d00",
+    "apps/web/src/features/conversation-workspace/components/LiveConversation.tsx": "a35fc7e5417827d3388ee6db896c9d61f73da61dbc03dd7fb7e149fb7a666134",
+    "apps/web/src/features/local-folders/lib/source-snapshot.ts": "3b56da3ceb6a4108db2928ca6ed1a474851f08c3f8fcd1fee53cb479520abb50",
+    "apps/web/src/features/local-folders/services/connection-session.ts": "84919210e7e7f45e0ddf38d2fdb6c16ccb3a24053522c66169d7ccf57dffaec8",
+    "apps/web/src/features/local-folders/store/source-connection-controller.ts": "fedb4512576700d74e5af59306d0d4df09b8950475fdb5996383c5fd2b532010",
+    "apps/web/src/features/local-folders/store/organization-preparation-controller.ts": "180c75af1335eb8ed0b062a73f17976604eff43d592c05777a1651ca975ba4ee",
+    "apps/web/src/features/local-folders/components/organization/OrganizationPreparationPanel.tsx": "400cabecc9963109c9ff263e4415fd922df79c3c3515993f19c909cfcb24ca94",
+    "apps/web/src/features/local-folders/components/organization/OrganizationSnapshotView.tsx": "235b65fca71f6e11780389bd36b3958bfe551c6cc46ce1fea5b8a0bb79307b27",
+    "apps/web/src/features/local-folders/components/organization/OrganizationResultView.tsx": "04562f0e4f0669b22bad4272d0ae5ae0c6319183a5d5233fa11887fbe35327cb"
+  },
+  "limits": [
+    "provider/session/database replaced in service tests; actual production action tested only rejection",
+    "no real personal content/model calls, physical Windows permissions/IME or authenticated full journey",
+    "no deploy/commit/push; AI to real-file execution remains unconnected"
+  ]
+}

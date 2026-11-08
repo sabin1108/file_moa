@@ -1,0 +1,40 @@
+{
+  "checks": [
+    {
+      "name": "AI requires explicit consent",
+      "passed": true
+    },
+    {
+      "name": "auth session lookup now succeeds without sample login",
+      "passed": true
+    },
+    {
+      "name": "consent enables selected synthetic sample request",
+      "passed": true
+    },
+    {
+      "name": "real Gemini result reaches review",
+      "passed": true
+    },
+    {
+      "name": "one action request and no automatic retry",
+      "passed": true
+    },
+    {
+      "name": "original virtual locations remain unchanged until approval",
+      "passed": true
+    },
+    {
+      "name": "refresh retains actual proposal and token usage",
+      "passed": true
+    },
+    {
+      "name": "refresh does not repeat a model request",
+      "passed": true
+    },
+    {
+      "name": "mobile review has no horizontal overflow",
+      "passed": true
+    }
+  ]
+}

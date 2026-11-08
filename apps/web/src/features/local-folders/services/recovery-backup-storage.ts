@@ -53,7 +53,12 @@ export class BackupDirectory {
   }
 
   async write(name: string, body: Blob): Promise<FileSystemFileHandle> {
-    if (!/^(?:prepared|stopped|item-\d{4}-(?:verified|target-started|target-verified|source-removal-started|source-removed)|editor-save-[a-f0-9-]{36}-(?:started|verified))\.json$|^[a-f0-9-]{36}\.bin$/u.test(name)) throw Error("backup-storage-name");
+    if (
+      !/^(?:prepared|stopped|item-\d{4}-(?:verified|target-started|target-verified|source-removal-started|source-removed)|editor-save-[a-f0-9-]{36}-(?:started|verified))\.json$|^[a-f0-9-]{36}\.bin$/u.test(
+        name,
+      )
+    )
+      throw Error("backup-storage-name");
     const directory = await this.current();
     try {
       await directory.getFileHandle(name, { create: false });
