@@ -6,7 +6,7 @@ import styles from "./page-loading.module.css";
 
 export function LoadingOverlay({ message }: { message?: string }) {
   if (typeof document === "undefined") return null;
-  return createPortal(<div className={styles.navigation} data-navigation-loading>
-    <div className={styles.loadingPanel}><PageLoading message={message} /></div>
+  return createPortal(<div className={`${styles.navigation} reading-surface`} data-navigation-loading>
+    <div className={styles.loadingPanel}><PageLoading compact message={message} /></div>
   </div>, document.body);
 }

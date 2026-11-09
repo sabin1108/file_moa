@@ -4,6 +4,7 @@ import { parseQuickPreferences, shortcutFromEvent, type QuickPreferences } from 
 import { readQuickPreferences, saveQuickPreferences, serverQuickPreferences, subscribeQuickPreferences } from "../store/quick-preferences";
 import { SettingRow } from "../../../components/ui/SettingRow";
 import { QuickSwitchButton } from "../../../components/ui/QuickSwitchButton";
+import { requestQuickSwitch } from "../store/quick-requests";
 
 export function QuickSwitchSettings() {
   const value = useSyncExternalStore(subscribeQuickPreferences, readQuickPreferences, serverQuickPreferences);
@@ -32,7 +33,7 @@ export function QuickSwitchSettings() {
         }} />
     </SettingRow>
     {hint && <p role="status">{hint}</p>}
-    <QuickSwitchButton />
+    <QuickSwitchButton onOpen={requestQuickSwitch} />
     {unsaved && <p role="status">설정을 이 탭에 적용했지만 저장하지 못했어요. 브라우저를 닫으면 기본값으로 돌아갈 수 있어요.</p>}
   </section>;
 }

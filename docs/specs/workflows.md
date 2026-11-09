@@ -1,8 +1,22 @@
 # 사용자 흐름 명세 — 개정 2026-10-23
 
+## 현재 구현과 브라우저 경계 — 2026-11-09
+
+단일 대화·기록/결과물/승인 기억·다중 폴더·PDF/로컬 색인·사용량/계정 수명의 현재 계약은 [workspace-nine](workspace-nine.md), [일반 채팅](general-chat.md)과 최신 기능별 검증을 따른다. 아래 초기 ‘미구현/후속’ 문구는 당시 기록이다. 사용량 migration과 로컬 활성화는 이미 승인 후 적용됐으며 이후 동의·원본·계정 격리 검사를 유지한다.
+
+내부 UI/인증 신호는 명시적인 구독 함수로 전달한다. 인증 폐기는 모든 구독자에게 동기 전달하고 includeCurrent=false는 현재 탭을 다시 알리지 않는다. 브라우저 저장소의 실패한 쓰기/삭제는 이 탭의 대체값/삭제 표식으로 유지하며 다른 탭 이벤트로 덮지 않는다. 폴더/네이티브 storage/브라우저 수명은 외부 경계에 남는다. [변경 계획](../planning/browser-boundary-improvement.md), [구현·검증](../verification/browser-boundary-improvement/README.md).
+
+## 2026-11-09 로컬 기록·자료 대화 확장
+
+사용자 작업목록1~9의 대화/결과물/기억/다중 폴더/PDF/사용량/계정 삭제는 [연결 계약](workspace-nine.md)과 [검증 보고서](../verification/workspace-nine/README.md)를 따른다. 앞선 시안·미구현 상태와 현재 제품 연결 및 운영 활성화 대기를 구분한다. 실제 사용량 원장은 운영 migration 전에는 비활성이며, 로컬 저장/원본 접근/외부 AI 전송/계정 삭제는 별도 동의다.
+
+## GC-001~008: 폴더 없이 일반 대화를 시작한다
+
+2026-11-09. 질문과 최근 완료된 대화를 같은 origin 채팅 전용 POST 스트림으로 전송한다. 생성 중 텍스트·완료·중지·실패·단절을 구분하며 파일 검색/정리/원본 작업을 자동 실행하지 않는다. 인증·입력·멱등성·공유 한도·공급자 정규화·세대/순서의 구체 계약은 [일반 채팅 명세](general-chat.md)를 따른다. 기존 아래 작업 명세와 별도이며 대화 영구 기록은 후속이다.
+
 검색과 정리 요청의 공통 판별·선택·취소 경계는 [RQ-001~005: 검색과 정리 요청 전환](conversation-request-routing.md)을 따른다.
 
-최신 로그인 전환의 공통 PageLoading과 상위 Next loading 경계, 인증 전 표시 범위 및 이동 URL의 인증 값 차단은 [AT-001~005: 앱으로 돌아오는 로그인 전환](auth-transition.md)을 따른다.
+최신 로그인 전환의 공통 PageLoading과 상위 Next loading 경계, 인증 전 표시 범위 및 이동 URL의 인증 값 차단은 [AT-001~005: 앱으로 돌아오는 로그인 전환](auth-transition.md)을 따른다. 2026-11-09 표시 교체는 [제공 애니메이션 계획](../planning/animation-replacement.md)과 [검증](../verification/animation-replacement/README.md)을 따른다. 로더/인증 단계의 모션만 교체하며 기존 실제 인증·입력 계약과 파일 작업 Stepper는 유지한다.
 2026-11-04 최신 실제 구현: 파일 연결/관리·복사·검증된 복구 백업·최종 승인 후 덮어쓰기는 각각의 기능 명세를 따른다. [백업 뒤 덮어쓰기 계약](recovery-overwrite.md), [검증](../verification/recovery-overwrite/README.md). 아래 초기 미구현 문구는 과거 기록이며 실제 이동/삭제/AI 연결은 여전히 후속이다.
 
 상태: 디자인·향후 구현 계약. 현재 원본 파일 쓰기와 AI 연결은 구현하지 않았다.

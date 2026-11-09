@@ -23,7 +23,7 @@ const pendingTitles = {
 };
 
 export function SourceFolderSettings({ onConnected }: { onConnected?: () => void } = {}) {
-  const { state, connect, reconnect, disconnect, reload, recoveryState, recoveryView } = useSharedSourceFolderConnection();
+  const { state, connect, reconnect, disconnect, reload, recoveryState, recoveryView, sources, activateSource, disconnectSource } = useSharedSourceFolderConnection();
   const router = useRouter();
   const pathname = usePathname();
   const mounted = useRef(false);
@@ -95,6 +95,14 @@ export function SourceFolderSettings({ onConnected }: { onConnected?: () => void
     )}
     {state.pending && <StatusNotice state="pending" title={pendingTitles[state.pending]} />}
     {state.notice && state.notice.state !== "success" && <StatusNotice {...state.notice} action={retryAction} />}
+    {sources.length > 1 && <div aria-label="연결된 자료 폴더 목록">
+      <p>연결된 자료 폴더</p>
+      {sources.map(source => <div key={source.connectionId}>
+        <span>{source.name}{source.active ? " (사용 중)" : ""}</span>
+        {!source.active && <button type="button" disabled={!!state.pending} onClick={() => { void activateSource(source.connectionId); }}>사용</button>}
+        <button type="button" disabled={!!state.pending} onClick={() => { void disconnectSource(source.connectionId); }}>연결 해제</button>
+      </div>)}
+    </div>}
     <RecoveryVaultSettings titleRef={vaultTitle} />
     {state.view?.status === "connected" && <div className={styles.finish}>
       <button

@@ -23,7 +23,7 @@ const { Pool } = requireWeb("pg");
 const fixtureSecret = "fixture-browser-" + randomUUID();
 const fixtureDatabase = new Pool({ connectionString: runtimeURL.toString(), ssl: { ca: readFileSync(process.env.MOA_TEST_TLS_CERT, "utf8"), rejectUnauthorized: true }, max: 1 });
 const next = requireWeb.resolve("next/dist/bin/next");
-const out = join(root, "docs/verification/kakao-disabled/browser");
+const out = resolve(process.env.MOA_AUTH_BROWSER_OUTPUT ?? join(root, "docs/verification/kakao-disabled/browser"));
 mkdirSync(out, { recursive: true });
 mkdirSync(cache, { recursive: true });
 const app = mkdtempSync(join(cache, "moa-auth-browser-"));
@@ -111,7 +111,7 @@ async function link(subject) {
 
 try {
   // A copied build and disposable CA keep strict production TLS intact; no app env is copied.
-  cpSync(join(web, ".next"), join(app, ".next"), { recursive: true, filter: source => !source.includes(join(".next", "cache")) && !source.includes(join(".next", "node_modules")) });
+  cpSync(join(web, ".next"), join(app, ".next"), { recursive: true, filter: source => !source.includes(join(".next", "cache")) && !source.includes(join(".next", "dev")) && !source.includes(join(".next", "node_modules")) });
   copyRuntimeLinks(join(web, ".next/node_modules"), join(app, ".next/node_modules"));
   cpSync(join(web, "public"), join(app, "public"), { recursive: true });
   mkdirSync(join(app, "prisma/certs"), { recursive: true });
@@ -187,7 +187,11 @@ try {
   await wait(() => document.body.textContent.includes("페이지를 이동하고 있어요."));
   check("a held page navigation shows the shared loading feedback", navigationResponses.length > 0);
   check("pending navigation keeps the previous form visible", await page.eval(() => window.fixtureLoginForm === document.querySelector('form[data-auth-form]') && window.fixtureLoginForm.getBoundingClientRect().width > 0));
-  check("navigation feedback stays at the viewport top while the link is hovered", await page.eval(() => { const rect = document.querySelector('[role="status"][aria-busy="true"]').getBoundingClientRect(); return rect.top <= 24 && Math.abs(rect.left + rect.width / 2 - innerWidth / 2) < 2; }));
+  check("navigation feedback stays compact and nonblocking at the lower right", await page.eval(() => {
+    const overlay = document.querySelector('[data-navigation-loading]');
+    const rect = overlay.getBoundingClientRect();
+    return innerWidth - rect.right <= 24 && innerHeight - rect.bottom <= 24 && rect.height < 100 && getComputedStyle(overlay).pointerEvents === "none";
+  }));
   for (const event of navigationResponses) await page.send("Fetch.continueResponse", { requestId: event.requestId });
   await page.send("Fetch.disable"); stopNavigation();
   await wait(() => location.pathname === "/welcome");
@@ -210,7 +214,8 @@ try {
   await page.eval(() => new Promise(resolve => setTimeout(resolve, 260)));
   check("revealing password fields keeps the heading anchored", Math.abs(await page.eval(() => document.querySelector("h1").getBoundingClientRect().top) - signupTop) < 1);
   await page.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
-  check("reduced motion disables input reveal", await page.eval(() => getComputedStyle(document.querySelector('[name="password"]').closest('[class*="revealedField"]')).animationName === "none"));
+  await wait(() => !document.querySelector('[data-paper-flight]'));
+  check("reduced motion stops paper flights and keeps the actual password field usable", await page.eval(() => !!document.querySelector('[data-paper-stepper]') && document.querySelector('[name="password"]').getBoundingClientRect().height >= 44 && !document.querySelector('[data-paper-flight]')));
   await page.send("Emulation.setEmulatedMedia", { features: [] });
 
   await page.eval(() => history.back());
@@ -294,7 +299,11 @@ try {
   const blocked = [];
   const stopBlocked = page.browser.on(page.sessionId, "Fetch.requestPaused", event => blocked.push(event));
   await page.send("Fetch.enable", { patterns: [{ urlPattern: base + "/account", resourceType: "Fetch", requestStage: "Response" }] });
-  await page.eval(() => window.dispatchEvent(new Event("moa-auth-session-changed")));
+  await page.eval(() => {
+    const channel = new BroadcastChannel('moa-auth-session-changed');
+    channel.postMessage({ type: 'changed', source: 'fixture-foreign-tab', id: crypto.randomUUID() });
+    channel.close();
+  });
   for (let count = 0; count < 100 && !blocked.length; count++) await sleep(30);
   check("blocking session changes show the shared loader instead of an empty screen", await page.eval(() => !!document.querySelector('[role="status"][aria-busy="true"]') && document.body.textContent.includes("로그인 상태를 확인하고 있어요.")));
   check("blocking loader and uncovered document canvas remain light", await page.eval(() => getComputedStyle(document.documentElement).backgroundColor === "rgb(228, 232, 230)" && getComputedStyle(document.body).backgroundColor === "rgb(228, 232, 230)" && getComputedStyle(document.querySelector('[role="status"][aria-busy="true"]')).backgroundColor === "rgb(228, 232, 230)"));
@@ -306,9 +315,17 @@ try {
     await page.setViewport({ width, height: 900 });
     for (const tab of ["account", "folders", "editor"]) {
       await page.goto(base + "/settings?tab=" + tab, { settleMs: 220 });
-      await wait(() => !!document.querySelector('[class*="settingsPanel"]') && document.querySelector("h1")?.getBoundingClientRect().width > 0);
+      await wait(tab => {
+        const panel = [...document.querySelectorAll('[class*="settingsPanel"]')].find(node => node.checkVisibility());
+        const heading = document.querySelector("h1");
+        return panel?.checkVisibility() && heading?.checkVisibility()
+          && !document.querySelector('[role="status"][aria-busy="true"]')
+          && (tab !== "account" || document.querySelectorAll('[aria-label="소셜 로그인 연결 관리"] button').length === 2);
+      }, 15_000, tab);
       await page.eval(async () => { await Promise.all(document.getAnimations().filter(animation => animation.effect?.getTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))); });
-      check(`settings ${tab} fits ${width}px`, await page.eval(() => document.documentElement.scrollWidth <= innerWidth && document.querySelectorAll("h1").length === 1));
+      const geometry = await page.eval(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth, headings: [...document.querySelectorAll("h1")].filter(heading => heading.checkVisibility()).length }));
+      if (geometry.scrollWidth > geometry.width || geometry.headings !== 1) writeFileSync(join(out, `settings-geometry-${tab}-${width}.json`), JSON.stringify(geometry, null, 2));
+      check(`settings ${tab} fits ${width}px`, geometry.scrollWidth <= geometry.width && geometry.headings === 1);
       check(`settings ${tab} has real account entry and no obsolete login notice`, await page.eval(() => !!document.querySelector('a[href="/account"]') && !document.body.textContent.includes("실제 로그인은 아직 연결되지 않았습니다")));
       if (tab === "account") check("social account settings show two enabled provider actions", await page.eval(() => document.querySelectorAll('[aria-label="소셜 로그인 연결 관리"] button').length === 2));
       const metrics = await page.eval(probe);

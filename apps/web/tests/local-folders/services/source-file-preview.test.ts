@@ -37,6 +37,15 @@ async function setup() {
 }
 
 describe("source file preview reader/session", () => {
+  it("rejects a saved citation for another owner, connection or path before file I/O", async () => {
+    const { session, root } = await setup();
+    const expected = { owner: { userId: "preview", workspaceId: "fixture" }, connectionId: "legacy", path: ["노트.md"], sha256: "a".repeat(64), size: 16, quote: "verified citation" };
+    for (const invalid of [{ owner: { userId: "other", workspaceId: "fixture" } }, { owner: { userId: "preview", workspaceId: "other" } }, { connectionId: "other" }, { path: ["other.md"] }]) {
+      await expect(session.readSourceFile(["노트.md"], undefined, { ...expected, ...invalid })).rejects.toThrow("citation-connection-mismatch");
+    }
+    expect(root.queryPermission).not.toHaveBeenCalled();
+    expect(root.getFileHandle).not.toHaveBeenCalled();
+  });
   it("PREVIEW-001/004/008 reads exact text and metadata without writes or permission requests", async () => {
     const { session, root, repository } = await setup();
     const result = await session.readSourceFile(["노트.md"]);
@@ -64,7 +73,7 @@ describe("source file preview reader/session", () => {
   });
   it("PREVIEW-001 rejects invalid paths and unsupported extensions before I/O", async () => {
     const { session, root } = await setup();
-    for (const path of [[], ["..", "a.md"], ["a/b.txt"], ["a\\b.md"], ["\0.txt"], [".", "a.md"], ["a.pdf"]]) {
+    for (const path of [[], ["..", "a.md"], ["a/b.txt"], ["a\\b.md"], ["\0.txt"], [".", "a.md"], ["a.exe"]]) {
       await expect(session.readSourceFile(path)).rejects.toThrow();
     }
     expect(root.queryPermission).not.toHaveBeenCalled();

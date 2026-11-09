@@ -1,0 +1,5 @@
+{
+  "status": 401,
+  "invalidCredentials": true,
+  "condition": "Synthetic .invalid credentials against the local development server; no account created, no personal password, no OAuth or model request. Authentication rate-limit state may be updated."
+}

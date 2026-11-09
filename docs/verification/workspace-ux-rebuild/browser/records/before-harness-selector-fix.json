@@ -1,0 +1,35 @@
+{
+  "checks": [
+    {
+      "name": "composer shows three controls and no inline settings essay",
+      "pass": true
+    },
+    {
+      "name": "completed chat is saved after verified file close",
+      "pass": true
+    },
+    {
+      "name": "file navigation retains the active saved conversation and storage mode",
+      "pass": true
+    },
+    {
+      "name": "post-navigation autosave updates one conversation instead of creating a duplicate",
+      "pass": true
+    },
+    {
+      "name": "new chat clears the current thread without generating",
+      "pass": true
+    },
+    {
+      "name": "saved chat restores text without replay",
+      "pass": true
+    },
+    {
+      "name": "artifact can be edited and versioned",
+      "pass": true
+    }
+  ],
+  "error": "Error: page eval: Error: Missing control 기억\n    at <anonymous>:1:242\n    at <anonymous>:1:298",
+  "consoleErrors": [],
+  "text": "chatfilessettings소유자 전환\n본문으로 건너뛰기\n모아.\n폴더\n채팅\n폴더 연결\n설정\n나의 계정\n채팅\n시안 보관함\n계정\n채팅\n기록함\n\n기록 검증 질문\n\n모아\n\n저장할 합성 답변입니다.\n\n답변 완료\n결과물로 편집기억으로 검토\n자료 연결\n저장 켜짐\n설정\nOpenAI로 질문과 최근 대화를 전송합니다.\nAI에게 질문하기\nEnter 보내기 · Shift+Enter 줄바꿈\n보내기\n기록함\n기록\n자료\n설정\n내 AI 검증\n저장 위치\n대화\n1\n결과물\n1\n기억\n0\n프로필\n0\n대화\n새 대화\n기록 검증 질문\n2026. 11. 9. · 2개 버전"
+}

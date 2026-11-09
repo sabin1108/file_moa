@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-09T08:20:56.893Z",
+  "region": "ap-southeast-2",
+  "samples": [
+    {
+      "mode": "sequential",
+      "elapsedMs": 1801
+    },
+    {
+      "mode": "parallel",
+      "elapsedMs": 900
+    },
+    {
+      "mode": "sequential",
+      "elapsedMs": 1807
+    },
+    {
+      "mode": "parallel",
+      "elapsedMs": 900
+    },
+    {
+      "mode": "sequential",
+      "elapsedMs": 1808
+    },
+    {
+      "mode": "parallel",
+      "elapsedMs": 902
+    }
+  ],
+  "condition": "Configured runtime adapter/TLS; warmed two connections, two SELECT-only transactions sequentially versus concurrently, three pairs. This isolates network overlap; it does not execute ledger writes, authorization, models or actual chat requests and cannot establish user-visible latency savings."
+}

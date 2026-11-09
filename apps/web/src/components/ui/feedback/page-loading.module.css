@@ -1,9 +1,15 @@
 .page, .compact { display: flex; align-items: center; justify-content: center; gap: 12px; background: var(--ground, #f9fafb); color: var(--muted, #52616b); font-size: 14px; line-height: 1.7; }
 .page { min-height: 100dvh; padding: 24px; flex-direction: column; }
-.compact { min-height: 44px; background: transparent; }
+.compact { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 12px; row-gap: 0; min-height: 44px; background: transparent; }
+.compact > [data-folder-loader] { grid-row: 1 / 3; }
+.compact > span:not([data-folder-loader]) { min-width: 0; overflow-wrap: anywhere; }
 .page p, .compact p { margin: 0; }
-.navigation { position: fixed; inset: 0; z-index: 1300; display: grid; place-items: center; padding: 24px; background: #11212d66; color: #253745; animation: appear 160ms ease-out; }
-.loadingPanel { min-width: 220px; max-width: 100%; padding: 24px 32px; background: #f8faf8; border: 1px solid #d2dad6; border-radius: 8px; box-shadow: 0 12px 40px #11212d26; }
+.navigation { position: fixed; right: 16px; bottom: 16px; z-index: 1300; max-width: calc(100% - 32px); pointer-events: none; color: var(--text, #253745); animation: appear 160ms ease-out; }
+.loadingPanel { max-width: 100%; padding: 4px 16px; background: var(--surface, #f8faf8); border: 1px solid var(--border, #d2dad6); border-radius: 8px; }
 .loadingPanel .page { min-height: 0; padding: 0; background: transparent; }
 @keyframes appear { from { opacity: 0; } to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .navigation { animation: none; } }
+.bar { display: block; position: relative; width: 200px; max-width: 100%; height: 4px; margin-top: 8px; overflow: hidden; border-radius: 2px; background: var(--border, #d2dad6); }
+.bar i { display: block; position: absolute; inset: 0 auto 0 0; width: 40%; height: 100%; background: var(--text, #253745); animation: slide 1.4s ease-in-out infinite; }
+.compact .bar { grid-column: 2; width: 120px; align-self: start; }
+@keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+@media (prefers-reduced-motion: reduce) { .navigation, .bar i { animation: none; } .bar i { width: 100%; opacity: .4; } }

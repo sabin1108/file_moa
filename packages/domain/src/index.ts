@@ -6,10 +6,11 @@ export const DOCUMENT_LIMITS = Object.freeze({
 });
 export type FileRejection = "unsupported-extension" | "invalid-size" | "too-large";
 export function checkDocumentCandidate(name: string, bytes: number): FileRejection | null {
-  if (!/\.(md|txt)$/i.test(name)) return "unsupported-extension";
+  if (!/\.(md|txt|pdf)$/i.test(name)) return "unsupported-extension";
   if (!Number.isSafeInteger(bytes) || bytes < 0) return "invalid-size";
   if (bytes > DOCUMENT_LIMITS.fileBytes) return "too-large";
   return null;
 }
 // 메타데이터 후보 필터입니다. UTF-8 디코딩·서버 크기·총량·권한 검증을 대신하지 않습니다.
+export { isRecordId, parseLocalRecord, canUseMemory, type LocalRecord, type RecordScope } from "./local-record";
 

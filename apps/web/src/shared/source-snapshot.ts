@@ -16,6 +16,7 @@ export type SnapshotDocument = Readonly<{
   sha256: string;
   size: number;
   lastModified: number;
+  pdf?: Readonly<{ pages: number; complete: boolean }>;
 }>;
 
 export type SourceSnapshot = Readonly<{

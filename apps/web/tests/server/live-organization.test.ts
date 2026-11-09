@@ -4,6 +4,8 @@ vi.mock("server-only", () => ({}));
 const guard = vi.hoisted(() => vi.fn());
 const reserve = vi.hoisted(() => vi.fn());
 const generate = vi.hoisted(() => vi.fn());
+const finish = vi.hoisted(() => vi.fn());
+vi.mock("../../src/server/ai-usage", () => ({ startUsage: async () => {}, finishUsage: finish }));
 vi.mock("../../src/server/session-guards", () => ({ requireWorkspace: guard }));
 vi.mock("../../src/server/auth-rate-limit", () => ({
   createAuthRateLimiter: () => ({ consumeAll: reserve })
@@ -45,6 +47,7 @@ const input = () => ({
   ]
 });
 beforeEach(() => {
+  finish.mockReset();
   vi.stubEnv("AI_PROVIDER", "gemini");
   vi.stubEnv("GEMINI_API_KEY", "fixture-key");
   vi.stubEnv("BETTER_AUTH_URL", "http://127.0.0.1:3034");
@@ -144,6 +147,8 @@ describe("authenticated local excerpt boundary", () => {
     expect(reserve).toHaveBeenCalledOnce();
     expect(reserve.mock.calls[0][0]).toEqual(
       expect.arrayContaining([
+        expect.objectContaining({ key: "live-ai-v1:workspace:workspace-A", max: 10, window: 3600 }),
+        expect.objectContaining({ key: "live-ai-v1:user:A", max: 10, window: 3600 }),
         expect.objectContaining({ key: "sample-ai-v1:global-minute", max: 1 }),
         expect.objectContaining({ key: "sample-ai-v1:global-hour", max: 12 })
       ])
@@ -224,6 +229,7 @@ describe("authenticated local excerpt boundary", () => {
       code: "session"
     });
     expect(generate).not.toHaveBeenCalled();
+    expect(finish).toHaveBeenLastCalledWith(expect.objectContaining(owner), expect.any(String), null, null);
     guard
       .mockReset()
       .mockResolvedValueOnce(session())
@@ -234,6 +240,7 @@ describe("authenticated local excerpt boundary", () => {
       code: "session"
     });
     expect(generate).toHaveBeenCalledOnce();
+    expect(finish).toHaveBeenLastCalledWith(expect.objectContaining(owner), expect.any(String), "fixture", { inputTokens: 1, outputTokens: 1, totalTokens: 2 });
   });
 
   it("rejects fabricated evidence and maps a provider timeout without leaking a body", async () => {

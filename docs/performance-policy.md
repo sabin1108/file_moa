@@ -1,5 +1,9 @@
 # 사이트 전체 성능 측정 정책
 
+최신 대화·기록함 UX 재구성: [검증과 비용](verification/workspace-ux-rebuild/README.md). 최종 빌드 전체49JS/CSS는3,617,630bytes로 직전 대비18,936bytes 증가했다. 새 도구/목록·설정/편집의 구성을 바꿨으며 실제 모델 속도 개선을 주장하지 않는다. production 게스트/샘플 경로와 임시DB 인증36표본, 긴 대화6표본을 field INP·실사용 UX와 구별한다.
+
+최신 실제 녹화 진단: [원자료와 검증](verification/recording-latency/README.md). 수정 전 실제 요청은 준비4544ms·첫provider9973ms·첫공개10987ms/HTTP약12.1초였다. 실제 runtime/TLS의 SELECT1은warm약220ms,4왕복transaction약882ms. DB region은ap-southeast-2다. 예약 SQL5→1·중복session조회제거 뒤 실제유료전체시간은 재측정하지 않았다. 마지막 측정 빌드 대비 JS/CSS1,714,956→1,715,365bytes(+409)/44파일동일이며 중간 한도 문구 변경도 포함한다. 합성UI32·자료51/35·임시PG25계약+55통합과 운영계정/field INP/heap/부하를 구별한다. [이전 화면/응답 변경](verification/progressive-chat/README.md), [첫 표시 개선](verification/chat-smoothness/README.md)도 보존한다.
+
 최신 검색·정리 요청 전환: [공통 판별과 취소 경계 검증](verification/request-routing/README.md). 실제 controller/합성 OPFS45개와 질문 답변 회귀35개를 구분한다. 전체 JS/CSS +2,897bytes. 실제 경로별 진입 지연·heap·INP는 미측정이며 속도 개선을 주장하지 않는다.
 
 최신 로그인 복귀 후 대기 UI: [상위 loading 경계·실제 Next fixture 비교](verification/auth-transition/README.md). 합성1800ms guard의 상태 표시 선행29검사와 실제production guest/샘플12검사를 구분한다. JS/CSS1,701,044bytes 동일. 실제 네이버의 약3초·Vercel callback·전체 로그인 지연 감소는 미측정이다.
@@ -133,3 +137,25 @@ PDF의 번들/이미지 크기와 경로별 로딩 지표 기록 방식을 참�
 ## 2026-11-08 검색·작업 흐름 마감
 
 [원자료](verification/completion-five/performance/routes-assets.json): production 6경로 각3회 lab 측정, 보호 경로는 guest redirect다. JS/CSS 총합 1,703,941 → 1,718,378 bytes, 43파일 유지, +14,437 bytes. 경로별 초기 전송량이나 이전 대비 속도 향상률로 해석하지 않는다. 검색/정리/파일 동작은 합성 OPFS이며 실제 Windows 체감·field INP·인증 경로 비용은 별도다. 로컬 단계 URL에는 기존 SettingsTabs와 같은 Next native History 통합을 사용하고, 진행 상태마다 서버 route 전환을 만들지 않는다. [검증/한계](verification/completion-five/README.md).
+
+## 2026-11-09 후속 검증
+
+단일 대화 통합의 최신 자료는 [통합 검증](verification/unified-conversation/README.md)이다. 실제 production 6경로 각3회·guest/history, 전체 JS/CSS49파일 3,564,851bytes와 직전 대비+7,398bytes를 기록했다. 100/500개 로컬 대화의 표시와390px 공통 입력/대화 공간도 별도로 확인했으며 인증 경로/실모델/field 성능으로 확대하지 않는다.
+
+[원자료와 한계](verification/follow-through/README.md): production 6경로 각3회는 guest redirect/공개 샘플이며 인증 후 INP가 아니다. 실제 런타임 SELECT-only 왕복과 두 독립 트랜잭션의 병행을 진단했고 실모델 체감 개선으로 환산하지 않았다. 100/500개 저장 대화는 이미 읽어 둔 상태에서 세 번씩 화면 복원을 측정했다. 전체 JS/CSS 합계와 초기 채팅 전송량, lab 두 frame 대기와 field INP를 구분한다.
+
+## 2026-11-09 — 1~5 후속 측정
+
+현재 자료 답변과 저장 답변은 동일한 근거 목록·검증된 원문 미리보기를 사용한다. 390px에서230자 파일명/200자 공백 없는 인용문 넘침을 재현해 공통 목록에서 수정했다. 검증과 조건은 docs/verification/first-five/README.md를 따른다.
+
+최종100/500회 대화 복원3회는79.9/37.7/36.1ms와198.1/138.8/132.5ms(이미 읽힌 기록의 두 frame까지, Vite Chromium lab). JS heap 시작19.8/마지막19.9/6표본최대46.6MiB, GC 비통제·장기누수증명아님. DOM은현재turn에맞고과거열기가누적되지않음. production6개 경로 각3회/history9통과, JS/CSS49파일3,568,324bytes로 직전 대비3,473bytes 증가했다. 보호 경로는 게스트 리다이렉트이며 인증된 화면의 성능이나 초기 다운로드 측정이 아니다.
+
+실제 OpenAI 합성 질문1회+격리DB 직접handler: 첫 본문3074ms/완료3184ms/두 본문 묶음 간109ms, 최종138토큰과원장일치. 운영DB SELECT1 warm224ms/읽기전용transaction894~898ms는 별도진단이다. 사용자12초 사례와 동일 조건 전후 비교가 아니며, 실사용 계정/원격DB/브라우저를 합친 개선율·현장INP/p75·사이트전체점수는 산출하지 않았다. 실제Windows/물리IME도미검증이다.
+
+## 2026-11-09 — 제공 로딩·인증 애니메이션 교체
+
+사용자 제공 회오리3600ms/접기3000ms/꺼내기1100ms의 키프레임을 유지하고 사이트 토큰에 맞췄다. 추가 최소 대기나 가짜 진행률은 없으며 서버 지연 감소를 주장하지 않는다. docs/verification/animation-replacement/README.md.
+
+production 게스트 보호경로3개와 demo3개 각각3회/history9, 실제 demo 이동 대기를 포함한 설정/로딩26검사 통과. 최종 빌드 QtvGPEbLNkupxaVlguVdw, 전체 JS/CSS49파일3,598,694bytes, 직전 대비30,370bytes 증가. 초기 다운로드·인증된 화면 속도·GPU·현장INP/메모리 지표가 아니다. 390/768/1440/1920px에서 실제 입력 크기·읽기와 장식 무대 축소를 분리해 확인했다. 장식 CSS 모션의 프레임 궤적은 원본과 대조했고 reduced motion은 정적으로 표시한다.
+
+별도 인증169검사의 빌드hm3T_vcz95qFMvz7l_Jje에서 합성 계정·임시 로컬DB/TLS·빈OPFS·캐시끔·2폭/각3회·350ms관측의36표본을 남겼다. CLS 최대0.04273. 모든 경로/작업 공간을 확인했으나 동일조건 변경전값이없어개선율없음,운영/현장성능아님. 이후글자가독성CSS보완은최종브라우저30/빌드/게스트경로에서재확인했다.

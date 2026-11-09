@@ -1,6 +1,3 @@
-.loader { display: inline-flex; flex: 0 0 auto; color: var(--text, #253745); }
-.loader path:first-child { stroke-dasharray: 140; animation: link 1.6s ease-in-out infinite; }
-@keyframes link { 0%, 100% { stroke-dashoffset: 0; opacity: 1; } 50% { stroke-dashoffset: 28; opacity: .45; } }
 .notice { display: flex; align-items: flex-start; gap: var(--ui-space-3, 12px); padding: var(--ui-space-4, 16px); border: 1px solid var(--border, #d2dad6); border-radius: var(--ui-radius-control, 6px); background: var(--panel, #f1f4f2); color: var(--text, #253745); font-size: 14px; line-height: 1.7; }
 .notice > svg { flex-shrink: 0; margin-top: 2px; }
 .noticeText { flex: 1; min-width: 0; }
@@ -23,7 +20,4 @@
   .toast { right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); }
   .notice { flex-wrap: wrap; }
   .action { flex-basis: 100%; justify-content: flex-end; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .loader path:first-child { animation: none; }
 }

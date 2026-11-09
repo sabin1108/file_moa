@@ -1,12 +1,27 @@
 import { createHash } from "node:crypto";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("pdfjs-dist/legacy/build/pdf.mjs", () => ({
+  PDFWorker: class { destroy() {} },
+  getDocument: () => ({
+    promise: Promise.resolve({
+      numPages: 1,
+      getPage: async () => ({
+        getTextContent: async () => ({ items: [{ str: "PDF 본문 검색어" }] }),
+        cleanup: vi.fn(),
+      }),
+    }),
+    destroy: vi.fn(),
+  }),
+}));
+
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.resetModules();
 });
 
 async function worker() {
+  vi.stubGlobal("Worker", class { terminate() {} });
   // The real Worker handler runs here; browser threading is covered by the OPFS browser check.
   const self = {
     postMessage: vi.fn(),
@@ -18,6 +33,15 @@ async function worker() {
 }
 
 describe("shared hash and text snapshot Worker", () => {
+  it("extracts PDF text in the Worker and returns only a bounded excerpt", async () => {
+    const self = await worker();
+    const file = new File(["not the real bytes"], "자료.pdf");
+    await self.onmessage!({ data: { file, instruction: "PDF 본문" } });
+    const response = self.postMessage.mock.calls[0][0];
+    expect(response.excerpt).toContain("PDF 본문 검색어");
+    expect(response.pdf).toEqual({ pages: 1, complete: true });
+  });
+
   it("searches the full decoded body without returning it to the UI", async () => {
     const self = await worker();
     const text =

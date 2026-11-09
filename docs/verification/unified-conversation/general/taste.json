@@ -1,0 +1,42 @@
+[
+  {
+    "width": 390,
+    "findings": [
+      {
+        "level": "WARN",
+        "id": "edge-text",
+        "width": 390,
+        "message": "7 text block(s) sit 12–15px from the phone's edge: \"임시 대화\" (14px); \"프로젝트 ID\" (14px); \"선택한 공급자로 최대 10개·6,000자가 전송됩니다.\" (14px)",
+        "fix": "The page margin is 16–20px on a phone; the header and the corner labels sit on it too."
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "findings": []
+  },
+  {
+    "width": 1440,
+    "findings": [
+      {
+        "level": "WARN",
+        "id": "hero-void",
+        "width": 1440,
+        "message": "30% of the first screen is one empty block (720×600px at 720,133).",
+        "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+      }
+    ]
+  },
+  {
+    "width": 1920,
+    "findings": [
+      {
+        "level": "WARN",
+        "id": "hero-void",
+        "width": 1920,
+        "message": "30% of the first screen is one empty block (960×600px at 960,133).",
+        "fix": "Place the void on purpose or fill it: move the picture, the film or one fact into it, grow the headline to meet it, or shrink the screen to its content. A void reads as placed only when something closes it on the far side and it is the screen's one rest."
+      }
+    ]
+  }
+]

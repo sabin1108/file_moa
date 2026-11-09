@@ -1,0 +1,35 @@
+{
+  "samples": [
+    {
+      "run": 0,
+      "turns": 100,
+      "elapsedMs": 71.9
+    },
+    {
+      "run": 0,
+      "turns": 500,
+      "elapsedMs": 209.3
+    },
+    {
+      "run": 1,
+      "turns": 100,
+      "elapsedMs": 30.4
+    },
+    {
+      "run": 1,
+      "turns": 500,
+      "elapsedMs": 119.5
+    },
+    {
+      "run": 2,
+      "turns": 100,
+      "elapsedMs": 24.6
+    },
+    {
+      "run": 2,
+      "turns": 500,
+      "elapsedMs": 105.3
+    }
+  ],
+  "condition": "Isolated Chromium 1440px, actual product repository and OPFS, 100/500 synthetic saved turns, three alternating opens measured through two animation frames; followed by 390px keyboard newline. This measures already-loaded local transcript rendering, not disk startup, field INP, live model speed or a stable percentile."
+}

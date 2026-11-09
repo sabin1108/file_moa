@@ -1,0 +1,171 @@
+{
+  "condition": "Actual Next production sample route; shared real SettingsTabs; delayed local RSC to observe overlay; no account/API mutation",
+  "results": [
+    {
+      "name": "round0 account: URL and visible panel agree",
+      "passed": true
+    },
+    {
+      "name": "round0 folders: URL and visible panel agree",
+      "passed": true
+    },
+    {
+      "name": "round0 editor: URL and visible panel agree",
+      "passed": true
+    },
+    {
+      "name": "round0 controls: URL and visible panel agree",
+      "passed": true
+    },
+    {
+      "name": "round1 account: URL and visible panel agree",
+      "passed": true
+    },
+    {
+      "name": "round1 folders: URL and visible panel agree",
+      "passed": true
+    },
+    {
+      "name": "round1 editor: URL and visible panel agree",
+      "passed": true
+    },
+    {
+      "name": "round1 controls: URL and visible panel agree",
+      "passed": true
+    },
+    {
+      "name": "round2 account: URL and visible panel agree",
+      "passed": true
+    },
+    {
+      "name": "round2 folders: URL and visible panel agree",
+      "passed": true
+    },
+    {
+      "name": "round2 editor: URL and visible panel agree",
+      "passed": true
+    },
+    {
+      "name": "round2 controls: URL and visible panel agree",
+      "passed": true
+    },
+    {
+      "name": "tab changes make zero RSC/auth POST requests",
+      "passed": true
+    },
+    {
+      "name": "hidden settings panels retain their DOM and need no fake loading",
+      "passed": true
+    },
+    {
+      "name": "Back restores the previous tab",
+      "passed": true
+    },
+    {
+      "name": "Forward restores the next tab",
+      "passed": true
+    },
+    {
+      "name": "F5-equivalent document reload restores URL tab",
+      "passed": true
+    },
+    {
+      "name": "arbitrary Ctrl+Alt+J input saves",
+      "passed": true
+    },
+    {
+      "name": "Escape cancels shortcut recording",
+      "passed": true
+    },
+    {
+      "name": "390: settings fit viewport",
+      "passed": true
+    },
+    {
+      "name": "768: settings fit viewport",
+      "passed": true
+    },
+    {
+      "name": "1440: settings fit viewport",
+      "passed": true
+    },
+    {
+      "name": "1920: settings fit viewport",
+      "passed": true
+    },
+    {
+      "name": "real delayed Link navigation preserves the visible page with compact nonblocking feedback",
+      "passed": true
+    },
+    {
+      "name": "loading disappears when navigation completes",
+      "passed": true
+    },
+    {
+      "name": "no settings or loading browser exceptions",
+      "passed": true
+    }
+  ],
+  "timings": [
+    {
+      "round": 0,
+      "tab": "account",
+      "elapsedMs": 10.1
+    },
+    {
+      "round": 0,
+      "tab": "folders",
+      "elapsedMs": 27.9
+    },
+    {
+      "round": 0,
+      "tab": "editor",
+      "elapsedMs": 28.3
+    },
+    {
+      "round": 0,
+      "tab": "controls",
+      "elapsedMs": 30.8
+    },
+    {
+      "round": 1,
+      "tab": "account",
+      "elapsedMs": 30.1
+    },
+    {
+      "round": 1,
+      "tab": "folders",
+      "elapsedMs": 32.3
+    },
+    {
+      "round": 1,
+      "tab": "editor",
+      "elapsedMs": 31.8
+    },
+    {
+      "round": 1,
+      "tab": "controls",
+      "elapsedMs": 30.3
+    },
+    {
+      "round": 2,
+      "tab": "account",
+      "elapsedMs": 32
+    },
+    {
+      "round": 2,
+      "tab": "folders",
+      "elapsedMs": 32.1
+    },
+    {
+      "round": 2,
+      "tab": "editor",
+      "elapsedMs": 31.5
+    },
+    {
+      "round": 2,
+      "tab": "controls",
+      "elapsedMs": 30.4
+    }
+  ]
+}

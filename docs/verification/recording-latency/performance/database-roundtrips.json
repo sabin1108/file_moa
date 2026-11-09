@@ -1,0 +1,35 @@
+{
+  "at": "2026-11-09T08:20:56.884Z",
+  "region": "ap-southeast-2",
+  "samples": [
+    {
+      "query": "cold SELECT 1",
+      "elapsedMs": 1654
+    },
+    {
+      "query": "warm SELECT 1",
+      "elapsedMs": 224
+    },
+    {
+      "query": "BEGIN + READ ONLY + SELECT 1 + COMMIT",
+      "elapsedMs": 898
+    },
+    {
+      "query": "warm SELECT 1",
+      "elapsedMs": 224
+    },
+    {
+      "query": "BEGIN + READ ONLY + SELECT 1 + COMMIT",
+      "elapsedMs": 894
+    },
+    {
+      "query": "warm SELECT 1",
+      "elapsedMs": 224
+    },
+    {
+      "query": "BEGIN + READ ONLY + SELECT 1 + COMMIT",
+      "elapsedMs": 896
+    }
+  ],
+  "condition": "Configured runtime adapter/TLS; only SELECT 1 and explicit read-only transactions. No application records, quotas, models or writes. Small sequential diagnostic, not production load or user latency."
+}

@@ -35,7 +35,7 @@ LiveConversation.isFindRequest → DocumentFindController.start/조건 확인 �
 ## 이메일 인증 화면 읽기 — 2026-11-06
 
 1. `app/login`, `app/welcome`, `app/verify-email`, `app/forgot-password`, `app/reset-password`, `app/account`: 화면 조합·서버 query/세션 진입.
-2. `components/layout/AuthShell.tsx`와 CSS: 실제/시안 공통 표시. `components/ui/WorkflowStepper.tsx`는 파일 작업·가입·재설정이 함께 쓴다.
+2. `components/layout/AuthShell.tsx`와 CSS: 실제/시안 공통 표시. 가입·재설정은 `components/ui/PaperStepper.tsx` → `use-paper-stepper-motion.ts`로 표시하며 인증 상태·입력을 소유하지 않는다. 파일·복구 작업은 `WorkflowStepper.tsx`를 유지한다. 모든 로딩은 기존 API에서 교체된 `MoaLoader`를 공유한다.
 3. `features/auth/components/AuthScreen.tsx` → `lib/form-config.ts`·`hooks/useAuthDraft.ts`: 공통 폼/오류/대기, 단계 데이터·허용 표시 상태, 이름·이메일 초안. 비밀번호/token은 저장하지 않는다.
 4. `app/actions/auth.ts` → `server/auth-forms.ts` → `server/auth-handler.ts` → `server/auth.ts`: 제출→서버 검증→동일 프로세스 인증→쿠키 반영→결과/redirect. 직접 auth.api 호출로 HTTP 보호를 우회하지 않는다.
 5. `shared/auth-contract.ts`: 양쪽에서 쓰는 최소 상태 타입. `tests/server/auth-actions.test.ts`·`auth-forms.test.ts`, `tests/auth/flow.test.ts`, 루트 `tests/browser/check-auth-ui.mjs`: 실패·쿠키·단계·실브라우저 검증.

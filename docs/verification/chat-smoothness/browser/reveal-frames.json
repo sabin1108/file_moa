@@ -1,0 +1,49 @@
+{
+  "condition": "Synthetic single received burst; UI reveal timing only, not provider latency",
+  "frames": [
+    {
+      "time": 5502.900000095367,
+      "length": 0
+    },
+    {
+      "time": 5609.800000071526,
+      "length": 8
+    },
+    {
+      "time": 5614.300000071526,
+      "length": 21
+    },
+    {
+      "time": 5630.800000071526,
+      "length": 87
+    },
+    {
+      "time": 5647.400000095367,
+      "length": 153
+    },
+    {
+      "time": 5665.400000095367,
+      "length": 219
+    },
+    {
+      "time": 5681.900000095367,
+      "length": 284
+    },
+    {
+      "time": 5698.100000023842,
+      "length": 350
+    },
+    {
+      "time": 5714.400000095367,
+      "length": 415
+    },
+    {
+      "time": 5730.900000095367,
+      "length": 479
+    },
+    {
+      "time": 5748.300000071526,
+      "length": 480
+    }
+  ]
+}

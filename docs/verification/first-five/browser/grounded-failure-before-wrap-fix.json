@@ -1,0 +1,75 @@
+{
+  "checks": [
+    {
+      "name": "consent is required before transmission",
+      "pass": true
+    },
+    {
+      "name": "changing the question invalidates previous consent",
+      "pass": true
+    },
+    {
+      "name": "verified answer includes an exact source quotation",
+      "pass": true
+    },
+    {
+      "name": "citation opens the shared full document preview",
+      "pass": true
+    },
+    {
+      "name": "citation and save controls survive the file preview round trip",
+      "pass": true
+    },
+    {
+      "name": "a new conversation cancels a pending citation navigation",
+      "pass": true
+    },
+    {
+      "name": "source changes during generation suppress the answer",
+      "pass": true
+    },
+    {
+      "name": "cancelled action cannot publish a late answer",
+      "pass": true
+    },
+    {
+      "name": "cancelling an action immediately permits a new request",
+      "pass": true
+    },
+    {
+      "name": "an old action cannot unlock or complete the new request",
+      "pass": true
+    },
+    {
+      "name": "revoked source permission blocks publication",
+      "pass": true
+    },
+    {
+      "name": "invalid action citations fail safely at the client boundary",
+      "pass": true
+    },
+    {
+      "name": "narrow material question does not overflow",
+      "pass": true
+    },
+    {
+      "name": "changed source before sending never reaches the action",
+      "pass": true
+    },
+    {
+      "name": "owner change discards the previous owner's pending answer",
+      "pass": true
+    },
+    {
+      "name": "reload and reopen restore citation references without another model call",
+      "pass": true
+    },
+    {
+      "name": "saved citation text and long file names fit a narrow conversation",
+      "pass": false
+    }
+  ],
+  "error": "AssertionError [ERR_ASSERTION]: saved citation text and long file names fit a narrow conversation",
+  "consoleErrors": [],
+  "text": "계정 전환 검증\n검증 자료 준비검증 폴더 연결대화로 복귀파일 화면 검증\n본문으로 건너뛰기\n채팅\n시안 보관함\n계정\n폴더\n채팅\n설정\n채팅\n대화·결과물·기억\n\n이 자료를 요약해 주세요. 저장한 근거 복원 검사\n\n모아\n\n합성 근거에서 확인한 답변입니다.\n\n작업 기록\nqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq · nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.md 원문 열기\n결과물로 편집기억으로 검토\n로컬 대화 불러옴\n저장 대화 보기\n자료·전송·보관 설정\nAI에게 질문하기\nEnter 보내기 · Shift+Enter 줄바꿈\n보내기\n내 AI 기록\n내 AI 폴더\n\nsaved-evidence-records\n\n폴더 변경\n권한 확인·다시 읽기\n연결 해제\n\n이 폴더의 앱 기록만 읽고 씁니다. 원본 자료는 복제하지 않으며 연결 해제는 파일을 삭제하지 않습니다. 로컬 파일은 암호화되지 않습니다.\n\n대화\n결과물\n기억\n프로필\n새 대화\n새 임시 대화\n이 자료를 요약해 주세요. 저장한 근거 복원 검사\n2026. 11. 9. 오후 5:22:54 · 1개 버전\n삭제"
+}

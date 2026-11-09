@@ -79,8 +79,7 @@ try {
     check(`${route}: public/auth view has no work scope`, await page.eval(() => !document.querySelector('[data-workspace-quick-menu]')));
     await mouse(page, 'mousePressed', 8, 450, 1); await pause(540); await mouse(page, 'mouseReleased', 8, 450);
     await key(page, 'keyDown', 'q', 'KeyQ', 1);
-    await page.eval(() => window.dispatchEvent(new CustomEvent('moa-quick-switch-open', { detail: { x: 400, y: 400 } })));
-    check(`${route}: hold, shortcut and open event are ignored`, await page.eval(() => !document.querySelector('[data-quick-switch-menu]')));
+    check(`${route}: hold and shortcut are ignored and no explicit opener is exposed`, await page.eval(() => !document.querySelector('[data-quick-switch-menu]') && !document.querySelector('[aria-label="빠른 전환 열기"]')));
     await key(page, 'keyUp', 'q', 'KeyQ', 1);
   }
   check("no browser exceptions", page.consoleErrors.length === 0);

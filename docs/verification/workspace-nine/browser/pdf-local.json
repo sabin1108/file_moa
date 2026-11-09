@@ -1,0 +1,39 @@
+{
+  "value": {
+    "sha256": "1c96c0474b6a236858635ca490ce01a6c7e857241e28278e3463a3dbfa985a98",
+    "size": 582,
+    "excerpt": "[1쪽]\nHelloPDF",
+    "excerptHash": "28cfcd1b1e43135c7f15b62d4bcd1dadc53cd8c0e57f4ad56802e252303e00bf",
+    "pdf": {
+      "pages": 1,
+      "complete": true
+    },
+    "fullText": "[1쪽]\nHelloPDF"
+  },
+  "cache": {
+    "updated": [
+      [
+        "two",
+        "changed text"
+      ]
+    ],
+    "isolated": [],
+    "revoked": true,
+    "remaining": []
+  },
+  "requests": [
+    "http://127.0.0.1:5871/__pdf",
+    "http://127.0.0.1:5871/src/features/local-folders/services/local-text-index.ts",
+    "http://127.0.0.1:5871/src/features/local-folders/services/copy-hash.ts",
+    "http://127.0.0.1:5871/src/features/local-folders/lib/document-find.ts",
+    "http://127.0.0.1:5871/src/shared/content-dates.ts",
+    "http://127.0.0.1:5871/src/features/local-folders/lib/document-find-reply.ts",
+    "http://127.0.0.1:5871/src/features/local-folders/services/copy-hash.worker.ts?worker_file&type=module",
+    "http://127.0.0.1:5871/src/shared/content-dates.ts",
+    "http://127.0.0.1:5871/src/features/local-folders/lib/document-find-reply.ts",
+    "http://127.0.0.1:5871/@fs/E:/project/ai_folder_project/.omx/browser-cache/pdf/deps/pdfjs-dist_legacy_build_pdf__mjs.js?v=d3bb40d1",
+    "http://127.0.0.1:5871/@vite/client",
+    "http://127.0.0.1:5871/src/features/local-folders/services/pdfjs.worker.ts?worker_file&type=module"
+  ],
+  "consoleErrors": []
+}

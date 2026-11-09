@@ -1,0 +1,99 @@
+{
+  "inspected": {
+    "viewport": {
+      "w": 1440,
+      "h": 1000
+    },
+    "dark": false,
+    "ground": "#e4e8e6",
+    "sidebar": null,
+    "topbar": {
+      "h": 46
+    },
+    "canvas": {
+      "left": 12,
+      "right": 82
+    },
+    "hero": {
+      "text": "모아 로그인",
+      "words": 2,
+      "chars": 6,
+      "lines": 1,
+      "size": 24,
+      "vw": 1.7,
+      "font": "Malgun Gothic",
+      "weight": 600,
+      "tracking": 0,
+      "leading": 1.5,
+      "top": 299,
+      "tag": "h1",
+      "kind": "heading",
+      "align": "left",
+      "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+      "panels": 4,
+      "firstScreen": 4,
+      "ragged": [],
+      "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+      "count": 4,
+      "radii": [
+        [
+          0,
+          3
+        ],
+        [
+          8,
+          1
+        ]
+      ],
+      "heavyBorders": 2,
+      "borderSamples": [
+        "#bcc7c4 on #f2f4f1 (1.57:1)",
+        "#bcc7c4 on #f2f4f1 (1.57:1)"
+      ],
+      "heavyShadows": 0,
+      "softShadows": 0,
+      "shadowSamples": [],
+      "glass": 0
+    },
+    "chips": {
+      "count": 0,
+      "hues": 0,
+      "samples": []
+    },
+    "numbers": {
+      "cells": 0,
+      "leftAligned": 0,
+      "figures": 0,
+      "tabularShare": null,
+      "kpiMax": null
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+      "under13": 0.08,
+      "tiny": 0,
+      "tinySamples": [],
+      "sizes": [
+        12,
+        13,
+        14,
+        16,
+        24,
+        43
+      ]
+    },
+    "title": {
+      "text": "모아 로그인",
+      "size": 24,
+      "top": 299
+    }
+  },
+  "verdict": []
+}

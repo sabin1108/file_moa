@@ -1,12 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
 import { FolderConnectionSession } from "../../../src/features/local-folders/services/connection-session";
 import { connectionKey } from "../../../src/features/local-folders/lib/connection-validation";
-import type { ConnectionOwner, FolderHandle, HandleRepository } from "../../../src/features/local-folders/types";
+import type { ConnectionOwner, FolderHandle, HandleRepository, SourceFolderRepository, SourceFolderConnection } from "../../../src/features/local-folders/types";
 
 const a = { userId: "a", workspaceId: "work" };
 const b = { userId: "b", workspaceId: "work" };
 function handle(name = "notes"): FolderHandle {
-  return { kind: "directory", name, queryPermission: vi.fn().mockResolvedValue("granted"), requestPermission: vi.fn().mockResolvedValue("granted") } as unknown as FolderHandle;
+  const folder = { kind: "directory", name, queryPermission: vi.fn().mockResolvedValue("granted"), requestPermission: vi.fn().mockResolvedValue("granted"), isSameEntry: vi.fn(async (other: object): Promise<boolean> => other === folder) };
+  return folder as unknown as FolderHandle;
 }
 function repository() {
   const entries = new Map<string, FolderHandle>();
@@ -22,8 +23,46 @@ function deferred<T>() {
   const promise = new Promise<T>((done, fail) => { resolve = done; reject = fail; });
   return { promise, resolve, reject };
 }
+function sourceRepository() {
+  const base = repository();
+  const entries = new Map<string, SourceFolderConnection>();
+  const repo: SourceFolderRepository = {
+    ...base,
+    listSource: vi.fn(async owner => [...entries.values()].filter(item => item.name.startsWith(`${owner.userId}:`))),
+    readSource: vi.fn(async (_owner, id) => entries.get(id)?.handle),
+    writeSource: vi.fn(async (owner, id, folder) => {
+      const prefix = `${owner.userId}:`;
+      const current = [...entries.values()].filter(item => item.name.startsWith(prefix));
+      entries.set(id, { connectionId: id, name: `${prefix}${folder.name}`, handle: folder, active: current.length === 0 });
+    }),
+    removeSource: vi.fn(async (_owner, id) => { entries.delete(id); }),
+    setActiveSource: vi.fn(async (_owner, id) => { for (const [key, value] of entries) entries.set(key, { ...value, active: key === id }); }),
+  };
+  return repo;
+}
 
 describe("account-scoped folder connections", () => {
+  it("stores multiple source roots, switches active root, and removes only the selected root", async () => {
+    const repo = sourceRepository(); const session = new FolderConnectionSession(repo); await session.switchOwner(a);
+    await session.select("source", async () => handle("A"));
+    await session.select("source", async () => handle("B"));
+    const roots = await session.listSourceConnections();
+    expect(roots).toHaveLength(2);
+    const inactive = roots.find(root => !root.active)!;
+    await session.activateSourceConnection(inactive.connectionId);
+    expect(session.view("source").folderName).toBe(inactive.name.split(":")[1]);
+    const active = (await session.listSourceConnections()).find(root => root.active)!;
+    await session.disconnectSourceConnection(active.connectionId);
+    expect((await session.listSourceConnections())).toHaveLength(1);
+    expect(session.view("source").folderName).toBe("B");
+  });
+  it("rejects a late active-root switch after changing account", async () => {
+    const repo = sourceRepository(); const session = new FolderConnectionSession(repo); await session.switchOwner(a);
+    await session.select("source", async () => handle("A")); const root = (await session.listSourceConnections())[0];
+    const slow = deferred<PermissionState>(); vi.mocked(root.handle.queryPermission).mockReturnValueOnce(slow.promise);
+    const pending = session.activateSourceConnection(root.connectionId); await session.switchOwner(b); slow.resolve("granted");
+    await expect(pending).rejects.toThrow("stale-connection-operation"); expect(session.view("source").folderName).toBe(null);
+  });
   it("uses non-colliding structured account/workspace/kind keys", () => {
     expect(connectionKey({ userId: "a:b", workspaceId: "c" }, "source")).not.toEqual(connectionKey({ userId: "a", workspaceId: "b:c" }, "source"));
     expect(() => connectionKey({ userId: "", workspaceId: "w" }, "source")).toThrow("invalid-connection-owner");

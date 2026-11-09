@@ -1,0 +1,153 @@
+{
+  "checks": [
+    {
+      "name": "all shipped vortex/fold/yank keyframes match the supplied motion",
+      "pass": true
+    },
+    {
+      "name": "old logo stroke animation and auth reveal animation are removed",
+      "pass": true
+    },
+    {
+      "name": "auth uses the replacement rather than rendering the old stepper beside it",
+      "pass": true
+    },
+    {
+      "name": "invalid email does not advance or animate",
+      "pass": true
+    },
+    {
+      "name": "composition Enter does not submit or advance",
+      "pass": true
+    },
+    {
+      "name": "a validated step advances immediately while the old paper folds for 3000ms",
+      "pass": true
+    },
+    {
+      "name": "decorative papers never copy input values or passwords",
+      "pass": true
+    },
+    {
+      "name": "back uses the supplied 1100ms yank animation",
+      "pass": true
+    },
+    {
+      "name": "fast reversal replaces the same step flight instead of duplicating it",
+      "pass": true
+    },
+    {
+      "name": "browser back and forward drive the real signup URL state",
+      "pass": true
+    },
+    {
+      "name": "reload restores the actual stage and email without replaying flights or passwords",
+      "pass": true
+    },
+    {
+      "name": "signup stage fits 390px with full-size inputs",
+      "pass": true
+    },
+    {
+      "name": "signup stage fits 768px with full-size inputs",
+      "pass": true
+    },
+    {
+      "name": "signup stage fits 1440px with full-size inputs",
+      "pass": true
+    },
+    {
+      "name": "signup stage fits 1920px with full-size inputs",
+      "pass": true
+    },
+    {
+      "name": "changing reduced motion during a flight clears it and new steps remain immediate",
+      "pass": true
+    },
+    {
+      "name": "unmount clears flight timers without replaying stale animation on remount",
+      "pass": true
+    },
+    {
+      "name": "loading loader fits 390px",
+      "pass": true
+    },
+    {
+      "name": "loading loader fits 768px",
+      "pass": true
+    },
+    {
+      "name": "loading loader fits 1440px",
+      "pass": true
+    },
+    {
+      "name": "compact loader fits 390px",
+      "pass": true
+    },
+    {
+      "name": "compact loader fits 768px",
+      "pass": true
+    },
+    {
+      "name": "compact loader fits 1440px",
+      "pass": true
+    },
+    {
+      "name": "reduced loading has no running animation",
+      "pass": true
+    },
+    {
+      "name": "real login pending uses the replacement and blocks duplicate submission",
+      "pass": true
+    },
+    {
+      "name": "login settles and removes its pending loader",
+      "pass": true
+    },
+    {
+      "name": "navigation feedback remains a nonblocking portal",
+      "pass": true
+    },
+    {
+      "name": "completed navigation removes its animation",
+      "pass": true
+    },
+    {
+      "name": "app inspector reports no failing findings",
+      "pass": true
+    },
+    {
+      "name": "no browser exceptions",
+      "pass": true
+    }
+  ],
+  "keyframes": {
+    "loader": [
+      "ringSpin",
+      "gulp",
+      "oSpin",
+      "oZ",
+      "pPull",
+      "bob"
+    ],
+    "paper": [
+      "sheetReveal",
+      "sheetIn",
+      "peekIn",
+      "countPop",
+      "pMove",
+      "fold1",
+      "fold2",
+      "swapOut",
+      "swapIn",
+      "colSwap",
+      "yMove",
+      "yFold2",
+      "yFold1",
+      "ySwapOut",
+      "ySwapIn",
+      "yColSwap"
+    ]
+  },
+  "condition": "Actual product auth/loader/paper components in isolated Chromium, synthetic action and Next navigation shim, synthetic IME, no account/auth API/mail/model or native permission operations. Motion keyframes compared to the supplied local files; decorative papers carry step labels only."
+}

@@ -1,0 +1,34 @@
+{
+  "checks": [
+    {
+      "name": "IME does not enter finding or start disk reads",
+      "passed": true
+    },
+    {
+      "name": "find intent asks year, date basis and around period before reading",
+      "passed": true
+    },
+    {
+      "name": "topic is an editable meeting term and no organization proposal is opened",
+      "passed": true
+    },
+    {
+      "name": "unsupported condition reply changes no filters or disk reads",
+      "passed": true
+    },
+    {
+      "name": "condition reply updates existing controls without automatic search",
+      "passed": true
+    },
+    {
+      "name": "explicit around choice displays inclusive dates",
+      "passed": true
+    },
+    {
+      "name": "390: general and find composers have equal input and box dimensions",
+      "passed": false
+    }
+  ],
+  "error": "AssertionError [ERR_ASSERTION]: 390: general and find composers have equal input and box dimensions",
+  "text": "chatfilessettings소유자 전환\n본문으로 건너뛰기\n자료 찾기\n시안 보관함\n계정\n폴더\n채팅\n설정\n채팅\n\n내가 10월쯤 한 회의자료 있는데 그것좀 찾아줄래\n\n모아\n\n검색할 범위와 날짜 기준을 확인해 주세요.\n\n2026년 회의 날짜 기준 앞뒤 7일 포함\n\n모아\n\n검색 조건을 반영했어요. 표시된 기간과 기준을 확인한 뒤 검색 시작을 눌러 주세요.\n\n정리 요청으로 돌아가기\n검색 조건 · 2026-09-24 ~ 2026-11-07\n어떤 자료를 찾을까요?\n검색 시작\n본문에서 찾을 단어 · 모두 포함\n찾을 달\n달 선택\n전체 기간\n1월\n2월\n3월\n4월\n5월\n6월\n7월\n8월\n9월\n10월\n11월\n12월\n어느 해인가요?\n어떤 날짜를 기준으로 찾을까요?\n기준 선택\n본문의 회의일\n본문의 작성일\n본문에 적힌 날짜 전체\n얼마나 넓게 찾을까요?\n기간 확인\n해당 월만\n해당 월의 앞뒤 7일도 포함\n월말 · 21일부터 마지막 날\n여러 달 · 같은 해\n\n2026-09-24 ~ 2026-11-07\n\n검색 범위: 검증 자료 A 전체\n\n연결한 폴더 전체\n현재 폴더와 하위 폴더\n\nTXT·MD 본문에서 단어와 날짜 근거를 확인합니다. 이 기기에서만 읽으며 파일을 옮기거나 외부 AI로 보내지 않습니다.\n\n이 기기에서만 검색 · TXT·MD·PDF\n\n새 자료 요청\nEnter 새 요청 확인 · Shift+Enter 줄바꿈\n새 요청 확인"
+}

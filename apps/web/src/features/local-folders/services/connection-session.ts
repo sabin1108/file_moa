@@ -6,12 +6,15 @@ import {
   connectionKey,
   validateFolderHandle,
 } from "../lib/connection-validation";
+import { sourceFileExpectationSchema, type SourceFileExpectation } from "../../../shared/grounded-evidence";
 import type {
   ConnectionOwner,
   FolderConnectionView,
   FolderHandle,
   FolderKind,
   HandleRepository,
+  SourceFolderConnection,
+  SourceFolderRepository,
 } from "../types";
 import {
   readSourceFolderListing,
@@ -85,6 +88,7 @@ import { InlineEditorSession } from "./inline-editor-session";
 import { readSourceSnapshot } from "./source-snapshot";
 import { readOrganizationFolders } from "./organization-reference";
 import { inferOrganizationConditions } from "../lib/organization-intent";
+import { LocalTextIndex } from "./local-text-index";
 import { assertOrganizationBaseline } from "../lib/organization-operation";
 import type {
   OrganizationScope,
@@ -164,6 +168,7 @@ export class FolderConnectionSession {
     operation: ReturnType<FolderConnectionSession["recoveryOperation"]>;
   } | null = null;
   private slots = emptySlots();
+  private sourceConnectionId = "legacy";
   constructor(private readonly repository: HandleRepository) {}
 
   state(kind: FolderKind): FolderConnectionView["status"] {
@@ -185,6 +190,27 @@ export class FolderConnectionSession {
     };
   }
 
+  aiRecordAccess = async () => {
+    const owner = this.owner;
+    const slot = this.slots["ai-records"];
+    const directory = slot.handle;
+    const generation = this.generation;
+    const sequence = slot.sequence;
+    if (!owner || !this.ready || !directory) throw new Error("ai-records-not-connected");
+    const assertCurrent = () => {
+      if (owner !== this.owner || generation !== this.generation || slot !== this.slots["ai-records"] || sequence !== slot.sequence) {
+        throw new Error("stale-connection-operation");
+      }
+    };
+    if (await directory.queryPermission({ mode: "readwrite" }) !== "granted") {
+      slot.connected = false;
+      throw new DOMException("AI records permission required", "NotAllowedError");
+    }
+    assertCurrent();
+    slot.connected = true;
+    return { directory, owner, assertCurrent };
+  };
+
   async switchOwner(next: ConnectionOwner | null): Promise<void> {
     this.inlineEditor.invalidate();
     this.discardManaged();
@@ -199,6 +225,7 @@ export class FolderConnectionSession {
     this.owner = null;
     this.ready = false;
     this.slots = emptySlots();
+    this.sourceConnectionId = "legacy";
     if (!next) {
       this.ready = true;
       return;
@@ -225,6 +252,12 @@ export class FolderConnectionSession {
     }
     if (generation !== this.generation)
       throw new Error("stale-connection-operation");
+    if ("listSource" in this.repository) {
+      const sources = await (this.repository as SourceFolderRepository).listSource(owner);
+      if (generation !== this.generation) throw new Error("stale-connection-operation");
+      const active = sources.find(item => item.active) ?? sources[0];
+      if (active) { source = active.handle; this.sourceConnectionId = active.connectionId; }
+    }
     if (source) validateFolderHandle(source);
     if (records) validateFolderHandle(records);
     if (recovery) validateFolderHandle(recovery);
@@ -312,7 +345,37 @@ export class FolderConnectionSession {
         throw new DOMException("Folder permission required", "NotAllowedError");
       }
       operation.assertCurrent();
-      await this.repository.write(operation.owner, kind, selected);
+      if (kind === "source" || kind === "ai-records") {
+        const others = kind === "source" ? [this.slots["ai-records"].handle] : [this.slots.source.handle, this.slots.recovery.handle];
+        if (kind === "ai-records" && "listSource" in this.repository) {
+          const sources = await (this.repository as SourceFolderRepository).listSource(operation.owner);
+          operation.assertCurrent();
+          others.push(...sources.map(source => source.handle));
+        }
+        for (const other of others) {
+          if (!other) continue;
+          if (await selected.isSameEntry(other) || await selected.resolve(other) !== null || await other.resolve(selected) !== null) {
+            throw new Error("ai-records-overlap");
+          }
+          operation.assertCurrent();
+        }
+      }
+      if (kind === "source" && "writeSource" in this.repository) {
+        const repository = this.repository as SourceFolderRepository;
+        const connections = await repository.listSource(operation.owner);
+        operation.assertCurrent();
+        let id = `source-${crypto.randomUUID()}`;
+        for (const connection of connections) {
+          if (await selected.isSameEntry(connection.handle)) { id = connection.connectionId; break; }
+          operation.assertCurrent();
+        }
+        if (id !== "legacy") await repository.writeSource(operation.owner, id, selected);
+        await repository.setActiveSource(operation.owner, id);
+        operation.assertCurrent();
+        this.sourceConnectionId = id;
+      } else {
+        await this.repository.write(operation.owner, kind, selected);
+      }
       operation.assertCurrent();
       operation.slot.handle = selected;
       operation.slot.connected = true;
@@ -320,6 +383,53 @@ export class FolderConnectionSession {
       operation.assertCurrent();
       throw error;
     }
+  }
+
+  async listSourceConnections(): Promise<readonly SourceFolderConnection[]> {
+    if (!("listSource" in this.repository) || !this.owner) return [];
+    return (this.repository as SourceFolderRepository).listSource(this.owner);
+  }
+
+  async activateSourceConnection(connectionId: string, permission?: Promise<PermissionState>): Promise<void> {
+    const operation = this.begin("source");
+    if (!("readSource" in this.repository)) throw new Error("source-connections-unavailable");
+    const repository = this.repository as SourceFolderRepository;
+    const handle = await repository.readSource(operation.owner, connectionId);
+    operation.assertCurrent();
+    if (!handle) throw new Error("source-connection-not-found");
+    const records = this.slots["ai-records"].handle;
+    if (records && (await records.isSameEntry(handle) || await records.resolve(handle) !== null || await handle.resolve(records) !== null)) throw new Error("ai-records-overlap");
+    operation.assertCurrent();
+    if ((await (permission ?? handle.queryPermission({ mode: "read" }))) !== "granted") throw new DOMException("Folder permission required", "NotAllowedError");
+    operation.assertCurrent();
+    await repository.setActiveSource(operation.owner, connectionId);
+    operation.assertCurrent();
+    operation.slot.handle = handle;
+    operation.slot.connected = true;
+    this.sourceConnectionId = connectionId;
+  }
+
+  async disconnectSourceConnection(connectionId: string): Promise<void> {
+    const operation = this.begin("source");
+    if (!("removeSource" in this.repository)) throw new Error("source-connections-unavailable");
+    const repository = this.repository as SourceFolderRepository;
+    await repository.removeSource(operation.owner, connectionId);
+    operation.assertCurrent();
+    await new LocalTextIndex().retain({ owner: operation.owner.userId, workspace: operation.owner.workspaceId, connection: connectionId }, [], operation.assertCurrent).catch(() => { operation.assertCurrent(); });
+    operation.assertCurrent();
+    const remaining = await repository.listSource(operation.owner);
+    if (remaining.length === 0) {
+      operation.slot.handle = undefined;
+      operation.slot.connected = false;
+      return;
+    }
+    const next = remaining.find(item => item.active) ?? remaining[0];
+    await repository.setActiveSource(operation.owner, next.connectionId);
+    operation.assertCurrent();
+    operation.slot.handle = next.handle;
+    operation.slot.connected = (await next.handle.queryPermission({ mode: "read" })) === "granted";
+    operation.assertCurrent();
+    this.sourceConnectionId = next.connectionId;
   }
 
   async reconnect(kind: FolderKind): Promise<void> {
@@ -637,6 +747,7 @@ export class FolderConnectionSession {
         check,
         signal,
         find,
+        { owner: owner.userId, workspace: owner.workspaceId, connection: this.sourceConnectionId },
       );
       check();
       if (!reference) return result;
@@ -805,6 +916,7 @@ export class FolderConnectionSession {
   async readSourceFile(
     path: readonly string[],
     signal?: AbortSignal,
+    expected?: SourceFileExpectation,
   ): Promise<SourceFilePreview> {
     const previewSequence = ++this.previewSequence;
     const generation = this.generation;
@@ -813,6 +925,8 @@ export class FolderConnectionSession {
     const handle = slot.handle;
     if (!this.owner || !this.ready || !slot.connected || !handle)
       throw new Error("source-folder-not-connected");
+    const expectation = expected ? sourceFileExpectationSchema.parse(expected) : undefined;
+    if (expectation && (expectation.owner.userId !== this.owner.userId || expectation.owner.workspaceId !== this.owner.workspaceId || expectation.connectionId !== this.sourceConnectionId || JSON.stringify(expectation.path) !== JSON.stringify(path))) throw new Error("citation-connection-mismatch");
     const assertCurrent = () => {
       if (
         generation !== this.generation ||
@@ -827,7 +941,7 @@ export class FolderConnectionSession {
     };
     try {
       assertCurrent();
-      const result = await readSourceFilePreview(handle, path, assertCurrent);
+      const result = await readSourceFilePreview(handle, path, assertCurrent, signal, expectation);
       assertCurrent();
       return result;
     } catch (error) {
@@ -1304,6 +1418,7 @@ export class FolderConnectionSession {
   };
 
   async disconnect(kind: FolderKind): Promise<void> {
+    if (kind === "source" && "removeSource" in this.repository) return this.disconnectSourceConnection(this.sourceConnectionId);
     const operation = this.begin(kind);
     operation.slot.handle = undefined;
     operation.slot.connected = false;

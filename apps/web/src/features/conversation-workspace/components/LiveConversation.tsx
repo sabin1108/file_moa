@@ -1,209 +1,140 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-import Link from "next/link";
-import {
-  ConversationWorkspace,
-  type ConversationMessage,
-} from "../../../components/layout/ConversationWorkspace";
+import { useRef, useState } from "react";
+import { ConversationWorkspace, type ConversationMessage } from "../../../components/layout/ConversationWorkspace";
 import { WorkspaceShell } from "../../../components/layout/WorkspaceShell";
-import { useSharedSourceFolderConnection } from "../../local-folders/providers/SourceFolderProvider";
-import { SourceFolderTree } from "../../local-folders/components/listing/SourceFolderTree";
-import { SourceConnectionControl } from "../../local-folders/components/connection/SourceConnectionControl";
-import { OrganizationPreparationPanel } from "../../local-folders/components/organization/OrganizationPreparationPanel";
+import { actionClasses } from "../../../components/ui/action-classes";
+import { AI_PROVIDER_LABELS, type AiProvider } from "../../../shared/ai-provider";
+import { CHAT_ERROR_MESSAGES } from "../../../shared/general-chat";
 import type { LiveOrganizationAction } from "../../../shared/live-organization";
-import { FindConversation } from "./FindConversation";
-import type { AiProvider } from "../../../shared/ai-provider";
-import { classifyConversationRequest } from "../lib/request-routing";
+import { SourceFolderTree } from "../../local-folders/components/listing/SourceFolderTree";
+import { useSharedSourceFolderConnection } from "../../local-folders/providers/SourceFolderProvider";
+import { useGeneralChat } from "../hooks/useGeneralChat";
+import { MaterialWorkPanel } from "./MaterialWorkPanel";
 import { RequestIntentChoice } from "./RequestIntentChoice";
-import { useConversationRequests } from "../hooks/useConversationRequests";
+import { GroundedAnswerView, GroundedConsent, SavedGroundedAnswer } from "./GroundedAnswerView";
+import { SourceConnectionControl } from "../../local-folders/components/connection/SourceConnectionControl";
+import { useWorkspaceConversation } from "../hooks/useWorkspaceConversation";
+import { useConversationStore } from "../providers/ConversationStateProvider";
+import { ConversationContextBar, type ConversationPanelView } from "./ConversationContextBar";
+import { ConversationSettingsPanel } from "./ConversationSettingsPanel";
+import options from "./conversation-options.module.css";
+import { Icon } from "../../../components/ui/Icon";
+import { useConversationRecords } from "../../ai-records/hooks/useConversationRecords";
+import { AiLibraryPanel } from "../../ai-records/components/AiLibraryPanel";
+import type { AiRecordPayload, ConversationPayload } from "../../../shared/ai-records";
+import { selectPersonalContext } from "../../ai-records/lib/personal-context";
+import type { GroundedAction } from "../../../shared/grounded-chat";
+import type { GroundedEvidence } from "../../../shared/grounded-evidence";
+import type { UsageSummary } from "../../../shared/ai-usage";
 
-export function LiveConversation({
-  organizeAction,
-  aiProvider = "gemini",
-}: {
+export function LiveConversation({ organizeAction, groundedAction, readUsage, aiProvider = "gemini" }: {
   organizeAction?: LiveOrganizationAction;
   aiProvider?: AiProvider | null;
+  groundedAction?: GroundedAction;
+  readUsage?: () => Promise<UsageSummary | null>;
 }) {
   const local = useSharedSourceFolderConnection();
-  const {
-    state: connection,
-    organization,
-    finding,
-  } = local;
-  const findState = useSyncExternalStore(
-    finding.subscribe,
-    finding.getSnapshot,
-    finding.getServerSnapshot,
-  );
-  const state = useSyncExternalStore(
-    organization.subscribe,
-    organization.getSnapshot,
-    organization.getServerSnapshot,
-  );
-  const connected = connection.view?.status === "connected";
-  const reading = state.phase === "reading";
-  const checking = state.phase === "checking";
-  const sending = state.phase === "sending";
-  const pending = reading || checking || sending;
-  const answering = !!state.snapshot && state.questions.length > 0;
-  const currentDraft = findState.phase !== "idle" ? findState.draft : state.request;
-  const requests = useConversationRequests(local, currentDraft);
-  const pendingRequest = requests.pendingRequest;
-  const requestChoice = connected && pendingRequest !== null && pendingRequest === currentDraft ? (
-    <RequestIntentChoice
-      disabled={!requests.canStart}
-      onChoose={intent => requests.submitRequest(pendingRequest, intent)}
-      onCancel={requests.cancelChoice}
-    />
-  ) : null;
-  const requestIntent = classifyConversationRequest(state.request);
-  const messages: ConversationMessage[] = [];
-  if (state.submittedRequest) {
-    messages.push({
-      id: "request",
-      author: "user",
-      text: state.submittedRequest,
-    });
-    let text: string | null = null;
-    if (state.phase === "scope") {
-      text = "어디에서 자료를 찾을까요? 아래에서 범위를 확인해 주세요.";
-    } else if (state.result) {
-      text = state.result.organization.held.length
-        ? "정리 전에 확인할 기준을 모았어요. 아래 질문에 답해 주세요."
-        : "이렇게 모으면 어떨까요? 정리 모습을 확인하고 복사 또는 이동을 선택해 주세요.";
-    } else if (state.issue) {
-      text = state.issue;
-    } else if (state.phase === "ready") {
-      text = `자료 ${state.snapshot?.documents.length ?? 0}개를 찾았어요. 전송할 자료와 조건을 확인해 주세요.`;
-    } else if (!pending) {
-      text =
-        "조건이 바뀌었거나 준비를 중지했어요. 설정한 범위를 다시 확인해 주세요.";
+  const [includeMemory, setIncludeMemory] = useState(false);
+  const conversationStore = useConversationStore();
+  const chat = useGeneralChat(local.owner, aiProvider, async () => {
+    if (!includeMemory) return undefined;
+    const records = await local.records.repository.list();
+    return selectPersonalContext(records.map(record => record.payload), conversationStore.getSelection().projectId || null);
+  });
+  const workflow = useWorkspaceConversation(chat, groundedAction);
+  const conversation = useConversationRecords(local.records, chat, { beforeRestore: workflow.reset, assertAvailable: workflow.assertCanChange });
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  const [panelView, setPanelView] = useState<ConversationPanelView>("records");
+  const panelTrigger = useRef<HTMLElement | null>(null);
+  const openPanel = (view: ConversationPanelView, trigger?: HTMLElement) => {
+    if (trigger) panelTrigger.current = trigger;
+    setPanelView(view);
+    setLibraryOpen(true);
+  };
+  const [editor, setEditor] = useState<Exclude<AiRecordPayload, ConversationPayload> | null>(null);
+  const scrollMemoryRef = useRef({ top: 0, follow: true });
+  const pending = workflow.pending;
+  const last = chat.state.turns.at(-1);
+  const chatNotice = last && (!last.kind || last.kind === "chat") ? last : null;
+  const savedEvidence = new Map<string, GroundedEvidence>(chat.state.turns.flatMap(turn => turn.evidence ? [[`${turn.id}:answer`, turn.evidence] as const] : []));
+  const messages = chat.state.turns.flatMap(turn => {
+    const messages: ConversationMessage[] = [{ id: `${turn.id}:question`, author: "user", text: turn.question }];
+    const answer = turn.answer.slice(0, turn.visibleLength);
+    if (answer) {
+      let status: string | undefined;
+      if (turn.status === "completed") status = turn.kind && turn.kind !== "chat" ? "작업 기록" : "답변 완료";
+      else if (turn.status !== "pending") status = "미완료 답변";
+      messages.push({ id: `${turn.id}:answer`, author: "assistant", text: answer, status });
     }
-    if (text) messages.push({ id: "preparation", author: "assistant", text });
-    if (state.submittedReply) {
-      messages.push({
-        id: "reply",
-        author: "user",
-        text: state.submittedReply,
-      });
-      messages.push({
-        id: "reply-confirmed",
-        author: "assistant",
-        text: "답변을 반영했어요. 아래 기준을 확인하고 새로 동의한 뒤 전송하면 AI 제안에 반영됩니다.",
-      });
-    }
-  }
+    return messages;
+  });
 
-  if (findState.phase !== "idle") return <FindConversation
-    state={findState}
-    canStart={requests.canStart}
-    onRequest={requests.submitRequest}
-    onDraftChange={requests.updateFindDraft}
-    onReturn={requests.returnToOrganization}
-    onPrepare={requests.prepareFound}
-    requestChoice={requestChoice}
-  />;
-  return (
-    <WorkspaceShell
-      title="채팅"
-      active="chat"
-      folderTree={<SourceFolderTree />}
-    >
-      <ConversationWorkspace
-        messages={messages}
-        draft={answering ? state.replyDraft : state.request}
-        onDraftChange={
-          answering
-            ? organization.updateReply
-            : requests.updateOrganizationDraft
-        }
-        onSend={() => {
-          if (answering) organization.submitReply();
-          else requests.submitRequest(state.request);
-        }}
-        canSend={requests.canStart}
-        pending={pending}
-        pendingLabel={
-          checking
-            ? "전송 전 원본 내용과 발췌를 다시 확인하고 있어요…"
-            : sending
-              ? "확인한 발췌로 AI 제안을 기다리고 있어요…"
-              : "선택한 범위의 TXT/MD를 이 기기에서 읽고 있어요…"
-        }
-        submitLabel={
-          answering
-            ? "답변 반영"
-            : requestIntent === "find"
-              ? "찾을 조건 확인"
-              : requestIntent === "organize" ? "자료 준비" : "작업 선택"
-        }
-        inputLabel={answering ? "확인 질문에 대한 답변" : undefined}
-        inputPlaceholder={
-          answering
-            ? "파일 이름과 날짜 기준 또는 ‘폴더명 폴더로’를 적어 주세요"
-            : undefined
-        }
-        cancelLabel={sending ? "응답 대기 중지" : "자료 준비 중지"}
-        onCancel={organization.cancel}
-        panelOpen={false}
-        onPanelChange={() => {}}
-        showComposer={connected}
-        scope={
-          connected && (
-            <div>
-              {answering && (
-                <p>
-                  질문에 대한 답변을 적어 주세요. 반영 후에도 AI 전송은 따로
-                  확인합니다.
-                </p>
-              )}
-              <p>
-                범위:{" "}
-                {state.scope?.kind === "all"
-                  ? "연결한 폴더 전체"
-                  : state.scope?.kind === "folder"
-                    ? state.scope.path.join(" / ") || "연결 폴더"
-                    : state.scope?.kind === "selected"
-                      ? `선택한 ${state.scope.entries.length}개`
-                      : "자료 준비 전에 확인"}{" "}
-                · 자료 {state.selectedIds.length}개
-              </p>
-            </div>
-          )
-        }
-        intro={
-          <>
-            <h2 tabIndex={-1} data-conversation-title>
-              {connected ? "어떤 자료로 작업할까요?" : "자료 폴더를 연결하세요"}
-            </h2>
-            {!connected ? (
-              <>
-                <p>
-                  폴더를 선택하면 왼쪽에서 구조를 확인할 수 있어요. 파일은 이
-                  기기에 보관됩니다.
-                </p>
-                <SourceConnectionControl />
-              </>
-            ) : (
-              <>
-                <p>
-                  찾거나 정리할 내용을 적어 주세요. 범위와 발췌를 확인한
-                  뒤 선택한 자료만 AI에 보낼 수 있어요. AI 분석만으로 원본을
-                  바꾸지 않으며 실제 파일 작업은 검토 후 별도로 실행합니다.
-                </p>
-                <Link href="/demo">AI 정리 샘플 체험하기</Link>
-              </>
-            )}
-          </>
-        }
-        panel={null}
-        interaction={
-          requestChoice ?? (connected && state.submittedRequest ? (
-            <OrganizationPreparationPanel organizeAction={organizeAction} aiProvider={aiProvider} />
-          ) : undefined)
-        }
-      />
-    </WorkspaceShell>
-  );
+  return <WorkspaceShell title="채팅" active="chat" folderTree={<SourceFolderTree />}>
+    <ConversationWorkspace
+      messages={messages}
+      scrollMemoryRef={scrollMemoryRef}
+      draft={chat.state.draft}
+      onDraftChange={chat.updateDraft}
+      onSend={() => { void workflow.submit(); }}
+      canSend={!workflow.blocked && (workflow.intent !== "chat" || !!aiProvider) && (workflow.intent !== "grounded" || workflow.grounded.canSend)}
+      pending={pending}
+      pendingLabel={chat.state.active ? last?.answer ? "답변을 작성하고 있어요…" : "AI 응답을 기다리고 있어요…" : "자료를 확인하고 있어요…"}
+      onCancel={workflow.cancel}
+      cancelLabel={chat.state.active ? "답변 중지" : "작업 대기 중지"}
+      inputLabel="AI에게 질문하기"
+      inputPlaceholder="질문하거나 찾고 정리할 자료를 적어 주세요"
+      submitLabel="보내기"
+      panel={<>
+        <nav className={options.panelNavigation} aria-label="대화 도구">
+          {([ ["records", "기록", "folder"], ["sources", "자료", "attach"], ["settings", "설정", "settings"] ] as const).map(([view, text, icon]) => <button type="button" key={view} aria-pressed={view === panelView || view === "records" && panelView === "storage"} onClick={() => setPanelView(view)}><Icon name={icon} />{text}</button>)}
+        </nav>
+        <div hidden={panelView !== "records" && panelView !== "storage"}>
+          <AiLibraryPanel controller={local.records} conversation={conversation} editor={editor} onEditorChange={setEditor}
+            onOpen={() => setLibraryOpen(false)} canSwitchConversation={!workflow.blocked}
+            storageOpen={panelView === "storage"} onStorageChange={open => setPanelView(open ? "storage" : "records")} />
+        </div>
+        <div hidden={panelView !== "sources"}><section className={options.sourcePanel} aria-label="대화에 참고할 자료">
+          <h3>참고할 자료 폴더</h3>
+          <p>이 기기의 자료를 읽어 찾고 정리합니다. AI에 보낼 발췌는 전송 전에 확인해요.</p>
+          <SourceConnectionControl />
+        </section></div>
+        <div hidden={panelView !== "settings"}><ConversationSettingsPanel includeMemory={includeMemory} onIncludeMemory={setIncludeMemory}
+          projectId={conversation.projectId} onProjectId={conversation.setProjectId} canUseMemory={conversation.library.phase === "ready"}
+          disabled={pending} provider={aiProvider ? AI_PROVIDER_LABELS[aiProvider] : null} temporary={conversation.temporary}
+          onStorage={() => setPanelView("storage")} readUsage={readUsage} /></div>
+      </>}
+      panelOpen={libraryOpen}
+      onPanelChange={open => { if (open) setPanelView("records"); setLibraryOpen(open); }}
+      panelTrigger={panelTrigger}
+      panelLabel="기록함"
+      panelTitle={{ records: "기록함", storage: "저장 위치", sources: "참고 자료", settings: "대화 설정" }[panelView]}
+      messageActions={message => message.author === "assistant" && workflow.task && (workflow.task.kind !== "grounded" || workflow.grounded.result) && message.id === `${workflow.task.id}:answer` ? (
+        workflow.task.kind === "grounded" ? <GroundedAnswerView conversation={workflow.grounded} /> : <MaterialWorkPanel kind={workflow.task.kind} onPrepare={workflow.prepareFound} canStart={workflow.canStart} organizeAction={organizeAction} aiProvider={aiProvider} waitingForSource={workflow.task.waitingForSource} onContinue={workflow.resume} />
+      ) : message.author === "assistant" ? <div className={options.messageActions}>
+        {savedEvidence.has(message.id) && <SavedGroundedAnswer evidence={savedEvidence.get(message.id)!} onOpen={workflow.grounded.openSavedCitation} disabled={workflow.blocked} />}
+        {!pending && <>
+        <button className={actionClasses("secondary")} onClick={event => {
+          setEditor({ type: "artifact", id: `artifact-${crypto.randomUUID()}`, title: "답변에서 만든 초안", updatedAt: new Date().toISOString(), markdown: message.text, status: "draft", sourceConversationId: conversation.temporary ? null : conversation.id });
+          openPanel("records", event.currentTarget);
+        }}><Icon name="file" />결과물로 편집</button>
+        <button className={actionClasses("secondary")} onClick={event => {
+          setEditor({ type: "memory", id: `memory-${crypto.randomUUID()}`, title: "답변에서 제안한 기억", updatedAt: new Date().toISOString(), content: message.text.slice(0, 4000), status: "proposed", sourceConversationId: conversation.temporary ? null : conversation.id, scope: { type: "global" } });
+          openPanel("records", event.currentTarget);
+        }}><Icon name="leaf" />기억으로 검토</button>
+        </>}
+      </div> : null}
+      intro={<>
+        <h2 tabIndex={-1} data-conversation-title>무엇을 도와드릴까요?</h2>
+        <p>바로 질문하거나, 자료를 연결해 함께 살펴보세요.</p>
+      </>}
+      scope={<div>
+        <ConversationContextBar temporary={conversation.temporary} status={conversation.status} sourceName={local.state.view?.folderName ?? null}
+          provider={aiProvider ? AI_PROVIDER_LABELS[aiProvider] : null} onOpen={openPanel} />
+        {workflow.intent === "grounded" && <GroundedConsent conversation={workflow.grounded} />}
+      </div>}
+      interaction={workflow.choice ? <RequestIntentChoice disabled={workflow.blocked} onChoose={kind => { void workflow.submit(kind); }} onChat={() => { void workflow.submit("chat"); }} onGrounded={workflow.grounded.documents.length ? () => { void workflow.submit("grounded"); } : undefined} onCancel={workflow.cancelChoice} /> : undefined}
+      notice={chatNotice?.status === "error" ? <p role="status">{CHAT_ERROR_MESSAGES[chatNotice.error ?? "unavailable"]}</p> : chatNotice?.status === "stopped" ? <p role="status">답변을 중지했어요. 여기까지 받은 내용은 미완료이며 자동으로 다시 보내지 않습니다.</p> : undefined}
+    />
+  </WorkspaceShell>;
 }

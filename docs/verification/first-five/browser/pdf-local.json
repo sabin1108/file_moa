@@ -1,0 +1,127 @@
+{
+  "value": {
+    "sha256": "1c96c0474b6a236858635ca490ce01a6c7e857241e28278e3463a3dbfa985a98",
+    "size": 582,
+    "excerpt": "[1쪽]\nHelloPDF",
+    "excerptHash": "28cfcd1b1e43135c7f15b62d4bcd1dadc53cd8c0e57f4ad56802e252303e00bf",
+    "pdf": {
+      "pages": 1,
+      "complete": true
+    },
+    "fullText": "[1쪽]\nHelloPDF"
+  },
+  "boundaries": [
+    {
+      "name": "no-text",
+      "error": "pdf-no-text",
+      "elapsedMs": 251
+    },
+    {
+      "name": "damaged",
+      "error": "pdf-invalid",
+      "elapsedMs": 286
+    },
+    {
+      "name": "51-pages",
+      "pdf": {
+        "pages": 51,
+        "complete": false
+      },
+      "textLength": 940,
+      "lastPageIncluded": false,
+      "elapsedMs": 382
+    },
+    {
+      "name": "character-limit",
+      "pdf": {
+        "pages": 1,
+        "complete": false
+      },
+      "textLength": 200005,
+      "lastPageIncluded": false,
+      "elapsedMs": 494
+    }
+  ],
+  "sizeBoundary": {
+    "error": "too-large",
+    "bodyRead": false
+  },
+  "cache": {
+    "updated": [
+      [
+        "two",
+        "changed text"
+      ]
+    ],
+    "isolated": [],
+    "revoked": true,
+    "remaining": []
+  },
+  "requests": [
+    "http://127.0.0.1:5976/__pdf",
+    "http://127.0.0.1:5976/src/features/local-folders/services/local-text-index.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/services/copy-hash.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/document-find.ts",
+    "http://127.0.0.1:5976/src/shared/content-dates.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/document-find-reply.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/services/copy-hash.worker.ts?worker_file&type=module",
+    "http://127.0.0.1:5976/@fs/E:/project/ai_folder_project/node_modules/.pnpm/vite@8.3.5_@types+node@24.10.1_jiti@2.7.0/node_modules/vite/dist/client/env.mjs",
+    "http://127.0.0.1:5976/src/shared/organization-candidates.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/document-find.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/services/pdf-text.ts",
+    "http://127.0.0.1:5976/src/shared/content-dates.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/document-find-reply.ts",
+    "http://127.0.0.1:5976/@fs/E:/project/ai_folder_project/.omx/browser-cache/pdf/deps/pdfjs-dist_legacy_build_pdf__mjs.js?v=7ae8af4b",
+    "http://127.0.0.1:5976/@vite/client",
+    "http://127.0.0.1:5976/src/features/local-folders/services/pdfjs.worker.ts?worker_file&type=module",
+    "http://127.0.0.1:5976/src/features/local-folders/services/copy-hash.worker.ts?worker_file&type=module",
+    "http://127.0.0.1:5976/@fs/E:/project/ai_folder_project/node_modules/.pnpm/vite@8.3.5_@types+node@24.10.1_jiti@2.7.0/node_modules/vite/dist/client/env.mjs",
+    "http://127.0.0.1:5976/src/shared/organization-candidates.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/document-find.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/services/pdf-text.ts",
+    "http://127.0.0.1:5976/src/shared/content-dates.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/document-find-reply.ts",
+    "http://127.0.0.1:5976/@fs/E:/project/ai_folder_project/.omx/browser-cache/pdf/deps/pdfjs-dist_legacy_build_pdf__mjs.js?v=7ae8af4b",
+    "http://127.0.0.1:5976/@vite/client",
+    "http://127.0.0.1:5976/src/features/local-folders/services/pdfjs.worker.ts?worker_file&type=module",
+    "http://127.0.0.1:5976/src/features/local-folders/services/copy-hash.worker.ts?worker_file&type=module",
+    "http://127.0.0.1:5976/@fs/E:/project/ai_folder_project/node_modules/.pnpm/vite@8.3.5_@types+node@24.10.1_jiti@2.7.0/node_modules/vite/dist/client/env.mjs",
+    "http://127.0.0.1:5976/src/shared/organization-candidates.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/document-find.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/services/pdf-text.ts",
+    "http://127.0.0.1:5976/src/shared/content-dates.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/document-find-reply.ts",
+    "http://127.0.0.1:5976/@fs/E:/project/ai_folder_project/.omx/browser-cache/pdf/deps/pdfjs-dist_legacy_build_pdf__mjs.js?v=7ae8af4b",
+    "http://127.0.0.1:5976/@vite/client",
+    "http://127.0.0.1:5976/src/features/local-folders/services/pdfjs.worker.ts?worker_file&type=module",
+    "http://127.0.0.1:5976/src/features/local-folders/services/copy-hash.worker.ts?worker_file&type=module",
+    "http://127.0.0.1:5976/@fs/E:/project/ai_folder_project/node_modules/.pnpm/vite@8.3.5_@types+node@24.10.1_jiti@2.7.0/node_modules/vite/dist/client/env.mjs",
+    "http://127.0.0.1:5976/src/shared/organization-candidates.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/document-find.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/services/pdf-text.ts",
+    "http://127.0.0.1:5976/src/shared/content-dates.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/document-find-reply.ts",
+    "http://127.0.0.1:5976/@fs/E:/project/ai_folder_project/.omx/browser-cache/pdf/deps/pdfjs-dist_legacy_build_pdf__mjs.js?v=7ae8af4b",
+    "http://127.0.0.1:5976/@vite/client",
+    "http://127.0.0.1:5976/src/features/local-folders/services/pdfjs.worker.ts?worker_file&type=module",
+    "http://127.0.0.1:5976/src/features/local-folders/services/copy-hash.worker.ts?worker_file&type=module",
+    "http://127.0.0.1:5976/@fs/E:/project/ai_folder_project/node_modules/.pnpm/vite@8.3.5_@types+node@24.10.1_jiti@2.7.0/node_modules/vite/dist/client/env.mjs",
+    "http://127.0.0.1:5976/src/shared/organization-candidates.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/document-find.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/services/pdf-text.ts",
+    "http://127.0.0.1:5976/src/shared/content-dates.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/document-find-reply.ts",
+    "http://127.0.0.1:5976/@fs/E:/project/ai_folder_project/.omx/browser-cache/pdf/deps/pdfjs-dist_legacy_build_pdf__mjs.js?v=7ae8af4b",
+    "http://127.0.0.1:5976/@vite/client",
+    "http://127.0.0.1:5976/src/features/local-folders/services/pdfjs.worker.ts?worker_file&type=module",
+    "http://127.0.0.1:5976/src/features/local-folders/services/source-file-preview.ts",
+    "http://127.0.0.1:5976/@fs/E:/project/ai_folder_project/packages/domain/src/index.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/folder-path.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/services/source-directory.ts",
+    "http://127.0.0.1:5976/src/features/local-folders/lib/recovery-vault.ts",
+    "http://127.0.0.1:5976/@fs/E:/project/ai_folder_project/packages/domain/src/local-record.ts",
+    "http://127.0.0.1:5976/@fs/E:/project/ai_folder_project/.omx/browser-cache/pdf/deps/zod.js?v=c2d336eb"
+  ],
+  "consoleErrors": [],
+  "condition": "Actual product Worker and nested PDF.js Worker, synthetic text-only PDFs and empty PDF. Empty covers no text-layer behavior; image-only/scanned real documents and OCR are not validated. Timings are local individual samples, not percentiles."
+}

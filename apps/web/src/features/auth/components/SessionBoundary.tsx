@@ -3,10 +3,10 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { StatusNotice } from "../../../components/ui/feedback/StatusNotice";
-import { announceAuthSessionChange, authSessionSource, AUTH_SCOPE_REVOKED, AUTH_SESSION_CHANGED, AUTH_SESSION_STORAGE_KEY } from "../../../shared/auth-session-events";
+import { announceAuthSessionChange, authSessionSource, revokeAuthScope, subscribeAuthSessionChange, AUTH_SESSION_CHANGED, AUTH_SESSION_STORAGE_KEY } from "../../../shared/auth-session-events";
 import { sessionScope } from "../lib/session-scope";
 import type { CheckAuthSessionAction } from "../../../shared/auth-contract";
-import { clearSignupDraft } from "../lib/signup-flow";
+import { clearSignupDraft } from "../store/signup-draft";
 import { PageLoading } from "../../../components/ui/feedback/PageLoading";
 
 export function SessionBoundary({
@@ -33,7 +33,7 @@ export function SessionBoundary({
     let lastSignal: string | undefined;
     let expiry: ReturnType<typeof setTimeout> | undefined;
     const revoke = () => {
-      window.dispatchEvent(new Event(AUTH_SCOPE_REVOKED));
+      revokeAuthScope();
       setActive(false);
     };
     const check = async (hide = false, force = false) => {
@@ -105,15 +105,14 @@ export function SessionBoundary({
       revoke();
       setChecking(true);
     };
-    const channel =
-      typeof BroadcastChannel === "undefined"
-        ? undefined
-        : new BroadcastChannel(AUTH_SESSION_CHANGED);
-    if (channel)
-      channel.onmessage = event => {
-        if (event.data?.type === "changed") signal(event.data);
-      };
-    window.addEventListener(AUTH_SESSION_CHANGED, changed);
+    let channel: BroadcastChannel | undefined;
+    try {
+      if (typeof BroadcastChannel !== "undefined") {
+        channel = new BroadcastChannel(AUTH_SESSION_CHANGED);
+        channel.onmessage = event => { if (event.data?.type === "changed") signal(event.data); };
+      }
+    } catch { /* Storage and lifecycle checks still revalidate authentication. */ }
+    const unsubscribeChanged = subscribeAuthSessionChange(changed);
     window.addEventListener("storage", storage);
     window.addEventListener("focus", visible);
     window.addEventListener("pageshow", visible);
@@ -140,14 +139,14 @@ export function SessionBoundary({
       ++sequence;
       clearTimeout(expiry);
       clearInterval(timer);
-      channel?.close();
-      window.removeEventListener(AUTH_SESSION_CHANGED, changed);
+      try { channel?.close(); } catch { /* Remaining subscriptions must still be released. */ }
+      unsubscribeChanged();
       window.removeEventListener("storage", storage);
       window.removeEventListener("focus", visible);
       window.removeEventListener("pageshow", visible);
       window.removeEventListener("pagehide", hidden);
       document.removeEventListener("visibilitychange", visible);
-      window.dispatchEvent(new Event(AUTH_SCOPE_REVOKED));
+      revokeAuthScope();
     };
   }, [router, userId, initialExpiresAt, checkSessionAction]);
 

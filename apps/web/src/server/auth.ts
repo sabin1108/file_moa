@@ -128,6 +128,7 @@ function createAuth() {
         "/sign-up/email": { window: 60, max: 5 },
         "/sign-in/social": { window: 60, max: 10 },
         "/link-social": { window: 60, max: 5 },
+        "/delete-user": { window: 60, max: 3 },
         "/update-user": { window: 60, max: 10 },
         "/send-verification-email": { window: 60, max: 3 },
         "/request-password-reset": { window: 60, max: 3 },

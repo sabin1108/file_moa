@@ -80,7 +80,7 @@ async function until(predicate) {
   throw Error("Find fixture timed out: " + predicate);
 }
 async function click(selector) {
-  const point = await page.eval((selector) => {
+  const point = await page.eval(async (selector) => {
     const node = document.querySelector(selector);
     if (!node) throw Error("Missing " + selector);
     for (let parent = node.parentElement; parent; parent = parent.parentElement)
@@ -90,8 +90,12 @@ async function click(selector) {
       )
         parent.open = true;
     node.scrollIntoView({ block: "center", behavior: "instant" });
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
     const r = node.getBoundingClientRect();
-    return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+    const point = { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+    if (!node.contains(document.elementFromPoint(point.x, point.y))) throw new Error("Occluded " + selector);
+    return point;
   }, selector);
   for (const type of ["mousePressed", "mouseReleased"])
     await page.send("Input.dispatchMouseEvent", {
@@ -119,8 +123,25 @@ async function choose(selector, value) {
     { selector, value },
   );
 }
+const composerSizes = [];
+const generalSizes = new Map();
+async function composerSize(target) {
+  return target.eval(() => {
+    const input = document.getElementById("message-draft");
+    const box = input.parentElement.getBoundingClientRect();
+    const textarea = input.getBoundingClientRect();
+    return { rows: input.rows, inputWidth: textarea.width, inputHeight: textarea.height, boxWidth: box.width, boxHeight: box.height };
+  });
+}
 try {
   page = await browser.newPage({ width: 1440, height: 1000 });
+  const generalPage = await browser.newPage({ width: 1440, height: 1000 });
+  await generalPage.goto(base + "/__find?general", { settleMs: 400 });
+  for (const width of [390, 768, 1440, 1920]) {
+    await generalPage.setViewport({ width, height: 1000 });
+    generalSizes.set(width, await composerSize(generalPage));
+  }
+  await generalPage.close();
   let external = 0,
     posts = 0;
   await page.send("Network.enable");
@@ -158,6 +179,7 @@ try {
         ["outside.md", "회의 자료\n회의일: 2026-11-08"],
         ["conflict.md", "회의 자료\n회의일: 2026-10-15\n회의일: 2026-11-15"],
         ["bad.txt", new Uint8Array([0xc3, 0x28])],
+        ["unsupported.bin", "unsupported format"],
       ]) {
         const writer = await (
           await listingProbe.a.getFileHandle(name, { create: true })
@@ -169,8 +191,10 @@ try {
       listingProbe.preparing = false;
     }
   });
+  await click('[data-conversation-context] button:first-child');
   await click('[aria-label="자료 폴더 연결"] button');
-  await until(() => document.getElementById("message-draft"));
+  await until(() => document.querySelector('[data-folder-tree-root]') && [...document.querySelectorAll('button')].some(button => button.textContent === '다른 폴더 선택' && !button.disabled));
+  await click('[data-drawer-close]');
   await fill(
     "#message-draft",
     "내가 10월쯤 한 회의자료 있는데 그것좀 찾아줄래",
@@ -238,6 +262,11 @@ try {
   );
   for (const width of [390, 768, 1440, 1920]) {
     await page.setViewport({ width, height: 1000 });
+    const general = generalSizes.get(width);
+    const finding = await composerSize(page);
+    composerSizes.push({ width, general, finding });
+    writeFileSync(`${output}/composer-sizes.json`, JSON.stringify({ samples: composerSizes, condition: "Actual general/find product components in isolated Chromium; compares the input box and textarea, excluding task-specific notices above the form." }, null, 2));
+    check(`${width}: general and find composers have equal input and box dimensions`, Object.keys(general).every(key => Math.abs(general[key] - finding[key]) < 1));
     await page.eval(() => {
       document.querySelector('[aria-label="대화 내용"]').scrollTop = 0;
     });
@@ -295,7 +324,7 @@ try {
       return (
         text.includes("검색 범위 일부") &&
         text.includes("bad.txt") &&
-        text.includes("TXT·MD가 아닌 형식")
+        text.includes("TXT·MD·PDF가 아닌 형식")
       );
     }),
   );
@@ -364,7 +393,7 @@ try {
   await until(() => listingProbe.holds.length > 0);
   await page.eval(() =>
     [...document.querySelectorAll("button")]
-      .find((button) => button.textContent.includes("검색 중지"))
+      .find((button) => button.textContent.includes("작업 대기 중지"))
       .click(),
   );
   await page.eval(() => {
@@ -395,15 +424,16 @@ try {
     check(`${width}: shared request choice fits viewport`, await page.eval(() => document.documentElement.scrollWidth <= innerWidth));
     await page.screenshot({ path: `${output}/request-choice-${width}.png`, format: "png" });
   }
-  await click("[data-request-intent-choice] button:nth-of-type(3)");
+  await click("[data-request-intent-choice] button:last-child");
   await until(() => document.activeElement?.id === "message-draft");
   check("continuing to write preserves the mixed request", await page.eval(() => document.getElementById("message-draft").value === "회의 자료를 찾아서 정리해줘"));
   await click('[data-action="organization-send"]');
   await until(() => document.querySelector("[data-request-intent-choice]"));
   await click("[data-request-intent-choice] button:nth-of-type(1)");
   await until(() => document.querySelector("[data-document-find]")?.checkVisibility());
-  check("choosing search keeps the request but uses content words rather than organization commands", await page.eval(() => document.querySelector('[aria-label="본문 검색어"]').value === "회의" && document.getElementById("message-draft").value === "회의 자료를 찾아서 정리해줘"));
+  check("choosing search records the request and extracts content words without retaining a sent draft", await page.eval(() => document.querySelector('[aria-label="본문 검색어"]').value === "회의" && document.getElementById("message-draft").value === "" && document.body.textContent.includes("회의 자료를 찾아서 정리해줘")));
   check("choosing search still waits for explicit search confirmation", JSON.stringify(beforeChoice) === JSON.stringify(await page.eval(() => ({ scans: listingProbe.scans, reads: listingProbe.productBodyReads, calls: liveTransferProbe.calls.length }))));
+  await fill("#message-draft", mixed);
   await click('[data-action="organization-send"]');
   await until(() => document.querySelector("[data-request-intent-choice]"));
   await click("[data-request-intent-choice] button:nth-of-type(2)");
@@ -435,7 +465,7 @@ try {
   const beforePrepare = await page.eval(() => listingProbe.productBodyReads);
   await click('[data-find-prepare]');
   await until(() => document.querySelector('[data-local-preparation]')?.textContent.includes('late-evidence.md'));
-  check('preparation re-reads the selected source and does not transmit', await page.eval(before => listingProbe.productBodyReads > before && liveTransferProbe.calls.length === 0 && document.body.textContent.includes('선택한 1개'), beforePrepare));
+  check('preparation re-reads the selected source and does not transmit', await page.eval(before => listingProbe.productBodyReads > before && liveTransferProbe.calls.length === 0 && document.querySelector('[data-local-preparation]').textContent.includes('선택한 항목 1개'), beforePrepare));
   check('fresh preparation has no inherited transfer consent', await page.eval(() => !document.querySelector('[data-action="live-organization-send"]:not(:disabled)')));
   await page.screenshot({ path: `${output}/selected-preparation.png`, format: 'png', fullPage: true });
   await fill("#message-draft", "회의 자료");

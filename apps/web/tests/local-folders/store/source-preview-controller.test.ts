@@ -130,6 +130,6 @@ describe("preview UI lifetime with real session/reader", () => {
     await preview.open(["a.md"]); expect(preview.getSnapshot().issue).toBe("encoding");
     getFile.mockResolvedValueOnce(new File(["a".repeat(2097153)], "a.md"));
     await preview.refresh(); expect(preview.getSnapshot().issue).toBe("too-large");
-    await preview.open(["a.pdf"]); expect(preview.getSnapshot().issue).toBe("unsupported");
+    await preview.open(["a.exe"]); expect(preview.getSnapshot().issue).toBe("unsupported");
   });
 });

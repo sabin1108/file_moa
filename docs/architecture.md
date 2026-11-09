@@ -1,5 +1,15 @@
 # 기술 경계
 
+## 저장 대화의 자료 근거 — 2026-11-09
+
+완료된 자료 turn의 최소 근거 메타데이터를 로컬 AI 기록 형식으로 보존한다. `grounded-evidence`의 엄격한 스키마를 저장과 읽기 경계에서 공유하고 일반 모델 문맥에서 제외한다. `useGroundedConversation.openSavedCitation` → 공통 `SourcePreviewController` → `FolderConnectionSession.readSourceFile`에서 owner·연결·경로를 확인 → 기존 해시 Worker로 파일/인용문 및 재취득 바이트 확인 → 공통 미리보기 성공 뒤 `/files` 이동 순서다. 이동 취소 신호가 읽기 수명에도 연결되므로 취소된 본문이 파일 화면에 남지 않는다. 원본 전체 본문이나 핸들은 대화에 복제하지 않는다. [명세](specs/general-chat.md), [검증](verification/first-five/README.md).
+
+## 자료 없는 일반 채팅 스트림 — 2026-11-09
+
+`LiveConversation` 하나가 공통 대화와 입력을 소유한다. `useWorkspaceConversation`이 요청을 판별해 일반 스트림 또는 기존 검색/정리 controller로 연결하고 애매한 요청만 확인한다. 자료 UI는 `MaterialWorkPanel`과 기존 검색/준비/미리보기 컴포넌트를 재사용하며 전체 화면을 교체하지 않는다. owner 범위 `ConversationStateProvider`가 대화·초안·저장 선택을 유지한다. 일반 모델에는 완료된 일반 turn만 같은 origin `POST /api/chat`으로 보내며 로컬 작업 turn은 묵시적 문맥에서 제외한다. Route Handler → `server/chat`의 세션·Origin·입력·원자 공유 한도 → 공급자 count → 생성 직전 세션 재검사 → 공급자 스트림 정규화 → 검증된 SSE 이벤트 → store/reducer 순서다. 서버는 토큰별 DB 쓰기나 대화 본문 저장을 하지 않는다. 승인한 로컬 기록과 자료 전송 동의는 별도 경계다. [단일 대화 검증](verification/unified-conversation/README.md).
+
+이 경로만 브라우저 fetch 예외다. 초기 전체 인증은 새 Headers 식별자로 요청 메모이즈 재사용을 피한다. 이후 생성 전·각 본문 공개 전에는 정확한 서버 세션 snapshot·로그인 자격·이름·workspace/owner/연결 관계를 새로 SELECT한다. RLS caller 설정과 SELECT는 같은 짧은 transaction이며 작업 공간 준비는 반복하지 않는다. 공개 검사 시작 기준은100ms다. 검사 전에 본문/완료 묶음을 고정하고 검사 중 공급자는 계속 읽으며 새 본문은 다음 검사를 받는다. 마지막 본문과 완료는 함께 고정했을 때 한 검사로 승인한다. 브라우저는 실제 받은 본문만120~650ms 동안 frame별로 표시하고 표시가 끝나야 완료 이벤트를 확정한다. 중지·세션 오류의 미표시 본문은 버리고 단절은 승인된 부분 답변을 미완료로 보존한다. 자동 재전송과 모델 응답을 기다리는 전체 시간 동안 유지하는 DB transaction은 없다. 세부 계약은 [일반 채팅 명세](specs/general-chat.md), [최신 검증](verification/progressive-chat/README.md)을 따른다.
+
 ## AI 공급자 선택과 전송 확인 — 2026-11-08
 
 AI 공급자 연결 최신 개정: 샘플·정식은 서버의 공급자 설정과 같은 정리 지침·JSON Schema를 공유한다. page가 공급자 이름을 표시하고 Server Action에 고정하며 서비스는 예약 전에 현재 설정과 대조한다. 각 REST 어댑터는 공통 생성 입력을 변환한다. 인증·원본 재검사·멱등성·할당량·본문 근거 검증은 기존 경계에 남는다. [명세](specs/openai-provider.md), [검증](verification/openai-provider/README.md).

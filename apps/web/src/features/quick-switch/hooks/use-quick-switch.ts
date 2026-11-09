@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
-import { canStartQuickHold, clampQuickPosition, matchesQuickShortcut, parseQuickPreferences, quickDirection, QUICK_HOLD_MS, QUICK_SWITCH_EVENT } from "../lib/quick-switch";
+import { canStartQuickHold, clampQuickPosition, matchesQuickShortcut, parseQuickPreferences, quickDirection, QUICK_HOLD_MS } from "../lib/quick-switch";
 import { readQuickPreferences, serverQuickPreferences, subscribeQuickPreferences } from "../store/quick-preferences";
+import { subscribeQuickSwitch } from "../store/quick-requests";
 
 type Point = Readonly<{ x: number; y: number }>;
 type Menu = Readonly<{ position: Point; anchor: Point; active: number | null; trigger: "pointer" | "keyboard" | "click"; pointerId?: number; code?: string; route: string; host: HTMLElement }>;
@@ -82,11 +83,10 @@ export function useQuickSwitch(route: string, onChoose: (index: number) => void)
       setMenu(session.current);
     };
     const cancel = () => { clearPending(); close(false); };
-    const requestOpen = (event: Event) => {
+    const requestOpen = (point: Point) => {
       if (!activeScope() || blockedOverlay()) return;
       if (session.current) { close(); return; }
-      const point = (event as CustomEvent<Point>).detail;
-      open(point ?? { x: innerWidth / 2, y: innerHeight / 2 }, "click");
+      open(point, "click");
     };
     const down = (event: PointerEvent) => {
       clearPending();
@@ -155,7 +155,7 @@ export function useQuickSwitch(route: string, onChoose: (index: number) => void)
     const keyUp = (event: KeyboardEvent) => {
       if (session.current?.trigger === "keyboard" && event.code === session.current.code) choose(session.current.active);
     };
-    window.addEventListener(QUICK_SWITCH_EVENT, requestOpen);
+    const unsubscribeRequests = subscribeQuickSwitch(requestOpen);
     window.addEventListener("pointerdown", down, true);
     window.addEventListener("pointermove", move, true);
     window.addEventListener("pointerup", up, true);
@@ -171,7 +171,7 @@ export function useQuickSwitch(route: string, onChoose: (index: number) => void)
     return () => {
       clearPending();
       close(false);
-      window.removeEventListener(QUICK_SWITCH_EVENT, requestOpen);
+      unsubscribeRequests();
       window.removeEventListener("pointerdown", down, true);
       window.removeEventListener("pointermove", move, true);
       window.removeEventListener("pointerup", up, true);

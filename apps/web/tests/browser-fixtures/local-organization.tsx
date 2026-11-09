@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { SourceFolderProvider } from "../../src/features/local-folders/providers/SourceFolderProvider";
 import { LiveConversation } from "../../src/features/conversation-workspace/components/LiveConversation";
+import { ConversationStateProvider } from "../../src/features/conversation-workspace/providers/ConversationStateProvider";
 import { SourceFolderSettings } from "../../src/features/local-folders/components/connection/SourceFolderSettings";
 import { SourceFolderBrowser } from "../../src/features/local-folders/components/listing/SourceFolderBrowser";
 import "../../src/styles/globals.css";
@@ -32,13 +33,15 @@ function Fixture() {
         </button>
       </div>
       <SourceFolderProvider key={owner} owner={owners[owner]}>
+        <ConversationStateProvider>
         {view === "chat" ? (
-          <LiveConversation organizeAction={organizeAction} />
+          <LiveConversation aiProvider="openai" organizeAction={organizeAction} />
         ) : view === "files" ? (
           <div data-workspace-quick-menu className={`${ui.system} ${files.theme}`}><SourceFolderBrowser /></div>
         ) : (
           <SourceFolderSettings />
         )}
+        </ConversationStateProvider>
       </SourceFolderProvider>
       <WorkspaceQuickSwitch />
     </>

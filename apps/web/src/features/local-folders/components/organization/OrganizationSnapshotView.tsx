@@ -14,7 +14,11 @@ import { actionClasses } from "../../../../components/ui/action-classes";
 import { hasUnansweredReview } from "../../../../shared/live-organization-review";
 
 const reasons: Record<string, string> = {
-  "unsupported-extension": "TXT/MD가 아닌 형식",
+  "unsupported-extension": "TXT/MD/PDF가 아닌 형식",
+  "pdf-no-text": "이미지 PDF · OCR이 필요함",
+  "pdf-encrypted": "암호가 설정된 PDF",
+  "pdf-invalid": "PDF를 읽을 수 없음",
+  "pdf-text-limit": "PDF 50쪽·200,000자 추출 상한",
   "too-large": "파일당 2MiB 초과",
   "invalid-utf8": "UTF-8로 읽을 수 없음",
   "unreadable-file": "파일 읽기 실패",
@@ -100,7 +104,7 @@ export function OrganizationSnapshotView({
         )}
         {snapshot.documents.length === 0 && (
           <p>
-            읽을 수 있는 TXT/MD가 없습니다. 제외 내역을 확인하거나 범위를 바꿔
+            읽을 수 있는 TXT/MD/PDF가 없습니다. 제외 내역을 확인하거나 범위를 바꿔
             주세요.
           </p>
         )}
@@ -200,7 +204,7 @@ export function OrganizationSnapshotView({
             않습니다.
           </p>
           <p className={styles.note}>
-            작업 공간·계정당 시간당 3회, 샘플과 합쳐 분당 1회·시간당 12회
+            작업 공간·계정당 시간당 10회, 샘플과 합쳐 분당 1회·시간당 12회
             한도입니다. 입력은 최대 8,192토큰, 출력은 최대 3,200토큰입니다.
             선택한 공급자에서 입력 토큰을 계산한 뒤 한도를 넘으면 생성을 중단하며 자동
             재시도하지 않습니다. 전송 후 중지해도 이미 호출한 사용량은 반환되지

@@ -10,7 +10,11 @@ export async function getAuthenticatedWorkspace(headers: Headers) {
     throw new Error("Authentication required.");
   }
 
-  const userId = session.user.id;
+  return getWorkspaceForAuthenticatedUser(session.user.id);
+}
+
+/** Called only after a fresh server session has authenticated this user. */
+export async function getWorkspaceForAuthenticatedUser(userId: string) {
 
   return getDatabase().$transaction(async transaction => {
     await transaction.$executeRaw`SELECT set_config('moa.user_id', ${userId}, true)`;

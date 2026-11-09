@@ -10,40 +10,27 @@ import { SettingsTabs } from "../../../components/layout/SettingsTabs";
 import { headers } from "next/headers";
 import { readSettingsDisplay } from "../../../server/settings-display";
 import { socialErrorMessage } from "../../../server/auth-social";
-import { socialAccountAction, connectExistingAccountAction, selectConnectedWorkspaceAction, disconnectAccountConnectionAction } from "../../actions/auth";
+import { accountDeletionAction, socialAccountAction, connectExistingAccountAction, selectConnectedWorkspaceAction, disconnectAccountConnectionAction } from "../../actions/auth";
 import { AccountLoginSettings } from "../../../features/auth/components/AccountLoginSettings";
 import { AccountConnectionSettings } from "../../../features/auth/components/AccountConnectionSettings";
+import { AccountDeletionSettings } from "../../../features/auth/components/AccountDeletionSettings";
 import { requireAccountSession } from "../../../server/session-guards";
 import { QuickSwitchSettings } from "../../../features/quick-switch/components/QuickSwitchSettings";
 import { SourceFolderTree } from "../../../features/local-folders/components/listing/SourceFolderTree";
+import { Suspense } from "react";
 
-export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  await requireAccountSession();
-  const params = await searchParams;
-  const requestHeaders = await headers();
-  const { account, connection } = await readSettingsDisplay(requestHeaders);
+type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
+
+export default function Page({ searchParams }: Props) {
   return (
     <WorkspaceShell title="설정" active="settings" folderTree={<SourceFolderTree />}>
       <div className={`${ui.canvas} ${styles.settingsCanvas}`}>
         <SettingsTabs
           panels={{
             account: (
-              <>
-                <AccountLoginSettings
-                  account={account}
-                  action={socialAccountAction}
-                  notice={socialErrorMessage(params.error)}
-                />
-                <AccountConnectionSettings
-                  connection={connection}
-                  canConnect={
-                    !account.hasPassword && account.providers.some(provider => provider.connected)
-                  }
-                  connectAction={connectExistingAccountAction}
-                  selectAction={selectConnectedWorkspaceAction}
-                  disconnectAction={disconnectAccountConnectionAction}
-                />
-              </>
+              <Suspense fallback={<p role="status">계정 정보를 불러오고 있어요.</p>}>
+                <AccountSettings searchParams={searchParams} />
+              </Suspense>
             ),
             folders: <SourceFolderSettings />,
             editor: <EditorSettings />,
@@ -53,4 +40,21 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       </div>
     </WorkspaceShell>
   );
+}
+
+async function AccountSettings({ searchParams }: Props) {
+  await requireAccountSession();
+  const params = await searchParams;
+  const { account, connection } = await readSettingsDisplay(await headers());
+  return <>
+    <AccountLoginSettings account={account} action={socialAccountAction} notice={socialErrorMessage(params.error)} />
+    <AccountConnectionSettings
+      connection={connection}
+      canConnect={!account.hasPassword && account.providers.some(provider => provider.connected)}
+      connectAction={connectExistingAccountAction}
+      selectAction={selectConnectedWorkspaceAction}
+      disconnectAction={disconnectAccountConnectionAction}
+    />
+    <AccountDeletionSettings connection={connection} action={accountDeletionAction} />
+  </>;
 }

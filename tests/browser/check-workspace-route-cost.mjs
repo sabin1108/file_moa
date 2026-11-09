@@ -15,6 +15,8 @@ try {
     const samples = [];
     for (let run = 0; run < 3; run++) {
       await page.goto(base + route, { settleMs: 200 });
+      for (let attempt = 0; attempt < 200 && !await page.eval(() => performance.getEntriesByType("navigation")[0]?.domContentLoadedEventEnd > 0); attempt++) await new Promise(resolve => setTimeout(resolve, 25));
+      assert.ok(await page.eval(() => performance.getEntriesByType("navigation")[0]?.domContentLoadedEventEnd > 0), "Navigation timing must finish before sampling");
       samples.push(await page.eval(() => {
         const n = performance.getEntriesByType("navigation")[0];
         return { path: location.pathname, ttfbMs: Math.round(n.responseStart - n.requestStart), domContentLoadedMs: Math.round(n.domContentLoadedEventEnd - n.startTime), responseBytes: n.transferSize };
@@ -31,7 +33,8 @@ try {
 } finally { await browser.close(); }
 const walk = directory => readdirSync(directory).flatMap(name => { const path = join(directory, name); return statSync(path).isDirectory() ? walk(path) : [path]; });
 const assets = walk("apps/web/.next/static").filter(path => /\.(js|css)$/u.test(path));
-const before = JSON.parse(readFileSync("docs/verification/request-routing/assets.json", "utf8")).after;
+const baseline = JSON.parse(readFileSync(process.argv[4] ?? "docs/verification/request-routing/assets.json", "utf8"));
+const before = baseline.after ?? baseline;
 const after = { buildId: readFileSync("apps/web/.next/BUILD_ID", "utf8").trim(), bytes: assets.reduce((sum, path) => sum + statSync(path).size, 0), files: assets.length };
 writeFileSync(`${output}/routes-assets.json`, JSON.stringify({ condition: "Local production Chromium lab, one cold then two warm navigations per route, 1440px. Protected routes are guest redirects, not authenticated performance. No before route timing, field INP or infrastructure cost claim.", checks, routes, before, after, deltaBytes: after.bytes - before.bytes }, null, 2) + "\n");
 console.log(JSON.stringify({ checks, before, after, deltaBytes: after.bytes - before.bytes }));

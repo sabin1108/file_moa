@@ -10,6 +10,21 @@ function fixture(rows: unknown[][]) {
   return { query, cleanup, store: createAuthRateLimiter(() => database, "fixture-auth-secret") };
 }
 describe("shared authentication limiter", () => {
+  it("reserves five rules with one bound SQL statement and hashed keys only", async () => {
+    const query = vi.fn(async (_sql: TemplateStringsArray, json: string) => {
+      return (JSON.parse(json) as { key: string }[]).map(rule => ({ key: rule.key }));
+    });
+    const cleanup = vi.fn().mockResolvedValue({ count: 0 });
+    const transaction = vi.fn(async (run: (value: { $queryRaw: typeof query }) => Promise<unknown>) => run({ $queryRaw: query }));
+    const database = { $transaction: transaction, rateLimit: { deleteMany: cleanup } } as unknown as PrismaClient;
+    const rules = Array.from({ length: 5 }, (_, index) => ({ key: `private-fixture-${index}`, max: 10, window: 3600 }));
+    expect(await createAuthRateLimiter(() => database, "fixture-auth-secret").consumeAll(rules)).toMatchObject({ allowed: true });
+    expect(query).toHaveBeenCalledOnce();
+    expect(transaction).toHaveBeenCalledOnce();
+    expect(cleanup).toHaveBeenCalledOnce();
+    expect(query.mock.calls[0][1]).not.toContain("private-fixture");
+  });
+
   it("uses an atomic database operation and never stores the raw request key", async () => {
     const { store, query } = fixture([[{ lastRequest: 1n }]]);
     expect(await store.consume("192.0.2.1:/sign-in/email", { max: 5, window: 60 })).toEqual({ allowed: true, retryAfter: null });
@@ -32,6 +47,15 @@ describe("shared authentication limiter", () => {
     const cleanup = vi.fn().mockResolvedValue({ count: 0 });
     const query = vi.fn(async (_strings: TemplateStringsArray, ...values: unknown[]) => {
       if (_strings.join("").includes("SELECT greatest")) return [{ retryAfter: 60 }];
+      if (_strings.join("").includes("jsonb_to_recordset")) {
+        const rules = JSON.parse(String(values[0])) as { key: string; maximum: number }[];
+        return rules.flatMap(rule => {
+          const count = records.get(rule.key) ?? 0;
+          if (count >= rule.maximum) return [];
+          records.set(rule.key, count + 1);
+          return [{ key: rule.key }];
+        });
+      }
       const key = String(values[1]);
       const maximum = Number(values.at(-1));
       const count = records.get(key) ?? 0;

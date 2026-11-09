@@ -188,7 +188,7 @@ try {
       await write(child, "혼합.txt", "회사 성능 테스트와 개인 학습이 섞여 있습니다. 성능 측정 결과 LCP 2.6초와 학습 노트입니다.");
       const reference = await root.getDirectoryHandle("참고", { create: true });
       await reference.getDirectoryHandle("월별", { create: true });
-      await write(reference, "본문아님.pdf", "Reference metadata must never expose this body.");
+      await write(reference, "본문아님.bin", "Reference metadata must never expose this body.");
       const destination = await root.getDirectoryHandle("정리", { create: true });
       const dates = await destination.getDirectoryHandle("날짜자료", { create: true });
       await dates.getDirectoryHandle("2026-10-15", { create: true });
@@ -197,9 +197,9 @@ try {
     } finally { listingProbe.preparing = false; }
   });
   await click('[aria-label="자료 폴더 연결"] button');
-  await until(() => document.getElementById("message-draft"));
+  await until(() => [...document.querySelectorAll('[aria-label="자료 폴더 연결"] button')].some(button => button.textContent === "다른 폴더 선택" && !button.disabled));
   await click('[data-fixture-view="settings"]');
-  await until(() => [...document.querySelectorAll("button")].some(button => button.textContent === "새 보관함 만들기"));
+  await until(() => [...document.querySelectorAll("button")].some(button => button.textContent === "새 보관함 만들기" && !button.disabled));
   await page.eval(() => { listingProbe.name = "검증 자료 B"; });
   await clickText("새 보관함 만들기");
   await clickText("만들 위치 선택");
@@ -214,12 +214,17 @@ try {
   await until(() => document.querySelector("[data-local-snapshot]"));
   for (const width of [390, 768, 1440, 1920]) {
     await page.setViewport({ width, height: 1000 }); await pause(200);
-    check(`${width}: preparation stays in the conversation without a material dialog or horizontal overflow`, await page.eval(() => !!document.querySelector('[data-conversation-interaction] [data-live-send]') && !document.querySelector('dialog[open]') && document.documentElement.scrollWidth <= innerWidth));
+    check(`${width}: preparation stays in the conversation without a material dialog or horizontal overflow`, await page.eval(() => !!document.querySelector('[data-conversation-workspace] [data-live-send]') && !document.querySelector('dialog[open]') && document.documentElement.scrollWidth <= innerWidth));
     await page.screenshot({ path: `${output}/ready-${width}.png`, format: "png", fullPage: true });
   }
   await page.setViewport({ width: 1440, height: 1000 });
   check("natural language resolves root scope, separate reference and destination without a scope wizard", await page.eval(() => document.querySelector('[aria-label="현재 탐색 범위"]').textContent.includes("전체") && document.querySelector("[data-local-preparation]").textContent.includes("참고: 검증 자료 A / 참고 · 목적지: 검증 자료 A / 정리")));
-  check("confirmed reference metadata contains directories, not file names or bodies", await page.eval(() => document.querySelector("[data-reference-structure]").textContent.includes("월별") && !document.querySelector("[data-reference-structure]").textContent.includes("본문아님.pdf")));
+  check("confirmed reference metadata contains directories, not file names or bodies", await page.eval(() => document.querySelector("[data-reference-structure]").textContent.includes("월별") && !document.querySelector("[data-reference-structure]").textContent.includes("본문아님.bin")));
+  const partial = await page.eval(() => [...document.querySelectorAll('[data-local-snapshot] label')].some(label => label.textContent.includes('전체가 아닌, 확인한 일부 자료만')));
+  if (partial) {
+    check("partial source preparation still requires explicit acknowledgement", await page.eval(() => document.querySelector('[data-local-consent]').disabled));
+    await page.eval(() => [...document.querySelectorAll('[data-local-snapshot] label')].find(label => label.textContent.includes('전체가 아닌, 확인한 일부 자료만')).querySelector('input').click());
+  }
   await click("[data-local-consent]");
   await click("[data-live-send]");
   await until(() => document.querySelector("[data-review-questions]"));
@@ -230,7 +235,7 @@ try {
   }));
   check("unanswered questions cannot obtain a new transmission consent", await page.eval(() => document.querySelector("[data-local-consent]").disabled));
   if (process.argv.includes("--reply")) {
-    check("questions switch the shared composer to an empty reply draft", await page.eval(() => document.getElementById("message-draft").value === "" && document.querySelector('[data-action="organization-send"]').textContent.includes("답변 반영")));
+    check("questions retain the same empty shared composer", await page.eval(() => document.getElementById("message-draft").value === "" && document.querySelector('[data-action="organization-send"]').textContent.includes("보내기")));
     await fill("#message-draft", "검토 기준일로, 혼합.txt는 알아서");
     await click('[data-action="organization-send"]');
     check("unsupported clause leaves every answer and first proposal intact", await page.eval(() => !!document.querySelector('[data-live-result]') && document.querySelector('[aria-label="날짜보고.md 날짜 기준"]').value === "" && document.querySelector('[data-local-consent]').disabled && liveTransferProbe.calls.length === 1));

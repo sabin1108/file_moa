@@ -7,7 +7,11 @@ import type { FindResult } from "../../lib/document-find";
 import styles from "./organization-preparation.module.css";
 
 const reasons: Record<string, string> = {
-  "unsupported-extension": "TXT·MD가 아닌 형식",
+  "unsupported-extension": "TXT·MD·PDF가 아닌 형식",
+  "pdf-no-text": "이미지 PDF · OCR이 필요함",
+  "pdf-encrypted": "암호가 설정된 PDF",
+  "pdf-invalid": "PDF를 읽을 수 없음",
+  "pdf-text-limit": "PDF 50쪽·200,000자 추출 상한",
   "invalid-utf8": "UTF-8로 읽을 수 없음",
   "too-large": "파일 크기 한도 초과",
   "unreadable-file": "파일 읽기 실패",

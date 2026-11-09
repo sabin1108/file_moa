@@ -4,7 +4,7 @@ import { useActionState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ActionLink } from "../../../components/ui/ActionLink";
 import { actionClasses } from "../../../components/ui/action-classes";
-import { WorkflowStepper } from "../../../components/ui/WorkflowStepper";
+import { PaperStepper } from "../../../components/ui/PaperStepper";
 import { StatusNotice } from "../../../components/ui/feedback/StatusNotice";
 import type { AuthFormAction, AuthFormState } from "../../../shared/auth-contract";
 import { useSignupFlow } from "../hooks/useSignupFlow";
@@ -37,7 +37,7 @@ export function SignupScreen({ action }: { action: AuthFormAction; providers?: r
     <section className={`${styles.form} ${styles.signupForm}`} aria-labelledby="auth-title">
       <h1 id="auth-title">모아 계정 만들기</h1>
       <p>이메일부터 입력해 주세요. 표시 이름은 가입을 마친 뒤 정합니다.</p>
-      <WorkflowStepper {...progress} />
+      <PaperStepper {...progress} />
       {state.message && (
         <StatusNotice
           state={success ? "success" : "error"}
@@ -72,11 +72,7 @@ export function SignupScreen({ action }: { action: AuthFormAction; providers?: r
             {fields.map(field => {
               const identity = field.name === "email" ? field.name : undefined;
               return (
-                <div
-                  key={field.name}
-                  className={field.name === "email" ? undefined : styles.revealedField}
-                >
-                  <div>
+                <div key={field.name}>
                     <AuthInput
                       field={field}
                       error={
@@ -128,7 +124,6 @@ export function SignupScreen({ action }: { action: AuthFormAction; providers?: r
                         }
                       }}
                     />
-                  </div>
                 </div>
               );
             })}

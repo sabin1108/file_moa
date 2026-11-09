@@ -1,0 +1,73 @@
+{
+  "samples": [
+    {
+      "width": 390,
+      "general": {
+        "rows": 3,
+        "inputWidth": 332,
+        "inputHeight": 83.171875,
+        "boxWidth": 362,
+        "boxHeight": 147.171875
+      },
+      "finding": {
+        "rows": 3,
+        "inputWidth": 332,
+        "inputHeight": 83.171875,
+        "boxWidth": 362,
+        "boxHeight": 147.171875
+      }
+    },
+    {
+      "width": 768,
+      "general": {
+        "rows": 3,
+        "inputWidth": 682,
+        "inputHeight": 83.171875,
+        "boxWidth": 712,
+        "boxHeight": 143.171875
+      },
+      "finding": {
+        "rows": 3,
+        "inputWidth": 682,
+        "inputHeight": 83.171875,
+        "boxWidth": 712,
+        "boxHeight": 143.171875
+      }
+    },
+    {
+      "width": 1440,
+      "general": {
+        "rows": 3,
+        "inputWidth": 694,
+        "inputHeight": 83.171875,
+        "boxWidth": 724,
+        "boxHeight": 143.171875
+      },
+      "finding": {
+        "rows": 3,
+        "inputWidth": 694,
+        "inputHeight": 83.171875,
+        "boxWidth": 724,
+        "boxHeight": 143.171875
+      }
+    },
+    {
+      "width": 1920,
+      "general": {
+        "rows": 3,
+        "inputWidth": 694,
+        "inputHeight": 83.171875,
+        "boxWidth": 724,
+        "boxHeight": 143.171875
+      },
+      "finding": {
+        "rows": 3,
+        "inputWidth": 694,
+        "inputHeight": 83.171875,
+        "boxWidth": 724,
+        "boxHeight": 143.171875
+      }
+    }
+  ],
+  "condition": "Actual general/find product components in isolated Chromium; compares the input box and textarea, excluding task-specific notices above the form."
+}

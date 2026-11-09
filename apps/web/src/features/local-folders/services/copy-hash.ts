@@ -9,7 +9,10 @@ export type TextFileSnapshot = Readonly<{
   excerpt: string;
   excerptHash: string;
   finding?: FindEvidence | null;
+  pdf?: Readonly<{ pages: number; complete: boolean }>;
+  fullText?: string;
 }>;
+export type TextIndexContext = Readonly<{ owner: string; workspace: string; connection: string; path: readonly string[] }>;
 
 /** Owns one Worker per inspection, with at most one pending file. Abort releases the Worker immediately. */
 export function createCopyHasher(signal?: AbortSignal) {
@@ -33,6 +36,8 @@ export function createCopyHasher(signal?: AbortSignal) {
     file: File,
     instruction?: string,
     find?: FindQuery,
+    index?: TextIndexContext,
+    cached?: { hash: string; text: string },
   ): Promise<TextFileSnapshot | { sha256: string; size: number }> => {
     if (signal?.aborted || disposed)
       return Promise.reject(
@@ -72,8 +77,8 @@ export function createCopyHasher(signal?: AbortSignal) {
             settle(new Error("hash-read-failed"));
           } else if (instruction === undefined) {
             settle(undefined, { sha256: data.sha256, size: file.size });
-          } else if ("issue" in data && data.issue === "invalid-utf8") {
-            settle(new Error("invalid-utf8"), undefined, false);
+          } else if ("issue" in data && typeof data.issue === "string") {
+            settle(new Error(data.issue), undefined, false);
           } else if (
             "excerpt" in data &&
             typeof data.excerpt === "string" &&
@@ -94,6 +99,8 @@ export function createCopyHasher(signal?: AbortSignal) {
               size: file.size,
               excerpt: data.excerpt,
               excerptHash: data.excerptHash,
+              ...( "pdf" in data && data.pdf && typeof data.pdf === "object" ? { pdf: data.pdf as { pages: number; complete: boolean } } : {}),
+              ...( "fullText" in data && typeof data.fullText === "string" ? { fullText: data.fullText } : {}),
               ...(find && "finding" in data
                 ? { finding: data.finding as FindEvidence | null }
                 : {}),
@@ -106,7 +113,7 @@ export function createCopyHasher(signal?: AbortSignal) {
         worker.postMessage(
           instruction === undefined
             ? file
-            : { file, instruction, ...(find ? { find } : {}) },
+            : { file, instruction, ...(find ? { find } : {}), ...(index ? { index } : {}), ...(cached ? { cached } : {}) },
         );
       } catch {
         settle(new Error("unsupported-hash"));
@@ -115,8 +122,8 @@ export function createCopyHasher(signal?: AbortSignal) {
   };
   return {
     hash: async (file: File) => (await request(file)).sha256,
-    readText: async (file: File, instruction: string, find?: FindQuery) =>
-      (await request(file, instruction, find)) as TextFileSnapshot,
+    readText: async (file: File, instruction: string, find?: FindQuery, index?: TextIndexContext, cached?: { hash: string; text: string }) =>
+      (await request(file, instruction, find, index, cached)) as TextFileSnapshot,
     dispose,
   };
 }

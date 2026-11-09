@@ -1,0 +1,14 @@
+{
+  "condition": "One successful real user chat in the recording interval, observed before this request's optimization. No prompt, answer, cookie, identity, database host or provider secret stored. The recording and log were compared by interval, without recording a private body or request-ID link.",
+  "recordingDurationSeconds": 25.367367,
+  "recordingSendIntervalSeconds": [10.5, 11],
+  "recordingFirstVisibleTextIntervalSeconds": [21.5, 22],
+  "recordingCompletionApproxSeconds": [23, 24],
+  "preflightMs": 4544,
+  "firstProviderTextMs": 9973,
+  "firstPublishedMs": 10987,
+  "streamElapsedMs": 7340,
+  "authorizationChecks": 4,
+  "authorizationTotalMs": 3598,
+  "httpRequestApproxMs": 12100
+}

@@ -14,6 +14,8 @@ import {
 } from "../shared/live-organization-review";
 import type { LiveOrganizationResult } from "../shared/live-organization";
 import { reportLiveAi, type LiveAiDiagnostic } from "./live-ai-diagnostics";
+import { startUsage, finishUsage } from "./ai-usage";
+import type { SampleAiUsage } from "../shared/sample-ai";
 
 const segment = z
   .string()
@@ -76,7 +78,7 @@ const inputSchema = z.strictObject({
     .array(
       z.strictObject({
         id: z.string().regex(/^document-[1-9]\d{0,2}$/u),
-        name: segment.refine(name => /\.(txt|md)$/iu.test(name)),
+        name: segment.refine(name => /\.(txt|md|pdf)$/iu.test(name)),
         path: path.min(1),
         excerpt: z.string().max(1200),
         excerptHash: hash,
@@ -86,7 +88,8 @@ const inputSchema = z.strictObject({
           .int()
           .min(0)
           .max(2 * 1024 * 1024),
-        lastModified: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER)
+        lastModified: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER),
+        pdf: z.strictObject({ pages: z.number().int().positive().max(1000000), complete: z.boolean() }).optional(),
       })
     )
     .min(1)
@@ -101,6 +104,7 @@ export async function organizeLive(
 ): Promise<LiveOrganizationResult> {
   const started = performance.now();
   let diagnostic: LiveAiDiagnostic | undefined;
+  let tracked: { session: Awaited<ReturnType<typeof requireWorkspace>>; requestId: string; model: string | null; usage: SampleAiUsage | null } | null = null;
   try {
     let session: Awaited<ReturnType<typeof requireWorkspace>>;
     try {
@@ -143,7 +147,7 @@ export async function organizeLive(
         document.name !== document.path.at(-1) ||
         ids.has(document.id) ||
         paths.has(key) ||
-        Buffer.byteLength(document.excerpt, "utf8") > document.size ||
+        (!/\.pdf$/iu.test(document.name) && Buffer.byteLength(document.excerpt, "utf8") > document.size) ||
         createHash("sha256").update(document.excerpt).digest("hex") !== document.excerptHash
       )
         return { ok: false, code: "input" };
@@ -178,8 +182,8 @@ export async function organizeLive(
     // Failed/cancelled calls may already have reached the provider; reservations are never refunded.
     const reservation = await quota.consumeAll([
       { key: `live-ai-v1:request:${session.workspaceId}:${input.requestId}`, max: 1, window: 3600 },
-      { key: `live-ai-v1:workspace:${session.workspaceId}`, max: 3, window: 3600 },
-      { key: `live-ai-v1:user:${session.sessionUserId}`, max: 3, window: 3600 },
+      { key: `live-ai-v1:workspace:${session.workspaceId}`, max: 10, window: 3600 },
+      { key: `live-ai-v1:user:${session.sessionUserId}`, max: 10, window: 3600 },
       { key: "sample-ai-v1:global-minute", max: 1, window: 60 },
       { key: "sample-ai-v1:global-hour", max: 12, window: 3600 }
     ]);
@@ -187,6 +191,8 @@ export async function organizeLive(
       diagnostic.outcome = "limit";
       return { ok: false, code: "limit", retryAfter: reservation.retryAfter ?? 60 };
     }
+    await startUsage(session, input.requestId, provider, "organize");
+    tracked = { session, requestId: input.requestId, model: null, usage: null };
     const assertSession = async () => {
       let current: typeof session;
       try {
@@ -233,6 +239,8 @@ export async function organizeLive(
     };
     diagnostic.stage = "generation";
     const result = await generateOrganization(request, AbortSignal.timeout(timeout), provider);
+    tracked.model = result.model;
+    tracked.usage = result.usage;
     diagnostic.usage = result.usage;
     diagnostic.stage = "session";
     await assertSession();
@@ -252,6 +260,10 @@ export async function organizeLive(
     if (diagnostic) diagnostic.outcome = code;
     return { ok: false, code };
   } finally {
+    if (tracked) {
+      try { await finishUsage(tracked.session, tracked.requestId, tracked.model, tracked.usage); }
+      catch { console.error("AI usage settlement unavailable."); }
+    }
     if (diagnostic) reportLiveAi({ ...diagnostic, elapsedMs: Math.round(performance.now() - started) });
   }
 }

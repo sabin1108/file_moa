@@ -1,0 +1,7 @@
+{
+  "condition": "Actual old full guard and new fresh guard/workspace code with fixed 80ms per mocked I/O and 40ms transaction boundaries. No production/user/model latency claim.",
+  "beforeMs": 560,
+  "afterMs": 240,
+  "previousAuthReads": 2,
+  "previousPreparations": 1
+}

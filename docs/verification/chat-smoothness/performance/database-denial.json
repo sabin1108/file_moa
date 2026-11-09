@@ -1,0 +1,6 @@
+{
+  "at": "2026-11-09T01:38:41.437Z",
+  "passed": true,
+  "elapsedMs": 2365,
+  "condition": "Actual configured runtime role/TLS; SELECT plus transaction-local caller context, synthetic nonexistent identities. No writes, private rows returned/logged, model calls, or live valid-session/cross-user proof."
+}

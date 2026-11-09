@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { CheckAuthSessionAction } from "../../../shared/auth-contract";
-import { authSessionSource, AUTH_SESSION_CHANGED, AUTH_SESSION_STORAGE_KEY } from "../../../shared/auth-session-events";
-import { clearSignupDraft } from "../lib/signup-flow";
+import { authSessionSource, subscribeAuthSessionChange, AUTH_SESSION_CHANGED, AUTH_SESSION_STORAGE_KEY } from "../../../shared/auth-session-events";
+import { clearSignupDraft } from "../store/signup-draft";
 
 export function GuestSessionObserver({ checkSessionAction }: { checkSessionAction: CheckAuthSessionAction }) {
   const router = useRouter();
@@ -23,17 +23,22 @@ export function GuestSessionObserver({ checkSessionAction }: { checkSessionActio
     };
     const visible = () => { if (document.visibilityState === "visible") void check(); };
     const storage = (event: StorageEvent) => { if (event.key === AUTH_SESSION_STORAGE_KEY) void check(); };
-    const channel = typeof BroadcastChannel === "undefined" ? undefined : new BroadcastChannel(AUTH_SESSION_CHANGED);
-    if (channel) channel.onmessage = event => { if (event.data?.type === "changed" && event.data.source !== authSessionSource()) void check(); };
-    window.addEventListener(AUTH_SESSION_CHANGED, check);
+    let channel: BroadcastChannel | undefined;
+    try {
+      if (typeof BroadcastChannel !== "undefined") {
+        channel = new BroadcastChannel(AUTH_SESSION_CHANGED);
+        channel.onmessage = event => { if (event.data?.type === "changed" && event.data.source !== authSessionSource()) void check(); };
+      }
+    } catch { /* Storage and lifecycle checks still revalidate authentication. */ }
+    const unsubscribeChanged = subscribeAuthSessionChange(check);
     window.addEventListener("storage", storage);
     window.addEventListener("focus", visible);
     window.addEventListener("pageshow", visible);
     document.addEventListener("visibilitychange", visible);
     return () => {
       ++sequence;
-      channel?.close();
-      window.removeEventListener(AUTH_SESSION_CHANGED, check);
+      try { channel?.close(); } catch { /* Remaining subscriptions must still be released. */ }
+      unsubscribeChanged();
       window.removeEventListener("storage", storage);
       window.removeEventListener("focus", visible);
       window.removeEventListener("pageshow", visible);

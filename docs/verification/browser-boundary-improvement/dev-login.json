@@ -1,0 +1,49 @@
+{
+  "condition": "Isolated Chromium without account cookies; actual local Next dev server, six one-second samples and public session API; no sign-in credentials or model call",
+  "requests": [
+    {
+      "path": "/login",
+      "method": "GET",
+      "type": "Document"
+    }
+  ],
+  "reloadReasons": [],
+  "reloadCount": 0,
+  "samples": [
+    {
+      "path": "/login",
+      "formVisible": true,
+      "loading": false
+    },
+    {
+      "path": "/login",
+      "formVisible": true,
+      "loading": false
+    },
+    {
+      "path": "/login",
+      "formVisible": true,
+      "loading": false
+    },
+    {
+      "path": "/login",
+      "formVisible": true,
+      "loading": false
+    },
+    {
+      "path": "/login",
+      "formVisible": true,
+      "loading": false
+    },
+    {
+      "path": "/login",
+      "formVisible": true,
+      "loading": false
+    }
+  ],
+  "exceptions": [],
+  "sessionProbe": {
+    "status": 200,
+    "anonymous": true
+  }
+}

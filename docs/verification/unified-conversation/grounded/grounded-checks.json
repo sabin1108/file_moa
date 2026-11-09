@@ -1,0 +1,65 @@
+{
+  "checks": [
+    {
+      "name": "consent is required before transmission",
+      "pass": true
+    },
+    {
+      "name": "changing the question invalidates previous consent",
+      "pass": true
+    },
+    {
+      "name": "verified answer includes an exact source quotation",
+      "pass": true
+    },
+    {
+      "name": "citation opens the shared full document preview",
+      "pass": true
+    },
+    {
+      "name": "citation and save controls survive the file preview round trip",
+      "pass": true
+    },
+    {
+      "name": "a new conversation cancels a pending citation navigation",
+      "pass": true
+    },
+    {
+      "name": "source changes during generation suppress the answer",
+      "pass": true
+    },
+    {
+      "name": "cancelled action cannot publish a late answer",
+      "pass": true
+    },
+    {
+      "name": "cancelling an action immediately permits a new request",
+      "pass": true
+    },
+    {
+      "name": "an old action cannot unlock or complete the new request",
+      "pass": true
+    },
+    {
+      "name": "revoked source permission blocks publication",
+      "pass": true
+    },
+    {
+      "name": "invalid action citations fail safely at the client boundary",
+      "pass": true
+    },
+    {
+      "name": "narrow material question does not overflow",
+      "pass": true
+    },
+    {
+      "name": "changed source before sending never reaches the action",
+      "pass": true
+    },
+    {
+      "name": "owner change discards the previous owner's pending answer",
+      "pass": true
+    }
+  ],
+  "condition": "Actual product components/session/hash Worker and isolated OPFS; synthetic Server Action and permissions; no live model or native permission claims."
+}

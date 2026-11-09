@@ -78,7 +78,7 @@ describe("classification fixture integrity (not model accuracy)", () => {
 
   it("keeps sample binary support separate from the production document reader", () => {
     for (const document of dataset.documents.filter(d => d.format === "pdf" || d.format === "xlsx")) {
-      expect(checkDocumentCandidate(path.basename(document.file), readFileSync(path.join(root, document.file)).length)).toBe("unsupported-extension");
+      expect(checkDocumentCandidate(path.basename(document.file), readFileSync(path.join(root, document.file)).length)).toBe(document.format === "pdf" ? null : "unsupported-extension");
       expect(() => parseClassificationRequest({ documents: [documentInput(document)], folders: dataset.folders }, { mode: "live", folders: dataset.folders })).toThrow();
     }
   });

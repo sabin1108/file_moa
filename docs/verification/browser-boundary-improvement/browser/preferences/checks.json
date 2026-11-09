@@ -1,0 +1,45 @@
+{
+  "checks": [
+    {
+      "name": "a real storage event updates the other tab",
+      "pass": true
+    },
+    {
+      "name": "cross-tab synchronization works in both directions",
+      "pass": true
+    },
+    {
+      "name": "blocked writes apply in this tab with a visible warning",
+      "pass": true
+    },
+    {
+      "name": "an unsaved fallback does not change another tab",
+      "pass": true
+    },
+    {
+      "name": "an external write does not discard this tab's unsaved setting",
+      "pass": true
+    },
+    {
+      "name": "reload reads the actual persisted setting",
+      "pass": true
+    },
+    {
+      "name": "the explicit callback opens this tab's menu",
+      "pass": true
+    },
+    {
+      "name": "a UI request never opens the other tab's menu",
+      "pass": true
+    },
+    {
+      "name": "settings remain contained on a narrow viewport",
+      "pass": true
+    },
+    {
+      "name": "neither tab has a browser exception",
+      "pass": true
+    }
+  ],
+  "condition": "Actual production sample settings, two isolated-profile Chromium pages sharing native storage events; blocked writes affect only the test page; no personal accounts, files, database migration or model request."
+}

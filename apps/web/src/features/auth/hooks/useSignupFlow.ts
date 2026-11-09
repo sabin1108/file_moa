@@ -2,56 +2,38 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useSearchParams } from "next/navigation";
-import { clearSignupDraft, normalizeSignupStage, parseSignupDraft, serializeSignupDraft, signupFieldError, signupInputStages, signupNextStage, SIGNUP_DRAFT_EVENT, SIGNUP_DRAFT_KEY, type SignupDraft, type SignupStage } from "../lib/signup-flow";
+import { normalizeSignupStage, parseSignupDraft, signupFieldError, signupInputStages, signupNextStage, type SignupDraft, type SignupStage } from "../lib/signup-flow";
+import { clearSignupDraft, persistSignupDraft, signupDraftStore } from "../store/signup-draft";
 
 const empty: SignupDraft = { name: "", email: "", stage: "email" };
-function read() { try { return localStorage.getItem(SIGNUP_DRAFT_KEY) ?? ""; } catch { return ""; } }
-function subscribe(listener: () => void) {
-  window.addEventListener("storage", listener);
-  window.addEventListener(SIGNUP_DRAFT_EVENT, listener);
-  return () => { window.removeEventListener("storage", listener); window.removeEventListener(SIGNUP_DRAFT_EVENT, listener); };
-}
 const noSubscription = () => () => {};
 
 export function useSavedSignupDraft() {
-  return parseSignupDraft(useSyncExternalStore(subscribe, read, () => ""));
+  return parseSignupDraft(useSyncExternalStore(signupDraftStore.subscribe, signupDraftStore.read, () => ""));
 }
 
 export function useSignupFlow() {
   const search = useSearchParams();
   const restored = useSyncExternalStore(noSubscription, () => true, () => false);
-  const raw = useSyncExternalStore(subscribe, read, () => "");
-  const [edited, setEdited] = useState<SignupDraft>();
+  const raw = useSyncExternalStore(signupDraftStore.subscribe, signupDraftStore.read, () => "");
   const [errors, setErrors] = useState<Partial<Record<"email", string>>>({});
-  const draft = edited ?? parseSignupDraft(raw) ?? empty;
+  const draft = parseSignupDraft(raw) ?? empty;
   const stage = normalizeSignupStage(search.get("step") ?? draft.stage, draft);
   const current = useRef(stage);
   const focusNext = useRef(false);
 
   useEffect(() => {
-    const reset = () => setEdited(undefined);
-    window.addEventListener("storage", reset);
-    window.addEventListener(SIGNUP_DRAFT_EVENT, reset);
-    return () => { window.removeEventListener("storage", reset); window.removeEventListener(SIGNUP_DRAFT_EVENT, reset); };
-  }, []);
-
-  useEffect(() => {
     if (!raw) return;
     const saved = parseSignupDraft(raw);
-    const timer = window.setTimeout(clearSignupDraft, saved ? Math.max(0, saved.expiresAt - Date.now()) : 0);
-    return () => window.clearTimeout(timer);
+    const timer = setTimeout(clearSignupDraft, saved ? Math.max(0, saved.expiresAt - Date.now()) : 0);
+    return () => clearTimeout(timer);
   }, [raw]);
-
-  function persist(next: SignupDraft) {
-    setEdited(next);
-    try { localStorage.setItem(SIGNUP_DRAFT_KEY, serializeSignupDraft(next)); window.dispatchEvent(new Event(SIGNUP_DRAFT_EVENT)); } catch {}
-  }
 
   function goTo(next: SignupStage, focus = true) {
     const valid = normalizeSignupStage(next, draft);
     current.current = valid;
     focusNext.current = focus;
-    persist({ ...draft, stage: valid });
+    persistSignupDraft({ ...draft, stage: valid });
     const url = new URL(window.location.href);
     url.search = new URLSearchParams({ step: valid }).toString();
     url.hash = "";
@@ -82,7 +64,7 @@ export function useSignupFlow() {
   return {
     draft, stage, errors,
     index: signupInputStages.indexOf(stage),
-    update: (field: "email", value: string) => { persist({ ...draft, stage, [field]: value }); setErrors(previous => ({ ...previous, [field]: undefined })); },
+    update: (field: "email", value: string) => { persistSignupDraft({ ...draft, stage, [field]: value }); setErrors(previous => ({ ...previous, [field]: undefined })); },
     advance, goTo,
     back: () => goTo("email"),
     clear: clearSignupDraft,

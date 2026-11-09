@@ -1,0 +1,58 @@
+[
+  {
+    "state": "conditions",
+    "width": 390,
+    "findings": [
+      {
+        "level": "WARN",
+        "id": "edge-text",
+        "width": 390,
+        "message": "7 text block(s) sit 12–15px from the phone's edge: \"임시 대화\" (14px); \"프로젝트 ID\" (14px); \"선택한 공급자로 최대 10개·6,000자가 전송됩니다.\" (14px)",
+        "fix": "The page margin is 16–20px on a phone; the header and the corner labels sit on it too."
+      }
+    ]
+  },
+  {
+    "state": "conditions",
+    "width": 768,
+    "findings": []
+  },
+  {
+    "state": "conditions",
+    "width": 1440,
+    "findings": []
+  },
+  {
+    "state": "conditions",
+    "width": 1920,
+    "findings": []
+  },
+  {
+    "state": "results",
+    "width": 390,
+    "findings": [
+      {
+        "level": "WARN",
+        "id": "edge-text",
+        "width": 390,
+        "message": "7 text block(s) sit 12–15px from the phone's edge: \"임시 대화\" (14px); \"프로젝트 ID\" (14px); \"선택한 공급자로 최대 10개·6,000자가 전송됩니다.\" (14px)",
+        "fix": "The page margin is 16–20px on a phone; the header and the corner labels sit on it too."
+      }
+    ]
+  },
+  {
+    "state": "results",
+    "width": 768,
+    "findings": []
+  },
+  {
+    "state": "results",
+    "width": 1440,
+    "findings": []
+  },
+  {
+    "state": "results",
+    "width": 1920,
+    "findings": []
+  }
+]

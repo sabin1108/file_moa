@@ -1,0 +1,31 @@
+{
+  "buildId": "MTrh8ncCKaPRMBa3337M5",
+  "checks": [
+    {
+      "scenario": "guest",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "scenario": "cross-origin",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "scenario": "missing-origin",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "scenario": "GET",
+      "status": 405,
+      "passed": true
+    },
+    {
+      "scenario": "PUT",
+      "status": 405,
+      "passed": true
+    }
+  ],
+  "condition": "Actual Next production HTTP route; no signed-in cookies, no live provider keys, no authenticated streaming claim"
+}

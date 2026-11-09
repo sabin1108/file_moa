@@ -1,15 +1,14 @@
 .page { min-height: 100dvh; display: flex; flex-direction: column; }
 .header, .footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 24px 5vw; }
 .brand { display: inline-flex; gap: 10px; align-items: center; font-size: 24px; font-weight: 600; text-decoration: none; }
-.layout { width: 100%; max-width: 1120px; padding: 55px 32px 70px; margin: auto; display: grid; grid-template-columns: 1fr 420px; gap: 90px; align-items: center; }
+.layout { width: 100%; max-width: 1280px; padding: 40px 32px 56px; margin: auto; display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 64px; align-items: center; }
 .identity { font-size: 14px; margin-bottom: 24px; color: var(--muted); }
 .tagline { font-size: clamp(32px, 3vw, 43px); line-height: 1.5; letter-spacing: -1.6px; font-weight: 500; margin-bottom: 24px; }
 .introduction > p:last-of-type { line-height: 1.9; font-size: 16px; color: var(--muted); }
-.folderSketch { position: relative; height: 155px; max-width: 330px; margin-top: 50px; }
-.folderSketch span { display: block; position: absolute; width: 220px; height: 95px; padding: 18px; border: 1px solid var(--border); border-radius: 0 5px 5px 5px; background: var(--active); font-size: 13px; }
-.folderSketch span::before { content: ""; position: absolute; top: -10px; left: -1px; width: 75px; height: 10px; background: inherit; border: 1px solid var(--border); border-bottom: 0; border-radius: 4px 4px 0 0; }
-.folderSketch span:nth-child(2) { top: 28px; left: 35px; background: var(--ground); }
-.folderSketch span:nth-child(3) { top: 56px; left: 70px; background: var(--surface); }
+.folderAnimation { display: grid; place-items: center; min-height: 364px; max-width: 600px; margin-top: 24px; }
+.folderAnimation:has([data-paper-visual]) > [data-auth-fallback] { display: none; }
+.folderAnimation > [data-paper-visual] { align-self: start; }
+@media (min-width: 1100px) { .folderFallback { transform: scale(1.5); } }
 .formSide { min-width: 0; }
 .form { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 32px; display: grid; gap: 22px; }
 .form h1, .form h2 { font-size: 24px; font-weight: 600; line-height: 1.5; }
@@ -43,6 +42,8 @@
 .dataNote p { font-size: 13px; line-height: 1.9; color: var(--muted); }
 .start { width: 100%; min-height: 44px; }
 .fields { display: grid; gap: 16px; border: 0; padding: 0; margin: 0; min-width: 0; }
+.checkbox { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.8; }
+.checkbox input { flex-shrink: 0; margin-top: 5px; }
 .field { display: grid; gap: 8px; font-size: 14px; font-weight: 500; }
 .field input { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--control-border, var(--border)); border-radius: var(--ui-radius-control, 5px); padding: 10px 12px; background: var(--surface); color: var(--text); font: inherit; }
 .field input:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
@@ -52,10 +53,6 @@
 .passwordToggle:focus-visible { outline: 2px solid var(--focus); outline-offset: -4px; }
 .signupForm { align-self: start; }
 .live .layout:has(.signupForm) { margin-block: 0; flex: 1; align-items: start; padding-top: clamp(24px, 6vh, 64px); }
-.revealedField { display: grid; grid-template-rows: 1fr; animation: revealField 240ms ease-out; }
-.revealedField > div { min-height: 0; overflow: hidden; padding: 5px; margin: -5px; }
-@keyframes revealField { from { grid-template-rows: 0fr; opacity: .35; } to { grid-template-rows: 1fr; opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .revealedField { animation: none; } }
 .fieldError { color: var(--danger, #a32929); font-size: 13px; font-weight: 400; }
 .submit { width: 100%; min-height: 44px; margin-top: 4px; cursor: pointer; }
 .submit:disabled { cursor: wait; opacity: .75; }
@@ -67,5 +64,5 @@
 .account dt { color: var(--muted); }
 .account dd { margin: 0; overflow-wrap: anywhere; }
 .live .form > nav:not(.links) { margin-block: 0; }
-@media (max-width: 900px) { .layout { gap: 40px; grid-template-columns: 1fr 360px; } .form { padding: 27px; } .tagline { font-size: 32px; } .folderSketch span { width: 160px; } }
+@media (max-width: 900px) { .layout { gap: 40px; grid-template-columns: minmax(0, 1fr) 360px; } .form { padding: 27px; } .tagline { font-size: 32px; } }
 @media (max-width: 700px) { .layout { max-width: 480px; grid-template-columns: 1fr; padding: 22px 20px 35px; gap: 30px; } .introduction { display: none; } .header { padding: 20px; } .form { padding: 25px; } .footer { padding: 15px 20px; } .footer > span { display: none; } .footer a { margin: auto; } }

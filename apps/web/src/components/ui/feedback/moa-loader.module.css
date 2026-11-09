@@ -1,0 +1,236 @@
+/* 색상 토큰: 프로젝트 색감에 맞게 이 블록만 바꿔 쓰세요 */
+.kit {
+  --c-back: var(--text, #253745);
+  --c-front: var(--muted, #52616b);
+  --c-paper: var(--surface, #f8faf8);
+  --c-line: var(--border, #d2dad6);
+  --c-text: var(--text, #253745);
+  --tone-a: var(--text, #253745); /* 종이 위 포인트 줄 색 (세 가지를 번갈아 사용) */
+  --tone-b: var(--muted, #52616b);
+  --tone-c: var(--control-border, #aebbb5);
+  color: var(--c-text);
+  box-sizing: border-box;
+}
+.kit *,
+.kit *::before,
+.kit *::after {
+  box-sizing: border-box;
+}
+
+.viewport { display: inline-block; position: relative; flex: none; vertical-align: middle; }
+.scene { display: block; position: absolute; inset: 0 auto auto 0; width: 360px; height: 300px; padding-top: 30px; transform: scale(var(--loader-scale)); transform-origin: 0 0; }
+.stage {
+  position: relative;
+  width: 360px;
+  height: 240px;
+  display: block;
+  transform-origin: 50% 0;
+}
+
+/* 회오리 느낌의 점선 고리: 종이가 빨려 들어가는 방향으로 천천히 돈다 */
+.ring {
+  position: absolute;
+  left: 50%;
+  top: 120px;
+  border: 1.5px dashed var(--c-line);
+  border-radius: 50%;
+  opacity: 0.7;
+}
+.ringA {
+  width: 200px;
+  height: 200px;
+  margin: -100px 0 0 -100px;
+  animation: ringSpin 9s linear infinite;
+}
+.ringB {
+  width: 300px;
+  height: 300px;
+  margin: -150px 0 0 -150px;
+  opacity: 0.4;
+  animation: ringSpin 14s linear infinite;
+}
+@keyframes ringSpin {
+  to {
+    transform: rotate(240deg);
+  }
+}
+
+/* ---------- 가운데 폴더 ---------- */
+.folder {
+  position: absolute;
+  left: calc(50% - 55px);
+  top: 82px;
+  width: 110px;
+  height: 76px;
+  /* 종이가 하나 들어올 때마다 살짝 꿀꺽하는 느낌 (종이 도착 간격과 같은 주기) */
+  animation: gulp calc(var(--T) / 10) ease-out infinite;
+}
+@keyframes gulp {
+  0% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.05, 0.95);
+  }
+  40% {
+    transform: scale(0.99, 1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.back {
+  position: absolute;
+  inset: 0;
+  background: var(--c-back);
+  border-radius: 5px 10px 8px 8px;
+}
+.back::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 0;
+  width: 40px;
+  height: 13px;
+  background: var(--c-back);
+  border-radius: 5px 8px 0 0;
+}
+.front {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 62px;
+  z-index: 3;
+  background: var(--c-front);
+  border-radius: 6px 6px 8px 8px;
+  transform-origin: 50% 100%;
+  transform: perspective(500px) rotateX(-24deg);
+}
+
+/* ---------- 흩어진 종이: 나타남 -> 잠깐 떠 있음 -> 회오리치며 폴더 속으로 ----------
+   종이마다 시작 시점이 한 칸(주기/10)씩 어긋나 있어서 항상 흩어진 종이와 빨려 드는 종이가 함께 보인다 */
+.orbit {
+  position: absolute;
+  left: 50%;
+  top: 120px;
+  width: 0;
+  height: 0;
+  z-index: 4;
+  animation: oSpin var(--T) linear calc(var(--T) / 10 * var(--i) * -1) infinite,
+    oZ var(--T) linear calc(var(--T) / 10 * var(--i) * -1) infinite;
+}
+@keyframes oSpin {
+  0%,
+  50% {
+    transform: rotate(var(--a));
+    animation-timing-function: cubic-bezier(0.55, 0, 0.85, 0.45);
+  }
+  90%,
+  100% {
+    transform: rotate(calc(var(--a) + 240deg));
+  }
+}
+@keyframes oZ {
+  0%,
+  74% {
+    z-index: 4;
+  }
+  74.1%,
+  100% {
+    z-index: 2;
+  }
+}
+.paper {
+  position: absolute;
+  left: -20px;
+  top: -26px;
+  width: 40px;
+  height: 52px;
+  opacity: 0;
+  animation: pPull var(--T) linear calc(var(--T) / 10 * var(--i) * -1) infinite;
+}
+@keyframes pPull {
+  0% {
+    opacity: 0;
+    transform: translateX(var(--r)) rotate(var(--rot)) scale(0.4);
+    animation-timing-function: cubic-bezier(0.2, 1.4, 0.4, 1);
+  }
+  10% {
+    opacity: 1;
+    transform: translateX(var(--r)) rotate(var(--rot)) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(var(--r)) rotate(var(--rot)) scale(1);
+    animation-timing-function: cubic-bezier(0.55, 0, 0.85, 0.45);
+  }
+  90% {
+    opacity: 1;
+    transform: translateX(0) rotate(calc(var(--rot) + 320deg)) scale(0.2);
+  }
+  90.1%,
+  100% {
+    opacity: 0;
+    transform: translateX(0) rotate(calc(var(--rot) + 320deg)) scale(0.2);
+  }
+}
+.sheet {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(var(--c-line) 0 0) 8px 20px / 24px 3px no-repeat,
+    linear-gradient(var(--c-line) 0 0) 8px 28px / 18px 3px no-repeat,
+    linear-gradient(var(--c-line) 0 0) 8px 36px / 24px 3px no-repeat, var(--c-paper);
+  box-shadow: 0 2px 7px rgba(20, 30, 50, 0.2), 0 0 0 1px rgba(20, 30, 50, 0.06);
+  /* 떠 있는 동안 아주 조금씩 흔들린다 */
+  animation: bob 2.4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.3s);
+}
+.sheet::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 9px;
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--tone);
+  opacity: 0.75;
+}
+.sheet::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 11px;
+  height: 11px;
+  border-radius: 0 3px 0 5px;
+  background: var(--c-line);
+}
+@keyframes bob {
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* 모션 줄이기: 종이는 흩어진 채 가만히 있고 진행 막대만 보인다 */
+@media (prefers-reduced-motion: reduce) {
+  .orbit,
+  .paper,
+  .sheet,
+  .folder,
+  .ring {
+    animation: none;
+  }
+  .orbit {
+    transform: rotate(var(--a));
+  }
+  .paper {
+    opacity: 1;
+    transform: translateX(var(--r)) rotate(var(--rot));
+  }
+
+}

@@ -2,11 +2,11 @@
   "condition": "Actual Provider/LiveConversation/Settings components, synthetic owner and Chromium OPFS; Next routing shim; no authenticated route or physical disk claim",
   "results": [
     {
-      "name": "disconnected chat is compact with no disabled composer or drawer",
+      "name": "disconnected chat keeps one editable composer and no open drawer",
       "passed": true
     },
     {
-      "name": "cancelling direct picker retains compact state and restores the button",
+      "name": "cancelling direct picker retains the editable composer and restores the button",
       "passed": true
     },
     {

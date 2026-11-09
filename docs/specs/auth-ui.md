@@ -2,7 +2,7 @@
 
 사용자 요청: 기존 템플릿·프로토타입을 참고하고 Stepper 재사용을 우선한다.
 
-- 공통 `WorkflowStepper`의 표시/ARIA/CSS를 수정하지 않고 회원가입과 재설정에서 같은 컴포넌트를 사용한다. 단계 목록은 인증 기능의 데이터이며 기존 파일 작업 URL 훅에 인증 로직을 섞지 않는다.
+- 회원가입과 재설정은 공통 `PaperStepper`의 표시/ARIA/종이 모션을 사용한다. 사용자 제공 동작을 사이트 토큰에 맞춰 교체했으며 파일·복구의 `WorkflowStepper`는 실제 소비처에서 유지한다. 단계 목록/URL은 인증 기능이 소유하며 모션에 인증 로직·입력값 복제를 넣지 않는다. [교체 검증](../verification/animation-replacement/README.md).
 - 기존 AuthShell/인증 CSS를 표시 책임의 공통 레이아웃으로 옮겨 실제 화면과 프로토타입이 함께 사용한다. 시안 표시는 프로토타입에만 남기며 원래 색상·배치·조작 토큰을 유지한다. 승인된 채팅/파일 디자인은 변경하지 않는다.
 - `/login`, `/welcome`, `/verify-email`, `/forgot-password`, `/reset-password`, `/account`. 마지막은 서버 세션으로 확인한 계정과 로그아웃만 제공한다. 기존 개발용 폴더를 로그인 회원에게 자동 연결하지 않는다.
 - 모든 폼은 Server Action → 같은 프로세스의 인증 handler를 호출한다. 자기 HTTP API에 fetch하지 않고 기존 Origin/CSRF/요청 제한을 유지한다. 응답 쿠키는 설치된 Better Auth의 공개 cookie parser/options로 Next 쿠키 저장소에 반영한다.

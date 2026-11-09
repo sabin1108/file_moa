@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-11-09T04:38:31.756Z",
+  "rlsEnabled": true,
+  "rlsForced": true,
+  "unscopedVisibleRows": 0,
+  "publicOrApiGrants": 0,
+  "columns": [
+    "id",
+    "workspaceId",
+    "requestId",
+    "provider",
+    "operation",
+    "status",
+    "model",
+    "inputTokens",
+    "outputTokens",
+    "totalTokens",
+    "createdAt",
+    "completedAt"
+  ],
+  "transaction": "READ ONLY",
+  "modelCalls": 0,
+  "syntheticUsageInserts": 0
+}

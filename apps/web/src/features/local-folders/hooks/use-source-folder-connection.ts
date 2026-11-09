@@ -11,7 +11,9 @@ import { FolderConnectionSession } from "../services/connection-session";
 import { IndexedDbHandleRepository } from "../services/handle-repository";
 import { SourceConnectionController } from "../store/source-connection-controller";
 import { RecoveryConnectionController } from "../store/recovery-connection-controller";
-import { AUTH_SCOPE_REVOKED } from "../../../shared/auth-session-events";
+import { subscribeAuthScopeRevoked } from "../../../shared/auth-session-events";
+import { AiRecordsController } from "../../ai-records/store/ai-records-controller";
+import { AiRecordRepository } from "../../ai-records/services/ai-record-repository";
 
 type PickerWindow = Window & {
   showDirectoryPicker?: (options: {
@@ -40,6 +42,11 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
   const [recovery] = useState(
     () => new RecoveryConnectionController(session, picker),
   );
+  const [records] = useState(() => new AiRecordsController(
+    session,
+    picker,
+    new AiRecordRepository(session.aiRecordAccess),
+  ));
   const recoveryState = useSyncExternalStore(
     recovery.subscribe,
     recovery.getSnapshot,
@@ -76,21 +83,25 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
         "폴더 선택·기기 저장소를 지원하는 데스크톱 Chrome 또는 Edge에서 보안 연결로 열어 주세요.",
       );
     } else {
-      void controller.load(owner);
+      void controller.load(owner).then(() => records.load());
     }
     const revoke = () => {
+      records.stop();
       recovery.stop();
       controller.stop();
       void session.switchOwner(null);
     };
-    window.addEventListener(AUTH_SCOPE_REVOKED, revoke);
+    const unsubscribeRevoked = subscribeAuthScopeRevoked(revoke);
     return () => {
-      window.removeEventListener(AUTH_SCOPE_REVOKED, revoke);
+      unsubscribeRevoked();
       revoke();
     };
-  }, [controller, recovery, session, owner]);
+  }, [controller, recovery, records, session, owner]);
 
   return {
+    owner,
+    records,
+    recheckSourceSnapshot: session.recheckSourceSnapshot,
     state,
     recovery,
     recoveryState,
@@ -133,6 +144,9 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
     connect: controller.connect,
     reconnect: controller.reconnect,
     disconnect: controller.disconnect,
+    sources: state.sources,
+    activateSource: controller.activateSource,
+    disconnectSource: controller.disconnectSource,
     reload: () => controller.load(owner),
   };
 }

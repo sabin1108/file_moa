@@ -87,8 +87,30 @@ model Workspace {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   owner       User     @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  aiUsage     AiUsageEvent[]
 
   @@map("workspace")
+  @@schema("moa_app")
+}
+
+model AiUsageEvent {
+  id           String    @id @default(uuid())
+  workspaceId  String
+  requestId    String
+  provider     String
+  operation    String
+  status       String
+  model        String?
+  inputTokens  Int?
+  outputTokens Int?
+  totalTokens  Int?
+  createdAt    DateTime  @default(now())
+  completedAt  DateTime?
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, requestId])
+  @@index([workspaceId, createdAt], map: "ai_usage_event_workspace_created_idx")
+  @@map("ai_usage_event")
   @@schema("moa_app")
 }
 

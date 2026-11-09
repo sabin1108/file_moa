@@ -17,11 +17,14 @@ async function visit(endpoint) {
   for (const node of file.statements) {
     if ((!ts.isImportDeclaration(node) && !ts.isExportDeclaration(node)) || !node.moduleSpecifier) continue;
     const specifier = node.moduleSpecifier.text;
-    assert.match(specifier, /^\.\.?\//, `Unmapped bare probe import: ${specifier}`);
+    assert.match(specifier, /^(?:\.{1,2}\/|\/(?!\/))/, `Unmapped bare probe import: ${specifier}`);
     await visit(new URL(specifier, endpoint).href);
   }
 }
 try {
+  for (const path of ['/.env.local', '/apps/web/.env.local', '/__source/apps/web/.env.local']) {
+    assert.equal((await fetch(url + path)).status, 404, 'Probe must never expose environment files');
+  }
   for (const name of ['folder-session', 'folder-repository', 'record-store', 'record-recovery']) await visit(`${url}/${name}.js`);
   browser = await Browser.launch();
   const page = await browser.newPage();

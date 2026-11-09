@@ -19,8 +19,9 @@ const messages: Record<PreviewIssue, string> = {
   read: "파일을 읽지 못했어요. 파일이 변경되었거나 사용할 수 없는 상태일 수 있습니다.",
   encoding: "UTF-8로 읽을 수 없는 파일이에요. 원본의 문자 인코딩을 확인해 주세요.",
   "too-large": "2MiB를 넘는 파일은 미리 볼 수 없어요.",
-  unsupported: "MD와 TXT 파일만 미리 볼 수 있어요.",
+  unsupported: "MD·TXT·텍스트 PDF 파일만 미리 볼 수 있어요.",
   cancelled: "본문 읽기를 취소했어요.",
+  changed: "저장한 근거와 원본 또는 연결이 달라요. 자료를 다시 준비해 주세요.",
 };
 type Props = {
   state: SourcePreviewState;
@@ -49,7 +50,7 @@ export function SourceDocumentPreview({ state, folderName, headingRef, onClose, 
       }
       actions={
         <>
-          {onEdit && (
+          {onEdit && !/\.pdf$/iu.test(state.path?.at(-1) ?? "") && (
             <button
               type="button"
               className={actionClasses("secondary")}
@@ -105,6 +106,7 @@ export function SourceDocumentPreview({ state, folderName, headingRef, onClose, 
       feedback={
         <>
           {pending && <StatusNotice state="pending" title="파일 본문을 읽고 있어요." />}
+          {result?.referenceVerified && !state.stale && state.phase === "ready" && <p role="status">저장한 근거와 현재 파일·인용문이 일치합니다.</p>}
           {issue && (
             <StatusNotice
               state={issue === "permission" || issue === "cancelled" ? "attention" : "error"}
@@ -123,7 +125,7 @@ export function SourceDocumentPreview({ state, folderName, headingRef, onClose, 
           )}
         </>
       }
-      footer="MD/TXT 원문 보기 · Markdown 서식과 링크는 텍스트로 표시합니다."
+      footer={result?.pdf ? `PDF ${result.pdf.pages}쪽 · ${result.pdf.complete ? "텍스트 추출 완료" : "최대 50쪽·200,000자 범위의 일부 텍스트"} · 이미지와 표 배치는 표시하지 않습니다.` : "MD/TXT 원문 보기 · Markdown 서식과 링크는 텍스트로 표시합니다."}
     >
       <div aria-busy={pending}>
         {/* 원문을 React 텍스트로 렌더링한다. HTML/Markdown 해석과 원격 리소스 요청을 만들지 않는다. */}

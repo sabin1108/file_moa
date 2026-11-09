@@ -1,18 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
-const calls = vi.hoisted(() => ({ submit: vi.fn(), set: vi.fn(), redirect: vi.fn(), session: vi.fn(), account: vi.fn(), guest: vi.fn(), headers: new Headers({ origin: "https://app.example.invalid" }) }));
+const calls = vi.hoisted(() => ({ submit: vi.fn(), set: vi.fn(), redirect: vi.fn(), session: vi.fn(), account: vi.fn(), guest: vi.fn(), deletion: vi.fn(), headers: new Headers({ origin: "https://app.example.invalid" }) }));
 vi.mock("../../src/server/auth-forms", () => ({ submitAuthForm: calls.submit }));
 vi.mock("next/headers", () => ({ headers: async () => calls.headers, cookies: async () => ({ set: calls.set }) }));
 vi.mock("next/navigation", () => ({ redirect: calls.redirect }));
 vi.mock("../../src/server/session-guards", () => ({ requireGuest: calls.guest, requireAccountSession: calls.account }));
 vi.mock("../../src/server/auth", () => ({ getAuth: () => ({ api: { getSession: calls.session } }) }));
+vi.mock("../../src/server/auth-account-deletion", () => ({ requestAccountDeletion: vi.fn(), finishAccountDeletion: calls.deletion }));
 
-import { loginAction, profileAction, signoutAction, checkAuthSessionAction } from "../../src/app/actions/auth";
+import { finishAccountDeletionAction, loginAction, profileAction, signoutAction, checkAuthSessionAction } from "../../src/app/actions/auth";
 
 beforeEach(() => {
   calls.submit.mockReset(); calls.set.mockReset(); calls.redirect.mockReset(); calls.session.mockReset();
-  calls.account.mockReset(); calls.guest.mockReset();
+  calls.account.mockReset(); calls.guest.mockReset(); calls.deletion.mockReset();
   calls.redirect.mockImplementation(() => { throw new Error("fixture-next-redirect"); });
 });
 
@@ -61,5 +62,16 @@ describe("authentication Server Action cookies", () => {
     await expect(signoutAction()).rejects.toThrow("fixture-next-redirect");
     expect(calls.set).toHaveBeenCalledWith("session", "", expect.objectContaining({ maxAge: 0 }));
     expect(calls.redirect).toHaveBeenCalledWith("/login");
+  });
+
+  it("clears both Better Auth session-cookie names only after an atomic deletion succeeds", async () => {
+    calls.deletion.mockResolvedValue({ status: "success" });
+    const form = new FormData(); form.set("confirm", "on"); form.set("token", "a".repeat(43));
+
+    await expect(finishAccountDeletionAction({ status: "idle" }, form)).rejects.toThrow("fixture-next-redirect");
+
+    expect(calls.set).toHaveBeenCalledWith(expect.objectContaining({ name: "better-auth.session_token", value: "", path: "/", secure: false }));
+    expect(calls.set).toHaveBeenCalledWith(expect.objectContaining({ name: "__Secure-better-auth.session_token", value: "", path: "/", secure: true }));
+    expect(calls.redirect).toHaveBeenCalledWith("/login?deleted=1");
   });
 });

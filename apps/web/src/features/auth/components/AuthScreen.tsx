@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { ActionLink } from "../../../components/ui/ActionLink";
 import { actionClasses } from "../../../components/ui/action-classes";
-import { WorkflowStepper } from "../../../components/ui/WorkflowStepper";
+import { PaperStepper } from "../../../components/ui/PaperStepper";
 import { StatusNotice } from "../../../components/ui/feedback/StatusNotice";
 import { useAuthDraft } from "../hooks/useAuthDraft";
 import { authForms, authProgress } from "../lib/form-config";
@@ -12,7 +12,7 @@ import styles from "../../../components/layout/auth-shell.module.css";
 import { announceAuthSessionChange } from "../../../shared/auth-session-events";
 import { SignupScreen } from "./SignupScreen";
 import { AuthInput } from "./AuthInput";
-import { clearSignupDraft } from "../lib/signup-flow";
+import { clearSignupDraft } from "../store/signup-draft";
 import { SocialProviders } from "./SocialProviders";
 import type { SocialProvider } from "../../../shared/social-auth";
 import { PageLoading } from "../../../components/ui/feedback/PageLoading";
@@ -73,7 +73,7 @@ function AuthFormScreen({ operation, action: submitAction, initialToken = "", ac
           </div>
         </>
       )}
-      {progress && <WorkflowStepper {...progress} />}
+      {progress && <PaperStepper {...progress} />}
       {account && (
         <>
           <dl className={styles.account}>

@@ -20,3 +20,4 @@
 .confirm input { margin-top: 5px; flex-shrink: 0; }
 .connectionFields .help { margin: 0; }
 .disconnect { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+.connection :global([data-state]) { margin-top: 16px; }

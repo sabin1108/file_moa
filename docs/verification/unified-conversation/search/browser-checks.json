@@ -1,0 +1,226 @@
+{
+  "at": "2026-11-09T06:27:22.230Z",
+  "checks": [
+    {
+      "name": "IME does not enter finding or start disk reads",
+      "passed": true
+    },
+    {
+      "name": "find intent asks year, date basis and around period before reading",
+      "passed": true
+    },
+    {
+      "name": "topic is an editable meeting term and no organization proposal is opened",
+      "passed": true
+    },
+    {
+      "name": "unsupported condition reply changes no filters or disk reads",
+      "passed": true
+    },
+    {
+      "name": "condition reply updates existing controls without automatic search",
+      "passed": true
+    },
+    {
+      "name": "explicit around choice displays inclusive dates",
+      "passed": true
+    },
+    {
+      "name": "390: general and find composers have equal input and box dimensions",
+      "passed": true
+    },
+    {
+      "name": "390: conditions do not overflow",
+      "passed": true
+    },
+    {
+      "name": "768: general and find composers have equal input and box dimensions",
+      "passed": true
+    },
+    {
+      "name": "768: conditions do not overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: general and find composers have equal input and box dimensions",
+      "passed": true
+    },
+    {
+      "name": "1440: conditions do not overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: confirmed search action fits the first screen",
+      "passed": true
+    },
+    {
+      "name": "1920: general and find composers have equal input and box dimensions",
+      "passed": true
+    },
+    {
+      "name": "1920: conditions do not overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: confirmed search action fits the first screen",
+      "passed": true
+    },
+    {
+      "name": "actual Worker finds evidence beyond the old excerpt",
+      "passed": true
+    },
+    {
+      "name": "unknown/conflicting dates stay visible and an outside meeting is omitted",
+      "passed": true
+    },
+    {
+      "name": "invalid UTF8 marks partial results, and unsupported formats are disclosed",
+      "passed": true
+    },
+    {
+      "name": "390: results do not overflow",
+      "passed": true
+    },
+    {
+      "name": "390: result file rows keep content height",
+      "passed": true
+    },
+    {
+      "name": "768: results do not overflow",
+      "passed": true
+    },
+    {
+      "name": "768: result file rows keep content height",
+      "passed": true
+    },
+    {
+      "name": "1440: results do not overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: result file rows keep content height",
+      "passed": true
+    },
+    {
+      "name": "1920: results do not overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: result file rows keep content height",
+      "passed": true
+    },
+    {
+      "name": "result opens the existing read-only full document preview",
+      "passed": true
+    },
+    {
+      "name": "return restores focus to the selected result",
+      "passed": true
+    },
+    {
+      "name": "same owner navigation preserves search results without another query",
+      "passed": true
+    },
+    {
+      "name": "new query clears the previous preview and can search all dates",
+      "passed": true
+    },
+    {
+      "name": "cancelled disk work cannot publish late candidates",
+      "passed": true
+    },
+    {
+      "name": "composing a mixed request cannot submit or switch workflows",
+      "passed": true
+    },
+    {
+      "name": "mixed request asks before new scans, reads or model access",
+      "passed": true
+    },
+    {
+      "name": "choice receives keyboard focus",
+      "passed": true
+    },
+    {
+      "name": "390: shared request choice fits viewport",
+      "passed": true
+    },
+    {
+      "name": "768: shared request choice fits viewport",
+      "passed": true
+    },
+    {
+      "name": "1440: shared request choice fits viewport",
+      "passed": true
+    },
+    {
+      "name": "1920: shared request choice fits viewport",
+      "passed": true
+    },
+    {
+      "name": "continuing to write preserves the mixed request",
+      "passed": true
+    },
+    {
+      "name": "choosing search records the request and extracts content words without retaining a sent draft",
+      "passed": true
+    },
+    {
+      "name": "choosing search still waits for explicit search confirmation",
+      "passed": true
+    },
+    {
+      "name": "choosing organization leaves search for the existing preparation flow",
+      "passed": true
+    },
+    {
+      "name": "organization can switch back to explicit search conditions",
+      "passed": true
+    },
+    {
+      "name": "a clear organization request from search is not started as another search",
+      "passed": true
+    },
+    {
+      "name": "empty results widen conditions without scanning automatically",
+      "passed": true
+    },
+    {
+      "name": "result selection enables existing preparation bridge",
+      "passed": true
+    },
+    {
+      "name": "preparation re-reads the selected source and does not transmit",
+      "passed": true
+    },
+    {
+      "name": "fresh preparation has no inherited transfer consent",
+      "passed": true
+    },
+    {
+      "name": "owner change discards the pending operation choice",
+      "passed": true
+    },
+    {
+      "name": "owner change drops the search request and result",
+      "passed": true
+    },
+    {
+      "name": "zero model or external requests and zero source writes",
+      "passed": true
+    },
+    {
+      "name": "protected original sentinel is unchanged",
+      "passed": true
+    },
+    {
+      "name": "no component or Worker exceptions",
+      "passed": true
+    },
+    {
+      "name": "refresh does not resume a search or transmit automatically",
+      "passed": true
+    }
+  ],
+  "condition": "Actual product controller/session/Worker/Chromium OPFS; synthetic owner and permission; no physical Windows/IME/authenticated-route claim"
+}

@@ -1,0 +1,74 @@
+{
+  "checks": [
+    {
+      "name": "completed chat is saved after verified file close",
+      "pass": true
+    },
+    {
+      "name": "file navigation retains the active saved conversation and storage mode",
+      "pass": true
+    },
+    {
+      "name": "post-navigation autosave updates one conversation instead of creating a duplicate",
+      "pass": true
+    },
+    {
+      "name": "new chat clears the current thread without generating",
+      "pass": true
+    },
+    {
+      "name": "saved chat restores text without replay",
+      "pass": true
+    },
+    {
+      "name": "artifact can be edited and versioned",
+      "pass": true
+    },
+    {
+      "name": "new memory remains proposed until explicit approval",
+      "pass": true
+    },
+    {
+      "name": "narrow record drawer fits viewport",
+      "pass": true
+    },
+    {
+      "name": "reload restores directory records without another model request",
+      "pass": true
+    },
+    {
+      "name": "100 and 500 saved turns restore without truncation or another model call",
+      "pass": true
+    },
+    {
+      "name": "repeated transcript opens retain exactly the current DOM and expose six heap samples",
+      "pass": true
+    },
+    {
+      "name": "500-turn narrow chat keeps keyboard newline and fits the viewport",
+      "pass": true
+    },
+    {
+      "name": "temporary draft is absent from saved conversation list",
+      "pass": true
+    },
+    {
+      "name": "multiple source references remain independently listed",
+      "pass": true
+    },
+    {
+      "name": "source root switches without modifying originals",
+      "pass": true
+    },
+    {
+      "name": "another account sees neither saved records nor another owner's AI folder",
+      "pass": true
+    },
+    {
+      "name": "record UI has no browser exceptions",
+      "pass": true
+    }
+  ],
+  "generations": 1,
+  "condition": "Actual product components/services with isolated OPFS and fixture SSE; no personal folders or paid model calls."
+}

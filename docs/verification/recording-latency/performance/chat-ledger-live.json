@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-09T08:31:31.413Z",
+  "provider": "openai",
+  "attemptedHttpCalls": [
+    {
+      "path": "responses/input_tokens",
+      "status": 200,
+      "latencyMs": 961
+    },
+    {
+      "path": "responses",
+      "status": 200,
+      "latencyMs": 1037
+    }
+  ],
+  "condition": "One synthetic question to the real provider; production handler, isolated disposable PostgreSQL, signed fixture session and enabled ledger. No real account, personal content, production database or retry.",
+  "phase": "completed",
+  "acceptedMs": 75,
+  "firstTextMs": 3074,
+  "completedMs": 3184,
+  "deltaCount": 2,
+  "maxPublishedGapMs": 109,
+  "model": "gpt-6-luna",
+  "usage": {
+    "inputTokens": 123,
+    "outputTokens": 15,
+    "totalTokens": 138
+  }
+}

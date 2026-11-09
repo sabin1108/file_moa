@@ -1,0 +1,134 @@
+{
+  "checks": [
+    {
+      "name": "unconnected folder does not prevent general chat",
+      "passed": true
+    },
+    {
+      "name": "mount does not send a generation",
+      "passed": true
+    },
+    {
+      "name": "composite input has a rounded outer focus ring instead of an inner rectangle",
+      "passed": true
+    },
+    {
+      "name": "composer helper text is aligned and separated from the disclosure and focus ring",
+      "passed": true
+    },
+    {
+      "name": "draft survives ten material workflow round trips",
+      "passed": true
+    },
+    {
+      "name": "composition Enter does not send",
+      "passed": true
+    },
+    {
+      "name": "Shift Enter preserves a newline without sending",
+      "passed": true
+    },
+    {
+      "name": "text appears while the generation is still pending",
+      "passed": true
+    },
+    {
+      "name": "only text and the selected owner/provider are sent",
+      "passed": true
+    },
+    {
+      "name": "complete response does not duplicate text",
+      "passed": true
+    },
+    {
+      "name": "completed conversation survives material workflow round trip",
+      "passed": true
+    },
+    {
+      "name": "stop aborts HTTP and preserves an incomplete answer without retry",
+      "passed": true
+    },
+    {
+      "name": "context excludes stopped turns",
+      "passed": true
+    },
+    {
+      "name": "invalid sequence is not rendered as text",
+      "passed": true
+    },
+    {
+      "name": "limit error preserves unsent question for explicit resubmission",
+      "passed": true
+    },
+    {
+      "name": "reading position survives a material workflow round trip",
+      "passed": true
+    },
+    {
+      "name": "no horizontal overflow at 390",
+      "passed": true
+    },
+    {
+      "name": "no horizontal overflow at 768",
+      "passed": true
+    },
+    {
+      "name": "no horizontal overflow at 1440",
+      "passed": true
+    },
+    {
+      "name": "no horizontal overflow at 1920",
+      "passed": true
+    },
+    {
+      "name": "auth revocation clears transcript and draft",
+      "passed": true
+    },
+    {
+      "name": "received burst grows across frames and catches up without duplicate text",
+      "passed": true
+    },
+    {
+      "name": "stop discards unrevealed burst and cancels late frames",
+      "passed": true
+    },
+    {
+      "name": "session failure discards unrevealed burst and cancels late frames",
+      "passed": true
+    },
+    {
+      "name": "reduced motion immediately reveals the received burst",
+      "passed": true
+    },
+    {
+      "name": "revocation cancels reveal and clears burst text",
+      "passed": true
+    },
+    {
+      "name": "completion waits for the received text to finish revealing instead of dumping the queue",
+      "passed": true
+    },
+    {
+      "name": "immediate completion still shows several small frames with exact final text",
+      "passed": true
+    },
+    {
+      "name": "stop cancels a completed transport whose visible text is still draining",
+      "passed": true
+    },
+    {
+      "name": "general conversation performs no file reads, writes or permission requests",
+      "passed": true
+    },
+    {
+      "name": "no browser component exceptions",
+      "passed": true
+    },
+    {
+      "name": "app inspector has no failing findings",
+      "passed": true
+    }
+  ],
+  "requestCount": 12,
+  "condition": "Actual product UI/hook/reducer/fetch/SSE in isolated Chromium; fixture HTTP stream and owner; no live provider, authenticated Next stream or physical IME claims"
+}

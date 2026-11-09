@@ -1,0 +1,22 @@
+{
+  "samples": [
+    {
+      "width": 390,
+      "general": {
+        "rows": 3,
+        "inputWidth": 332,
+        "inputHeight": 83.171875,
+        "boxWidth": 362,
+        "boxHeight": 147.171875
+      },
+      "finding": {
+        "rows": 2,
+        "inputWidth": 332,
+        "inputHeight": 60.78125,
+        "boxWidth": 362,
+        "boxHeight": 124.78125
+      }
+    }
+  ],
+  "condition": "Actual general/find product components in isolated Chromium; compares the input box and textarea, excluding task-specific notices above the form."
+}

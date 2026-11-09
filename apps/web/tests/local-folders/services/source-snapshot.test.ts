@@ -58,7 +58,7 @@ describe("read-only TXT/MD organization snapshot", () => {
     });
     const root = directory("자료", {
       회사: child,
-      "photo.pdf": new File(["unsupported"], "photo.pdf"),
+      "photo.exe": new File(["unsupported"], "photo.exe"),
       ".moa-history": directory(".moa-history", {
         "secret.txt": new File(["internal"], "secret.txt")
       })
@@ -78,7 +78,7 @@ describe("read-only TXT/MD organization snapshot", () => {
     ]);
     expect(result.complete).toBe(true);
     expect(result.excluded).toContainEqual({
-      path: ["photo.pdf"],
+      path: ["photo.exe"],
       reason: "unsupported-extension"
     });
     expect(readText).toHaveBeenCalledTimes(1);

@@ -1,0 +1,39 @@
+{
+  "checks": [
+    {
+      "name": "all shipped vortex/fold/yank keyframes match the supplied motion",
+      "pass": true
+    },
+    {
+      "name": "old logo stroke animation and auth reveal animation are removed",
+      "pass": true
+    },
+    {
+      "name": "auth uses the replacement rather than rendering the old stepper beside it",
+      "pass": true
+    },
+    {
+      "name": "invalid email does not advance or animate",
+      "pass": true
+    },
+    {
+      "name": "composition Enter does not submit or advance",
+      "pass": true
+    },
+    {
+      "name": "a validated step advances immediately while the old paper folds for 3000ms",
+      "pass": true
+    },
+    {
+      "name": "decorative papers never copy input values or passwords",
+      "pass": true
+    },
+    {
+      "name": "back uses the supplied 1100ms yank animation",
+      "pass": true
+    }
+  ],
+  "error": "Error: Object reference chain is too long",
+  "consoleErrors": [],
+  "text": "signuploginmotionloadingcompact표시 전환이동 대기 전환이메일비밀번호이메일 확인완료\n모아.\n로그인으로\n\n나의 자료, 나의 작업 공간\n\n흩어진 기록을 모아,\n다음 생각으로.\n\n폴더에 쌓인 자료를 정리하고,\n필요한 순간 대화로 이어가세요.\n\n공부 노트\n프로젝트 기록\n나의 생각\n모아 계정 만들기\n\n이메일부터 입력해 주세요. 표시 이름은 가입을 마친 뒤 정합니다.\n\n1. 이메일\n2. 비밀번호\n3. 이메일 확인\n4. 완료\n2 / 4\n\n진행 단계\n\n비밀번호\n\n회원가입 진행 단계\n\n1 / 4\n\n진행 단계\n\n이메일\n1 / 4\n\n진행 단계\n\n이메일\n1 / 4\n\n진행 단계\n\n이메일\n1 / 4\n\n진행 단계\n\n이메일\n\n2 / 4 · 비밀번호\n\n이메일\n비밀번호\n보기\n비밀번호 확인\n보기\n가입하고 인증 메일 받기\n이전 단계\n\n이메일·단계는 이 브라우저에 하루 동안 보관합니다. 비밀번호는 저장하지 않아요.\n\n다른 방법으로 가입\n로그인으로\n모아 · 개인 작업 공간\n계정 로그인"
+}

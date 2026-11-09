@@ -1,0 +1,50 @@
+{
+  "condition": "Isolated Chromium without account cookies; actual local Next dev server, six one-second samples, no authentication or model call",
+  "requests": [
+    {
+      "path": "/login",
+      "method": "GET",
+      "type": "Document"
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "type": "Fetch"
+    }
+  ],
+  "reloadReasons": [],
+  "reloadCount": 0,
+  "samples": [
+    {
+      "path": "/login",
+      "formVisible": true,
+      "loading": false
+    },
+    {
+      "path": "/login",
+      "formVisible": true,
+      "loading": false
+    },
+    {
+      "path": "/login",
+      "formVisible": true,
+      "loading": false
+    },
+    {
+      "path": "/login",
+      "formVisible": true,
+      "loading": false
+    },
+    {
+      "path": "/login",
+      "formVisible": true,
+      "loading": false
+    },
+    {
+      "path": "/login",
+      "formVisible": true,
+      "loading": false
+    }
+  ],
+  "exceptions": []
+}

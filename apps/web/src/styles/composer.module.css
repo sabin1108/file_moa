@@ -1,8 +1,13 @@
 .composerRegion { width: 100%; max-width: 800px; margin: 0 auto; padding: 8px 38px 13px; flex-shrink: 0; }
+.scope, .scope > div { display: grid; gap: 8px; }
+.scope { margin-bottom: 12px; font-size: 13px; line-height: 1.65; }
+.scope > button, .scope > div > button { justify-self: start; padding-inline: 0; }
+.scope details p { margin-top: 8px; }
 .composer { padding: 8px 14px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
+.composer:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
 .composer textarea { display: block; resize: none; width: 100%; min-height: 43px; padding: 8px 4px; font-size: 16px; line-height: 1.7; background: none; border: 0; color: var(--text); }
 .composer textarea::placeholder { color: var(--muted); opacity: 1; }
-.composer textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.composer textarea:focus { outline: none; }
 .composerTools, .composerTools > div { display: flex; align-items: center; gap: 8px; }
 .composerTools { justify-content: space-between; }
 .sourceHint { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }

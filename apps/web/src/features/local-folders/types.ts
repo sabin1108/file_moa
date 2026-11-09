@@ -15,6 +15,13 @@ export type FolderConnectionView = Readonly<
   | { status: "needs-permission" | "connected"; folderName: string }
 >;
 export type ConnectionOwner = Readonly<{ userId: string; workspaceId: string }>;
+/** A named source-folder reference. The handle stays browser-local in IndexedDB. */
+export type SourceFolderConnection = Readonly<{
+  connectionId: string;
+  name: string;
+  handle: FolderHandle;
+  active: boolean;
+}>;
 export type FolderHandle = FileSystemDirectoryHandle & {
   queryPermission(options: { mode: "read" | "readwrite" }): Promise<PermissionState>;
   requestPermission(options: { mode: "read" | "readwrite" }): Promise<PermissionState>;
@@ -23,4 +30,12 @@ export interface HandleRepository {
   read(owner: ConnectionOwner, kind: FolderKind): Promise<FolderHandle | undefined>;
   write(owner: ConnectionOwner, kind: FolderKind, handle: FolderHandle): Promise<void>;
   remove(owner: ConnectionOwner, kind: FolderKind): Promise<void>;
+}
+
+export interface SourceFolderRepository extends HandleRepository {
+  listSource(owner: ConnectionOwner): Promise<readonly SourceFolderConnection[]>;
+  readSource(owner: ConnectionOwner, connectionId: string): Promise<FolderHandle | undefined>;
+  writeSource(owner: ConnectionOwner, connectionId: string, handle: FolderHandle, name?: string): Promise<void>;
+  removeSource(owner: ConnectionOwner, connectionId: string): Promise<void>;
+  setActiveSource(owner: ConnectionOwner, connectionId: string): Promise<void>;
 }

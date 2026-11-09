@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode, type RefObject } from "react";
 import { Icon, MoaMark } from "../ui/Icon";
 import { actionClasses } from "../ui/action-classes";
 import composer from "../../styles/composer.module.css";
@@ -10,6 +10,7 @@ export type ConversationMessage = Readonly<{
   id: string;
   author: "user" | "assistant";
   text: string;
+  status?: string;
 }>;
 
 export function ConversationWorkspace({
@@ -34,6 +35,11 @@ export function ConversationWorkspace({
   submitLabel = "보내기",
   pendingLabel = "선택한 범위의 내용을 읽고 정리 계획을 만들고 있어요…",
   cancelLabel = "응답 대기 취소",
+  scrollMemoryRef,
+  panelLabel = "자료 보기",
+  panelTitle,
+  messageActions,
+  panelTrigger: panelTriggerRef,
 }: {
   messages: readonly ConversationMessage[];
   draft: string;
@@ -56,33 +62,43 @@ export function ConversationWorkspace({
   interaction?: ReactNode;
   inputLabel?: string;
   inputPlaceholder?: string;
+  scrollMemoryRef?: { current: { top: number; follow: boolean } };
+  panelLabel?: string;
+  panelTitle?: string;
+  messageActions?: (message: ConversationMessage) => ReactNode;
+  panelTrigger?: RefObject<HTMLElement | null>;
 }) {
   const trigger = useRef<HTMLElement | null>(null);
   const closePanel = () => onPanelChange(false);
-  const drawer = useDrawerDialog(panelOpen, (panel) => {
+  const drawer = useDrawerDialog(panelOpen, (_panel, returnFocus) => {
     requestAnimationFrame(() => {
       if (
-        (document.activeElement === document.body ||
-          panel?.contains(document.activeElement)) &&
-        trigger.current?.isConnected
+        returnFocus &&
+        (panelTriggerRef?.current ?? trigger.current)?.isConnected
       )
-        trigger.current.focus({ preventScroll: true });
+        (panelTriggerRef?.current ?? trigger.current)?.focus({ preventScroll: true });
     });
   });
   const composing = useRef(false);
   const thread = useRef<HTMLDivElement>(null);
   const follow = useRef(true);
   const hasInteraction = interaction != null;
+  const latestTextLength = messages.at(-1)?.text.length;
+  useEffect(() => {
+    if (!scrollMemoryRef || !thread.current) return;
+    follow.current = scrollMemoryRef.current.follow;
+    thread.current.scrollTop = scrollMemoryRef.current.top;
+  }, [scrollMemoryRef]);
   useEffect(() => {
     if (hasInteraction) return;
     if (follow.current && thread.current)
       thread.current.scrollTo({
         top: thread.current.scrollHeight,
-        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+        behavior: pending || matchMedia("(prefers-reduced-motion: reduce)").matches
           ? "instant"
           : "smooth",
       });
-  }, [messages.length, pending, hasInteraction]);
+  }, [messages.length, latestTextLength, pending, hasInteraction]);
   const send = () => {
     if (composing.current || !canSend || pending || !draft.trim()) return;
     trigger.current =
@@ -104,16 +120,17 @@ export function ConversationWorkspace({
             <div>
               <button
                 type="button"
-                className={actionClasses("ghost")}
+                className={actionClasses("secondary")}
                 aria-expanded={panelOpen}
                 aria-controls="conversation-materials"
                 onClick={(event) => {
                   trigger.current = event.currentTarget;
+                  if (panelTriggerRef) panelTriggerRef.current = event.currentTarget;
                   onPanelChange(true);
                 }}
               >
                 <Icon name="folder" size={18} />
-                자료 보기
+                {panelLabel}
               </button>
               {planReady && (
                 <button
@@ -122,6 +139,7 @@ export function ConversationWorkspace({
                   className={actionClasses("secondary")}
                   onClick={(event) => {
                     trigger.current = event.currentTarget;
+                    if (panelTriggerRef) panelTriggerRef.current = event.currentTarget;
                     onPanelChange(true);
                   }}
                 >
@@ -139,9 +157,11 @@ export function ConversationWorkspace({
           aria-label="대화 내용"
           onScroll={() => {
             const node = thread.current;
-            if (node)
+            if (node) {
               follow.current =
                 node.scrollHeight - node.scrollTop - node.clientHeight < 100;
+              if (scrollMemoryRef) scrollMemoryRef.current = { top: node.scrollTop, follow: follow.current };
+            }
           }}
         >
           <div className={styles.threadInner}>
@@ -165,6 +185,8 @@ export function ConversationWorkspace({
                       </div>
                     )}
                     <p>{message.text}</p>
+                    {message.status && <small>{message.status}</small>}
+                    {messageActions?.(message)}
                   </article>
                 ))
               : intro}
@@ -185,7 +207,7 @@ export function ConversationWorkspace({
               send();
             }}
           >
-            {scope}
+            {scope != null && <div className={composer.scope}>{scope}</div>}
             <div className={composer.composer}>
               <label htmlFor="message-draft" className="sr-only">
                 {inputLabel}
@@ -194,7 +216,7 @@ export function ConversationWorkspace({
                 id="message-draft"
                 value={draft}
                 maxLength={800}
-                rows={hasInteraction ? 2 : 3}
+                rows={3}
                 readOnly={pending}
                 placeholder={inputPlaceholder}
                 onChange={(event) => onDraftChange(event.target.value)}
@@ -245,7 +267,7 @@ export function ConversationWorkspace({
           id="conversation-materials"
           ref={drawer}
           className={styles.materials}
-          aria-label="자료 및 정리 계획"
+          aria-label={panelTitle ?? "자료 및 정리 계획"}
           onCancel={(event) => {
             event.preventDefault();
             closePanel();
@@ -259,12 +281,12 @@ export function ConversationWorkspace({
           }}
         >
           <div className={styles.drawerHeading}>
-            <h2>{planReady ? "정리 계획" : "자료"}</h2>
+            <h2>{panelTitle ?? (planReady ? "정리 계획" : "자료")}</h2>
             <button
               type="button"
               data-drawer-close
               className={actionClasses("ghost")}
-              aria-label="자료 창 닫기"
+              aria-label={`${panelTitle ?? "자료"} 창 닫기`}
               onClick={closePanel}
             >
               <Icon name="close" size={18} />

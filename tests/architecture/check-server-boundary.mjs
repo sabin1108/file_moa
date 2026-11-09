@@ -14,6 +14,11 @@ const boundaryRules = new Set([
 // Adversarial snippets exercise the actual repository ESLint configuration, not a copy of its rules.
 const cases = [
   ['UI direct fetch', 'src/features/check.ts', 'export const load = () => fetch("/api/private");', false],
+  ['fixed chat stream transport', 'src/features/conversation-workspace/services/chat-stream.ts', 'export const load = () => fetch("/api/chat", { method: "POST", credentials: "same-origin", redirect: "error" });', true],
+  ['chat cannot access other endpoints', 'src/features/conversation-workspace/services/chat-stream.ts', 'export const load = () => fetch("/api/private", { method: "POST", credentials: "same-origin", redirect: "error" });', false],
+  ['chat cannot alias fetch', 'src/features/conversation-workspace/services/chat-stream.ts', 'export const load = fetch;', false],
+  ['chat cannot follow redirects', 'src/features/conversation-workspace/services/chat-stream.ts', 'export const load = () => fetch("/api/chat", { method: "POST", credentials: "same-origin" });', false],
+  ['chat cannot override fixed transport options by spreading', 'src/features/conversation-workspace/services/chat-stream.ts', 'export const load = (options: RequestInit) => fetch("/api/chat", { method: "POST", credentials: "same-origin", redirect: "error", ...options });', false],
   ['indirect client dependency fetch', 'src/features/shared/load.ts', 'export async function load() { return fetch("https://example.invalid"); }', false],
   ['window fetch alias', 'src/features/check.ts', 'export const load = window.fetch;', false],
   ['computed global fetch', 'src/features/check.ts', 'export const load = globalThis["fetch"];', false],

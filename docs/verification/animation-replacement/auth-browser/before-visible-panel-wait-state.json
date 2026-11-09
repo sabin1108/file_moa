@@ -1,0 +1,83 @@
+{
+  "path": "/settings",
+  "alerts": [],
+  "forms": [
+    {
+      "label": null,
+      "busy": null,
+      "fields": [
+        {
+          "name": "provider",
+          "type": "hidden",
+          "checked": false,
+          "disabled": false,
+          "valid": true
+        },
+        {
+          "name": "operation",
+          "type": "hidden",
+          "checked": false,
+          "disabled": false,
+          "valid": true
+        },
+        {
+          "name": "",
+          "type": "submit",
+          "disabled": false,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "label": null,
+      "busy": null,
+      "fields": [
+        {
+          "name": "provider",
+          "type": "hidden",
+          "checked": false,
+          "disabled": false,
+          "valid": true
+        },
+        {
+          "name": "operation",
+          "type": "hidden",
+          "checked": false,
+          "disabled": false,
+          "valid": true
+        },
+        {
+          "name": "",
+          "type": "submit",
+          "disabled": false,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "label": null,
+      "busy": "false",
+      "fields": [
+        {
+          "name": "",
+          "type": "fieldset",
+          "disabled": false,
+          "valid": true
+        },
+        {
+          "name": "confirm",
+          "type": "checkbox",
+          "checked": false,
+          "disabled": false,
+          "valid": false
+        },
+        {
+          "name": "",
+          "type": "submit",
+          "disabled": false,
+          "valid": true
+        }
+      ]
+    }
+  ]
+}

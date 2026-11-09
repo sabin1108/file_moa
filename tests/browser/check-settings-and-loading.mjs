@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { Browser } from "../../.agents/skills/design-taste-frontend/scripts/lib/cdp.mjs";
 
-const output = "docs/verification/workspace-details";
+const output = process.argv[3] ?? "docs/verification/workspace-details";
+const base = process.argv[2] ?? "http://127.0.0.1:3034";
 mkdirSync(output, { recursive: true });
 const results = [], timings = [];
 const check = (name, passed) => { results.push({ name, passed: !!passed }); assert.ok(passed, name); };
@@ -15,8 +16,8 @@ let delayedPage;
 const paused = [];
 try {
   const page = await browser.newPage({ width: 1440, height: 1000 });
-  await page.goto("http://127.0.0.1:3034/demo", { settleMs: 250 });
-  await page.goto("http://127.0.0.1:3034/demo/settings?tab=controls", { settleMs: 300 });
+  await page.goto(base + "/demo", { settleMs: 250 });
+  await page.goto(base + "/demo/settings?tab=controls", { settleMs: 300 });
   await wait(page, () => document.querySelector('[aria-label="빠른 전환 단축키"]')?.checkVisibility());
   let rsc = 0, posts = 0;
   await page.send("Network.enable");
@@ -44,7 +45,7 @@ try {
   await page.eval(() => history.forward());
   await wait(page, () => document.querySelector('[aria-label="설정 분류"] [aria-current="page"]').href.endsWith('tab=controls'));
   check("Forward restores the next tab", true);
-  await page.goto("http://127.0.0.1:3034/demo/settings?tab=controls", { settleMs: 250 });
+  await page.goto(base + "/demo/settings?tab=controls", { settleMs: 250 });
   check("F5-equivalent document reload restores URL tab", await page.eval(() => document.querySelector('[aria-label="빠른 전환 단축키"]').checkVisibility()));
   await page.eval(() => document.querySelector('[aria-label="빠른 전환 단축키"]').focus());
   await key(page, "J", "KeyJ", 3);
@@ -59,18 +60,18 @@ try {
   }
   delayedPage = await browser.newPage({ width: 1440, height: 1000 });
   browser.on(delayedPage.sessionId, "Fetch.requestPaused", event => { paused.push(event.requestId); });
-  await delayedPage.send("Fetch.enable", { patterns: [{ urlPattern: "*127.0.0.1:3034/demo/files*", requestStage: "Request" }] });
-  await delayedPage.goto("http://127.0.0.1:3034/demo/settings?tab=controls", { settleMs: 250 });
+  await delayedPage.send("Fetch.enable", { patterns: [{ urlPattern: base + "/demo/files*", requestStage: "Request" }] });
+  await delayedPage.goto(base + "/demo/settings?tab=controls", { settleMs: 250 });
   await click(delayedPage, '[data-workspace-sidebar] nav a[href="/demo/files"]');
   await wait(delayedPage, () => document.querySelector('[data-navigation-loading]'));
-  check("real delayed Link navigation shows central dim loading", await delayedPage.eval(() => {
+  check("real delayed Link navigation preserves the visible page with compact nonblocking feedback", await delayedPage.eval(() => {
     const overlay = document.querySelector('[data-navigation-loading]');
     const panel = overlay.firstElementChild.getBoundingClientRect();
     const style = getComputedStyle(overlay);
-    return style.position === 'fixed' && style.backgroundColor.includes('0.4') && Math.abs(panel.x + panel.width / 2 - innerWidth / 2) < 2 && Math.abs(panel.y + panel.height / 2 - innerHeight / 2) < 2 && !!overlay.querySelector('[role="status"][aria-busy="true"]');
+    return style.position === 'fixed' && style.pointerEvents === 'none' && panel.width < innerWidth / 2 && panel.height < 100 && document.querySelector('[aria-label="빠른 전환 단축키"]').checkVisibility() && !!overlay.querySelector('[role="status"][aria-busy="true"]');
   }));
   await pause(180);
-  await delayedPage.screenshot({ path: `${output}/central-loading.png`, format: "png" });
+  await delayedPage.screenshot({ path: `${output}/navigation-pending.png`, format: "png" });
   await delayedPage.send("Fetch.disable");
   await wait(delayedPage, () => location.pathname === '/demo/files' && !document.querySelector('[data-navigation-loading]'));
   check("loading disappears when navigation completes", true);

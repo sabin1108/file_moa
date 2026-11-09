@@ -1,0 +1,173 @@
+{
+  "condition": "Local production, CDP mouse/keyboard, no Gemini calls or personal folders",
+  "results": [
+    {
+      "name": "primary destinations plus footer settings",
+      "passed": true
+    },
+    {
+      "name": "materials drawer reserves no default right column",
+      "passed": true
+    },
+    {
+      "name": "shared entry opens exactly folder/chat/settings",
+      "passed": true
+    },
+    {
+      "name": "arrow key moves focus and indicator without changing current page semantics",
+      "passed": true
+    },
+    {
+      "name": "Escape closes and restores previous conversation focus",
+      "passed": true
+    },
+    {
+      "name": "short click never opens quick menu",
+      "passed": true
+    },
+    {
+      "name": "moving more than eight pixels cancels hold",
+      "passed": true
+    },
+    {
+      "name": "blank primary left hold opens after half a second",
+      "passed": true
+    },
+    {
+      "name": "release in center cancels without navigating",
+      "passed": true
+    },
+    {
+      "name": "direction remains selected beyond radial boundary",
+      "passed": true
+    },
+    {
+      "name": "release alone navigates without another click",
+      "passed": true
+    },
+    {
+      "name": "editing surface never starts hold",
+      "passed": true
+    },
+    {
+      "name": "shortcut is ignored while editing",
+      "passed": true
+    },
+    {
+      "name": "default shortcut opens outside input",
+      "passed": true
+    },
+    {
+      "name": "edge clamping does not select a direction without movement",
+      "passed": true
+    },
+    {
+      "name": "held shortcut arrow selects settings",
+      "passed": true
+    },
+    {
+      "name": "releasing shortcut key navigates the chosen direction",
+      "passed": true
+    },
+    {
+      "name": "losing window focus cancels a pending hold",
+      "passed": true
+    },
+    {
+      "name": "390: no viewport overflow",
+      "passed": true
+    },
+    {
+      "name": "390: menu clamped inside viewport",
+      "passed": true
+    },
+    {
+      "name": "390: materials usable within viewport",
+      "passed": true
+    },
+    {
+      "name": "390: Escape closes materials and restores trigger focus",
+      "passed": true
+    },
+    {
+      "name": "768: no viewport overflow",
+      "passed": true
+    },
+    {
+      "name": "768: menu clamped inside viewport",
+      "passed": true
+    },
+    {
+      "name": "768: materials usable within viewport",
+      "passed": true
+    },
+    {
+      "name": "768: Escape closes materials and restores trigger focus",
+      "passed": true
+    },
+    {
+      "name": "1440: no viewport overflow",
+      "passed": true
+    },
+    {
+      "name": "1440: menu clamped inside viewport",
+      "passed": true
+    },
+    {
+      "name": "1440: materials usable within viewport",
+      "passed": true
+    },
+    {
+      "name": "1440: Escape closes materials and restores trigger focus",
+      "passed": true
+    },
+    {
+      "name": "1920: no viewport overflow",
+      "passed": true
+    },
+    {
+      "name": "1920: menu clamped inside viewport",
+      "passed": true
+    },
+    {
+      "name": "1920: materials usable within viewport",
+      "passed": true
+    },
+    {
+      "name": "1920: Escape closes materials and restores trigger focus",
+      "passed": true
+    },
+    {
+      "name": "shortcut records the actual key input",
+      "passed": true
+    },
+    {
+      "name": "old shortcut stops after settings change",
+      "passed": true
+    },
+    {
+      "name": "changed shortcut persists after page reload",
+      "passed": true
+    },
+    {
+      "name": "reduced motion disables menu animation and indicator transition",
+      "passed": true
+    },
+    {
+      "name": "files reuse primary destinations plus footer settings and width",
+      "passed": true
+    },
+    {
+      "name": "file row keeps selection hold and never opens quick menu",
+      "passed": true
+    },
+    {
+      "name": "zero real picker or indexedDB calls",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true
+    }
+  ]
+}

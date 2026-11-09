@@ -1,0 +1,9 @@
+{
+  "condition": "Summary of observed actual local HTTP responses after restarting the same app with DB network access. Synthetic email and temporary OAuth starts; no user credentials, provider-page login or model calls.",
+  "origin": "http://127.0.0.1:3034",
+  "checks": [
+    { "check": "synthetic-email-rejection", "status": 401, "code": "INVALID_EMAIL_OR_PASSWORD" },
+    { "check": "social-start", "provider": "google", "status": 200, "targetHost": "accounts.google.com", "callback": "http://127.0.0.1:3034/api/auth/callback/google", "returnedStateCookie": true },
+    { "check": "social-start", "provider": "naver", "status": 200, "targetHost": "nid.naver.com", "callback": "http://127.0.0.1:3034/api/auth/callback/naver", "returnedStateCookie": true }
+  ]
+}

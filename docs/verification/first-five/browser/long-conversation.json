@@ -1,0 +1,42 @@
+{
+  "heapBefore": 20773564,
+  "samples": [
+    {
+      "run": 0,
+      "turns": 100,
+      "elapsedMs": 79.9,
+      "heapBytes": 19543452
+    },
+    {
+      "run": 0,
+      "turns": 500,
+      "elapsedMs": 198.1,
+      "heapBytes": 31719820
+    },
+    {
+      "run": 1,
+      "turns": 100,
+      "elapsedMs": 37.7,
+      "heapBytes": 29939096
+    },
+    {
+      "run": 1,
+      "turns": 500,
+      "elapsedMs": 138.8,
+      "heapBytes": 48887688
+    },
+    {
+      "run": 2,
+      "turns": 100,
+      "elapsedMs": 36.1,
+      "heapBytes": 36017204
+    },
+    {
+      "run": 2,
+      "turns": 500,
+      "elapsedMs": 132.5,
+      "heapBytes": 20894908
+    }
+  ],
+  "condition": "Isolated Chromium 1440px, actual product repository and OPFS, 100/500 synthetic saved turns, three alternating opens measured through two animation frames; followed by 390px keyboard newline. Heap is CDP JSHeapUsedSize with uncontrolled GC, not browser RSS or a leak proof. DOM equals the current turn count rather than accumulating previous opens. Timing measures already-loaded transcript rendering, not disk startup, field INP, live model speed or a stable percentile."
+}

@@ -1,0 +1,155 @@
+{
+  "condition": "Local production Chromium lab, one cold then two warm navigations per route, 1440px. Protected routes are guest redirects, not authenticated performance. No before route timing, field INP or infrastructure cost claim.",
+  "checks": 9,
+  "routes": [
+    {
+      "route": "/",
+      "samples": [
+        {
+          "path": "/login",
+          "ttfbMs": 59,
+          "domContentLoadedMs": 78,
+          "responseBytes": 5502
+        },
+        {
+          "path": "/login",
+          "ttfbMs": 11,
+          "domContentLoadedMs": 22,
+          "responseBytes": 5502
+        },
+        {
+          "path": "/login",
+          "ttfbMs": 12,
+          "domContentLoadedMs": 23,
+          "responseBytes": 5502
+        }
+      ]
+    },
+    {
+      "route": "/files",
+      "samples": [
+        {
+          "path": "/login",
+          "ttfbMs": 8,
+          "domContentLoadedMs": 18,
+          "responseBytes": 5502
+        },
+        {
+          "path": "/login",
+          "ttfbMs": 10,
+          "domContentLoadedMs": 21,
+          "responseBytes": 5502
+        },
+        {
+          "path": "/login",
+          "ttfbMs": 7,
+          "domContentLoadedMs": 19,
+          "responseBytes": 5502
+        }
+      ]
+    },
+    {
+      "route": "/settings",
+      "samples": [
+        {
+          "path": "/login",
+          "ttfbMs": 8,
+          "domContentLoadedMs": 21,
+          "responseBytes": 5502
+        },
+        {
+          "path": "/login",
+          "ttfbMs": 8,
+          "domContentLoadedMs": 21,
+          "responseBytes": 5502
+        },
+        {
+          "path": "/login",
+          "ttfbMs": 9,
+          "domContentLoadedMs": 21,
+          "responseBytes": 5502
+        }
+      ]
+    },
+    {
+      "route": "/demo",
+      "samples": [
+        {
+          "path": "/demo",
+          "ttfbMs": 95,
+          "domContentLoadedMs": 127,
+          "responseBytes": 19321
+        },
+        {
+          "path": "/demo",
+          "ttfbMs": 27,
+          "domContentLoadedMs": 46,
+          "responseBytes": 19321
+        },
+        {
+          "path": "/demo",
+          "ttfbMs": 15,
+          "domContentLoadedMs": 26,
+          "responseBytes": 19321
+        }
+      ]
+    },
+    {
+      "route": "/demo/files",
+      "samples": [
+        {
+          "path": "/demo/files",
+          "ttfbMs": 22,
+          "domContentLoadedMs": 42,
+          "responseBytes": 18920
+        },
+        {
+          "path": "/demo/files",
+          "ttfbMs": 10,
+          "domContentLoadedMs": 20,
+          "responseBytes": 18921
+        },
+        {
+          "path": "/demo/files",
+          "ttfbMs": 9,
+          "domContentLoadedMs": 21,
+          "responseBytes": 18921
+        }
+      ]
+    },
+    {
+      "route": "/demo/settings?tab=controls",
+      "samples": [
+        {
+          "path": "/demo/settings",
+          "ttfbMs": 10,
+          "domContentLoadedMs": 20,
+          "responseBytes": 6221
+        },
+        {
+          "path": "/demo/settings",
+          "ttfbMs": 8,
+          "domContentLoadedMs": 17,
+          "responseBytes": 6221
+        },
+        {
+          "path": "/demo/settings",
+          "ttfbMs": 7,
+          "domContentLoadedMs": 15,
+          "responseBytes": 6221
+        }
+      ]
+    }
+  ],
+  "before": {
+    "buildId": "1UMqoUFDQV2YwJsNccyDZ",
+    "bytes": 1718378,
+    "count": 43
+  },
+  "after": {
+    "buildId": "iNe_C3eWemXo7DcROYjYG",
+    "bytes": 1729075,
+    "files": 43
+  },
+  "deltaBytes": 10697
+}

@@ -6,6 +6,7 @@ import type {
   ConnectionOwner,
   FolderConnectionView,
   FolderHandle,
+  SourceFolderConnection,
 } from "../types";
 import { FolderConnectionSession } from "../services/connection-session";
 import { SourceListingController } from "./source-listing-controller";
@@ -35,12 +36,14 @@ export type SourceConnectionState = Readonly<{
   view: FolderConnectionView | null;
   pending: Action | null;
   notice: Notice | null;
+  sources: readonly SourceFolderConnection[];
 }>;
 const initialState: SourceConnectionState = {
   phase: "loading",
   view: null,
   pending: null,
   notice: null,
+  sources: [],
 };
 
 const successes: Record<Action, string> = {
@@ -107,7 +110,7 @@ export class SourceConnectionController {
       () => this.permissionLost(),
     );
     this.preview = new SourcePreviewController(
-      (path, signal) => this.session.readSourceFile(path, signal),
+      (path, signal, expectation) => this.session.readSourceFile(path, signal, expectation),
       () => this.permissionLost(),
     );
     this.plan = new SourcePlanController(
@@ -195,6 +198,7 @@ export class SourceConnectionController {
         view: this.session.view("source"),
         pending: null,
         notice: null,
+        sources: await this.session.listSourceConnections(),
       });
     } catch {
       if (generation !== this.generation) return;
@@ -202,6 +206,7 @@ export class SourceConnectionController {
         phase: "load-error",
         view: null,
         pending: null,
+        sources: [],
         notice: {
           state: "error",
           title: "저장된 연결 정보를 불러오지 못했어요.",
@@ -229,6 +234,7 @@ export class SourceConnectionController {
       phase: "unsupported",
       view: null,
       pending: null,
+      sources: [],
       notice: {
         state: "attention",
         title: "이 환경에서는 폴더 연결을 사용할 수 없어요.",
@@ -240,6 +246,36 @@ export class SourceConnectionController {
   connect = () => this.run("connect");
   reconnect = () => this.run("reconnect");
   disconnect = () => this.run("disconnect");
+  activateSource = (connectionId: string) => {
+    if (this.state.pending || this.state.phase !== "ready" || this.organizationExecution.managed.getSnapshot().phase === "running") return Promise.resolve(false);
+    const source = this.state.sources.find(item => item.connectionId === connectionId);
+    if (!source) return Promise.resolve(false);
+    const permission = source.handle.requestPermission({ mode: "read" });
+    return this.runSourceSwitch(() => this.session.activateSourceConnection(connectionId, permission));
+  };
+  disconnectSource = async (connectionId: string) => this.runSourceSwitch(() => this.session.disconnectSourceConnection(connectionId));
+
+  private async runSourceSwitch(action: () => Promise<void>): Promise<boolean> {
+    if (this.state.pending || this.state.phase !== "ready" || this.organizationExecution.managed.getSnapshot().phase === "running") return false;
+    const generation = this.generation;
+    this.listing.reset(false);
+    this.preview.reset(false);
+    this.publish({ ...this.state, pending: "reconnect", notice: null });
+    try {
+      await action();
+      const sources = await this.session.listSourceConnections();
+      if (generation !== this.generation) return false;
+      this.publish({ ...this.state, view: this.session.view("source"), pending: null, sources });
+      const connected = this.session.state("source") === "connected";
+      this.listing.reset(connected); this.preview.reset(connected);
+      return true;
+    } catch (error) {
+      const sources = await this.session.listSourceConnections();
+      if (generation !== this.generation) return false;
+      this.publish({ ...this.state, pending: null, notice: failure("reconnect", error), sources });
+      return false;
+    }
+  }
 
   /** 이번 요청의 완료 여부를 반환한다. 이전 connected 상태로 성공을 추측하지 않도록 한다. */
   private async run(action: Action): Promise<boolean> {
@@ -277,6 +313,7 @@ export class SourceConnectionController {
         view: this.session.view("source"),
         pending: null,
         notice: { state: "success", title: successes[action] },
+        sources: await this.session.listSourceConnections(),
       });
       if (action === "connect") {
         this.listing.reset(true);
@@ -284,6 +321,9 @@ export class SourceConnectionController {
       } else if (action === "reconnect") {
         this.listing.resume(true, true);
         this.preview.resume(true, true);
+      } else if (this.session.state("source") === "connected") {
+        this.listing.reset(true);
+        this.preview.reset(true);
       }
       return true;
     } catch (error) {
@@ -292,6 +332,7 @@ export class SourceConnectionController {
         phase: action === "disconnect" ? "disconnect-error" : "ready",
         view: this.session.view("source"),
         pending: null,
+        sources: await this.session.listSourceConnections(),
         notice: failure(action, error),
       });
       this.listing.resume(this.session.state("source") === "connected");

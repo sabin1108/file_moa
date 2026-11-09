@@ -129,8 +129,13 @@
   font-size: 16px;
   line-height: 1.8;
 }
-.threadInner:has(.interaction) {
+.threadInner:has(.interaction),
+.threadInner:has([data-document-find]),
+.threadInner:has([data-local-preparation]) {
   max-width: 1104px;
+}
+.threadInner > article > p {
+  max-width: 720px;
 }
 .interaction summary {
   min-height: 44px;

@@ -17,9 +17,10 @@ const hold = async (page, selector) => { const p = await point(page, selector); 
 const release = (page, p) => mouse(page, "mouseReleased", p.x, p.y);
 try {
   const page = await browser.newPage({ width: 1440, height: 1000 });
-  await page.goto(base + "/demo", { settleMs: 400 });
+  await page.goto(base + "/demo", { settleMs: 300 });
+  await page.goto(base + "/demo/settings?tab=controls", { settleMs: 400 });
   for (let n = 0; n < 150 && !await shown(page); n++) {
-    await page.eval(() => window.dispatchEvent(new CustomEvent('moa-quick-switch-open', { detail: { x: 400, y: 400 } })));
+    await page.eval(() => document.querySelector('[aria-label="빠른 전환 열기"]')?.click());
     await pause(30);
   }
   assert.ok(await shown(page), 'Shared client menu listener must be ready before pointer checks');

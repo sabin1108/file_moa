@@ -10,6 +10,7 @@ import { requireGuest, requireAccountSession } from "../../server/session-guards
 import { beginSocialSignIn } from "../../server/auth-social";
 import { getAuthenticatedSession } from "../../server/authenticated-session";
 import { manageSocialAccount } from "../../server/auth-account";
+import { finishAccountDeletion, requestAccountDeletion } from "../../server/auth-account-deletion";
 import { reportAuthenticationFailure } from "../../server/auth-diagnostics";
 import { connectExistingAccount, selectConnectedWorkspace, disconnectAccountConnection } from "../../server/auth-account-connection";
 
@@ -62,6 +63,35 @@ export async function socialAccountAction(_previous: AuthFormState, data: FormDa
   await applyAuthCookies(result.response);
   if (result.url) redirect(result.url);
   return result.state;
+}
+
+export async function accountDeletionAction(_previous: AuthFormState, data: FormData) {
+  try {
+    return await requestAccountDeletion(data, new Headers(await headers()));
+  } catch (error) {
+    reportAuthenticationFailure("form", error);
+    return { status: "error" as const, message: "계정 삭제 요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요." };
+  }
+}
+
+function clearDeletedAccountSessionCookies(store: Awaited<ReturnType<typeof cookies>>) {
+  store.set({ name: "better-auth.session_token", value: "", path: "/", expires: new Date(0), httpOnly: true, sameSite: "lax", secure: false });
+  store.set({ name: "__Secure-better-auth.session_token", value: "", path: "/", expires: new Date(0), httpOnly: true, sameSite: "lax", secure: true });
+}
+
+export async function finishAccountDeletionAction(_previous: AuthFormState, data: FormData) {
+  let state: AuthFormState;
+  try {
+    state = await finishAccountDeletion(data, new Headers(await headers()));
+  } catch (error) {
+    reportAuthenticationFailure("form", error);
+    return { status: "error" as const, message: "계정 삭제를 처리하지 못했습니다. 잠시 후 다시 시도해 주세요." };
+  }
+  if (state.status === "success") {
+    clearDeletedAccountSessionCookies(await cookies());
+    redirect("/login?deleted=1");
+  }
+  return state;
 }
 
 async function changeAccountConnection(data: FormData, operation: typeof connectExistingAccount) {

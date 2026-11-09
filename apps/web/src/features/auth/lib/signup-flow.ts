@@ -4,8 +4,6 @@ import type { AuthDraft } from "./draft";
 export const signupInputStages = ["email", "password"] as const;
 export type SignupStage = typeof signupInputStages[number];
 export type SignupDraft = AuthDraft & { stage: SignupStage };
-export const SIGNUP_DRAFT_KEY = "moa-signup-draft-v1";
-export const SIGNUP_DRAFT_EVENT = "moa-signup-draft-change";
 const lifetime = 86_400_000;
 const email = z.string().trim().max(254).pipe(z.email("올바른 이메일 주소를 입력해 주세요."));
 const draftSchema = z.object({ email: z.string().max(254), stage: z.enum(["name", ...signupInputStages]), expiresAt: z.number().finite() });
@@ -39,8 +37,4 @@ export function parseSignupDraft(raw: string, now = Date.now()): (SignupDraft & 
 
 export function serializeSignupDraft(value: SignupDraft, now = Date.now()) {
   return JSON.stringify({ email: value.email.slice(0, 254), stage: value.stage, expiresAt: now + lifetime });
-}
-
-export function clearSignupDraft() {
-  try { localStorage.removeItem(SIGNUP_DRAFT_KEY); window.dispatchEvent(new Event(SIGNUP_DRAFT_EVENT)); } catch {}
 }

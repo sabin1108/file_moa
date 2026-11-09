@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-09T08:19:28.147Z",
+  "provider": "openai",
+  "attemptedHttpCalls": [
+    {
+      "path": "responses/input_tokens",
+      "status": 200,
+      "latencyMs": 0
+    },
+    {
+      "path": "responses",
+      "status": 200,
+      "latencyMs": 0
+    }
+  ],
+  "condition": "Synthetic provider stream, no external HTTP or model; production handler, isolated disposable PostgreSQL, signed fixture session and enabled ledger. No real account, personal content, production database or retry.",
+  "phase": "completed",
+  "acceptedMs": 63,
+  "firstTextMs": 198,
+  "completedMs": 198,
+  "deltaCount": 1,
+  "maxPublishedGapMs": 0,
+  "model": "fixture-model",
+  "usage": {
+    "inputTokens": 10,
+    "outputTokens": 8,
+    "totalTokens": 18
+  }
+}

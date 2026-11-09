@@ -4,7 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 
 type Visual = Readonly<{ opacity: string; transform: string }>;
 
-export function useDrawerDialog(open: boolean, onClosed: (dialog: HTMLDialogElement) => void) {
+export function useDrawerDialog(open: boolean, onClosed: (dialog: HTMLDialogElement, returnFocus: boolean) => void) {
   const dialog = useRef<HTMLDialogElement>(null);
   const afterClose = useRef(onClosed);
   const visual = useRef<Visual | null>(null);
@@ -40,7 +40,11 @@ export function useDrawerDialog(open: boolean, onClosed: (dialog: HTMLDialogElem
         if (current !== generation) return;
         element.dataset.drawerState = open ? "open" : "closed";
         visual.current = null;
-        if (!open) { element.close(); afterClose.current(element); }
+        if (!open) {
+          const returnFocus = element.contains(document.activeElement) || document.activeElement === document.body;
+          element.close();
+          afterClose.current(element, returnFocus);
+        }
         animation?.cancel();
         animation = null;
       };

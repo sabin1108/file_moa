@@ -1,0 +1,37 @@
+.context { display: grid; gap: 6px; }
+.messageActions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.messageActions > :not(button) { flex-basis: 100%; }
+.messageActions > button { min-height: 36px; font-size: 13px; }
+.contextActions { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.contextActions button { min-height: 36px; border-color: var(--control-border, #aebbb5); background: var(--surface); font-size: 13px; }
+.contextActions button:first-child { min-width: 0; max-width: 52%; }
+.contextActions button span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.settingsButton { margin-left: auto; flex: none; }
+.transmission { color: var(--muted); font-size: 12px; }
+.settings { display: grid; gap: 24px; padding: 20px 4px; }
+.settings > section { display: grid; gap: 12px; }
+.settings h3 { font-size: 15px; font-weight: 600; }
+.settings p, .settings small { color: var(--muted); font-size: 13px; line-height: 1.7; }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; cursor: pointer; }
+.toggle > span { display: grid; gap: 4px; }
+.toggle strong { font-size: 14px; font-weight: 500; }
+.toggle input { width: 20px; height: 20px; flex: none; accent-color: var(--text); }
+.advanced { border-top: 1px solid var(--border); padding-top: 12px; }
+.advanced summary { min-height: 40px; cursor: pointer; font-size: 14px; font-weight: 500; }
+.advanced[open] { display: grid; gap: 12px; }
+.advanced label { display: grid; gap: 8px; }
+.advanced input { width: 100%; min-height: 44px; padding: 10px; border: 1px solid var(--control-border); border-radius: 6px; background: var(--surface); color: var(--text); }
+.facts { display: grid; gap: 12px; }
+.facts > div { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 12px; font-size: 13px; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; overflow-wrap: anywhere; }
+.panelNavigation { display: flex; gap: 4px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+.panelNavigation button { flex: 1; min-height: 42px; border: 1px solid transparent; border-radius: 6px; font-size: 14px; cursor: pointer; }
+.panelNavigation button[aria-pressed="true"] { border-color: var(--text); background: var(--active); font-weight: 600; }
+.sourcePanel { display: grid; gap: 16px; padding: 24px 4px; }
+.sourcePanel h3 { font-size: 16px; }
+.sourcePanel > p { color: var(--muted); line-height: 1.8; font-size: 14px; }
+.sourcePanel button { border: 1px solid var(--control-border); min-height: 42px; padding-inline: 14px; }
+.sourcePanel [aria-label="자료 폴더 연결"] { align-items: center; gap: 12px; }
+.sourcePanel [aria-label="자료 폴더 연결"] > span { font-weight: 600; overflow-wrap: anywhere; }
+@media (max-width: 500px) { .contextActions { gap: 6px; } .contextActions button { padding-inline: 8px; } }

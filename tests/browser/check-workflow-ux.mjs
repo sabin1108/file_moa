@@ -157,7 +157,7 @@ try {
   check('second save reuses the original preservation', await text() === '두 번째 저장' && (await archives()).length === 1);
   await page.eval(() => {
     localStorage.setItem('moa-editor-autosave-seconds-v1', '15');
-    window.dispatchEvent(new Event('moa-editor-preferences-changed'));
+    window.dispatchEvent(new StorageEvent('storage', { key: 'moa-editor-autosave-seconds-v1', storageArea: localStorage }));
   });
   await edit('주기적 저장 내용');
   const permissionBefore = await page.eval(() => listingProbe.permissionRequests);
@@ -169,7 +169,7 @@ try {
     await page.screenshot({ path: `${out}/inline-editor-${width}.png`, format: 'png' });
   }
   await page.setViewport({ width: 1440, height: 900 });
-  await page.eval(() => { localStorage.setItem('moa-editor-autosave-seconds-v1', '0'); window.dispatchEvent(new Event('moa-editor-preferences-changed')); });
+  await page.eval(() => { localStorage.setItem('moa-editor-autosave-seconds-v1', '0'); window.dispatchEvent(new StorageEvent('storage', { key: 'moa-editor-autosave-seconds-v1', storageArea: localStorage })); });
   await edit('F5 이전 미저장 초안');
   await page.eval(() => new Promise(resolve => setTimeout(resolve, 250)));
   const url = await page.eval(() => location.href);

@@ -23,6 +23,9 @@ let containerId;
 let passed = 0;
 let tlsDirectory;
 const withBrowser = process.argv.includes("--ui");
+const withChatFixture = process.argv.includes("--chat-ledger-fixture");
+const withChatLedger = process.argv.includes("--chat-ledger-live") || withChatFixture;
+assert.ok(!(withChatFixture && process.argv.includes("--chat-ledger-live")), "Choose fixture or live verification, never both.");
 const fixtureCache = join(root, "apps/web/node_modules/.cache");
 
 function prismaCommand(args, url) {
@@ -41,7 +44,7 @@ function prismaCommand(args, url) {
   });
 
   if (result.error) throw result.error;
-  assert.equal(result.status, 0, result.stderr || "Prisma command failed on the disposable database");
+  assert.equal(result.status, 0, (result.stderr ?? "") + (result.stdout ?? "") || "Prisma command failed on the disposable database");
 }
 
 function docker(args, input) {
@@ -60,6 +63,23 @@ function docker(args, input) {
 function requireSuccess(result) {
   assert.equal(result.status, 0, result.stderr || "Docker command failed");
   return result.stdout.trim();
+}
+
+function readEnvValue(file, name) {
+  const expression = new RegExp(`^\\s*(?:export\\s+)?${name}\\s*=\\s*(.*?)\\s*$`, "u");
+  for (const line of readFileSync(file, "utf8").split(/\r?\n/u)) {
+    const value = line.match(expression)?.[1];
+    if (value === undefined) continue;
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) return value.slice(1, -1);
+    return value.replace(/\s+#.*$/u, "");
+  }
+  return undefined;
+}
+
+function chatLedgerEnvironment(runtimeUrl, provider, openAiKey) {
+  const child = { ...process.env };
+  for (const name of ["DATABASE_URL", "MIGRATION_DATABASE_URL", "BETTER_AUTH_SECRET", "BETTER_AUTH_URL", "OPENAI_API_KEY", "GEMINI_API_KEY", "GOOGLE_CLIENT_SECRET", "NAVER_CLIENT_SECRET", "KAKAO_CLIENT_SECRET", "RESEND_API_KEY", "EMAIL_FROM"]) delete child[name];
+  return { ...child, MOA_TEST_DATABASE_URL: runtimeUrl, MOA_TEST_DATABASE_RUN: runId, MOA_RUN_CHAT_LEDGER_LIVE: "1", AI_PROVIDER: provider, OPENAI_API_KEY: openAiKey };
 }
 
 function sqlArgs() {
@@ -164,7 +184,7 @@ try {
   await test("Prisma deploy applies and records the migration exactly once", () => {
     prismaCommand(["migrate", "deploy"], localUrl);
     prismaCommand(["migrate", "deploy"], localUrl);
-    assert.equal(sql('SELECT count(*) FROM moa_app._prisma_migrations WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL'), "3");
+    assert.equal(sql('SELECT count(*) FROM moa_app._prisma_migrations WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL'), "4");
   });
 
   await test("the migrated database has no model drift", () => {
@@ -368,9 +388,28 @@ try {
       if (browser.error) throw browser.error;
       assert.equal(browser.status, 0, "Authentication browser checks failed");
     }
+
+    if (withChatLedger) {
+      const envPath = join(root, "apps/web/.env.local");
+      assert.ok(withChatFixture || existsSync(envPath), "The local provider configuration is required for the explicit chat ledger check");
+      const openAiKey = withChatFixture ? "fixture-only-no-provider-key" : readEnvValue(envPath, "OPENAI_API_KEY");
+      const provider = withChatFixture ? "openai" : (readEnvValue(envPath, "AI_PROVIDER")?.trim() || (openAiKey?.trim() ? "openai" : "gemini"));
+      assert.equal(provider, "openai", "The explicit chat ledger check currently covers the configured OpenAI stream");
+      assert.ok(openAiKey?.trim(), "OPENAI_API_KEY is required for the explicit chat ledger check");
+      const live = spawnSync(process.execPath, [vitestCli, "run", "--config", "tests/database/vitest.chat-ledger-live.config.mts"], {
+        cwd: root,
+        env: { ...chatLedgerEnvironment(runtimeUrl, provider, openAiKey), MOA_CHAT_PROVIDER_FIXTURE: withChatFixture ? "1" : "0" },
+        encoding: "utf8",
+        windowsHide: true,
+        timeout: 75_000,
+      });
+      if (live.error) throw live.error;
+      process.stdout.write(live.stdout);
+      assert.equal(live.status, 0, live.stderr || "Synthetic chat ledger verification failed");
+    }
   });
 
-  console.log(`Database contract: ${passed} checks passed on disposable PostgreSQL; no application env files or user folders accessed.`);
+  console.log(`Database contract: ${passed} checks passed on disposable PostgreSQL; no user folders accessed.${withChatLedger && !withChatFixture ? " Provider settings read for the explicitly enabled synthetic live check." : " No application env files accessed."}`);
 } finally {
   if (containerId) {
     assert.match(containerId, /^[a-f0-9]{64}$/);

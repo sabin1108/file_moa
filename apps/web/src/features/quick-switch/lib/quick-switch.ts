@@ -1,4 +1,3 @@
-export { QUICK_SWITCH_EVENT } from "../../../shared/workspace-navigation";
 export const QUICK_HOLD_MS = 500;
 export type QuickShortcut = string;
 export type QuickPreferences = Readonly<{ trigger: "both" | "hold" | "keyboard" | "off"; shortcut: QuickShortcut }>;

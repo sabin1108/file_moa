@@ -28,10 +28,10 @@ try {
   const wait = async predicate => { for (let i = 0; i < 200; i++) { if (await page.eval(`Boolean((${predicate.toString()})())`)) return; await new Promise(resolve => setTimeout(resolve, 30)); }
     writeFileSync(`${output}/connection-failure.json`, JSON.stringify(await page.eval(() => ({ text: document.body.innerText, buttons: [...document.querySelectorAll('[aria-label="연결 폴더 구조"] button')].map(node => ({ title: node.title, disabled: node.disabled, ariaDisabled: node.getAttribute('aria-disabled') })) })), null, 2));
     throw Error('Connection fixture timed out: '+JSON.stringify(page.consoleErrors)); };
-  const click = async selector => { const point = await page.eval(selector => { const node = document.querySelector(selector); node.scrollIntoView({ block: "center" }); const r = node.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; }, selector);
+  const click = async selector => { const point = await page.eval(selector => { const node = document.querySelector(selector); for (let parent = node.parentElement; parent; parent = parent.parentElement) if (parent.tagName === 'DETAILS') parent.open = true; node.scrollIntoView({ block: "center" }); const r = node.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; }, selector);
     for (const type of ["mousePressed", "mouseReleased"]) await page.send("Input.dispatchMouseEvent", { type, ...point, button: "left", clickCount: 1 }); };
   await wait(() => document.querySelector('[data-conversation-workspace] button:not(:disabled)'));
-  check("disconnected chat is compact with no disabled composer or drawer", await page.eval(() => !document.getElementById('message-draft') && !document.getElementById('conversation-materials').open && window.pickerCalls.length === 0));
+  check("disconnected chat keeps one editable composer and no open drawer", await page.eval(() => !!document.getElementById('message-draft') && !document.getElementById('message-draft').readOnly && document.querySelectorAll('#message-draft').length === 1 && !document.getElementById('conversation-materials').open && window.pickerCalls.length === 0));
   await page.eval(async () => {
     await listingProbe.prepare(); listingProbe.preparing = true;
     try {
@@ -45,7 +45,7 @@ try {
   await page.eval(() => { listingProbe.pickerMode = 'cancel'; });
   await click('[data-conversation-workspace] [aria-label="자료 폴더 연결"] button');
   await wait(() => document.querySelector('[data-conversation-workspace]').textContent.includes('폴더 연결을 마치지 않았어요'));
-  check("cancelling direct picker retains compact state and restores the button", await page.eval(() => pickerCalls.length === 1 && pickerCalls[0].active && document.activeElement.textContent === '폴더 연결' && !document.getElementById('message-draft')));
+  check("cancelling direct picker retains the editable composer and restores the button", await page.eval(() => pickerCalls.length === 1 && pickerCalls[0].active && document.activeElement.textContent === '폴더 연결' && !!document.getElementById('message-draft') && !document.getElementById('message-draft').readOnly));
   await page.eval(() => { listingProbe.pickerMode = 'success'; });
   await click('[data-conversation-workspace] [aria-label="자료 폴더 연결"] button');
   await wait(() => document.querySelector('[data-folder-tree-root]'));

@@ -2,25 +2,38 @@ import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { Browser } from "../../.agents/skills/design-taste-frontend/scripts/lib/cdp.mjs";
 
-const output = "docs/verification/quick-menu-scope";
+const base = process.argv[2] ?? "http://127.0.0.1:3034";
+const output = process.argv[3] ?? "docs/verification/quick-menu-scope";
 mkdirSync(output, { recursive: true });
 const results = [];
 const check = (name, passed) => { results.push({ name, passed: !!passed }); assert.ok(passed, name); };
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 const browser = await Browser.launch({ extraArgs: ["--disable-gpu", "--disable-gpu-compositing", "--disable-software-rasterizer", "--disable-dev-shm-usage", "--no-sandbox"] });
-const click = (page, selector) => page.eval(selector => {
-  const control = document.querySelector(selector);
-  if (!control && selector === '[aria-label="빠른 전환 열기"]') {
-    (document.querySelector('[aria-label="대화 내용"]') ?? document.querySelector('main'))?.focus();
-    window.dispatchEvent(new CustomEvent('moa-quick-switch-open', { detail: { x: innerWidth / 2, y: innerHeight / 2 } }));
+let shortcutHeld = false;
+const click = async (page, selector) => {
+  if (selector === '[aria-label="빠른 전환 열기"]' && !await page.eval(selector => !!document.querySelector(selector), selector)) {
+    await page.eval(() => (document.querySelector('[aria-label="대화 내용"]') ?? document.querySelector('main'))?.focus());
+    for (let attempt = 0; attempt < 30 && !await exists(page); attempt++) {
+      await page.send("Input.dispatchKeyEvent", { type: "keyDown", key: "q", code: "KeyQ", modifiers: 1 });
+      await pause(250);
+    }
+    shortcutHeld = true;
+    await key(page, "ArrowRight"); await key(page, "ArrowRight");
     return;
   }
+  await page.eval(selector => {
+  const control = document.querySelector(selector);
   control.focus(); control.click();
-}, selector);
+  }, selector);
+};
 const exists = page => page.eval(() => !!document.querySelector('[data-quick-switch-menu]'));
 const key = async (page, key, code = key, modifiers = 0) => {
   await page.send("Input.dispatchKeyEvent", { type: "keyDown", key, code, modifiers });
   await page.send("Input.dispatchKeyEvent", { type: "keyUp", key, code, modifiers });
+  if (key === "Escape" && shortcutHeld) {
+    await page.send("Input.dispatchKeyEvent", { type: "keyUp", key: "q", code: "KeyQ", modifiers: 1 });
+    shortcutHeld = false;
+  }
 };
 const mouse = (page, type, x, y, extra = {}) => page.send("Input.dispatchMouseEvent", { type, x, y, button: "left", ...extra });
 const point = (page, selector) => page.eval(selector => { const r = document.querySelector(selector).getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; }, selector);
@@ -28,14 +41,14 @@ const until = async (page, predicate) => { for (let i = 0; i < 120; i++) { if (a
 try {
   const page = await browser.newPage({ width: 1440, height: 1000 });
   await page.send("Page.addScriptToEvaluateOnNewDocument", { source: `window.sampleIO=[]; const open=IDBFactory.prototype.open; IDBFactory.prototype.open=function(...args){window.sampleIO.push('indexedDB');return open.apply(this,args)};window.showDirectoryPicker=()=>{window.sampleIO.push('picker');throw Error('sample isolation')};` });
-  await page.goto("http://127.0.0.1:3034/demo", { settleMs: 300 });
+  await page.goto(base + "/demo", { settleMs: 300 });
   await until(page, () => document.getElementById("message-draft"));
   check("primary destinations plus footer settings", await page.eval(() => [...document.querySelectorAll('[data-workspace-sidebar] nav a')].map(a => a.textContent.trim()).join(',') === '폴더,채팅' && document.querySelector('[data-workspace-sidebar] [href="/demo/settings"]').textContent === '설정'));
-  check("materials drawer reserves no default right column", await page.eval(() => !document.getElementById('conversation-materials').open && document.querySelector('[data-conversation-workspace]').clientWidth > 1100));
+  check("materials drawer reserves no default right column", await page.eval(() => { const drawer = document.getElementById('conversation-materials'); return !drawer.open && ['fixed', 'absolute'].includes(getComputedStyle(drawer).position); }));
   await click(page, '[aria-label="빠른 전환 열기"]');
   await until(page, () => document.querySelector('[data-quick-switch-menu]'));
   await until(page, () => document.activeElement?.dataset.quickTarget === 'chat');
-  check("explicit entry opens exactly folder/chat/settings", await page.eval(() => [...document.querySelectorAll('[data-quick-target]')].map(b => b.textContent).join(',') === '폴더,채팅,설정'));
+  check("shared entry opens exactly folder/chat/settings", await page.eval(() => [...document.querySelectorAll('[data-quick-target]')].map(b => b.textContent).join(',') === '폴더,채팅,설정'));
   await key(page, "ArrowRight");
   check("arrow key moves focus and indicator without changing current page semantics", await page.eval(() => document.activeElement.dataset.quickTarget === 'settings' && document.activeElement.dataset.active === 'true' && document.querySelector('[data-quick-target][aria-current="page"]').dataset.quickTarget === 'chat'));
   await pause(250);
@@ -60,7 +73,7 @@ try {
   await mouse(page, "mouseReleased", blank.x, blank.y - 300, { clickCount: 1 });
   await until(page, () => location.pathname === '/demo/files');
   check("release alone navigates without another click", !(await exists(page)));
-  await page.goto('http://127.0.0.1:3034/demo', { settleMs: 250 });
+  await page.goto(base + '/demo', { settleMs: 250 });
   await key(page, "Escape"); await pause(50);
   const input = await point(page, '#message-draft');
   await mouse(page, "mousePressed", input.x, input.y, { clickCount: 1, buttons: 1 }); await pause(620); await mouse(page, "mouseReleased", input.x, input.y, { clickCount: 1 });
@@ -85,7 +98,7 @@ try {
   await page.send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'q', code: 'KeyQ', modifiers: 1 });
   await until(page, () => location.pathname === '/demo/settings');
   check("releasing shortcut key navigates the chosen direction", !(await exists(page)));
-  await page.goto('http://127.0.0.1:3034/demo', { settleMs: 250 });
+  await page.goto(base + '/demo', { settleMs: 250 });
   await mouse(page, "mousePressed", blank.x, blank.y, { buttons: 1 });
   await page.eval(() => window.dispatchEvent(new Event('blur'))); await pause(620); await mouse(page, "mouseReleased", blank.x, blank.y);
   check("losing window focus cancels a pending hold", !(await exists(page)));
@@ -111,7 +124,7 @@ try {
   await page.eval(() => { const select = document.querySelector('[aria-label="빠른 전환 호출 방식"]'); select.value = 'keyboard'; select.dispatchEvent(new Event('change', { bubbles: true })); document.querySelector('[aria-label="빠른 전환 단축키"]').focus(); });
   await key(page, 'K', 'KeyK', 10);
   check("shortcut records the actual key input", await page.eval(() => document.querySelector('[aria-label="빠른 전환 단축키"]').value === 'Ctrl+Shift+K'));
-  await page.goto("http://127.0.0.1:3034/demo", { settleMs: 250 });
+  await page.goto(base + "/demo", { settleMs: 250 });
   await page.eval(() => document.querySelector('[aria-label="대화 내용"]').focus());
   await key(page, "q", "KeyQ", 1); check("old shortcut stops after settings change", !(await exists(page)));
   await page.send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'K', code: 'KeyK', modifiers: 10 }); await pause(50);
@@ -122,7 +135,7 @@ try {
   await page.send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'K', code: 'KeyK', modifiers: 10 });
   await until(page, () => document.querySelector('[data-sample-ready="true"]'));
   check("files reuse primary destinations plus footer settings and width", await page.eval(() => [...document.querySelectorAll('[data-workspace-sidebar] nav a')].map(a => a.textContent.trim()).join(',') === '폴더,채팅' && !!document.querySelector('[data-workspace-sidebar] [href="/demo/settings"]') && document.querySelector('[data-workspace-sidebar]').getBoundingClientRect().width === 240));
-  await page.eval(() => { localStorage.removeItem('moa-quick-switch-v1'); window.dispatchEvent(new Event('moa-quick-preferences-changed')); });
+  await page.eval(() => { localStorage.removeItem('moa-quick-switch-v1'); window.dispatchEvent(new StorageEvent('storage', { key: 'moa-quick-switch-v1', storageArea: localStorage })); });
   await page.eval(() => document.querySelector('[data-sample-id="text-003"] button').scrollIntoView({ block: 'center' })); await pause(80);
   const row = await point(page, '[data-sample-id="text-003"] button');
   await mouse(page, "mousePressed", row.x, row.y, { buttons: 1, clickCount: 1 }); await pause(750); await mouse(page, "mouseReleased", row.x, row.y, { clickCount: 1 });

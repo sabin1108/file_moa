@@ -5,16 +5,17 @@ import type {
 } from "../lib/source-snapshot";
 import { copyFolderPath } from "../lib/folder-path";
 import type { FolderHandle } from "../types";
-import { createCopyHasher } from "./copy-hash";
+import { createCopyHasher, type TextIndexContext } from "./copy-hash";
 import { readSourceFolderListing } from "./source-folder-listing";
 import { openSourceDirectory } from "./source-directory";
+import { LocalTextIndex, LOCAL_TEXT_INDEX_VERSION } from "./local-text-index";
 import type {
   FindDocument,
   FindQuery,
   FindableSnapshot,
 } from "../lib/document-find";
 
-/** Bounded point-in-time snapshot. No persistence, network, permission prompt or writes. */
+/** Bounded source snapshot. Optional extracted-text cache stays in this browser. */
 export async function readSourceSnapshot(
   root: FolderHandle,
   scope: OrganizationScope,
@@ -22,6 +23,7 @@ export async function readSourceSnapshot(
   assertCurrent: () => void,
   signal?: AbortSignal,
   find?: FindQuery,
+  indexContext?: Omit<TextIndexContext, "path">,
 ): Promise<FindableSnapshot> {
   const starts =
     scope.kind === "all"
@@ -68,7 +70,7 @@ export async function readSourceSnapshot(
       const key = JSON.stringify(entry.path);
       if (
         seen.has(key) ||
-        entry.path.some((part) => part.toLowerCase() === ".moa-history")
+        entry.path.some((part) => [".moa-history", ".moa-ai-v1"].includes(part.toLowerCase()))
       )
         continue;
       seen.add(key);
@@ -147,7 +149,9 @@ export async function readSourceSnapshot(
           limits.add("bytes-limit");
           break;
         }
-        const content = await reader.readText(file, instruction, find);
+        const cached = indexContext ? await new LocalTextIndex().readPath(indexContext, entry.path).catch(() => undefined) : undefined;
+        check();
+        const content = await reader.readText(file, instruction, find, indexContext ? { ...indexContext, path: entry.path } : undefined, cached);
         check();
         const current = await handle.getFile();
         check();
@@ -159,10 +163,16 @@ export async function readSourceSnapshot(
         if ((await root.queryPermission({ mode: "read" })) !== "granted")
           throw new DOMException("Read permission required", "NotAllowedError");
         check();
-        const { finding, ...documentContent } = content;
+        const { finding } = content;
+        if (content.pdf && !content.pdf.complete) limits.add("pdf-text-limit");
+        if (indexContext && typeof content.fullText === "string") {
+          await new LocalTextIndex().put({ ...indexContext, path: entry.path, hash: content.sha256, parserVersion: LOCAL_TEXT_INDEX_VERSION }, content.fullText, check).catch(() => { check(); });
+          check();
+        }
         if (finding) findings.push({ name, path: entry.path, finding });
         documents.push({
-          ...documentContent,
+          sha256: content.sha256, size: content.size, excerpt: content.excerpt, excerptHash: content.excerptHash,
+          ...(content.pdf ? { pdf: content.pdf } : {}),
           id: `document-${documents.length + 1}`,
           name,
           path: entry.path,
@@ -184,14 +194,18 @@ export async function readSourceSnapshot(
         failed = true;
         excluded.push({
           path: entry.path,
-          reason:
-            reason === "invalid-utf8" || reason === "source-changed"
+            reason:
+            reason === "invalid-utf8" || reason === "source-changed" || reason.startsWith("pdf-")
               ? reason
               : "unreadable-file",
         });
       }
     }
     check();
+    if (indexContext && scope.kind === "all" && !failed && !limits.size) {
+      await new LocalTextIndex().retain(indexContext, documents.map(document => document.path), check).catch(() => { check(); });
+      check();
+    }
     return {
       documents,
       excluded,
