@@ -10,14 +10,14 @@ import ui from "../../src/styles/workspace-ui.module.css";
 import files from "../../src/features/local-folders/components/listing/folder-workspace.module.css";
 
 declare global {
-  interface Window { groundedProbe: { calls: GroundedRequest[]; mode: "success" | "hold" | "forged"; finish: (() => void) | null; navigations: string[] }; }
+  interface Window { groundedProbe: { calls: GroundedRequest[]; mode: "success" | "hold" | "forged"; finish: (() => void) | null; navigations: string[]; answer?: string }; }
 }
 const probe = window.groundedProbe = { calls: [] as GroundedRequest[], mode: "success" as "success" | "hold" | "forged", finish: null as (() => void) | null, navigations: [] as string[] };
 const action: GroundedAction = async input => {
   const parsed = groundedRequestSchema.parse(input);
   probe.calls.push(parsed);
   if (probe.mode === "hold") await new Promise<void>(resolve => { probe.finish = resolve; });
-  return { ok: true, model: "fixture-only", answer: { answer: "합성 근거에서 확인한 답변입니다.", citations: [{ documentId: probe.mode === "forged" ? "document-999" : parsed.documents[0].id, quote: parsed.documents[0].excerpt.slice(0, 20) }] } };
+  return { ok: true, model: "fixture-only", answer: { answer: window.groundedProbe.answer ?? "합성 근거에서 확인한 답변입니다.", citations: [{ documentId: probe.mode === "forged" ? "document-999" : parsed.documents[0].id, quote: parsed.documents[0].excerpt.slice(0, 20) }] } };
 };
 function Workbench() {
   const local = useSharedSourceFolderConnection();

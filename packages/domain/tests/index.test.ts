@@ -4,6 +4,8 @@ describe("document candidate policy", () => {
   it("accepts supported extensions through the exact byte boundary", () => {
     expect(checkDocumentCandidate("한글.MD", DOCUMENT_LIMITS.fileBytes)).toBeNull();
     expect(checkDocumentCandidate("empty.txt", 0)).toBeNull();
+    expect(checkDocumentCandidate("scan.PNG", DOCUMENT_LIMITS.fileBytes)).toBeNull();
+    expect(checkDocumentCandidate("photo.jpeg", 100)).toBeNull();
   });
   it("rejects oversize and disguised executable names", () => {
     expect(checkDocumentCandidate("large.md", DOCUMENT_LIMITS.fileBytes + 1)).toBe("too-large");

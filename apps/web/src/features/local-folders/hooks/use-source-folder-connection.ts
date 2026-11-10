@@ -5,7 +5,8 @@
  * effect에서 브라우저 지원/연결 복원을 시작하고, 구독으로 UI를 갱신하며 Provider 종료 때 이전 요청을 무효화한다.
  */
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import type { SourceFileExpectation } from "../../../shared/grounded-evidence";
 import type { ConnectionOwner, FolderHandle } from "../types";
 import { FolderConnectionSession } from "../services/connection-session";
 import { IndexedDbHandleRepository } from "../services/handle-repository";
@@ -98,8 +99,11 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
     };
   }, [controller, recovery, records, session, owner]);
 
+  const readSourceFile = useCallback((path: readonly string[], signal: AbortSignal, expectation: SourceFileExpectation) => session.readSourceFile(path, signal, expectation), [session]);
+
   return {
     owner,
+    readSourceFile,
     records,
     recheckSourceSnapshot: session.recheckSourceSnapshot,
     state,

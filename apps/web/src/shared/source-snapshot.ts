@@ -17,6 +17,7 @@ export type SnapshotDocument = Readonly<{
   size: number;
   lastModified: number;
   pdf?: Readonly<{ pages: number; complete: boolean }>;
+  ocr?: Readonly<{ pages: number; complete: boolean }>;
 }>;
 
 export type SourceSnapshot = Readonly<{

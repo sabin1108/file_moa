@@ -3,6 +3,8 @@ import {
   type FindEvidence,
   type FindQuery,
 } from "../lib/document-find";
+import { readOcrEnabled } from "../store/ocr-preferences";
+import { isOcrDetails, OCR_LIMITS } from "../lib/ocr-image";
 export type TextFileSnapshot = Readonly<{
   sha256: string;
   size: number;
@@ -10,6 +12,7 @@ export type TextFileSnapshot = Readonly<{
   excerptHash: string;
   finding?: FindEvidence | null;
   pdf?: Readonly<{ pages: number; complete: boolean }>;
+  ocr?: Readonly<{ pages: number; complete: boolean }>;
   fullText?: string;
 }>;
 export type TextIndexContext = Readonly<{ owner: string; workspace: string; connection: string; path: readonly string[] }>;
@@ -75,6 +78,8 @@ export function createCopyHasher(signal?: AbortSignal) {
             data.size !== file.size
           ) {
             settle(new Error("hash-read-failed"));
+          } else if ("ocr" in data && !isOcrDetails(data.ocr)) {
+            settle(new Error("hash-read-failed"));
           } else if (instruction === undefined) {
             settle(undefined, { sha256: data.sha256, size: file.size });
           } else if ("issue" in data && typeof data.issue === "string") {
@@ -100,6 +105,7 @@ export function createCopyHasher(signal?: AbortSignal) {
               excerpt: data.excerpt,
               excerptHash: data.excerptHash,
               ...( "pdf" in data && data.pdf && typeof data.pdf === "object" ? { pdf: data.pdf as { pages: number; complete: boolean } } : {}),
+              ...("ocr" in data && isOcrDetails(data.ocr) ? { ocr: data.ocr } : {}),
               ...( "fullText" in data && typeof data.fullText === "string" ? { fullText: data.fullText } : {}),
               ...(find && "finding" in data
                 ? { finding: data.finding as FindEvidence | null }
@@ -109,11 +115,12 @@ export function createCopyHasher(signal?: AbortSignal) {
         };
         worker.onerror = () => settle(new Error("unsupported-hash"));
         worker.onmessageerror = () => settle(new Error("hash-read-failed"));
-        timer = setTimeout(() => settle(new Error("hash-read-failed")), 30_000);
+        const ocr = instruction !== undefined && readOcrEnabled() && /\.(pdf|png|jpe?g)$/iu.test(file.name);
+        timer = setTimeout(() => settle(new Error(ocr ? "ocr-timeout" : "hash-read-failed")), ocr ? OCR_LIMITS.timeoutMs : 30_000);
         worker.postMessage(
           instruction === undefined
             ? file
-            : { file, instruction, ...(find ? { find } : {}), ...(index ? { index } : {}), ...(cached ? { cached } : {}) },
+            : { file, instruction, ...(ocr ? { ocr: true } : {}), ...(find ? { find } : {}), ...(index ? { index } : {}), ...(cached ? { cached } : {}) },
         );
       } catch {
         settle(new Error("unsupported-hash"));

@@ -23,6 +23,24 @@ afterEach(() => {
 });
 
 describe("copy hash Worker lifetime", () => {
+  it("bounds opt-in OCR time and rejects malformed OCR metadata", async () => {
+    vi.stubGlobal("Worker", TestWorker);
+    vi.stubGlobal("localStorage", { getItem: () => "true" });
+    vi.useFakeTimers();
+    const hasher = createCopyHasher();
+    const file = new File(["abc"], "scan.png");
+    const pending = hasher.readText(file, "검증");
+    const rejected = expect(pending).rejects.toThrow("ocr-timeout");
+    expect(TestWorker.instances[0].postMessage).toHaveBeenCalledWith({ file, instruction: "검증", ocr: true });
+    await vi.advanceTimersByTimeAsync(90_000);
+    await rejected;
+    expect(TestWorker.instances[0].terminate).toHaveBeenCalledOnce();
+    const next = createCopyHasher();
+    const malformed = next.readText(file, "검증");
+    const malformedRejection = expect(malformed).rejects.toThrow("hash-read-failed");
+    TestWorker.instances.at(-1)!.onmessage!({ data: { sha256: "a".repeat(64), size: 3, ocr: { pages: 1000, complete: true } } });
+    await malformedRejection;
+  });
   it("validates search evidence and refuses a missing or malformed search reply", async () => {
     vi.stubGlobal("Worker", TestWorker);
     const find = {

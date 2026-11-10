@@ -27,6 +27,7 @@ import { selectPersonalContext } from "../../ai-records/lib/personal-context";
 import type { GroundedAction } from "../../../shared/grounded-chat";
 import type { GroundedEvidence } from "../../../shared/grounded-evidence";
 import type { UsageSummary } from "../../../shared/ai-usage";
+import { makeWikiDraft } from "../../ai-records/lib/wiki";
 
 export function LiveConversation({ organizeAction, groundedAction, readUsage, aiProvider = "gemini" }: {
   organizeAction?: LiveOrganizationAction;
@@ -58,6 +59,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
   const last = chat.state.turns.at(-1);
   const chatNotice = last && (!last.kind || last.kind === "chat") ? last : null;
   const savedEvidence = new Map<string, GroundedEvidence>(chat.state.turns.flatMap(turn => turn.evidence ? [[`${turn.id}:answer`, turn.evidence] as const] : []));
+  const savedModels = new Map(chat.state.turns.map(turn => [`${turn.id}:answer`, turn.model ?? null]));
   const messages = chat.state.turns.flatMap(turn => {
     const messages: ConversationMessage[] = [{ id: `${turn.id}:question`, author: "user", text: turn.question }];
     const answer = turn.answer.slice(0, turn.visibleLength);
@@ -92,7 +94,8 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
         <div hidden={panelView !== "records" && panelView !== "storage"}>
           <AiLibraryPanel controller={local.records} conversation={conversation} editor={editor} onEditorChange={setEditor}
             onOpen={() => setLibraryOpen(false)} canSwitchConversation={!workflow.blocked}
-            storageOpen={panelView === "storage"} onStorageChange={open => setPanelView(open ? "storage" : "records")} />
+            storageOpen={panelView === "storage"} onStorageChange={open => setPanelView(open ? "storage" : "records")}
+            onCreateWiki={() => { chat.updateDraft("선택한 자료를 요약해 주세요."); setLibraryOpen(false); }} />
         </div>
         <div hidden={panelView !== "sources"}><section className={options.sourcePanel} aria-label="대화에 참고할 자료">
           <h3>참고할 자료 폴더</h3>
@@ -110,10 +113,14 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
       panelLabel="기록함"
       panelTitle={{ records: "기록함", storage: "저장 위치", sources: "참고 자료", settings: "대화 설정" }[panelView]}
       messageActions={message => message.author === "assistant" && workflow.task && (workflow.task.kind !== "grounded" || workflow.grounded.result) && message.id === `${workflow.task.id}:answer` ? (
-        workflow.task.kind === "grounded" ? <GroundedAnswerView conversation={workflow.grounded} /> : <MaterialWorkPanel kind={workflow.task.kind} onPrepare={workflow.prepareFound} canStart={workflow.canStart} organizeAction={organizeAction} aiProvider={aiProvider} waitingForSource={workflow.task.waitingForSource} onContinue={workflow.resume} />
+        workflow.task.kind === "grounded" ? <GroundedAnswerView conversation={workflow.grounded} allowWikiSave={!editor} /> : <MaterialWorkPanel kind={workflow.task.kind} onPrepare={workflow.prepareFound} canStart={workflow.canStart} organizeAction={organizeAction} aiProvider={aiProvider} waitingForSource={workflow.task.waitingForSource} onContinue={workflow.resume} />
       ) : message.author === "assistant" ? <div className={options.messageActions}>
         {savedEvidence.has(message.id) && <SavedGroundedAnswer evidence={savedEvidence.get(message.id)!} onOpen={workflow.grounded.openSavedCitation} disabled={workflow.blocked} />}
         {!pending && <>
+        {savedEvidence.get(message.id)?.citations.length && !editor ? <button type="button" className={actionClasses("secondary")} onClick={event => {
+          setEditor(makeWikiDraft({ id: `wiki-${crypto.randomUUID()}`, title: "자료 답변에서 만든 위키", markdown: message.text, evidence: savedEvidence.get(message.id)!, model: savedModels.get(message.id) ?? null, sourceConversationId: conversation.temporary ? null : conversation.id, now: new Date().toISOString() }));
+          openPanel("records", event.currentTarget);
+        }}><Icon name="file" />위키로 편집</button> : null}
         <button className={actionClasses("secondary")} onClick={event => {
           setEditor({ type: "artifact", id: `artifact-${crypto.randomUUID()}`, title: "답변에서 만든 초안", updatedAt: new Date().toISOString(), markdown: message.text, status: "draft", sourceConversationId: conversation.temporary ? null : conversation.id });
           openPanel("records", event.currentTarget);

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { isRecordId, parseLocalRecord, type LocalRecord } from "@personal-ai/domain";
-import { aiRecordPayloadSchema, type AiRecordPayload } from "../../../shared/ai-records";
+import { aiRecordPayloadSchema, recordConversationSources, type AiRecordPayload } from "../../../shared/ai-records";
 import type { ConnectionOwner } from "../../local-folders/types";
 import { decodeRecord, encodeRecord } from "../lib/record-codec";
 import { digest, loadLatest, saveRevision } from "./record-store";
@@ -75,11 +75,10 @@ export class AiRecordRepository {
   }
 
   private async assertSourceRetained(root: FileSystemDirectoryHandle, payload: AiRecordPayload) {
-    if (!("sourceConversationId" in payload) || !payload.sourceConversationId) return;
-    try {
+    for (const sourceId of recordConversationSources(payload)) try {
       const deleted = await root.getDirectoryHandle("deleted");
-      const tombstone = tombstoneSchema.parse(await readJson(deleted, `${payload.sourceConversationId}.json`));
-      if (tombstone.id !== payload.sourceConversationId) throw new Error("invalid-record-tombstone");
+      const tombstone = tombstoneSchema.parse(await readJson(deleted, `${sourceId}.json`));
+      if (tombstone.id !== sourceId) throw new Error("invalid-record-tombstone");
       if (tombstone.cascade) throw new Error("record-deleted");
     } catch (error) { if (!missing(error)) throw error; }
   }
@@ -120,6 +119,11 @@ export class AiRecordRepository {
   async save(input: AiRecordPayload, parentRevisionId: string | null): Promise<SavedAiRecord> {
     const payload = aiRecordPayloadSchema.parse(input);
     const context = await this.root();
+    if (payload.type === "artifact" && payload.wiki) {
+      for (const evidence of [payload.wiki.evidence, payload.wiki.proposal?.evidence]) {
+        if (evidence && (evidence.owner.userId !== context.owner.userId || evidence.owner.workspaceId !== context.owner.workspaceId)) throw new Error("ai-record-owner-mismatch");
+      }
+    }
     await this.assertNotDeleted(context.root, payload.id);
     await this.assertSourceRetained(context.root, payload);
     const parent = await context.root.getDirectoryHandle(folders[payload.type], { create: true });
@@ -135,9 +139,14 @@ export class AiRecordRepository {
       assertCurrent: context.assertCurrent, maxRevisions: 1000,
       beforeWrite: async () => { await this.assertNotDeleted(context.root, payload.id); await this.assertSourceRetained(context.root, payload); },
     });
-    const sourceId = "sourceConversationId" in payload ? payload.sourceConversationId : null;
-    if (sourceId === payload.id) throw new Error("invalid-source-record");
-    const metadata = sourceId ? await navigator.locks.request(`moa-record-save:${sourceId}`, write) : await write();
+    const sourceIds = recordConversationSources(payload).sort();
+    if (sourceIds.includes(payload.id)) throw new Error("invalid-source-record");
+    let lockedWrite = write;
+    for (const sourceId of [...sourceIds].reverse()) {
+      const next = lockedWrite;
+      lockedWrite = async () => await navigator.locks.request(`moa-record-save:${sourceId}`, next);
+    }
+    const metadata = await lockedWrite();
     if (!metadata) throw new Error("record-write-not-verified");
     return { payload, revisionId: metadata.metadata.revisionId, revisions: metadata.revisionCount };
   }

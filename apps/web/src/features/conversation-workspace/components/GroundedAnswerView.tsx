@@ -16,7 +16,8 @@ export function GroundedConsent({ conversation }: { conversation: Grounded }) {
   </section>;
 }
 
-export function GroundedAnswerView({ conversation }: { conversation: Grounded }) {
+export function GroundedAnswerView({ conversation, allowWikiSave = true }: { conversation: Grounded; allowWikiSave?: boolean }) {
+  const [wikiTarget, setWikiTarget] = useState("");
   const { result, documents } = conversation;
   if (!result) return null;
   return <section aria-label="자료 근거 답변">
@@ -25,6 +26,10 @@ export function GroundedAnswerView({ conversation }: { conversation: Grounded })
       return document ? [{ path: document.path, quote: citation.quote }] : [];
     })} onOpen={index => conversation.openCitation(result.value.citations[index].documentId)} />
     <button type="button" className={actionClasses("ghost")} disabled={!conversation.canSave} onClick={conversation.saveResult}>답변·근거를 결과물로 저장</button>
+    {result.value.citations.length > 0 && <div className={styles.wikiSave}>
+      {conversation.wikiTargets.length > 0 && <label>위키 저장 대상<select aria-label="위키 저장 대상" value={wikiTarget} onChange={event => setWikiTarget(event.target.value)}><option value="">새 위키</option>{conversation.wikiTargets.map(target => <option key={target.id} value={target.id}>{target.title} · 새 초안 제안</option>)}</select></label>}
+      <button type="button" className={actionClasses("secondary")} disabled={!conversation.canSave || !allowWikiSave} onClick={() => conversation.saveWiki(wikiTarget || undefined)}>{wikiTarget ? "위키에 새 초안 제안" : "위키로 저장"}</button>
+    </div>}
     {conversation.notice && <p role="status">{conversation.notice}</p>}
   </section>;
 }

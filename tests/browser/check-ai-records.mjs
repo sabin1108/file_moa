@@ -11,7 +11,8 @@ const { createServer } = await import(pathToFileURL(require.resolve("vite")).hre
 const output = resolve(process.argv[2] ?? "docs/verification/workspace-nine/browser");
 mkdirSync(output, { recursive: true });
 let generations = 0;
-const server = await createServer({ configFile: false, root: resolve("apps/web"), logLevel: "error", cacheDir: resolve(".omx/browser-cache/records"), server: { host: "127.0.0.1", port: 0, fs: { allow: [resolve(".")] } }, resolve: { alias: { "next/link": resolve("tests/fixtures/navigation-next-shim.tsx"), "next/navigation": resolve("tests/fixtures/navigation-next-shim.tsx"), "@personal-ai/domain": resolve("packages/domain/src/index.ts") } }, oxc: { jsx: { runtime: "automatic" } }, plugins: [{ name: "records-fixture", configureServer(server) {
+const server = await createServer({ configFile: false, root: resolve("apps/web"), logLevel: "error", cacheDir: resolve(".omx/browser-cache/records"), server: { host: "127.0.0.1", port: 0, fs: { allow: [resolve(".")] } }, resolve: { alias: { "next/link": resolve("tests/fixtures/navigation-next-shim.tsx"), "next/navigation": resolve("tests/fixtures/navigation-next-shim.tsx"), "@personal-ai/domain": resolve("packages/domain/src/index.ts") } }, oxc: { jsx: { runtime: "automatic" } },
+  optimizeDeps: { include: ["react", "react-dom/client", "react/jsx-runtime", "tesseract.js", "pdfjs-dist/legacy/build/pdf.mjs"] }, plugins: [{ name: "records-fixture", configureServer(server) {
   server.middlewares.use("/__records", (_request, response) => { response.setHeader("content-type", "text/html; charset=utf-8"); response.end('<html lang="ko"><meta name="viewport" content="width=device-width,initial-scale=1"><div id="fixture"></div><script type="module" src="/tests/browser-fixtures/local-organization.tsx"></script></html>'); });
   server.middlewares.use("/api/chat", async (request, response) => {
     let body = ""; for await (const chunk of request) body += chunk;

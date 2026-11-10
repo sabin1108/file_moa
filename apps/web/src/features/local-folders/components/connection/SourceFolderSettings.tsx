@@ -15,6 +15,7 @@ import { useSharedSourceFolderConnection } from "../../providers/SourceFolderPro
 import styles from "./source-folder-connection.module.css";
 import { RecoveryVaultSettings } from "./RecoveryVaultSettings";
 import { FolderPermissionGuide } from "./FolderPermissionGuide";
+import { OcrControl } from "./OcrControl";
 
 const pendingTitles = {
   connect: "폴더 선택과 연결을 기다리고 있어요.",
@@ -103,6 +104,7 @@ export function SourceFolderSettings({ onConnected }: { onConnected?: () => void
         <button type="button" disabled={!!state.pending} onClick={() => { void disconnectSource(source.connectionId); }}>연결 해제</button>
       </div>)}
     </div>}
+    <OcrControl disabled={!!state.pending} />
     <RecoveryVaultSettings titleRef={vaultTitle} />
     {state.view?.status === "connected" && <div className={styles.finish}>
       <button

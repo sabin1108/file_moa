@@ -9,12 +9,14 @@ import type { useConversationRecords } from "../hooks/useConversationRecords";
 import { RecordEditor } from "./RecordEditor";
 import { AiStorageSettings } from "./AiStorageSettings";
 import styles from "./ai-library.module.css";
+import { isWiki } from "../lib/wiki";
 
 type Editable = Exclude<AiRecordPayload, ConversationPayload>;
-const kinds = [["conversation", "대화", "chat"], ["artifact", "결과물", "file"], ["memory", "기억", "leaf"], ["profile", "프로필", "person"]] as const;
+const kinds = [["conversation", "대화", "chat"], ["artifact", "결과물", "file"], ["wiki", "위키", "file"], ["memory", "기억", "leaf"], ["profile", "프로필", "person"]] as const;
+const category = (payload: AiRecordPayload) => isWiki(payload) ? "wiki" : payload.type;
 const statusLabels = { draft: "초안", final: "확정본", proposed: "검토 중", approved: "사용 중", inactive: "사용 안 함" } as const;
 
-export function AiLibraryPanel({ controller, conversation, editor, onEditorChange, onOpen, canSwitchConversation = true, storageOpen, onStorageChange }: {
+export function AiLibraryPanel({ controller, conversation, editor, onEditorChange, onOpen, canSwitchConversation = true, storageOpen, onStorageChange, onCreateWiki }: {
   controller: AiRecordsController;
   conversation: ReturnType<typeof useConversationRecords>;
   editor: Editable | null;
@@ -23,8 +25,9 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
   canSwitchConversation?: boolean;
   storageOpen: boolean;
   onStorageChange: (open: boolean) => void;
+  onCreateWiki?: () => void;
 }) {
-  const [tab, setTab] = useState<AiRecordPayload["type"]>("conversation");
+  const [tab, setTab] = useState<typeof kinds[number][0]>("conversation");
   const [query, setQuery] = useState("");
   const [deletion, setDeletion] = useState<(AiRecordPayload & { connectionRevision: number }) | null>(null);
   const [cascade, setCascade] = useState(false);
@@ -38,7 +41,7 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
   const { library } = conversation;
   const ready = library.phase === "ready";
   const selectedKind = kinds.find(([type]) => type === tab)!;
-  const records = ready ? library.records.filter(item => item.payload.type === tab && item.payload.title.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase())) : [];
+  const records = ready ? library.records.filter(item => category(item.payload) === tab && item.payload.title.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase())) : [];
 
   useEffect(() => {
     if (deletion) confirmation.current?.focus();
@@ -57,6 +60,11 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
     }
   };
   const create = () => {
+    if (tab === "wiki") {
+      if (onCreateWiki) onCreateWiki();
+      else setNotice("자료 답변의 ‘위키로 저장’에서 출처가 있는 초안을 만들 수 있어요.");
+      return;
+    }
     if (tab === "conversation") {
       void perform(async () => { await conversation.open(null, !ready); onOpen(); });
       return;
@@ -83,12 +91,12 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
       <div hidden={!!editor || !!deletion}>
         <nav className={styles.tabs} aria-label="보관 기록 종류">
           {kinds.map(([type, label, icon]) => <button type="button" key={type} aria-pressed={tab === type} onClick={() => { setTab(type); setQuery(""); }}>
-            <Icon name={icon} /><span>{label}</span>{ready && <small>{library.records.filter(item => item.payload.type === type).length}</small>}
+            <Icon name={icon} /><span>{label}</span>{ready && <small>{library.records.filter(item => category(item.payload) === type).length}</small>}
           </button>)}
         </nav>
         <section aria-label="저장 기록" className={styles.browser}>
-          <div className={styles.listHeading}><h3 ref={listHeading} tabIndex={-1}>{selectedKind[1]}</h3><button type="button" className={actionClasses("primary")} disabled={tab === "conversation" && (!canSwitchConversation || library.pending)} onClick={create}><Icon name="plus" />{tab === "conversation" ? "새 대화" : tab === "profile" ? "프로필 만들기" : `새 ${selectedKind[1]}`}</button></div>
-          {ready && library.records.some(item => item.payload.type === tab) && <label className={styles.search}><Icon name="search" /><input type="search" aria-label="저장 기록 검색" value={query} onChange={event => setQuery(event.target.value)} placeholder={`${selectedKind[1]} 검색`} /></label>}
+          <div className={styles.listHeading}><h3 ref={listHeading} tabIndex={-1}>{selectedKind[1]}</h3><button type="button" className={actionClasses("primary")} disabled={(tab === "conversation" || tab === "wiki") && (!canSwitchConversation || library.pending)} onClick={create}><Icon name="plus" />{tab === "conversation" ? "새 대화" : tab === "wiki" ? "자료 답변에서 만들기" : tab === "profile" ? "프로필 만들기" : `새 ${selectedKind[1]}`}</button></div>
+          {ready && library.records.some(item => category(item.payload) === tab) && <label className={styles.search}><Icon name="search" /><input type="search" aria-label="저장 기록 검색" value={query} onChange={event => setQuery(event.target.value)} placeholder={`${selectedKind[1]} 검색`} /></label>}
           {!ready ? <div className={styles.empty}>
             <Icon name="folder" size={32} /><strong>{library.pending ? "기록을 불러오고 있어요" : "대화를 다시 꺼내 보고 싶다면"}</strong>
             <p>{library.pending ? "연결한 저장 위치를 확인합니다." : "이 기기의 저장 폴더를 연결해 주세요."}</p>
@@ -122,8 +130,8 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
       {deletion && <section className={styles.deletion} aria-label="기록 삭제 확인">
         <h3 ref={confirmation} tabIndex={-1}>‘{deletion.title}’ 삭제할까요?</h3>
         <p>저장한 모든 버전이 삭제됩니다. 내보낸 사본은 남아요.</p>
-        {deletion.type === "conversation" && <label className={styles.checkRow}><input type="checkbox" checked={cascade} onChange={event => setCascade(event.target.checked)} />이 대화의 결과물과 기억도 삭제</label>}
-        {deletion.type === "conversation" && !cascade && <p>결과물과 기억은 보존합니다.</p>}
+        {deletion.type === "conversation" && <label className={styles.checkRow}><input type="checkbox" checked={cascade} onChange={event => setCascade(event.target.checked)} />이 대화의 결과물·위키·기억도 삭제</label>}
+        {deletion.type === "conversation" && !cascade && <p>결과물·위키·기억은 보존합니다.</p>}
         <div className={styles.actions}>
           <button type="button" className={actionClasses("secondary")} onClick={cancelDelete}>취소</button>
           <button type="button" className={actionClasses("primary", styles.danger)} disabled={deletion.type === "conversation" && !canSwitchConversation} onClick={() => void perform(async () => {

@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { AiRecordRepository } from "../../src/features/ai-records/services/ai-record-repository";
 import type { ConnectionOwner } from "../../src/features/local-folders/types";
+import { makeWikiDraft, proposeWikiUpdate } from "../../src/features/ai-records/lib/wiki";
 
 type FileNode = { kind: "file"; name: string; text: string };
 type DirNode = { kind: "directory"; name: string; children: Map<string, FileNode | DirNode> };
@@ -22,6 +23,19 @@ const payload = { type: "artifact" as const, id: "artifact-a", title: "draft", u
 function setup() { vi.stubGlobal("navigator", { locks: { request: async (_name: string, work: () => Promise<unknown>) => work() } }); const root = fakeRoot(); let valid = true; const repo = new AiRecordRepository(async () => ({ directory: root, owner, assertCurrent: () => { if (!valid) throw new Error("stale-connection-operation"); } })); return { root, repo, revoke: () => { valid = false; } }; }
 
 describe("AI record repository", () => {
+  it("round trips wiki metadata and rejects late updates from any cascading source conversation", async () => {
+    const { repo } = setup();
+    await repo.initialize();
+    const input = { id: "wiki-a", title: "위키", markdown: "합성 요약", evidence: { owner, connectionId: "source-a", citations: [{ path: ["note.md"], sha256: "a".repeat(64), size: 100, quote: "위키를 위한 합성 원문 인용입니다." }] }, model: "fixture", sourceConversationId: "chat-a", now: payload.updatedAt };
+    const wiki = makeWikiDraft(input);
+    const saved = await repo.save(wiki, null);
+    expect((await repo.read("artifact", wiki.id)).payload).toEqual(wiki);
+    const proposed = proposeWikiUpdate({ ...wiki, markdown: "사용자 수정" }, { ...input, sourceConversationId: "chat-b", markdown: "새 초안" });
+    await repo.remove("conversation", "chat-b", true);
+    await expect(repo.save(proposed, saved.revisionId)).rejects.toThrow("record-deleted");
+    expect((await repo.read("artifact", wiki.id)).payload).toEqual(wiki);
+    await expect(repo.save({ ...wiki, id: "wiki-other", wiki: { ...wiki.wiki, evidence: { ...wiki.wiki.evidence, owner: { ...owner, userId: "other" } } } }, null)).rejects.toThrow("ai-record-owner-mismatch");
+  });
   it("rejects a late derived artifact after cascading conversation deletion", async () => {
     const { repo } = setup();
     await repo.initialize();

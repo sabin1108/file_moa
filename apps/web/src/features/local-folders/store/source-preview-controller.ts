@@ -5,7 +5,7 @@
 import type { SourceFilePreview } from "../services/source-file-preview";
 import { sourceFileExpectationSchema, type SourceFileExpectation } from "../../../shared/grounded-evidence";
 
-export type PreviewIssue = "permission" | "missing" | "read" | "encoding" | "too-large" | "unsupported" | "cancelled" | "changed";
+export type PreviewIssue = "permission" | "missing" | "read" | "encoding" | "too-large" | "unsupported" | "cancelled" | "changed" | "ocr";
 export type SourcePreviewState = Readonly<{
   available: boolean;
   path: readonly string[] | null;
@@ -98,6 +98,7 @@ export class SourcePreviewController {
       else if (message === "invalid-utf8") issue = "encoding";
       else if (message === "too-large") issue = "too-large";
       else if (message === "unsupported-extension") issue = "unsupported";
+      else if (message.startsWith("ocr-") || message === "pdf-no-text") issue = "ocr";
       else if (["citation-changed", "source-changed", "citation-connection-mismatch"].includes(message)) issue = "changed";
       this.publish({ ...this.state, available: issue !== "permission", phase: issue === "cancelled" ? "cancelled" : "error", issue });
       if (issue === "permission") this.onPermissionLost();

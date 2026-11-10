@@ -1,7 +1,7 @@
 import { chatReducer, initialChatState, type RestorableChatAction } from "../lib/general-chat-state";
 import type { GroundedAnswer } from "../../../shared/grounded-chat";
 
-export type GroundedConversationResult = { taskId: string; key: string; question: string; value: GroundedAnswer };
+export type GroundedConversationResult = { taskId: string; key: string; question: string; value: GroundedAnswer; model?: string };
 
 const initialSelection = { id: null as string | null, temporary: true, projectId: "", status: "임시 대화", lastSaved: "" };
 

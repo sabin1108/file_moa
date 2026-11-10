@@ -20,6 +20,7 @@ const server = await createServer({
   server: { host: "127.0.0.1", port: 0, fs: { allow: [resolve(".")] } },
   resolve: { alias: { "next/link": resolve("tests/fixtures/navigation-next-shim.tsx"), "next/navigation": resolve("tests/fixtures/navigation-next-shim.tsx"), "@personal-ai/domain": resolve("packages/domain/src/index.ts") } },
   oxc: { jsx: { runtime: "automatic" } },
+  optimizeDeps: { include: ["react", "react-dom/client", "react/jsx-runtime", "tesseract.js", "pdfjs-dist/legacy/build/pdf.mjs"] },
   plugins: [{ name: "general-chat-fixture", configureServer(server) {
     server.middlewares.use("/__chat", (_request, response) => {
       response.setHeader("content-type", "text/html; charset=utf-8");

@@ -165,14 +165,16 @@ export async function readSourceSnapshot(
         check();
         const { finding } = content;
         if (content.pdf && !content.pdf.complete) limits.add("pdf-text-limit");
+        if (content.ocr && !content.ocr.complete) limits.add("ocr-limit");
         if (indexContext && typeof content.fullText === "string") {
           await new LocalTextIndex().put({ ...indexContext, path: entry.path, hash: content.sha256, parserVersion: LOCAL_TEXT_INDEX_VERSION }, content.fullText, check).catch(() => { check(); });
           check();
         }
-        if (finding) findings.push({ name, path: entry.path, finding });
+        if (finding) findings.push({ name, path: entry.path, finding, ...(content.ocr ? { ocr: true } : {}) });
         documents.push({
           sha256: content.sha256, size: content.size, excerpt: content.excerpt, excerptHash: content.excerptHash,
           ...(content.pdf ? { pdf: content.pdf } : {}),
+          ...(content.ocr ? { ocr: content.ocr } : {}),
           id: `document-${documents.length + 1}`,
           name,
           path: entry.path,
@@ -195,7 +197,7 @@ export async function readSourceSnapshot(
         excluded.push({
           path: entry.path,
             reason:
-            reason === "invalid-utf8" || reason === "source-changed" || reason.startsWith("pdf-")
+            reason === "invalid-utf8" || reason === "source-changed" || reason.startsWith("pdf-") || reason.startsWith("ocr-")
               ? reason
               : "unreadable-file",
         });

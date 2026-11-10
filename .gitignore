@@ -13,6 +13,11 @@ coverage/
 test-results/
 playwright-report/
 apps/web/generated/prisma/
+apps/web/public/ocr/core/
+apps/web/public/ocr/worker.min.js
+apps/web/public/ocr/worker.min.js.LICENSE.txt
+apps/web/public/ocr/ENGINE-LICENSE.md
+apps/web/public/ocr/CORE-LICENSE
 
 # 실제 로컬 디스크 관측 원자료는 공개 요약과 분리해 보관합니다.
 /docs/verification/live-organization-completion/manual-*.json

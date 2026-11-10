@@ -172,7 +172,7 @@ export function DocumentFindPanel({
               </button>
             </div>
             <p className={styles.note}>
-              TXT·MD 본문에서 단어와 날짜 근거를 확인합니다. 이 기기에서만
+              문서 본문과 사용을 켠 OCR 인식 글에서 단어·날짜 근거를 확인합니다. 이 기기에서만
               읽으며 파일을 옮기거나 외부 AI로 보내지 않습니다.
             </p>
           </fieldset>

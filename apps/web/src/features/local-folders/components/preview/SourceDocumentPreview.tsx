@@ -12,6 +12,7 @@ import { StatusNotice } from "../../../../components/ui/feedback/StatusNotice";
 import type { PreviewIssue, SourcePreviewState } from "../../store/source-preview-controller";
 import styles from "./source-document-preview.module.css";
 import { DocumentWorkspace } from "./DocumentWorkspace";
+import { OcrControl } from "../connection/OcrControl";
 
 const messages: Record<PreviewIssue, string> = {
   permission: "파일을 읽을 권한이 필요해요. 연결 관리에서 다시 연결해 주세요.",
@@ -19,7 +20,8 @@ const messages: Record<PreviewIssue, string> = {
   read: "파일을 읽지 못했어요. 파일이 변경되었거나 사용할 수 없는 상태일 수 있습니다.",
   encoding: "UTF-8로 읽을 수 없는 파일이에요. 원본의 문자 인코딩을 확인해 주세요.",
   "too-large": "2MiB를 넘는 파일은 미리 볼 수 없어요.",
-  unsupported: "MD·TXT·텍스트 PDF 파일만 미리 볼 수 있어요.",
+  unsupported: "MD·TXT·PDF·PNG·JPEG 파일만 미리 볼 수 있어요.",
+  ocr: "이미지 글자를 읽지 못했어요. OCR 설정·이미지 크기·원본의 글자를 확인해 주세요.",
   cancelled: "본문 읽기를 취소했어요.",
   changed: "저장한 근거와 원본 또는 연결이 달라요. 자료를 다시 준비해 주세요.",
 };
@@ -50,7 +52,7 @@ export function SourceDocumentPreview({ state, folderName, headingRef, onClose, 
       }
       actions={
         <>
-          {onEdit && !/\.pdf$/iu.test(state.path?.at(-1) ?? "") && (
+          {onEdit && /\.(md|txt)$/iu.test(state.path?.at(-1) ?? "") && (
             <button
               type="button"
               className={actionClasses("secondary")}
@@ -75,7 +77,7 @@ export function SourceDocumentPreview({ state, folderName, headingRef, onClose, 
           )}
         </>
       }
-      status={state.stale ? "이전에 읽은 본문" : "MD/TXT 원문"}
+      status={state.stale ? "이전에 읽은 본문" : result?.ocr ? "OCR로 읽은 글 · 원본 대조 필요" : result?.pdf ? "PDF에서 추출한 글" : "MD/TXT 원문"}
       info={
         <>
           <dl>
@@ -106,6 +108,8 @@ export function SourceDocumentPreview({ state, folderName, headingRef, onClose, 
       feedback={
         <>
           {pending && <StatusNotice state="pending" title="파일 본문을 읽고 있어요." />}
+          {issue === "ocr" && <OcrControl disabled={pending} />}
+          {result?.ocr && <p role="status">OCR로 읽은 {result.ocr.pages}쪽의 글입니다. 인식 오류가 있을 수 있으며 {result.ocr.complete ? "설정 범위에서 읽었습니다." : "처리 상한으로 일부만 읽었습니다."}</p>}
           {result?.referenceVerified && !state.stale && state.phase === "ready" && <p role="status">저장한 근거와 현재 파일·인용문이 일치합니다.</p>}
           {issue && (
             <StatusNotice
@@ -125,7 +129,7 @@ export function SourceDocumentPreview({ state, folderName, headingRef, onClose, 
           )}
         </>
       }
-      footer={result?.pdf ? `PDF ${result.pdf.pages}쪽 · ${result.pdf.complete ? "텍스트 추출 완료" : "최대 50쪽·200,000자 범위의 일부 텍스트"} · 이미지와 표 배치는 표시하지 않습니다.` : "MD/TXT 원문 보기 · Markdown 서식과 링크는 텍스트로 표시합니다."}
+      footer={result?.ocr ? `OCR ${result.ocr.pages}쪽 · ${result.ocr.complete ? "설정 범위에서 글자 인식" : "처리 상한으로 일부만 인식"} · 인식 글은 원본과 대조해 주세요.` : result?.pdf ? `PDF ${result.pdf.pages}쪽 · ${result.pdf.complete ? "텍스트 추출 완료" : "최대 50쪽·200,000자 범위의 일부 텍스트"} · 이미지와 표 배치는 표시하지 않습니다.` : "MD/TXT 원문 보기 · Markdown 서식과 링크는 텍스트로 표시합니다."}
     >
       <div aria-busy={pending}>
         {/* 원문을 React 텍스트로 렌더링한다. HTML/Markdown 해석과 원격 리소스 요청을 만들지 않는다. */}

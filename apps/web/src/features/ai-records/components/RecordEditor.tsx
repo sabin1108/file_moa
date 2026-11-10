@@ -6,6 +6,8 @@ import { Icon } from "../../../components/ui/Icon";
 import { aiRecordPayloadSchema, type AiRecordPayload } from "../../../shared/ai-records";
 import type { AiRecordsController } from "../store/ai-records-controller";
 import styles from "./ai-library.module.css";
+import { acceptWikiUpdate, isWiki, wikiMarkdown } from "../lib/wiki";
+import { WikiSources } from "./WikiSources";
 
 export function RecordEditor({ initial, controller, onClose }: { initial: Exclude<AiRecordPayload, { type: "conversation" }>; controller: AiRecordsController; onClose: () => void }) {
   const [value, setValue] = useState(initial);
@@ -39,7 +41,7 @@ export function RecordEditor({ initial, controller, onClose }: { initial: Exclud
   };
 
   useEffect(() => {
-    if (value.type !== "artifact" || value.status !== "draft" || !dirty || pending || closing || controller.getSnapshot().phase !== "ready") return;
+    if (value.type !== "artifact" || value.wiki || value.status !== "draft" || !dirty || pending || closing || controller.getSnapshot().phase !== "ready") return;
     const timer = window.setTimeout(() => {
       const input = { ...value, updatedAt: new Date().toISOString() };
       void controller.save(input).then(async () => {
@@ -52,7 +54,7 @@ export function RecordEditor({ initial, controller, onClose }: { initial: Exclud
   }, [controller, value, dirty, pending, closing]);
 
   const exportText = (format: "md" | "txt") => {
-    const text = value.type === "artifact" ? value.markdown : value.type === "memory" ? value.content : `${value.displayName}\n\n${value.description}\n\n${value.preferences}`;
+    const text = isWiki(value) ? wikiMarkdown(value) : value.type === "artifact" ? value.markdown : value.type === "memory" ? value.content : `${value.displayName}\n\n${value.description}\n\n${value.preferences}`;
     const url = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
     const link = document.createElement("a");
     link.href = url;
@@ -61,14 +63,15 @@ export function RecordEditor({ initial, controller, onClose }: { initial: Exclud
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
-  return <section className={styles.editor} aria-label="기록 편집">
-    <div className={styles.editorHeading}><div><h3>{value.type === "artifact" ? "결과물 편집" : value.type === "memory" ? "기억 검토" : "내 프로필"}</h3><small>{pending ? "저장 중…" : dirty ? "저장하지 않은 변경" : "저장됨"}</small></div><button type="button" className={actionClasses("secondary")} onClick={() => dirty ? setClosing(true) : onClose()} disabled={pending}>목록으로</button></div>
+  return <section className={styles.editor} aria-label="기록 편집" data-quick-switch-block={dirty || pending || undefined}>
+    <div className={styles.editorHeading}><div><h3>{isWiki(value) ? "위키 편집" : value.type === "artifact" ? "결과물 편집" : value.type === "memory" ? "기억 검토" : "내 프로필"}</h3><small>{pending ? "저장 중…" : dirty ? "저장하지 않은 변경" : "저장됨"}</small></div><button type="button" className={actionClasses("secondary")} onClick={() => dirty ? setClosing(true) : onClose()} disabled={pending}>목록으로</button></div>
     {closing && <div role="alert" className={styles.deletion}><p>저장하지 않은 내용이 있어요.</p><div className={styles.actions}><button type="button" className={actionClasses("secondary")} onClick={() => setClosing(false)}>계속 편집</button><button type="button" className={actionClasses("secondary", styles.danger)} onClick={onClose}>변경 버리고 나가기</button></div></div>}
     <form className={styles.fields} onSubmit={event => { event.preventDefault(); void save(); }}>
       <label>제목<input value={value.title} maxLength={120} required onChange={event => setValue({ ...value, title: event.target.value })} /></label>
       {value.type === "artifact" && <>
         <label>본문<textarea data-document value={value.markdown} maxLength={500000} onChange={event => setValue({ ...value, markdown: event.target.value })} /></label>
-        <details className={styles.details}><summary>문서 상태 · {value.status === "draft" ? "초안" : "확정본"}</summary><label>상태<select value={value.status} onChange={event => setValue({ ...value, status: event.target.value as "draft" | "final" })}><option value="draft">초안</option><option value="final">확정본</option></select></label><p>초안은 연결한 폴더에 자동 저장됩니다.</p></details>
+        {value.wiki && <p>{value.markdown === value.wiki.generatedMarkdown ? "AI가 만든 초안입니다. 본문과 출처를 확인해 주세요." : "사용자가 편집한 본문입니다. AI 초안과 구분해 보존합니다."}</p>}
+        <details className={styles.details}><summary>문서 상태 · {value.status === "draft" ? "초안" : "확정본"}</summary><label>상태<select value={value.status} onChange={event => setValue({ ...value, status: event.target.value as "draft" | "final" })}><option value="draft">초안</option><option value="final">확정본</option></select></label><p>{value.wiki ? "위키는 본문과 출처를 검토한 뒤 저장합니다." : "초안은 연결한 폴더에 자동 저장됩니다."}</p></details>
       </>}
       {value.type === "memory" && <>
         <label>내용<textarea value={value.content} maxLength={4000} required onChange={event => setValue({ ...value, content: event.target.value })} /></label>
@@ -86,6 +89,10 @@ export function RecordEditor({ initial, controller, onClose }: { initial: Exclud
       </>}
       <div className={styles.editorActions}><button type="submit" className={actionClasses("primary")} disabled={pending || controller.getSnapshot().phase !== "ready"}><Icon name="check" />{pending ? "저장 중" : "저장"}</button></div>
     </form>
+    {isWiki(value) && <>
+      {value.wiki.proposal && <section className={styles.wikiSources} aria-label="위키 새 초안 검토"><h4>새 자료 답변으로 만든 초안</h4><p>현재 편집 본문은 바꾸지 않았습니다. 반영하면 새 생성 버전이 되며 저장 후 이전 버전에서 기존 내용을 확인할 수 있어요.</p><pre>{value.wiki.proposal.markdown}</pre></section>}
+      <WikiSources wiki={value.wiki} onAccept={() => setValue(acceptWikiUpdate(value))} />
+    </>}
     <details className={styles.details}><summary>파일로 내보내기</summary><div className={styles.fields}><label>파일 형식<select value={format} onChange={event => setFormat(event.target.value as "md" | "txt")}><option value="md">Markdown (.md)</option><option value="txt">텍스트 (.txt)</option></select></label><button type="button" className={actionClasses("secondary")} onClick={() => exportText(format)}><Icon name="external" />내보내기</button></div></details>
     {versions.length > 0 && <details className={styles.details}><summary>이전 버전 · {versions.length}개</summary><label className={styles.fields}>저장 버전 불러오기<select defaultValue="" onChange={event => {
       const version = versions.find(item => item.metadata.revisionId === event.target.value);

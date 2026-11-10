@@ -7,6 +7,7 @@ import { createGroundedEvidence, groundedRequestSchema, validateGroundedAnswer, 
 import { groundedEvidenceSchema, type GroundedEvidence } from "../../../shared/grounded-evidence";
 import { useSharedSourceFolderConnection } from "../../local-folders/providers/SourceFolderProvider";
 import { useConversationStore } from "../providers/ConversationStateProvider";
+import { isWiki, makeWikiDraft, proposeWikiUpdate } from "../../ai-records/lib/wiki";
 
 export function useGroundedConversation(question: string, action?: GroundedAction) {
   const local = useSharedSourceFolderConnection();
@@ -59,7 +60,7 @@ export function useGroundedConversation(question: string, action?: GroundedActio
       await local.recheckSourceSnapshot(documents, preparation.request, operation.signal);
       if (operation.signal.aborted) return null;
       const value = validateGroundedAnswer(response.answer, input.documents);
-      setResult({ taskId, key: sourceKey, question, value });
+      setResult({ taskId, key: sourceKey, question, value, model: response.model });
       return { ...value, evidence: createGroundedEvidence(owner, connection, input.documents, value) };
     } catch {
       if (!operation.signal.aborted) setNotice("자료·권한이 바뀌었거나 답변을 확인하지 못했어요. 자료를 다시 준비해 주세요. 늦은 답변은 표시하지 않습니다.");
@@ -98,10 +99,22 @@ export function useGroundedConversation(question: string, action?: GroundedActio
     const selection = store.getSelection();
     void local.records.save({ type: "artifact", id: `artifact-${crypto.randomUUID()}`, title: result.question.slice(0, 120), updatedAt: new Date().toISOString(), markdown: `${result.value.answer}\n\n## 확인한 근거\n${result.value.citations.map(citation => `- ${documents.find(document => document.id === citation.documentId)?.name}: ${citation.quote}`).join("\n")}`, sourceConversationId: selection.temporary ? null : selection.id, status: "draft" }).then(() => setNotice("답변과 근거를 내 AI 폴더의 결과물 초안으로 저장했습니다."), () => setNotice("저장하지 못했어요. 답변을 복사해 보관해 주세요."));
   };
+  const wikiTargets = (local.records.getSnapshot().records ?? []).filter(record => isWiki(record.payload)).map(record => ({ id: record.payload.id, title: record.payload.title }));
+  const saveWiki = (targetId?: string) => {
+    if (!result || result.key !== sourceKey || !local.owner || !result.value.citations.length || local.records.getSnapshot().phase !== "ready") return;
+    const evidence = createGroundedEvidence(local.owner, connection, documents.map(document => ({ ...document, path: [...document.path] })), result.value);
+    const selection = store.getSelection();
+    const input = { id: `wiki-${crypto.randomUUID()}`, title: result.question.slice(0, 120), markdown: result.value.answer, evidence, model: result.model ?? null, sourceConversationId: selection.temporary ? null : selection.id, now: new Date().toISOString() };
+    const target = targetId ? local.records.getSnapshot().records.find(record => record.payload.id === targetId)?.payload : undefined;
+    if (targetId && (!target || !isWiki(target))) { setNotice("갱신할 위키를 다시 선택해 주세요."); return; }
+    const payload = target && isWiki(target) ? proposeWikiUpdate(target, input) : makeWikiDraft(input);
+    void local.records.save(payload).then(() => setNotice(target ? "새 초안을 위키에 보관했습니다. 위키 편집에서 검토 후 반영해 주세요. 기존 본문은 유지합니다." : "출처가 연결된 위키 초안을 기록함에 저장했습니다."), () => setNotice("위키를 저장하지 못했어요. 답변과 편집 내용은 유지합니다."));
+  };
   return {
     documents, pending, consented: consent === key, canSend: !!action && !!documents.length && !!question.trim() && consent === key && !pending,
     setConsent: (value: boolean) => setConsent(value ? key : null),
     result: result?.key === sourceKey ? result : null, notice, send, cancel, reset, openCitation, openSavedCitation, saveResult,
     canSave: local.records.getSnapshot().phase === "ready", isSending,
+    saveWiki, wikiTargets,
   };
 }

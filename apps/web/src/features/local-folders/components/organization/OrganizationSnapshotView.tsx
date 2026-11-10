@@ -14,7 +14,14 @@ import { actionClasses } from "../../../../components/ui/action-classes";
 import { hasUnansweredReview } from "../../../../shared/live-organization-review";
 
 const reasons: Record<string, string> = {
-  "unsupported-extension": "TXT/MD/PDF가 아닌 형식",
+  "unsupported-extension": "TXT·MD·PDF·PNG·JPEG가 아닌 형식",
+  "ocr-disabled": "이미지 글자 읽기 설정이 꺼져 있음",
+  "ocr-no-text": "OCR에서 읽을 글자를 찾지 못함",
+  "ocr-unavailable": "OCR 엔진·인식 파일 확인 필요",
+  "ocr-image-too-large": "이미지600만 픽셀 상한 초과",
+  "ocr-image-invalid": "PNG·JPEG 이미지 손상",
+  "ocr-timeout": "OCR 처리 시간 상한",
+  "ocr-limit": "OCR 쪽수·문자 상한으로 일부만 읽음",
   "pdf-no-text": "이미지 PDF · OCR이 필요함",
   "pdf-encrypted": "암호가 설정된 PDF",
   "pdf-invalid": "PDF를 읽을 수 없음",

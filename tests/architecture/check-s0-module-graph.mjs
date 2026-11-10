@@ -26,7 +26,7 @@ try {
     assert.equal((await fetch(url + path)).status, 404, 'Probe must never expose environment files');
   }
   for (const name of ['folder-session', 'folder-repository', 'record-store', 'record-recovery']) await visit(`${url}/${name}.js`);
-  browser = await Browser.launch();
+  browser = await Browser.launch({ extraArgs: ['--no-sandbox', '--disable-gpu'] });
   const page = await browser.newPage();
   // 원본 선택 UI를 실행하지 않고 같은 origin의 소스 문서에서 모듈 평가만 확인한다.
   await page.goto(`${url}/folder-contracts.js`, { settleMs: 50 });

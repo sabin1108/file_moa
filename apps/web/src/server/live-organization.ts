@@ -78,7 +78,7 @@ const inputSchema = z.strictObject({
     .array(
       z.strictObject({
         id: z.string().regex(/^document-[1-9]\d{0,2}$/u),
-        name: segment.refine(name => /\.(txt|md|pdf)$/iu.test(name)),
+        name: segment.refine(name => /\.(txt|md|pdf|png|jpe?g)$/iu.test(name)),
         path: path.min(1),
         excerpt: z.string().max(1200),
         excerptHash: hash,
@@ -90,6 +90,7 @@ const inputSchema = z.strictObject({
           .max(2 * 1024 * 1024),
         lastModified: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER),
         pdf: z.strictObject({ pages: z.number().int().positive().max(1000000), complete: z.boolean() }).optional(),
+        ocr: z.strictObject({ pages: z.number().int().positive().max(3), complete: z.boolean() }).optional(),
       })
     )
     .min(1)

@@ -6,7 +6,7 @@ export const DOCUMENT_LIMITS = Object.freeze({
 });
 export type FileRejection = "unsupported-extension" | "invalid-size" | "too-large";
 export function checkDocumentCandidate(name: string, bytes: number): FileRejection | null {
-  if (!/\.(md|txt|pdf)$/i.test(name)) return "unsupported-extension";
+  if (!/\.(md|txt|pdf|png|jpe?g)$/i.test(name)) return "unsupported-extension";
   if (!Number.isSafeInteger(bytes) || bytes < 0) return "invalid-size";
   if (bytes > DOCUMENT_LIMITS.fileBytes) return "too-large";
   return null;

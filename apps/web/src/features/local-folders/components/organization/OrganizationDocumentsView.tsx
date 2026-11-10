@@ -38,6 +38,7 @@ export function OrganizationDocumentsView({
           />
           <p className={styles.note}>
             {document.path.join(" / ")}
+            {document.ocr && " · OCR 인식 글 · 원본 대조 필요"}
             {!candidateIds.includes(document.id) &&
               " · 입력량 한도로 후보 제외"}
           </p>

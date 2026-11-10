@@ -15,6 +15,7 @@ export type SourceFilePreview = Readonly<{
   size: number;
   lastModified: number;
   pdf?: Readonly<{ pages: number; complete: boolean }>;
+  ocr?: Readonly<{ pages: number; complete: boolean }>;
   referenceVerified?: true;
 }>;
 
@@ -46,7 +47,7 @@ export async function readSourceFilePreview(
   assertCurrent();
   const sizeIssue = checkDocumentCandidate(name, file.size);
   if (sizeIssue) throw new Error(sizeIssue);
-  if (/\.pdf$/iu.test(name) || expectation) {
+  if (/\.(pdf|png|jpe?g)$/iu.test(name) || expectation) {
     const reader = createCopyHasher(signal);
     try {
       const snapshot = await reader.readText(file, "Source preview");
@@ -60,7 +61,7 @@ export async function readSourceFilePreview(
         if (await reader.hash(current) !== expectation.sha256) throw new Error("citation-changed");
         await permission();
       }
-      return { path: requestedPath, text, size: snapshot.size, lastModified: file.lastModified, pdf: snapshot.pdf, ...(expectation ? { referenceVerified: true as const } : {}) };
+      return { path: requestedPath, text, size: snapshot.size, lastModified: file.lastModified, pdf: snapshot.pdf, ...(snapshot.ocr ? { ocr: snapshot.ocr } : {}), ...(expectation ? { referenceVerified: true as const } : {}) };
     } finally { reader.dispose(); }
   }
   // arrayBuffer 자체는 중단 API가 없다. 전후 수명 검증으로 늦은 결과의 게시를 막는다.

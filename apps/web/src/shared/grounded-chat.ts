@@ -9,7 +9,7 @@ export const groundedRequestSchema = z.strictObject({
   question: z.string().trim().min(1).max(800),
   documents: z.array(z.strictObject({
     id: z.string().regex(/^document-[1-9]\d{0,2}$/u),
-    name: segment.refine(value => /\.(md|txt|pdf)$/iu.test(value)),
+    name: segment.refine(value => /\.(md|txt|pdf|png|jpe?g)$/iu.test(value)),
     path: z.array(segment).min(1).max(65), excerpt: z.string().min(1).max(1200),
     excerptHash: hash, sha256: hash, size: z.number().int().min(0).max(2 * 1024 * 1024),
     lastModified: z.number().int().nonnegative(),

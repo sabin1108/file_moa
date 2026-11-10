@@ -28,6 +28,7 @@ const server = await createServer({
     },
   },
   oxc: { jsx: { runtime: "automatic" } },
+  optimizeDeps: { include: ["react", "react-dom/client", "react/jsx-runtime", "tesseract.js", "pdfjs-dist/legacy/build/pdf.mjs"] },
   plugins: [
     {
       name: "find-fixture",
@@ -137,6 +138,8 @@ try {
   page = await browser.newPage({ width: 1440, height: 1000 });
   const generalPage = await browser.newPage({ width: 1440, height: 1000 });
   await generalPage.goto(base + "/__find?general", { settleMs: 400 });
+  for (let n = 0; n < 500 && !await generalPage.eval(() => !!document.getElementById("message-draft")); n++) await new Promise(resolve => setTimeout(resolve, 30));
+  assert.ok(await generalPage.eval(() => !!document.getElementById("message-draft")), "General composer is ready before sizing");
   for (const width of [390, 768, 1440, 1920]) {
     await generalPage.setViewport({ width, height: 1000 });
     generalSizes.set(width, await composerSize(generalPage));
@@ -324,7 +327,7 @@ try {
       return (
         text.includes("검색 범위 일부") &&
         text.includes("bad.txt") &&
-        text.includes("TXT·MD·PDF가 아닌 형식")
+        text.includes("TXT·MD·PDF·PNG·JPEG가 아닌 형식")
       );
     }),
   );

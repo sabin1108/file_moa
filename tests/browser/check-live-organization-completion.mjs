@@ -24,6 +24,7 @@ const server = await createServer({
     }
   },
   oxc: { jsx: { runtime: "automatic" } },
+  optimizeDeps: { include: ["react", "react-dom/client", "react/jsx-runtime", "tesseract.js", "pdfjs-dist/legacy/build/pdf.mjs"] },
   plugins: [
     {
       name: "local-organization-fixture",

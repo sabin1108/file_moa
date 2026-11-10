@@ -1,4 +1,4 @@
-import type { AiRecordPayload } from "../../../shared/ai-records";
+import { recordConversationSources, type AiRecordPayload } from "../../../shared/ai-records";
 import type { FolderConnectionSession } from "../../local-folders/services/connection-session";
 import type { FolderHandle } from "../../local-folders/types";
 import type { AiRecordRepository, SavedAiRecord } from "../services/ai-record-repository";
@@ -130,7 +130,7 @@ export class AiRecordsController {
     if (!cascade) return;
     const current = await this.repository.list();
     if (generation !== this.generation) return;
-    const targets = current.filter(record => "sourceConversationId" in record.payload && record.payload.sourceConversationId === id);
+    const targets = current.filter(record => recordConversationSources(record.payload).includes(id));
     for (const record of targets) {
       await this.repository.remove(record.payload.type, record.payload.id, cascade);
       if (generation !== this.generation) return;

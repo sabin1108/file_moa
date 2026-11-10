@@ -25,6 +25,7 @@ export type FindDocument = Readonly<{
   name: string;
   path: readonly string[];
   finding: FindEvidence;
+  ocr?: boolean;
 }>;
 export type FindResult = Readonly<{
   documents: readonly FindDocument[];

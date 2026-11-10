@@ -54,7 +54,7 @@
 .fields textarea { min-height: 140px; resize: vertical; line-height: 1.8; }
 .fields textarea[data-document] { min-height: 300px; font-size: 16px; }
 .fields input[type="checkbox"] { width: auto; min-height: auto; }
-.tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
+.tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
 .tabs button { display: flex; justify-content: center; align-items: center; gap: 5px; padding: 10px 4px; min-height: 48px; font-size: 13px; color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap; }
 .tabs button[aria-pressed="true"] { color: var(--text); border-bottom-color: var(--text); font-weight: 600; }
 .tabs small { font-size: 12px; }
@@ -66,4 +66,10 @@
 .usageCount strong { font-size: 28px; font-weight: 550; }
 .usageCount small, .usageCount > span { color: var(--muted); font-size: 13px; font-weight: 400; }
 .usage li { font-size: 12px; line-height: 1.8; margin-bottom: 12px; overflow-wrap: anywhere; }
+.wikiSources { display: grid; gap: 12px; border-top: 1px solid var(--border); padding-top: 20px; overflow-wrap: anywhere; }
+.wikiSources h4 { font-size: 15px; }
+.wikiSources p, .wikiSources blockquote { font-size: 13px; line-height: 1.8; }
+.wikiSources ul { display: grid; gap: 12px; padding: 0; list-style: none; }
+.wikiSources pre { white-space: pre-wrap; font: inherit; line-height: 1.8; max-height: 300px; overflow: auto; }
+.wikiSources > button { justify-self: start; }
 @media (max-width: 500px) { .tabs button { gap: 4px; } .tabs button > svg { display: none; } .recordOpen { padding: 12px; gap: 8px; } }
