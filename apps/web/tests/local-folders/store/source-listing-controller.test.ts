@@ -5,11 +5,16 @@ import { SourceConnectionController } from "../../../src/features/local-folders/
 import type { FolderHandle, HandleRepository } from "../../../src/features/local-folders/types";
 
 const owner = { userId: "browser-test", workspaceId: "fixture" };
+
 function deferred<T>() {
   let resolve!: (value: T) => void;
-  const promise = new Promise<T>(done => { resolve = done; });
+  const promise = new Promise<T>(done => {
+    resolve = done;
+  });
+
   return { promise, resolve };
 }
+
 function folder(name = "자료", names = ["원본.md"]) {
   return withAbsentVaultMarker({
     kind: "directory" as const,
@@ -22,7 +27,9 @@ function folder(name = "자료", names = ["원본.md"]) {
     }),
   });
 }
+
 const handle = (value: ReturnType<typeof folder>) => value as unknown as FolderHandle;
+
 async function setup() {
   const root = folder();
   const repository: HandleRepository = {
@@ -32,11 +39,14 @@ async function setup() {
   };
   const picker = vi.fn(async () => handle(root));
   const controller = new SourceConnectionController(new FolderConnectionSession(repository), picker);
+
   await controller.load(owner);
   await controller.connect();
+
   return { root, repository, picker, controller, listing: controller.listing };
 }
 // Uses real connection/listing controllers and session. Only browser I/O is synthetic.
+
 async function ready(listing: SourceConnectionController["listing"]) {
   await vi.waitFor(() => expect(listing.getSnapshot().phase).toBe("ready"));
 }
@@ -44,16 +54,21 @@ async function ready(listing: SourceConnectionController["listing"]) {
 describe("file browser state integration", () => {
   it("PLAN-007 real connection owner switch discards a pending plan and late reads", async () => {
     const { listing, root, controller } = await setup();
+
     listing.activate();
     await ready(listing);
     listing.toggleSelection("원본.md");
     controller.plan.open();
+
     const gate = deferred<void>();
+
     root.values.mockImplementationOnce(async function* () {
       await gate.promise;
       yield { name: "원본.md", kind: "file" as const };
     });
+
     const pending = controller.plan.generate();
+
     await controller.load({ userId: "other-owner", workspaceId: "other-workspace" });
     gate.resolve();
     await pending;
@@ -64,6 +79,7 @@ describe("file browser state integration", () => {
 
   it("PLAN-008 real session permission loss from a plan invalidates all readers", async () => {
     const { listing, root, controller } = await setup();
+
     listing.activate();
     await ready(listing);
     listing.toggleSelection("원본.md");
@@ -77,12 +93,19 @@ describe("file browser state integration", () => {
   });
   it("UI-001/009 reads only when files mounts and retains results through route changes", async () => {
     const { listing, root } = await setup();
+
     expect(root.values).not.toHaveBeenCalled();
+
     const leave = listing.activate();
+
     await ready(listing);
+
     const snapshot = listing.getSnapshot();
+
     leave();
+
     const leaveAgain = listing.activate();
+
     expect(listing.getSnapshot()).toBe(snapshot);
     expect(root.values).toHaveBeenCalledTimes(1);
     leaveAgain();
@@ -91,6 +114,7 @@ describe("file browser state integration", () => {
   it("UI-002 opens requested folders and can return to root", async () => {
     const { listing, root } = await setup();
     const child = folder("하위", ["내용.txt"]);
+
     root.getDirectoryHandle.mockResolvedValue(child);
     listing.activate();
     await ready(listing);
@@ -102,10 +126,15 @@ describe("file browser state integration", () => {
 
   it("UI-003 preserves the last list on refresh failure, marks it stale and recovers", async () => {
     const { listing, root } = await setup();
+
     listing.activate();
     await ready(listing);
+
     const previous = listing.getSnapshot().result;
-    root.values.mockImplementationOnce(async function* () { throw new DOMException("I/O", "NotReadableError"); });
+
+    root.values.mockImplementationOnce(async function* () {
+      throw new DOMException("I/O", "NotReadableError");
+    });
     await listing.refresh();
     expect(listing.getSnapshot()).toMatchObject({ phase: "error", result: previous, stale: true, issue: "read" });
     await listing.retry();
@@ -114,6 +143,7 @@ describe("file browser state integration", () => {
 
   it("UI-004 keeps the displayed path on navigation failure; retry uses failed destination", async () => {
     const { listing, root } = await setup();
+
     listing.activate();
     await ready(listing);
     root.getDirectoryHandle.mockRejectedValueOnce(new DOMException("gone", "NotFoundError"));
@@ -128,12 +158,15 @@ describe("file browser state integration", () => {
     const { listing, root } = await setup();
     const gate = deferred<void>();
     const entered = deferred<void>();
+
     root.values.mockImplementationOnce(async function* () {
       entered.resolve();
       await gate.promise;
       yield { name: "late.txt", kind: "file" };
     });
+
     const pending = listing.open([]);
+
     await entered.promise;
     listing.cancel();
     expect(listing.getSnapshot()).toMatchObject({ phase: "cancelled", result: null, issue: "cancelled" });
@@ -146,11 +179,14 @@ describe("file browser state integration", () => {
 
   it("UI-006 clears old data even when the replacement has the same folder name", async () => {
     const { listing, picker, controller } = await setup();
+
     listing.activate();
     await ready(listing);
     listing.selectAll();
+
     const replacement = folder("자료", ["새 파일.txt"]);
     const permission = deferred<PermissionState>();
+
     replacement.queryPermission.mockResolvedValueOnce("granted").mockReturnValueOnce(permission.promise);
     picker.mockResolvedValueOnce(handle(replacement));
     await controller.connect();
@@ -162,10 +198,13 @@ describe("file browser state integration", () => {
 
   it("UI-006 keeps previous results after picker cancellation without rereading", async () => {
     const { listing, picker, root, controller } = await setup();
+
     listing.activate();
     await ready(listing);
     listing.selectAll();
+
     const previous = listing.getSnapshot().result;
+
     picker.mockRejectedValueOnce(new DOMException("cancel", "AbortError"));
     await controller.connect();
     expect(listing.getSnapshot()).toMatchObject({ available: true, result: previous, stale: true, selectedNames: ["원본.md"] });
@@ -174,11 +213,14 @@ describe("file browser state integration", () => {
 
   it("UI-007 clears results even if disconnect persistence fails", async () => {
     const { listing, repository, controller } = await setup();
+
     listing.activate();
     await ready(listing);
     listing.selectAll();
     vi.mocked(repository.remove).mockRejectedValueOnce(new Error("IDB failed"));
+
     const pending = controller.disconnect();
+
     expect(listing.getSnapshot()).toMatchObject({ available: false, result: null, selectedNames: [] });
     await pending;
     expect(listing.getSnapshot().result).toBeNull();
@@ -187,11 +229,16 @@ describe("file browser state integration", () => {
 
   it("UI-007 drops a late list on owner switch and never leaks old errors/results", async () => {
     const { listing, root, controller } = await setup();
+
     await listing.open([]);
     listing.selectAll();
+
     const gate = deferred<PermissionState>();
+
     root.queryPermission.mockReturnValueOnce(gate.promise);
+
     const pending = listing.open([]);
+
     await controller.load({ ...owner, userId: "other" });
     gate.resolve("granted");
     await pending;
@@ -200,6 +247,7 @@ describe("file browser state integration", () => {
 
   it("UI-008 synchronizes lost permission with connection UI and refreshes on explicit reconnect", async () => {
     const { listing, root, controller } = await setup();
+
     listing.activate();
     await ready(listing);
     root.queryPermission.mockResolvedValueOnce("denied");
@@ -214,6 +262,7 @@ describe("file browser state integration", () => {
 
   it("UI-008 reconnects at the same subdirectory", async () => {
     const { listing, root, controller } = await setup();
+
     root.getDirectoryHandle.mockResolvedValue(folder("하위"));
     listing.activate();
     await ready(listing);
@@ -227,6 +276,7 @@ describe("file browser state integration", () => {
 
   it("UI-007 stop clears results; restart resumes only an already granted connection", async () => {
     const { listing, root, repository, controller } = await setup();
+
     listing.activate();
     await ready(listing);
     controller.stop();

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { StatusNotice } from "../../../../components/ui/feedback/StatusNotice";
 import { useState } from "react";
@@ -53,15 +53,20 @@ export function OrganizationSnapshotView({
   aiProvider?: AiProvider | null;
 }) {
   const [confirmation, setConfirmation] = useState({ provider: aiProvider, accepted: false });
+
   if (confirmation.provider !== aiProvider) {
     setConfirmation({ provider: aiProvider, accepted: false });
   }
+
   const snapshot = state.snapshot;
+
   if (!snapshot) return null;
+
   const pending = state.phase === "checking" || state.phase === "sending";
   const unanswered = hasUnansweredReview(state.questions, state.answers);
   const consented = !!state.consentKey && !!aiProvider && confirmation.provider === aiProvider && confirmation.accepted;
   const providerLabel = aiProvider ? AI_PROVIDER_LABELS[aiProvider] : "설정되지 않은 외부 AI";
+
   return (
     <section
       className={styles.snapshot}
@@ -84,37 +89,40 @@ export function OrganizationSnapshotView({
           {providerLabel}에 선택한 파일의 이름·상대 경로·발췌와 정리 조건을
           보냅니다. 짧은 문서는 발췌에 전체 내용이 포함될 수 있습니다.
         </p>
-        {!snapshot.complete && (
-          <>
-            <StatusNotice
-              state="attention"
-              title="범위 일부만 준비됐어요"
-              detail={
-                snapshot.limits
-                  .map((limit) => reasons[limit] ?? limit)
-                  .join(" · ") ||
-                "읽지 못한 자료가 있습니다. 제외 내역을 확인하세요."
-              }
-            />
-            <label className={styles.check}>
-              <input
-                type="checkbox"
-                checked={state.partialAccepted}
-                disabled={pending || state.phase === "review"}
-                onChange={(event) =>
-                  controller.acceptPartial(event.target.checked)
+        {!snapshot.complete
+          && (
+            <>
+              <StatusNotice
+                state="attention"
+                title="범위 일부만 준비됐어요"
+                detail={
+                  snapshot.limits
+                    .map((limit) => reasons[limit] ?? limit)
+                    .join(" · ")
+                  ||
+                  "읽지 못한 자료가 있습니다. 제외 내역을 확인하세요."
                 }
               />
-              전체가 아닌, 확인한 일부 자료만 대상으로 준비합니다.
-            </label>
-          </>
-        )}
-        {snapshot.documents.length === 0 && (
-          <p>
-            읽을 수 있는 TXT/MD/PDF가 없습니다. 제외 내역을 확인하거나 범위를 바꿔
-            주세요.
-          </p>
-        )}
+              <label className={styles.check}>
+                <input
+                  type="checkbox"
+                  checked={state.partialAccepted}
+                  disabled={pending || state.phase === "review"}
+                  onChange={(event) =>
+                    controller.acceptPartial(event.target.checked)
+                  }
+                />
+                전체가 아닌, 확인한 일부 자료만 대상으로 준비합니다.
+              </label>
+            </>
+          )}
+        {snapshot.documents.length === 0
+          && (
+            <p>
+              읽을 수 있는 TXT/MD/PDF가 없습니다. 제외 내역을 확인하거나 범위를 바꿔
+              주세요.
+            </p>
+          )}
         {state.answers.length > 0 && (
           <p>함께 반영할 답변 {state.answers.length}개</p>
         )}
@@ -125,9 +133,12 @@ export function OrganizationSnapshotView({
             checked={consented}
             disabled={
               state.phase !== "ready" ||
-              !state.selectedIds.length ||
-              (!snapshot.complete && !state.partialAccepted) ||
-              unanswered || !aiProvider
+              !state.selectedIds.length
+              ||
+              (!snapshot.complete && !state.partialAccepted)
+              ||
+              unanswered
+              || !aiProvider
             }
             onChange={(event) => {
               setConfirmation({ provider: aiProvider, accepted: event.target.checked });
@@ -136,27 +147,29 @@ export function OrganizationSnapshotView({
           />
           선택 자료의 발췌와 정리 조건을 외부 AI 전송 대상으로 확인했습니다.
         </label>
-        {organizeAction && (
-          <button
-            type="button"
-            data-live-send
-            className={actionClasses("primary")}
-            disabled={state.phase !== "ready" || !consented}
-            onClick={() => void controller.send(organizeAction)}
-          >
-            {state.phase === "checking"
-              ? "원본 재검사 중…"
-              : state.phase === "sending"
-                ? "AI 응답 대기 중…"
-                : "확인한 발췌를 AI에 전송"}
-          </button>
-        )}
-        {consented && (
-          <p role="status">
-            전송 대상 확인을 마쳤어요. 전송 직전에 원본과 발췌를 다시
-            검사합니다.
-          </p>
-        )}
+        {organizeAction
+          && (
+            <button
+              type="button"
+              data-live-send
+              className={actionClasses("primary")}
+              disabled={state.phase !== "ready" || !consented}
+              onClick={() => void controller.send(organizeAction)}
+            >
+              {state.phase === "checking"
+                ? "원본 재검사 중…"
+                : state.phase === "sending"
+                  ? "AI 응답 대기 중…"
+                  : "확인한 발췌를 AI에 전송"}
+            </button>
+          )}
+        {consented
+          && (
+            <p role="status">
+              전송 대상 확인을 마쳤어요. 전송 직전에 원본과 발췌를 다시
+              검사합니다.
+            </p>
+          )}
         <details data-source-excerpts>
           <summary>자료 {snapshot.documents.length}개 · 선택·발췌 보기</summary>
           <OrganizationDocumentsView
@@ -167,37 +180,39 @@ export function OrganizationSnapshotView({
             onToggle={controller.toggleDocument}
           />
         </details>
-        {snapshot.reference && (
-          <details data-reference-structure>
-            <summary>
-              함께 보낼 참고 폴더 구조 {snapshot.reference.directories.length}개
-            </summary>
-            <p>
-              폴더 이름과 상대 경로만 읽었습니다. 파일 본문은 포함하지 않습니다.
-              {!snapshot.reference.complete && " 구조 일부만 확인했습니다."}
-            </p>
-            <ul>
-              {snapshot.reference.directories.map((path) => (
-                <li key={JSON.stringify(path)}>
-                  {path.join(" / ") || "연결 폴더"}
-                </li>
-              ))}
-            </ul>
-          </details>
-        )}
-        {snapshot.excluded.length > 0 && (
-          <details>
-            <summary>제외·실패 내역 {snapshot.excluded.length}개</summary>
-            <ul className={styles.exclusions}>
-              {snapshot.excluded.map((entry, index) => (
-                <li key={index}>
-                  {entry.path.join(" / ")} —{" "}
-                  {reasons[entry.reason] ?? "읽기 제외"}
-                </li>
-              ))}
-            </ul>
-          </details>
-        )}
+        {snapshot.reference
+          && (
+            <details data-reference-structure>
+              <summary>
+                함께 보낼 참고 폴더 구조 {snapshot.reference.directories.length}개
+              </summary>
+              <p>
+                폴더 이름과 상대 경로만 읽었습니다. 파일 본문은 포함하지 않습니다.
+                {!snapshot.reference.complete && " 구조 일부만 확인했습니다."}
+              </p>
+              <ul>
+                {snapshot.reference.directories.map((path) => (
+                  <li key={JSON.stringify(path)}>
+                    {path.join(" / ") || "연결 폴더"}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+        {snapshot.excluded.length > 0
+          && (
+            <details>
+              <summary>제외·실패 내역 {snapshot.excluded.length}개</summary>
+              <ul className={styles.exclusions}>
+                {snapshot.excluded.map((entry, index) => (
+                  <li key={index}>
+                    {entry.path.join(" / ")} —{" "}
+                    {reasons[entry.reason] ?? "읽기 제외"}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
         <details>
           <summary>전송 범위·모델 한도 상세</summary>
           <p className={styles.note}>

@@ -12,13 +12,30 @@ import { parseFindReply } from "../../local-folders/lib/document-find-reply";
 import { subscribeAuthScopeRevoked } from "../../../shared/auth-session-events";
 import { parseOrganizationReply } from "../../local-folders/lib/organization-reply";
 
-type Task = { id: string; kind: "find" | "organize" | "grounded"; request: string; waitingForSource: boolean };
+type Task = {
+  id: string;
+  kind: "find" | "organize" | "grounded";
+  request: string;
+  waitingForSource: boolean
+};
 
 export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>, groundedAction?: GroundedAction) {
   const local = useSharedSourceFolderConnection();
-  const finding = useSyncExternalStore(local.finding.subscribe, local.finding.getSnapshot, local.finding.getServerSnapshot);
-  const organization = useSyncExternalStore(local.organization.subscribe, local.organization.getSnapshot, local.organization.getServerSnapshot);
-  const managed = useSyncExternalStore(local.organizationExecution.managed.subscribe, local.organizationExecution.managed.getSnapshot, local.organizationExecution.managed.getServerSnapshot);
+  const finding = useSyncExternalStore(
+    local.finding.subscribe,
+    local.finding.getSnapshot,
+    local.finding.getServerSnapshot
+  );
+  const organization = useSyncExternalStore(
+    local.organization.subscribe,
+    local.organization.getSnapshot,
+    local.organization.getServerSnapshot
+  );
+  const managed = useSyncExternalStore(
+    local.organizationExecution.managed.subscribe,
+    local.organizationExecution.managed.getSnapshot,
+    local.organizationExecution.managed.getServerSnapshot
+  );
   const requests = useConversationRequests(local, chat.state.draft);
   const grounded = useGroundedConversation(chat.state.draft, groundedAction);
   const cancelGrounded = grounded.cancel;
@@ -27,8 +44,12 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
   const getChatSnapshot = chat.getSnapshot;
   const [task, setTask] = useState<Task | null>(() => {
     const previous = [...chat.state.turns].reverse().find(turn => turn.kind && turn.kind !== "chat");
+
     if (previous?.kind === "grounded" && grounded.result?.taskId === previous.id) return { id: previous.id, kind: "grounded", request: previous.question, waitingForSource: false };
-    if (!previous || (previous.kind !== "find" && previous.kind !== "organize") || (previous.kind === "find" ? finding.phase === "idle" : organization.phase === "draft")) return null;
+
+    if (!previous || (previous.kind !== "find" && previous.kind !== "organize")
+      || (previous.kind === "find" ? finding.phase === "idle" : organization.phase === "draft")) return null;
+
     return { id: previous.id, kind: previous.kind, request: previous.question, waitingForSource: false };
   });
   const [choice, setChoice] = useState<string | null>(null);
@@ -38,7 +59,9 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
   const reading = finding.phase === "searching" || ["reading", "checking", "sending"].includes(organization.phase);
   const pending = !!chat.state.active || reading || grounded.pending;
   const blocked = pending || managed.phase === "running";
-  const intent = groundedRequest === chat.state.draft ? "grounded" : classifyWorkspaceRequest(chat.state.draft, grounded.documents.length > 0);
+  const intent = groundedRequest === chat.state.draft
+    ? "grounded"
+    : classifyWorkspaceRequest(chat.state.draft, grounded.documents.length > 0);
 
   useEffect(() => {
     const revoke = () => {
@@ -48,12 +71,16 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
       setChoice(null);
       setGroundedRequest(null);
     };
+
     return subscribeAuthScopeRevoked(revoke);
   }, [cancelGrounded]);
 
   const assertCanChange = useCallback(() => {
     if (local.organizationExecution.managed.getSnapshot().phase === "running") throw new Error("managed-operation-running");
-    if (getChatSnapshot().active || local.finding.getSnapshot().phase === "searching" || ["reading", "checking", "sending"].includes(local.organization.getSnapshot().phase) || isGroundedSending()) throw new Error("conversation-response-running");
+
+    if (getChatSnapshot().active || local.finding.getSnapshot().phase === "searching"
+      || ["reading", "checking", "sending"].includes(local.organization.getSnapshot().phase)
+      || isGroundedSending()) throw new Error("conversation-response-running");
   }, [local.organizationExecution.managed, local.finding, local.organization, getChatSnapshot, isGroundedSending]);
   const reset = useCallback(() => {
     assertCanChange();
@@ -69,103 +96,229 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
 
   const resume = () => {
     if (!task?.waitingForSource || !connected || blocked || task.kind === "grounded") return;
+
     requests.submitRequest(task.request, task.kind);
     setTask({ ...task, waitingForSource: false });
   };
 
   const updateTask = chat.updateTask;
+
   useEffect(() => {
     if (!task || task.waitingForSource || task.kind === "grounded") return;
+
     if (task.kind === "find") {
-      const answer = finding.issue ?? (finding.phase === "ready" ? `자료 후보 ${finding.result?.documents.length ?? 0}개를 찾았어요. 본문 근거를 확인해 주세요.` : finding.phase === "searching" ? "이 기기에서 자료를 찾고 있어요." : finding.phase === "cancelled" ? "자료 찾기를 중지했어요." : "검색할 범위와 날짜 기준을 확인해 주세요.");
-      updateTask(task.id, answer, finding.phase === "searching" ? "pending" : finding.phase === "error" ? "error" : finding.phase === "cancelled" ? "stopped" : "completed");
+      const answer = finding.issue ?? (finding.phase === "ready"
+        ? `자료 후보 ${finding.result?.documents.length ?? 0}개를 찾았어요. 본문 근거를 확인해 주세요.`
+        : finding.phase === "searching"
+          ? "이 기기에서 자료를 찾고 있어요."
+          : finding.phase === "cancelled" ? "자료 찾기를 중지했어요." : "검색할 범위와 날짜 기준을 확인해 주세요.");
+
+      updateTask(
+        task.id,
+        answer,
+        finding.phase === "searching"
+          ? "pending"
+          : finding.phase === "error" ? "error" : finding.phase === "cancelled" ? "stopped" : "completed"
+      );
     } else {
-      const answer = organization.issue ?? (organization.result ? "정리 제안을 확인해 주세요. 원본 변경은 계획 검토 뒤 별도로 실행합니다." : organization.phase === "scope" ? "어디에서 자료를 찾을까요? 범위를 확인해 주세요." : organization.snapshot ? `자료 ${organization.snapshot.documents.length}개를 준비했어요. 범위와 발췌·전송 동의를 확인해 주세요.` : "자료의 범위와 정리 조건을 확인해 주세요.");
-      updateTask(task.id, answer, ["reading", "checking", "sending"].includes(organization.phase) ? "pending" : organization.phase === "error" ? "error" : "completed");
+      const answer = organization.issue ?? (organization.result
+        ? "정리 제안을 확인해 주세요. 원본 변경은 계획 검토 뒤 별도로 실행합니다."
+        : organization.phase === "scope"
+          ? "어디에서 자료를 찾을까요? 범위를 확인해 주세요."
+          : organization.snapshot
+            ? `자료 ${organization.snapshot.documents.length}개를 준비했어요. 범위와 발췌·전송 동의를 확인해 주세요.`
+            : "자료의 범위와 정리 조건을 확인해 주세요.");
+
+      updateTask(
+        task.id,
+        answer,
+        ["reading", "checking", "sending"].includes(organization.phase)
+          ? "pending"
+          : organization.phase === "error" ? "error" : "completed"
+      );
     }
   }, [task, finding, organization, updateTask]);
 
   const startMaterial = (kind: "find" | "organize", request: string) => {
     if (blocked || local.organizationExecution.managed.getSnapshot().phase === "running") return;
+
     const id = chat.recordTask(kind, request, connected ? "자료 작업을 준비하고 있어요." : "이 요청에 사용할 자료 폴더를 연결해 주세요.");
+
     if (!id) return;
+
     grounded.cancel();
     setTask({ id, kind, request, waitingForSource: !connected });
     setChoice(null);
     chat.updateDraft("");
+
     if (connected) requests.submitRequest(request, kind);
   };
 
   const submit = async (selected?: WorkspaceRequestKind) => {
     const request = chat.getSnapshot().draft.trim();
+
     if (!request || blocked || submitting.current || local.organizationExecution.managed.getSnapshot().phase === "running") return;
+
     const kind = selected ?? intent;
+
     if (!selected && task?.kind === "organize" && organization.snapshot && organization.questions.length) {
       const documents = organization.snapshot.documents.filter(document => organization.selectedIds.includes(document.id)).map(document => ({ ...document, sourcePath: document.path.slice(0, -1) }));
       let validReply = false;
-      try { parseOrganizationReply(request, organization.questions, documents); validReply = true; }
-      catch {
-        if (/기준일로|폴더로/u.test(request) || documents.some(document => request.includes(document.name))) { setChoice(request); return; }
+
+      try {
+        parseOrganizationReply(request, organization.questions, documents);
+        validReply = true;
       }
+      catch {
+        if (/기준일로|폴더로/u.test(request) || documents.some(document => request.includes(document.name))) {
+          setChoice(request);
+
+          return;
+        }
+      }
+
       if (validReply) {
         local.organization.updateReply(request);
         local.organization.submitReply();
-        const id = chat.recordTask("organize", request, "답변을 정리 기준에 반영했어요. 기준과 발췌를 확인하고 새로 동의한 뒤 전송해 주세요.", "completed");
+
+        const id = chat.recordTask(
+          "organize",
+          request,
+          "답변을 정리 기준에 반영했어요. 기준과 발췌를 확인하고 새로 동의한 뒤 전송해 주세요.",
+          "completed"
+        );
+
         if (id) setTask({ ...task, id });
+
         chat.updateDraft("");
+
         return;
       }
     }
-    if (!selected && kind === "chat" && task?.kind === "find" && parseFindReply(request, new Date().getFullYear()).kind !== "none") {
+
+    if (!selected && kind === "chat" && task?.kind === "find"
+      && parseFindReply(request, new Date().getFullYear()).kind !== "none") {
       local.finding.submitReply(request);
+
       const current = local.finding.getSnapshot();
       const id = chat.recordTask("find", request, current.issue ?? "검색 조건을 반영했어요. 기간과 기준을 확인한 뒤 검색 시작을 눌러 주세요.");
+
       if (id) setTask({ ...task, id });
+
       chat.updateDraft("");
+
       return;
     }
-    if (kind === "choose") { setChoice(request); return; }
+
+    if (kind === "choose") {
+      setChoice(request);
+
+      return;
+    }
+
     setChoice(null);
-    if (kind === "chat") { await chat.send(); return; }
-    if (kind === "find" || kind === "organize") { startMaterial(kind, request); return; }
-    if (!grounded.canSend) { setGroundedRequest(request); return; }
+
+    if (kind === "chat") {
+      await chat.send();
+
+      return;
+    }
+
+    if (kind === "find" || kind === "organize") {
+      startMaterial(kind, request);
+
+      return;
+    }
+
+    if (!grounded.canSend) {
+      setGroundedRequest(request);
+
+      return;
+    }
+
     const id = chat.recordTask("grounded", request, "선택 자료의 원본을 확인하고 답변을 기다리고 있어요.");
+
     if (!id) return;
+
     setTask({ id, kind: "grounded", request, waitingForSource: false });
+
     const operation = Symbol();
+
     submitting.current = operation;
+
     try {
       const result = await grounded.send(id);
+
       if (submitting.current !== operation) return;
-      chat.updateTask(id, result?.answer ?? "자료 답변을 게시하지 못했어요. 원본과 동의를 확인하고 다시 요청해 주세요.", result ? "completed" : "stopped", result?.evidence);
+
+      chat.updateTask(
+        id,
+        result?.answer ?? "자료 답변을 게시하지 못했어요. 원본과 동의를 확인하고 다시 요청해 주세요.",
+        result ? "completed" : "stopped",
+        result?.evidence
+      );
+
       if (result) chat.updateDraft("");
-    } finally { if (submitting.current === operation) submitting.current = null; }
+    } finally {
+      if (submitting.current === operation) submitting.current = null;
+    }
   };
 
   const prepareFound = () => {
     if (blocked || !connected || local.organizationExecution.managed.getSnapshot().phase === "running") return;
+
     const current = local.finding.getSnapshot();
+
     if (current.phase !== "ready" || !current.result || !current.selectedPaths.length) return;
+
     const request = `${current.filters.terms} 자료 정리`;
     const id = chat.recordTask("organize", request, "선택한 자료를 다시 읽어 정리 조건을 준비하고 있어요.");
+
     if (!id) return;
-    if (prepareFoundDocuments({ finding: local.finding, organization: local.organization, preview: local.preview }, true)) {
+
+    if (prepareFoundDocuments(
+      { finding: local.finding, organization: local.organization, preview: local.preview },
+      true
+    )) {
       setTask({ id, kind: "organize", request, waitingForSource: false });
       chat.updateDraft("");
     } else chat.updateTask(id, "자료 선택이 바뀌었어요. 검색 결과에서 다시 선택해 주세요.", "error");
   };
 
   const cancel = () => {
-    if (chat.state.active) { chat.stop(); return; }
-    if (grounded.pending) { grounded.cancel(); submitting.current = null; }
+    if (chat.state.active) {
+      chat.stop();
+
+      return;
+    }
+
+    if (grounded.pending) {
+      grounded.cancel();
+      submitting.current = null;
+    }
     else if (finding.phase === "searching") local.finding.cancel();
     else if (["reading", "checking", "sending"].includes(organization.phase)) local.organization.cancel();
+
     if (task) chat.updateTask(task.id, "진행 중인 응답·자료 읽기를 중지했어요. 자동으로 다시 실행하지 않습니다.", "stopped");
   };
+
   return {
-    task, intent, pending, blocked, grounded, submit, cancel, reset, prepareFound, resume, assertCanChange,
+    task,
+    intent,
+    pending,
+    blocked,
+    grounded,
+    submit,
+    cancel,
+    reset,
+    prepareFound,
+    resume,
+    assertCanChange,
     canStart: connected && !blocked,
     choice: choice === chat.state.draft ? choice : null,
-    cancelChoice: () => { setChoice(null); requestAnimationFrame(() => document.getElementById("message-draft")?.focus()); },
+    cancelChoice: () => {
+      setChoice(null);
+      requestAnimationFrame(() => document.getElementById("message-draft")?.focus());
+    },
   };
 }

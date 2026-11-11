@@ -10,7 +10,10 @@ const examples = {
   disconnected: { status: "disconnected", folderName: null },
   permission: { status: "needs-permission", folderName: "학습 노트" },
   connected: { status: "connected", folderName: "학습 노트" },
-  long: { status: "connected", folderName: "2026년_프로젝트별_학습기록과참고자료를모아둔아주긴폴더이름_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" },
+  long: {
+    status: "connected",
+    folderName: "2026년_프로젝트별_학습기록과참고자료를모아둔아주긴폴더이름_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+  },
 } as const satisfies Record<string, FolderConnectionView>;
 
 const options = [
@@ -36,9 +39,13 @@ export function FolderConnectionDemo() {
     <p role="status" aria-live="polite">
       {lastCall.count === 0 ? "호출 기록 없음 · 위 버튼을 눌러 확인하세요." : `마지막 호출: ${lastCall.action} · 누른 횟수: ${lastCall.count}회`}
     </p>
-    <ScenarioControls value={example} options={options} onChange={next => {
-      setExample(next);
-      setLastCall({ action: "", count: 0 });
-    }} />
+    <ScenarioControls
+      value={example}
+      options={options}
+      onChange={next => {
+        setExample(next);
+        setLastCall({ action: "", count: 0 });
+      }}
+    />
   </div>;
 }

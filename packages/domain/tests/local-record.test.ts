@@ -2,9 +2,16 @@ import { describe, expect, it } from "vitest";
 import { canUseMemory, parseLocalRecord } from "../src/local-record";
 
 const valid = () => ({
-  schemaVersion: 1, recordId: "record-1", revisionId: "revision-1", parentRevisionId: null,
-  kind: "artifact", scope: { type: "project", id: "project-1" }, state: "draft",
-  createdAt: "2026-10-25T00:00:00.000Z", contentFile: "revision-1.md", contentSha256: "a".repeat(64),
+  schemaVersion: 1,
+  recordId: "record-1",
+  revisionId: "revision-1",
+  parentRevisionId: null,
+  kind: "artifact",
+  scope: { type: "project", id: "project-1" },
+  state: "draft",
+  createdAt: "2026-10-25T00:00:00.000Z",
+  contentFile: "revision-1.md",
+  contentSha256: "a".repeat(64),
 });
 
 describe("local record v1 boundary", () => {
@@ -32,13 +39,16 @@ describe("local record v1 boundary", () => {
   });
   it("uses only approved memories in the active scope", () => {
     const memory = parseLocalRecord({ ...valid(), kind: "memory", state: "approved" });
+
     expect(canUseMemory(memory, "project-1")).toBe(true);
     expect(canUseMemory(memory, "project-2")).toBe(false);
     expect(canUseMemory(memory)).toBe(false);
     expect(canUseMemory(parseLocalRecord({ ...memory, scope: { type: "global" } }))).toBe(true);
+
     for (const state of ["proposed", "inactive"]) {
       expect(canUseMemory(parseLocalRecord({ ...memory, state }), "project-1")).toBe(false);
     }
+
     expect(canUseMemory(parseLocalRecord(valid()), "project-1")).toBe(false);
   });
   it("does not turn task instructions or draft artifacts into approved memories", () => {

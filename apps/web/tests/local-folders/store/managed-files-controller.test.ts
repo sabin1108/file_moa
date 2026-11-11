@@ -2,18 +2,45 @@ import { describe, expect, it, vi } from "vitest";
 import { ManagedFilesController } from "../../../src/features/local-folders/store/managed-files-controller";
 import type { ManagedPreview, ManagedResult } from "../../../src/features/local-folders/lib/managed-files";
 
-const preview: ManagedPreview = { id: "one", kind: "trash", roots: [["a.txt"]], destination: [], files: 1, folders: 0, bytes: 5, paths: [["a.txt"]], skipped: false };
-const result: ManagedResult = { id: "one", phase: "completed", status: "verified", copied: 0, removed: 1, preserved: true, issue: null };
+const preview: ManagedPreview = {
+  id: "one",
+  kind: "trash",
+  roots: [["a.txt"]],
+  destination: [],
+  files: 1,
+  folders: 0,
+  bytes: 5,
+  paths: [["a.txt"]],
+  skipped: false
+};
+const result: ManagedResult = {
+  id: "one",
+  phase: "completed",
+  status: "verified",
+  copied: 0,
+  removed: 1,
+  preserved: true,
+  issue: null
+};
+
 function controller(prepare = vi.fn(async () => preview), run = vi.fn(async () => result)) {
   return new ManagedFilesController(vi.fn(), vi.fn(), prepare, run, vi.fn(), vi.fn());
 }
+
 describe("managed screen lifetime", () => {
   it("invalidates inspection when changing operation and restores destination confirmation without approval", async () => {
     const read = vi.fn(async () => ({ path: [], entries: [], truncated: false }));
     const prepare = vi.fn(async () => preview);
     const run = vi.fn(async () => result);
     const c = new ManagedFilesController(read, vi.fn(), prepare, run, vi.fn(), vi.fn());
-    await c.resume({ kind: "copy", source: [], names: ["folder"], destination: [] }, "destination", false, undefined, true);
+
+    await c.resume(
+      { kind: "copy", source: [], names: ["folder"], destination: [] },
+      "destination",
+      false,
+      undefined,
+      true
+    );
     expect(c.getSnapshot()).toMatchObject({ phase: "draft", destinationConfirmed: true, preview: null });
     await c.start();
     expect(run).not.toHaveBeenCalled();
@@ -22,7 +49,15 @@ describe("managed screen lifetime", () => {
     expect(c.getSnapshot()).toMatchObject({ phase: "draft", preview: null, request: { kind: "move" }, destinationConfirmed: true });
     await c.start();
     expect(run).not.toHaveBeenCalled();
-    await c.resume({ kind: "copy", source: [], names: ["folder"], destination: ["confirmed"] }, "destination", false, undefined, true, true, ["browsing"]);
+    await c.resume(
+      { kind: "copy", source: [], names: ["folder"], destination: ["confirmed"] },
+      "destination",
+      false,
+      undefined,
+      true,
+      true,
+      ["browsing"]
+    );
     expect(c.getSnapshot().request?.destination).toEqual(["confirmed"]);
     expect(c.picker.getSnapshot().requestedPath).toEqual(["browsing"]);
     c.picker.close();
@@ -32,6 +67,7 @@ describe("managed screen lifetime", () => {
     const read = vi.fn(async () => ({ path: [], entries: [], truncated: false }));
     const prepare = vi.fn(async () => preview);
     const c = new ManagedFilesController(read, vi.fn(), prepare, vi.fn(), vi.fn(), vi.fn());
+
     for (const kind of ["copy", "move"] as const) {
       await c.open({ kind, source: [], names: ["folder"], destination: [] });
       expect(c.picker.getSnapshot().open).toBe(false);
@@ -48,9 +84,14 @@ describe("managed screen lifetime", () => {
   });
   it("discards preparation that finishes after dialog close", async () => {
     let finish!: (value: ManagedPreview) => void;
-    const c = controller(vi.fn(() => new Promise(resolve => { finish = resolve; })));
+    const c = controller(vi.fn(() => new Promise(resolve => {
+      finish = resolve;
+    })));
+
     await c.open({ kind: "trash", source: [], names: ["a.txt"], destination: [] });
+
     const pending = c.review();
+
     c.close();
     finish(preview);
     await pending;
@@ -58,11 +99,16 @@ describe("managed screen lifetime", () => {
   });
   it("ignores double execution and retains cancellation until the service settles", async () => {
     let finish!: (value: ManagedResult) => void;
-    const run = vi.fn(() => new Promise<ManagedResult>(resolve => { finish = resolve; }));
+    const run = vi.fn(() => new Promise<ManagedResult>(resolve => {
+      finish = resolve;
+    }));
     const c = controller(undefined, run);
+
     await c.open({ kind: "trash", source: [], names: ["a.txt"], destination: [] });
     await c.review();
+
     const pending = c.start();
+
     await c.start();
     expect(run).toHaveBeenCalledTimes(1);
     expect(c.close()).toBe(false);

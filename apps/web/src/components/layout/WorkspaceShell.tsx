@@ -9,8 +9,8 @@ import { WorkspaceSidebar, WorkspaceNavigation, type WorkspaceSection } from "./
 import ui from "../../styles/workspace-ui.module.css";
 import styles from "../../styles/workspace-layout.module.css";
 
-
 /** 가짜 이력이나 프로필을 만들지 않고 실제 작업 경로를 안내한다. */
+
 export function WorkspaceShell({ title, active, children, mode = "live", tools, folderTree, quickMenu = true }: {
   title: string;
   active?: WorkspaceSection;
@@ -21,15 +21,31 @@ export function WorkspaceShell({ title, active, children, mode = "live", tools, 
   quickMenu?: boolean;
 }) {
   return (
-    <div className={`${ui.system} ${ui.workspace}`} data-workspace={mode} data-workspace-quick-menu={quickMenu || undefined}>
+    <div
+      className={`${ui.system} ${ui.workspace}`}
+      data-workspace={mode}
+      data-workspace-quick-menu={quickMenu || undefined}
+    >
       <a className="skip-link" href="#workspace-content">본문으로 건너뛰기</a>
-      <WorkspaceSidebar active={active} mode={mode}>{folderTree}</WorkspaceSidebar>
+      <WorkspaceSidebar active={active} mode={mode}>
+        {folderTree}
+      </WorkspaceSidebar>
       <main id="workspace-content" className={`${ui.main} ${styles.main}`}>
         <header className={ui.topbar}>
-          <h1>{title}</h1>
-          <nav aria-label={mode === "sample" ? "샘플 작업 메뉴" : "계정 메뉴"}>{tools ?? (mode === "sample" ? <ActionLink href="/login">정식으로 사용</ActionLink> : <>
-            <ActionLink href="/preview">시안 보관함</ActionLink><ActionLink href="/account"><Icon name="person" />계정</ActionLink>
-          </>)}</nav>
+          <h1>
+            {title}
+          </h1>
+          <nav aria-label={mode === "sample" ? "샘플 작업 메뉴" : "계정 메뉴"}>
+            {tools ?? (mode === "sample"
+              ? <ActionLink href="/login">정식으로 사용</ActionLink>
+              : <>
+                <ActionLink href="/preview">시안 보관함</ActionLink>
+                <ActionLink href="/account">
+                  <Icon name="person" />
+                  계정
+                </ActionLink>
+              </>)}
+          </nav>
         </header>
         <nav className={styles.mobileNav} aria-label="모바일 주 메뉴">
           <WorkspaceNavigation active={active} mode={mode} />

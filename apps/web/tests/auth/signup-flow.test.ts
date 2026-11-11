@@ -3,6 +3,7 @@ import { normalizeSignupStage, parseSignupDraft, serializeSignupDraft, signupFie
 
 const now = 1_800_000_000_000;
 const identity = { name: "이름", email: "fixture@example.invalid" };
+
 describe("signup input progress and recovery", () => {
   it("clamps a forged later URL to the first incomplete identity field", () => {
     expect(normalizeSignupStage("password", { name: "", email: "" })).toBe("email");
@@ -22,7 +23,11 @@ describe("signup input progress and recovery", () => {
     expect(signupFieldError("email", identity.email)).toBeUndefined();
   });
   it("restores the current step and identity until expiry without serializing secrets", () => {
-    const raw = serializeSignupDraft({ ...identity, stage: "email", password: "private-password", token: "private-token" } as typeof identity & { stage: "email" }, now);
+    const raw = serializeSignupDraft(
+      { ...identity, stage: "email", password: "private-password", token: "private-token" } as typeof identity & { stage: "email" },
+      now
+    );
+
     expect(raw).not.toMatch(/password|token|private|name/);
     expect(parseSignupDraft(raw, now + 1000)).toMatchObject({ name: "", email: identity.email, stage: "email" });
     expect(parseSignupDraft(raw, now + 86_400_001)).toBeUndefined();

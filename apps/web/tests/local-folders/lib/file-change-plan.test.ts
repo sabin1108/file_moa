@@ -1,8 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { buildFileChangePlan, classificationFolder, parsePlanDestination, type PlanDirectory, type PlanOperation } from "../../../src/features/local-folders/lib/file-change-plan";
+import {
+  buildFileChangePlan,
+  classificationFolder,
+  parsePlanDestination,
+  type PlanDirectory,
+  type PlanOperation
+} from "../../../src/features/local-folders/lib/file-change-plan";
 
 // Fixed synthetic names; no filesystem or permission mocks are needed for these pure rules.
-const source = { path: ["자료"], entries: [{ name: "a.md", kind: "file" as const }, { name: "B.TXT", kind: "file" as const }], truncated: false };
+
+const source = {
+  path: ["자료"],
+  entries: [{ name: "a.md", kind: "file" as const }, { name: "B.TXT", kind: "file" as const }],
+  truncated: false
+};
 const target: PlanDirectory = { path: ["보관"], entries: [], truncated: false, availability: "existing" };
 const plan = (operation: PlanOperation = "move", destinations = [target], selectedNames = ["a.md"]) => buildFileChangePlan({ operation, source, selectedNames, destinationPath: ["보관"], destinations });
 
@@ -20,24 +31,41 @@ describe("read-only file change rules", () => {
     expect(() => plan("move", [target], [])).toThrow("empty-selection");
     expect(() => plan("move", [target], ["a.md", "a.md"])).toThrow();
     expect(() => plan("move", [target], ["missing.md"])).toThrow("source-changed");
-    expect(() => buildFileChangePlan({ operation: "move", source: { ...source, entries: [{ name: "a.md", kind: "directory" }] }, selectedNames: ["a.md"], destinationPath: target.path, destinations: [target] })).toThrow("source-changed");
+    expect(() => buildFileChangePlan({
+      operation: "move",
+      source: { ...source, entries: [{ name: "a.md", kind: "directory" }] },
+      selectedNames: ["a.md"],
+      destinationPath: target.path,
+      destinations: [target]
+    })).toThrow("source-changed");
   });
   it("PLAN-003 preserves source and gives exact move/copy rows without mutating input", () => {
     const before = JSON.stringify(source);
+
     for (const operation of ["move", "copy"] as const) {
       expect(plan(operation)).toMatchObject({ operation, rows: [{ from: ["자료", "a.md"], to: ["보관", "a.md"], issues: [] }], conflictCount: 0 });
     }
+
     expect(JSON.stringify(source)).toBe(before);
   });
   it("PLAN-003 classifies by extension and lists only proposed folders", () => {
     expect(["A.MD", "a.txt", "photo.pdf", "README"].map(classificationFolder)).toEqual(["마크다운", "텍스트", "기타", "기타"]);
+
     const result = plan("classify", [{ ...target, path: ["보관", "마크다운"], availability: "planned" }]);
+
     expect(result.rows[0].to).toEqual(["보관", "마크다운", "a.md"]);
     expect(result.directoriesToCreate).toEqual([["보관", "마크다운"]]);
   });
   it("PLAN-004 marks same source/destination for move and copy", () => {
     for (const operation of ["move", "copy"] as const) {
-      const result = buildFileChangePlan({ operation, source, selectedNames: ["a.md"], destinationPath: source.path, destinations: [{ ...target, ...source }] });
+      const result = buildFileChangePlan({
+        operation,
+        source,
+        selectedNames: ["a.md"],
+        destinationPath: source.path,
+        destinations: [{ ...target, ...source }]
+      });
+
       expect(result.rows[0].issues).toContain("same-path");
     }
   });
@@ -48,11 +76,26 @@ describe("read-only file change rules", () => {
   });
   it("PLAN-004 conservatively marks case and Unicode aliases", () => {
     expect(plan("move", [{ ...target, entries: [{ name: "A.MD", kind: "file" }] }]).rows[0].issues).toContain("ambiguous-name");
-    const unicode = buildFileChangePlan({ operation: "copy", source: { ...source, entries: [{ name: "é.md", kind: "file" }] }, selectedNames: ["é.md"], destinationPath: target.path, destinations: [{ ...target, entries: [{ name: "e\u0301.md", kind: "file" }] }] });
+
+    const unicode = buildFileChangePlan({
+      operation: "copy",
+      source: { ...source, entries: [{ name: "é.md", kind: "file" }] },
+      selectedNames: ["é.md"],
+      destinationPath: target.path,
+      destinations: [{ ...target, entries: [{ name: "e\u0301.md", kind: "file" }] }]
+    });
+
     expect(unicode.rows[0].issues).toContain("ambiguous-name");
   });
   it("PLAN-004 marks all duplicate normalized targets, not just the last one", () => {
-    const result = buildFileChangePlan({ operation: "move", source: { ...source, entries: [{ name: "a.md", kind: "file" }, { name: "A.MD", kind: "file" }] }, selectedNames: ["a.md", "A.MD"], destinationPath: target.path, destinations: [target] });
+    const result = buildFileChangePlan({
+      operation: "move",
+      source: { ...source, entries: [{ name: "a.md", kind: "file" }, { name: "A.MD", kind: "file" }] },
+      selectedNames: ["a.md", "A.MD"],
+      destinationPath: target.path,
+      destinations: [target]
+    });
+
     expect(result.rows.every(row => row.issues.includes("duplicate-target"))).toBe(true);
     expect(result.conflictCount).toBe(2);
   });

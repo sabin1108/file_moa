@@ -3,13 +3,16 @@ import { createSampleSession, readSampleSession, readSampleAccess } from "../../
 
 vi.mock("server-only", () => ({}));
 afterEach(() => vi.unstubAllEnvs());
+
 const now = 1_800_000_000_000;
 
 describe("sample-only signed sessions", () => {
   it("SAMPLE-001 creates independent, expiring identities without a production user", () => {
     vi.stubEnv("BETTER_AUTH_SECRET", "sample-fixture-secret-with-at-least-32-characters");
+
     const first = createSampleSession(now);
     const second = createSampleSession(now);
+
     expect(first.session.id).not.toBe(second.session.id);
     expect(readSampleSession(first.token, now)).toEqual(first.session);
     expect(readSampleSession(first.token, now - 30_000)).toEqual(first.session);
@@ -21,7 +24,9 @@ describe("sample-only signed sessions", () => {
 
   it("SAMPLE-001 rejects tampering, expiry and changed signing keys", () => {
     vi.stubEnv("BETTER_AUTH_SECRET", "sample-fixture-secret-with-at-least-32-characters");
+
     const { token, session } = createSampleSession(now);
+
     expect(readSampleSession(token + "x", now)).toBeNull();
     expect(readSampleSession(token, session.expiresAt)).toBeNull();
     expect(readSampleSession("not-a-session", now)).toBeNull();

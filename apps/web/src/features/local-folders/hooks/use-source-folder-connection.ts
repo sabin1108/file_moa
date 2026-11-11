@@ -23,6 +23,7 @@ type PickerWindow = Window & {
 };
 
 /** React와 외부 상태의 연결점. Provider 수명 동안 controller를 유지하고 effect에서 브라우저 I/O를 시작한다. */
+
 export function useSourceFolderConnection(owner: ConnectionOwner) {
   // Development handles remain in their original database; do not import them into an account.
   const [session] = useState(
@@ -33,8 +34,10 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
   );
   const [picker] = useState(() => (options: { mode: "read" | "readwrite" }) => {
     const picker = (window as PickerWindow).showDirectoryPicker;
+
     if (!picker)
       return Promise.reject(new Error("directory-picker-unavailable"));
+
     return picker.call(window, options);
   });
   const [controller] = useState(
@@ -63,9 +66,12 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
     const check = () => {
       if (document.visibilityState === "visible") void recovery.checkPresence();
     };
+
     window.addEventListener("focus", check);
     document.addEventListener("visibilitychange", check);
+
     const timer = window.setInterval(check, 5000);
+
     return () => {
       window.removeEventListener("focus", check);
       document.removeEventListener("visibilitychange", check);
@@ -76,8 +82,10 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
   useEffect(() => {
     if (
       !window.isSecureContext ||
-      typeof (window as PickerWindow).showDirectoryPicker !== "function" ||
-      !window.indexedDB ||
+      typeof (window as PickerWindow).showDirectoryPicker !== "function"
+      ||
+      !window.indexedDB
+      ||
       !navigator.locks
     ) {
       controller.unavailable(
@@ -86,6 +94,7 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
     } else {
       void controller.load(owner).then(() => records.load());
     }
+
     const revoke = () => {
       records.stop();
       recovery.stop();
@@ -93,13 +102,17 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
       void session.switchOwner(null);
     };
     const unsubscribeRevoked = subscribeAuthScopeRevoked(revoke);
+
     return () => {
       unsubscribeRevoked();
       revoke();
     };
   }, [controller, recovery, records, session, owner]);
 
-  const readSourceFile = useCallback((path: readonly string[], signal: AbortSignal, expectation: SourceFileExpectation) => session.readSourceFile(path, signal, expectation), [session]);
+  const readSourceFile = useCallback(
+    (path: readonly string[], signal: AbortSignal, expectation: SourceFileExpectation) => session.readSourceFile(path, signal, expectation),
+    [session]
+  );
 
   return {
     owner,

@@ -1,4 +1,5 @@
 "use client";
+
 import { useId, useState } from "react";
 import { ActionLink } from "../../../components/ui/ActionLink";
 import { selectedFiles } from "../../files/library-data";
@@ -35,7 +36,11 @@ export function DocumentScenes({ scene, navigate, documentName = "리액트 성�
           </div>
           <div>
             <dt>파일</dt>
-            <dd>{"Markdown · "}{selectedFiles.find(file => file.name === documentName)?.size ?? 2.4}{" KB"}</dd>
+            <dd>
+              {"Markdown · "}
+              {selectedFiles.find(file => file.name === documentName)?.size ?? 2.4}
+              {" KB"}
+            </dd>
           </div>
           <div>
             <dt>자료 사용</dt>
@@ -44,24 +49,39 @@ export function DocumentScenes({ scene, navigate, documentName = "리액트 성�
         </dl>
       </aside>
       <article className={styles.article}>
-        <h3>{documentName.replace(/\.md$/i, "")}</h3>
+        <h3>
+          {documentName.replace(/\.md$/i, "")}
+        </h3>
         <p>느리게 느껴지는 화면이 있다면, 먼저 어떤 작업에서 시간이 걸리는지 확인한다.</p>
         <h4>입력창과 목록 나누기</h4>
         <p>검색창의 입력 상태를 가까이 두면 관련 없는 화면까지 다시 그리는 일을 줄일 수 있다. 큰 목록은 Profiler에서 실제 비용을 확인한 뒤 개선한다.</p>
         <h4>측정 기록 남기기</h4>
         <p>같은 데이터와 기기에서 변경 전후를 비교한다. 파일 수와 대화 길이도 함께 기록한다.</p>
       </article>
-      <div className={styles.actions}><DemoButton variant="primary" onClick={() => navigate("transfer")}>대화에 보낼 자료 확인</DemoButton></div>
+      <div className={styles.actions}>
+        <DemoButton variant="primary" onClick={() => navigate("transfer")}>대화에 보낼 자료 확인</DemoButton>
+      </div>
     </div>
   );
+
   if (scene === "indexing") return (
     <div className={layout.ledger}>
-      <TaskProgress label={`문서 ${selectedFiles.length}개 중 2개 준비`} detail="프론트엔드 공부 / React" progress={{ completed: 2, total: selectedFiles.length }} />
+      <TaskProgress
+        label={`문서 ${selectedFiles.length}개 중 2개 준비`}
+        detail="프론트엔드 공부 / React"
+        progress={{ completed: 2, total: selectedFiles.length }}
+      />
       <FileSelection files={selectedFiles} status={index => index < 2 ? "준비됨" : "대기"} />
-      <div className={layout.ledgerFooter}><p>준비된 자료부터 대화에 사용할 수 있어요. 지금은 준비 상태의 예시입니다.</p>
-      <div className={styles.actions}><DemoButton onClick={() => navigate("transfer")}>자료 범위 확인</DemoButton><ActionLink href="/" variant="primary">대화로 돌아가기</ActionLink></div></div>
+      <div className={layout.ledgerFooter}>
+        <p>준비된 자료부터 대화에 사용할 수 있어요. 지금은 준비 상태의 예시입니다.</p>
+        <div className={styles.actions}>
+          <DemoButton onClick={() => navigate("transfer")}>자료 범위 확인</DemoButton>
+          <ActionLink href="/" variant="primary">대화로 돌아가기</ActionLink>
+        </div>
+      </div>
     </div>
   );
+
   return (
     <div className={styles.stack}>
       <RiskNotice label="서버 전송 전 확인" title="선택한 문서의 내용이 기기 밖으로 전송돼요">

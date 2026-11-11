@@ -1,11 +1,14 @@
 import { createHash } from "node:crypto";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
 vi.mock("server-only", () => ({}));
+
 const guard = vi.hoisted(() => vi.fn());
 const reserve = vi.hoisted(() => vi.fn());
 const generate = vi.hoisted(() => vi.fn());
 const finish = vi.hoisted(() => vi.fn());
-vi.mock("../../src/server/ai-usage", () => ({ startUsage: async () => {}, finishUsage: finish }));
+
+vi.mock("../../src/server/ai-usage", () => ({ startUsage: async () => { }, finishUsage: finish }));
 vi.mock("../../src/server/session-guards", () => ({ requireWorkspace: guard }));
 vi.mock("../../src/server/auth-rate-limit", () => ({
   createAuthRateLimiter: () => ({ consumeAll: reserve })
@@ -15,6 +18,7 @@ vi.mock("../../src/server/ai-generation", async original => ({
   ...(await original<typeof import("../../src/server/ai-generation")>()),
   generateAiJson: generate
 }));
+
 import { organizeLive } from "../../src/server/live-organization";
 
 const owner = { userId: "A", workspaceId: "workspace-A" };
@@ -46,6 +50,7 @@ const input = () => ({
     }
   ]
 });
+
 beforeEach(() => {
   finish.mockReset();
   vi.stubEnv("AI_PROVIDER", "gemini");
@@ -92,14 +97,17 @@ describe("authenticated local excerpt boundary", () => {
     ]) {
       expect(await organizeLive({ ...input(), ...extra }, "http://127.0.0.1:3034")).toEqual({ ok: false, code: "input" });
     }
+
     expect(reserve).not.toHaveBeenCalled();
     expect(generate).not.toHaveBeenCalled();
   });
   it("rejects aggregate excerpts and oversized metadata before reserving usage", async () => {
     const value = input();
+
     value.documents = Array.from({ length: 7 }, (_, index) => {
       const excerpt = "가".repeat(1000);
       const name = `memo-${index}.md`;
+
       return {
         ...value.documents[0],
         id: `document-${index + 1}`,
@@ -130,9 +138,12 @@ describe("authenticated local excerpt boundary", () => {
 
   it("keeps the user's reference folder independent from the instruction and destination", async () => {
     const value = { ...input(), reference: ["보고서"], destination: ["검토"] };
+
     await organizeLive(value, "http://127.0.0.1:3034");
+
     const generation = generate.mock.calls[0][0];
     const body = JSON.parse(generation.input);
+
     expect(body.instruction).toBe(value.request);
     expect(body.context).toMatchObject({ reference: ["보고서"], destination: ["검토"], liveReview: true });
     expect(generation.instructions).not.toContain("The user asked for REPORTS");
@@ -154,7 +165,9 @@ describe("authenticated local excerpt boundary", () => {
       ])
     );
     expect(generate).toHaveBeenCalledOnce();
+
     const payload = generate.mock.calls[0][0];
+
     expect(JSON.stringify(payload)).toContain(excerpt);
     expect(JSON.stringify(payload)).not.toContain("workspace-A");
     expect(JSON.stringify(payload)).not.toContain("excerptHash");
@@ -164,10 +177,14 @@ describe("authenticated local excerpt boundary", () => {
     "rejects %s before quota or model access",
     async kind => {
       const value = input();
+
       if (kind === "auth") guard.mockRejectedValueOnce(Error("not authenticated"));
+
       if (kind === "owner") value.owner = { userId: "B", workspaceId: "workspace-B" };
+
       if (kind === "expiry")
         guard.mockResolvedValueOnce({ ...session(), sessionExpiresAt: new Date(0).toISOString() });
+
       expect(
         await organizeLive(
           value,
@@ -191,15 +208,25 @@ describe("authenticated local excerpt boundary", () => {
     "bytes"
   ])("rejects invalid %s", async kind => {
     const value = input();
+
     if (kind === "hash") value.documents[0].excerptHash = "f".repeat(64);
+
     if (kind === "path") value.documents[0].path = ["..", "memo.md"];
+
     if (kind === "scope") Object.assign(value, { scope: { kind: "folder", path: ["outside"] } });
+
     if (kind === "duplicate") value.documents.push(value.documents[0]);
+
     if (kind === "consent") Object.assign(value, { consent: false });
+
     if (kind === "extra") Object.assign(value, { workspaceId: "forged" });
+
     if (kind === "expired-id") value.requestId = `${Date.now() - 3600000}:${crypto.randomUUID()}`;
+
     if (kind === "length") value.documents[0].excerpt = "x".repeat(1201);
+
     if (kind === "bytes") value.documents[0].size = 2 * 1024 * 1024 + 1;
+
     expect(await organizeLive(value, "http://127.0.0.1:3034")).toEqual({
       ok: false,
       code: "input"
@@ -210,8 +237,11 @@ describe("authenticated local excerpt boundary", () => {
 
   it("denies duplicates even if payload changed and never silently retries", async () => {
     const value = input();
+
     await organizeLive(value, "http://127.0.0.1:3034");
+
     const rules = reserve.mock.calls[0][0];
+
     reserve.mockResolvedValueOnce({ allowed: false, retryAfter: 60 });
     expect(await organizeLive({ ...value, request: "다른 요청" }, "http://127.0.0.1:3034")).toEqual(
       { ok: false, code: "limit", retryAfter: 60 }
@@ -229,7 +259,12 @@ describe("authenticated local excerpt boundary", () => {
       code: "session"
     });
     expect(generate).not.toHaveBeenCalled();
-    expect(finish).toHaveBeenLastCalledWith(expect.objectContaining(owner), expect.any(String), null, null);
+    expect(finish).toHaveBeenLastCalledWith(
+      expect.objectContaining(owner),
+      expect.any(String),
+      null,
+      null
+    );
     guard
       .mockReset()
       .mockResolvedValueOnce(session())
@@ -240,7 +275,12 @@ describe("authenticated local excerpt boundary", () => {
       code: "session"
     });
     expect(generate).toHaveBeenCalledOnce();
-    expect(finish).toHaveBeenLastCalledWith(expect.objectContaining(owner), expect.any(String), "fixture", { inputTokens: 1, outputTokens: 1, totalTokens: 2 });
+    expect(finish).toHaveBeenLastCalledWith(
+      expect.objectContaining(owner),
+      expect.any(String),
+      "fixture",
+      { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
+    );
   });
 
   it("rejects fabricated evidence and maps a provider timeout without leaking a body", async () => {

@@ -21,23 +21,26 @@ import { OrganizationExecutionController } from "./organization-execution-contro
 import { DocumentFindController } from "./document-find-controller";
 
 type Action = "connect" | "reconnect" | "disconnect";
+
 type Notice = Readonly<{
   state: "success" | "attention" | "error";
   title: string;
   detail?: string;
 }>;
+
 export type SourceConnectionState = Readonly<{
   phase:
-    | "loading"
-    | "ready"
-    | "load-error"
-    | "disconnect-error"
-    | "unsupported";
+  | "loading"
+  | "ready"
+  | "load-error"
+  | "disconnect-error"
+  | "unsupported";
   view: FolderConnectionView | null;
   pending: Action | null;
   notice: Notice | null;
   sources: readonly SourceFolderConnection[];
 }>;
+
 const initialState: SourceConnectionState = {
   phase: "loading",
   view: null,
@@ -51,6 +54,7 @@ const successes: Record<Action, string> = {
   reconnect: "자료 폴더에 다시 연결했어요.",
   disconnect: "연결 정보를 지웠어요. 원본 폴더는 그대로입니다.",
 };
+
 function failure(action: Action, error: unknown): Notice {
   if (action === "disconnect") {
     return {
@@ -62,6 +66,7 @@ function failure(action: Action, error: unknown): Notice {
   }
 
   const name = error instanceof Error ? error.name : "";
+
   if (name === "AbortError") {
     return {
       state: "attention",
@@ -70,6 +75,7 @@ function failure(action: Action, error: unknown): Notice {
         "선택 취소 또는 접근 제한일 수 있습니다. 기존 연결은 유지했습니다.",
     };
   }
+
   if (name === "NotAllowedError" || name === "SecurityError") {
     return {
       state: "attention",
@@ -77,6 +83,7 @@ function failure(action: Action, error: unknown): Notice {
       detail: "버튼을 다시 눌러 브라우저의 읽기 권한을 확인해 주세요.",
     };
   }
+
   return {
     state: "error",
     title: "폴더 연결 처리에 실패했어요.",
@@ -86,6 +93,7 @@ function failure(action: Action, error: unknown): Notice {
 }
 
 /** 화면의 작업 상태를 관리한다. 핸들은 session, 구독 수명은 React hook이 맡는다. */
+
 export class SourceConnectionController {
   readonly listing: SourceListingController;
   readonly preview: SourcePreviewController;
@@ -168,6 +176,7 @@ export class SourceConnectionController {
   getServerSnapshot = () => initialState;
   subscribe = (listener: () => void) => {
     this.listeners.add(listener);
+
     return () => {
       this.listeners.delete(listener);
     };
@@ -182,15 +191,22 @@ export class SourceConnectionController {
 
   async load(owner: ConnectionOwner): Promise<void> {
     const generation = ++this.generation;
+
     this.listing.reset(false);
     this.preview.reset(false);
     this.publish(initialState);
+
     try {
       await this.session.switchOwner(owner);
+
       if (generation !== this.generation) return;
+
       await this.session.resumeGrantedConnections();
+
       if (generation !== this.generation) return;
+
       const available = this.session.view("source").status === "connected";
+
       this.listing.reset(available);
       this.preview.reset(available);
       this.publish({
@@ -202,6 +218,7 @@ export class SourceConnectionController {
       });
     } catch {
       if (generation !== this.generation) return;
+
       this.publish({
         phase: "load-error",
         view: null,
@@ -247,32 +264,51 @@ export class SourceConnectionController {
   reconnect = () => this.run("reconnect");
   disconnect = () => this.run("disconnect");
   activateSource = (connectionId: string) => {
-    if (this.state.pending || this.state.phase !== "ready" || this.organizationExecution.managed.getSnapshot().phase === "running") return Promise.resolve(false);
+    if (this.state.pending || this.state.phase !== "ready"
+      || this.organizationExecution.managed.getSnapshot().phase === "running") return Promise.resolve(false);
+
     const source = this.state.sources.find(item => item.connectionId === connectionId);
+
     if (!source) return Promise.resolve(false);
+
     const permission = source.handle.requestPermission({ mode: "read" });
+
     return this.runSourceSwitch(() => this.session.activateSourceConnection(connectionId, permission));
   };
   disconnectSource = async (connectionId: string) => this.runSourceSwitch(() => this.session.disconnectSourceConnection(connectionId));
 
   private async runSourceSwitch(action: () => Promise<void>): Promise<boolean> {
-    if (this.state.pending || this.state.phase !== "ready" || this.organizationExecution.managed.getSnapshot().phase === "running") return false;
+    if (this.state.pending || this.state.phase !== "ready"
+      || this.organizationExecution.managed.getSnapshot().phase === "running") return false;
+
     const generation = this.generation;
+
     this.listing.reset(false);
     this.preview.reset(false);
     this.publish({ ...this.state, pending: "reconnect", notice: null });
+
     try {
       await action();
+
       const sources = await this.session.listSourceConnections();
+
       if (generation !== this.generation) return false;
+
       this.publish({ ...this.state, view: this.session.view("source"), pending: null, sources });
+
       const connected = this.session.state("source") === "connected";
-      this.listing.reset(connected); this.preview.reset(connected);
+
+      this.listing.reset(connected);
+      this.preview.reset(connected);
+
       return true;
     } catch (error) {
       const sources = await this.session.listSourceConnections();
+
       if (generation !== this.generation) return false;
+
       this.publish({ ...this.state, pending: null, notice: failure("reconnect", error), sources });
+
       return false;
     }
   }
@@ -281,12 +317,15 @@ export class SourceConnectionController {
   private async run(action: Action): Promise<boolean> {
     const canRetryRemoval =
       this.state.phase === "disconnect-error" && action === "disconnect";
+
     if (
       this.state.pending ||
       (this.state.phase !== "ready" && !canRetryRemoval)
     )
       return false;
+
     const generation = this.generation;
+
     if (action === "disconnect") {
       this.listing.reset(false);
       this.preview.reset(false);
@@ -294,10 +333,13 @@ export class SourceConnectionController {
       this.listing.suspend();
       this.preview.suspend();
     }
+
     this.publish({ ...this.state, pending: action, notice: null });
+
     try {
       // 브라우저는 클릭에 이어진 권한 요청만 허용한다. 이 호출 전에 await를 넣지 않는다.
       let task: Promise<void>;
+
       if (action === "connect") {
         task = this.session.select("source", this.picker);
       } else if (action === "reconnect") {
@@ -305,9 +347,12 @@ export class SourceConnectionController {
       } else {
         task = this.session.disconnect("source");
       }
+
       this.publish({ ...this.state, view: this.session.view("source") });
       await task;
+
       if (generation !== this.generation) return false;
+
       this.publish({
         phase: "ready",
         view: this.session.view("source"),
@@ -315,6 +360,7 @@ export class SourceConnectionController {
         notice: { state: "success", title: successes[action] },
         sources: await this.session.listSourceConnections(),
       });
+
       if (action === "connect") {
         this.listing.reset(true);
         this.preview.reset(true);
@@ -325,9 +371,11 @@ export class SourceConnectionController {
         this.listing.reset(true);
         this.preview.reset(true);
       }
+
       return true;
     } catch (error) {
       if (generation !== this.generation) return false;
+
       this.publish({
         phase: action === "disconnect" ? "disconnect-error" : "ready",
         view: this.session.view("source"),
@@ -337,6 +385,7 @@ export class SourceConnectionController {
       });
       this.listing.resume(this.session.state("source") === "connected");
       this.preview.resume(this.session.state("source") === "connected");
+
       return false;
     }
   }

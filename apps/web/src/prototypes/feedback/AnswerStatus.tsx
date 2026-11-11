@@ -3,6 +3,7 @@ import { StatusNotice } from "../../components/ui/feedback/StatusNotice";
 import styles from "./prototype-feedback.module.css";
 
 export type AnswerPhase = "queued" | "reading" | "writing" | "stopped" | "error" | "complete";
+
 const phases = {
   queued: { title: "요청을 받았어요", detail: "답변을 시작할 준비를 하고 있어요.", tone: "pending" },
   reading: { title: "선택한 자료를 확인하고 있어요", detail: "답변에 필요한 내용을 찾고 있어요.", tone: "pending" },
@@ -13,9 +14,13 @@ const phases = {
 } as const;
 
 export function AnswerStatus({ phase, text, sources = [], action }: {
-  phase: AnswerPhase; text: string; sources?: readonly string[]; action?: ReactNode;
+  phase: AnswerPhase;
+  text: string;
+  sources?: readonly string[];
+  action?: ReactNode;
 }) {
   const state = phases[phase];
+
   return (
     <section className={styles.answer} aria-label="AI 답변">
       <StatusNotice
@@ -34,19 +39,26 @@ export function AnswerStatus({ phase, text, sources = [], action }: {
         aria-live="off"
         data-writing={phase === "writing" || undefined}
       >
-        {text ? (
-          <p>{text}</p>
-        ) : (
-          <p className={styles.emptyAnswer}>답변이 도착하면 이곳에 표시됩니다.</p>
-        )}
+        {text
+          ? (
+            <p>
+              {text}
+            </p>
+          )
+          : (
+            <p className={styles.emptyAnswer}>답변이 도착하면 이곳에 표시됩니다.</p>
+          )}
       </article>
-      {!!sources.length && (
-        <ul className={styles.sources} aria-label="참고 자료">
-          {sources.map(source => (
-            <li key={source}>{source}</li>
-          ))}
-        </ul>
-      )}
+      {!!sources.length
+        && (
+          <ul className={styles.sources} aria-label="참고 자료">
+            {sources.map(source => (
+              <li key={source}>
+                {source}
+              </li>
+            ))}
+          </ul>
+        )}
     </section>
   );
 }

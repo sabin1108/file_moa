@@ -1,4 +1,5 @@
 "use client";
+
 import { useId, useState } from "react";
 import { ActionLink } from "../../../components/ui/ActionLink";
 import { selectedFiles } from "../../files/library-data";
@@ -12,11 +13,15 @@ import { studyFolder, sourceFolder, portfolioFolder, targetFolder } from "../../
 import { RiskNotice } from "../RiskSummary";
 import { TaskProgress } from "../../feedback/TaskProgress";
 
-const route = { from: { root: studyFolder, name: sourceFolder }, to: { root: portfolioFolder, name: targetFolder } };
+const route = {
+  from: { root: studyFolder, name: sourceFolder },
+  to: { root: portfolioFolder, name: targetFolder }
+};
 
 export function MoveScenes({ scene, navigate, dismiss }: SceneProps) {
   const radioGroup = useId();
   const [resolution, setResolution] = useState("rename");
+
   if (scene === "destination") return (
     <div>
       <FolderRoute {...route} />
@@ -39,6 +44,7 @@ export function MoveScenes({ scene, navigate, dismiss }: SceneProps) {
       </div>
     </div>
   );
+
   if (scene === "conflict") return (
     <div className={styles.stack}>
       <RiskNotice label="이름 충돌 · 선택 필요" title="이름은 같지만 내용이 다른 파일일 수 있어요">
@@ -103,6 +109,7 @@ export function MoveScenes({ scene, navigate, dismiss }: SceneProps) {
       </div>
     </div>
   );
+
   if (scene === "move-progress") return (
     <div>
       <FolderRoute {...route} />
@@ -125,20 +132,23 @@ export function MoveScenes({ scene, navigate, dismiss }: SceneProps) {
       </div>
     </div>
   );
+
   const partial = scene === "move-partial";
   const copy = scene === "copy-result";
   const skipped = scene === "move-skipped";
+
   return (
     <div className={styles.stack}>
-      {partial && (
-        <RiskNotice
-          label="일부 미처리 · 확인 필요"
-          title={`${selectedFiles[2].name} 파일이 아직 원래 위치에 있어요`}
-        >
-          다른 두 파일은 이동 완료 상태입니다. 중단 원인과 접근 권한을 확인한 뒤 미처리 파일의
-          이동을 다시 계획해 주세요.
-        </RiskNotice>
-      )}
+      {partial
+        && (
+          <RiskNotice
+            label="일부 미처리 · 확인 필요"
+            title={`${selectedFiles[2].name} 파일이 아직 원래 위치에 있어요`}
+          >
+            다른 두 파일은 이동 완료 상태입니다. 중단 원인과 접근 권한을 확인한 뒤 미처리 파일의
+            이동을 다시 계획해 주세요.
+          </RiskNotice>
+        )}
       <div>
         <FolderRoute {...route} copy={copy} />
         <div className={layout.ledger}>
@@ -178,19 +188,23 @@ export function MoveScenes({ scene, navigate, dismiss }: SceneProps) {
               {partial && (
                 <DemoButton onClick={() => navigate("permission")}>권한 문제 확인</DemoButton>
               )}
-              {partial ? (
-                <DemoButton variant="primary" onClick={() => navigate("destination")}>
-                  다시 계획하기
-                </DemoButton>
-              ) : dismiss ? (
-                <DemoButton variant="primary" onClick={dismiss}>
-                  확인
-                </DemoButton>
-              ) : (
-                <ActionLink href="/files" variant="primary">
-                  폴더 화면으로
-                </ActionLink>
-              )}
+              {partial
+                ? (
+                  <DemoButton variant="primary" onClick={() => navigate("destination")}>
+                    다시 계획하기
+                  </DemoButton>
+                )
+                : dismiss
+                  ? (
+                    <DemoButton variant="primary" onClick={dismiss}>
+                      확인
+                    </DemoButton>
+                  )
+                  : (
+                    <ActionLink href="/files" variant="primary">
+                      폴더 화면으로
+                    </ActionLink>
+                  )}
             </div>
           </div>
         </div>

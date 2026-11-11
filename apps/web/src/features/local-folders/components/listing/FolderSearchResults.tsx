@@ -27,28 +27,31 @@ export function FolderSearchResults({ state, rootName, disabled, onOpen, onOpenF
                 ? "검색을 취소했어요."
                 : `${state.result?.entries.length ?? 0}개 검색 결과`}
         </p>
-        {state.phase === "loading" && (
-          <button type="button" className={actionClasses("ghost")} onClick={onCancel}>
-            검색 취소
-          </button>
-        )}
-        {(state.phase === "error" || state.phase === "cancelled") && (
-          <button
-            type="button"
-            className={actionClasses("secondary")}
-            disabled={disabled}
-            onClick={onRetry}
-          >
-            검색 다시 시도
-          </button>
-        )}
+        {state.phase === "loading"
+          && (
+            <button type="button" className={actionClasses("ghost")} onClick={onCancel}>
+              검색 취소
+            </button>
+          )}
+        {(state.phase === "error" || state.phase === "cancelled")
+          && (
+            <button
+              type="button"
+              className={actionClasses("secondary")}
+              disabled={disabled}
+              onClick={onRetry}
+            >
+              검색 다시 시도
+            </button>
+          )}
       </div>
-      {state.result?.incomplete && (
-        <p role="status" className={styles.footnote}>
-          읽지 못한 폴더가 있거나 검색 한도에 도달해 일부 결과만 표시합니다. 폴더를 좁혀 다시 검색해
-          주세요.
-        </p>
-      )}
+      {state.result?.incomplete
+        && (
+          <p role="status" className={styles.footnote}>
+            읽지 못한 폴더가 있거나 검색 한도에 도달해 일부 결과만 표시합니다. 폴더를 좁혀 다시 검색해
+            주세요.
+          </p>
+        )}
       <ul className={styles.entries} aria-label="검색한 파일과 폴더">
         {state.result?.entries.map(entry => {
           const parent = entry.path.slice(0, -1);
@@ -56,30 +59,32 @@ export function FolderSearchResults({ state, rootName, disabled, onOpen, onOpenF
 
           return (
             <li key={JSON.stringify([entry.path, entry.kind])}>
-              {entry.kind === "directory" ? (
-                <SourceFolderRow
-                  name={entry.name}
-                  selected={false}
-                  selecting={false}
-                  disabled={disabled}
-                  selectionDisabled={disabled}
-                  onOpen={() => onOpen(entry.path)}
-                  onToggle={select}
-                  onLongSelect={select}
-                />
-              ) : (
-                <SourceFileRow
-                  name={entry.name}
-                  selected={false}
-                  selecting={false}
-                  previewing={false}
-                  selectionDisabled={disabled}
-                  previewDisabled={disabled}
-                  onPreview={() => onOpenFile(entry.path)}
-                  onToggle={select}
-                  onLongSelect={select}
-                />
-              )}
+              {entry.kind === "directory"
+                ? (
+                  <SourceFolderRow
+                    name={entry.name}
+                    selected={false}
+                    selecting={false}
+                    disabled={disabled}
+                    selectionDisabled={disabled}
+                    onOpen={() => onOpen(entry.path)}
+                    onToggle={select}
+                    onLongSelect={select}
+                  />
+                )
+                : (
+                  <SourceFileRow
+                    name={entry.name}
+                    selected={false}
+                    selecting={false}
+                    previewing={false}
+                    selectionDisabled={disabled}
+                    previewDisabled={disabled}
+                    onPreview={() => onOpenFile(entry.path)}
+                    onToggle={select}
+                    onLongSelect={select}
+                  />
+                )}
               <button
                 type="button"
                 className={styles.searchLocation}

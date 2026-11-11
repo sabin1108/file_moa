@@ -10,10 +10,13 @@ export const CHAT_LIMITS = {
 } as const;
 
 export const chatErrorCodes = ["session", "origin", "input", "limit", "timeout", "unavailable", "interrupted", "refused"] as const;
+
 export type ChatErrorCode = typeof chatErrorCodes[number];
 
 export class ChatError extends Error {
-  constructor(readonly code: ChatErrorCode) { super(code); }
+  constructor(readonly code: ChatErrorCode) {
+    super(code);
+  }
 }
 
 const messageSchema = z.strictObject({
@@ -24,19 +27,23 @@ const messageSchema = z.strictObject({
 export const chatRequestSchema = z.strictObject({
   requestId: z.string().regex(/^\d{13}:[a-f0-9-]{36}$/u).refine(value => {
     const [time, id] = value.split(":");
+
     return z.uuid().safeParse(id).success && Number(time) >= Date.now() - 300_000 && Number(time) <= Date.now() + 30_000;
   }),
   owner: z.strictObject({ userId: z.string().min(1).max(128), workspaceId: z.string().min(1).max(128) }),
   provider: z.enum(["openai", "gemini"]),
   personalContext: personalContextSchema.optional(),
   messages: z.array(messageSchema).min(1).max(7).refine(messages =>
-    messages.length % 2 === 1 &&
-    messages.every((message, index) => message.role === (index % 2 ? "assistant" : "user") && (message.role !== "user" || message.content.length <= 800)) &&
+    messages.length % 2 === 1
+    &&
+    messages.every((message, index) => message.role === (index % 2 ? "assistant" : "user") && (message.role !== "user" || message.content.length <= 800))
+    &&
     messages.reduce((length, message) => length + message.content.length, 0) <= CHAT_LIMITS.inputCharacters,
   ),
 });
 
 export type ChatRequest = z.infer<typeof chatRequestSchema>;
+
 export type ChatMessageInput = ChatRequest["messages"][number];
 
 const usageSchema = z.strictObject({
@@ -50,14 +57,37 @@ const eventBase = {
 };
 export const chatEventSchema = z.discriminatedUnion("type", [
   z.strictObject({ ...eventBase, type: z.literal("accepted") }),
-  z.strictObject({ ...eventBase, type: z.literal("text_delta"), text: z.string().min(1).max(CHAT_LIMITS.answerCharacters) }),
-  z.strictObject({ ...eventBase, type: z.literal("completed"), model: z.string().min(1).max(200), usage: usageSchema.nullable() }),
-  z.strictObject({ ...eventBase, type: z.literal("error"), code: z.enum(chatErrorCodes), retryAfter: z.number().int().positive().optional() }),
+  z.strictObject({
+    ...eventBase,
+    type: z.literal("text_delta"),
+    text: z.string().min(1).max(CHAT_LIMITS.answerCharacters)
+  }),
+  z.strictObject({
+    ...eventBase,
+    type: z.literal("completed"),
+    model: z.string().min(1).max(200),
+    usage: usageSchema.nullable()
+  }),
+  z.strictObject({
+    ...eventBase,
+    type: z.literal("error"),
+    code: z.enum(chatErrorCodes),
+    retryAfter: z.number().int().positive().optional()
+  }),
 ]);
+
 export type ChatEvent = z.infer<typeof chatEventSchema>;
+
 export type ChatGenerationEvent =
-  | { type: "text"; text: string }
-  | { type: "completed"; model: string; usage: SampleAiUsage | null };
+  | {
+    type: "text";
+    text: string
+  }
+  | {
+    type: "completed";
+    model: string;
+    usage: SampleAiUsage | null
+  };
 
 export const CHAT_ERROR_MESSAGES: Record<ChatErrorCode, string> = {
   session: "로그인 상태가 바뀌었어요. 새로고침한 뒤 다시 확인해 주세요.",

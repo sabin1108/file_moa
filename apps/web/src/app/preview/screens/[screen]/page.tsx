@@ -14,6 +14,7 @@ export function generateStaticParams() {
 
 export default async function Page({ params }: { params: Promise<{ screen: string }> }) {
   const { screen } = await params;
+
   switch (screen) {
     case "chat": return <WorkspacePrototype />;
     case "chat-first": return <ChatFirstPrototype />;

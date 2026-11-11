@@ -101,7 +101,12 @@ import type {
   FindableSnapshot,
 } from "../lib/document-find";
 
-type Slot = { handle?: FolderHandle; connected: boolean; sequence: number };
+type Slot = {
+  handle?: FolderHandle;
+  connected: boolean;
+  sequence: number
+};
+
 const emptySlots = (): Record<FolderKind, Slot> => ({
   source: { connected: false, sequence: 0 },
   "ai-records": { connected: false, sequence: 0 },
@@ -111,6 +116,7 @@ const modeFor = (kind: FolderKind) =>
   kind === "source" ? ("read" as const) : ("readwrite" as const);
 
 /** Owner comes from the trusted authentication boundary; this class does not authenticate callers. */
+
 export class FolderConnectionSession {
   private owner: ConnectionOwner | null = null;
   private generation = 0;
@@ -169,7 +175,7 @@ export class FolderConnectionSession {
   } | null = null;
   private slots = emptySlots();
   private sourceConnectionId = "legacy";
-  constructor(private readonly repository: HandleRepository) {}
+  constructor(private readonly repository: HandleRepository) { }
 
   state(kind: FolderKind): FolderConnectionView["status"] {
     return this.view(kind).status;
@@ -180,10 +186,14 @@ export class FolderConnectionSession {
     if (kind !== "source" && kind !== "ai-records" && kind !== "recovery") {
       throw Error("invalid-folder-kind");
     }
+
     const slot = this.slots[kind];
+
     if (!slot.handle) return { status: "disconnected", folderName: null };
+
     const connected =
       slot.connected && (kind !== "recovery" || this.slots.source.connected);
+
     return {
       status: connected ? "connected" : "needs-permission",
       folderName: slot.handle.name,
@@ -196,18 +206,25 @@ export class FolderConnectionSession {
     const directory = slot.handle;
     const generation = this.generation;
     const sequence = slot.sequence;
+
     if (!owner || !this.ready || !directory) throw new Error("ai-records-not-connected");
+
     const assertCurrent = () => {
-      if (owner !== this.owner || generation !== this.generation || slot !== this.slots["ai-records"] || sequence !== slot.sequence) {
+      if (owner !== this.owner || generation !== this.generation || slot !== this.slots["ai-records"]
+        || sequence !== slot.sequence) {
         throw new Error("stale-connection-operation");
       }
     };
+
     if (await directory.queryPermission({ mode: "readwrite" }) !== "granted") {
       slot.connected = false;
+
       throw new DOMException("AI records permission required", "NotAllowedError");
     }
+
     assertCurrent();
     slot.connected = true;
+
     return { directory, owner, assertCurrent };
   };
 
@@ -221,24 +238,33 @@ export class FolderConnectionSession {
     this.archiveSnapshot = null;
     this.completedBackup = null;
     this.pendingRecoveryCreation = null;
+
     const generation = ++this.generation;
+
     this.owner = null;
     this.ready = false;
     this.slots = emptySlots();
     this.sourceConnectionId = "legacy";
+
     if (!next) {
       this.ready = true;
+
       return;
     }
+
     connectionKey(next, "source");
+
     const owner = Object.freeze({
       userId: next.userId,
       workspaceId: next.workspaceId,
     });
+
     this.owner = owner;
+
     let source: FolderHandle | undefined,
       records: FolderHandle | undefined,
       recovery: FolderHandle | undefined;
+
     try {
       [source, records, recovery] = await Promise.all([
         this.repository.read(owner, "source"),
@@ -248,19 +274,32 @@ export class FolderConnectionSession {
     } catch (error) {
       if (generation !== this.generation)
         throw new Error("stale-connection-operation");
+
       throw error;
     }
+
     if (generation !== this.generation)
       throw new Error("stale-connection-operation");
+
     if ("listSource" in this.repository) {
       const sources = await (this.repository as SourceFolderRepository).listSource(owner);
+
       if (generation !== this.generation) throw new Error("stale-connection-operation");
+
       const active = sources.find(item => item.active) ?? sources[0];
-      if (active) { source = active.handle; this.sourceConnectionId = active.connectionId; }
+
+      if (active) {
+        source = active.handle;
+        this.sourceConnectionId = active.connectionId;
+      }
     }
+
     if (source) validateFolderHandle(source);
+
     if (records) validateFolderHandle(records);
+
     if (recovery) validateFolderHandle(recovery);
+
     this.slots.source.handle = source;
     this.slots["ai-records"].handle = records;
     this.slots.recovery.handle = recovery;
@@ -269,15 +308,20 @@ export class FolderConnectionSession {
 
   private begin(kind: FolderKind) {
     if (!this.owner) throw new Error("no-connection-owner");
+
     connectionKey(this.owner, kind);
+
     if (!this.ready) throw new Error("connection-not-ready");
+
     if (kind === "source") {
       this.cancelRecovery();
     }
+
     const owner = this.owner,
       generation = this.generation,
       slot = this.slots[kind];
     const sequence = ++slot.sequence;
+
     return {
       owner,
       slot,
@@ -302,17 +346,25 @@ export class FolderConnectionSession {
       )
         throw Error("stale-connection-operation");
     };
+
     if (!owner || !source.handle || !this.ready) return;
+
     const permission = await source.handle.queryPermission({ mode: "read" });
+
     check();
+
     if (permission !== "granted") return;
+
     source.connected = true;
+
     if (!recovery.handle) return;
+
     try {
       if (
         (await recovery.handle.queryPermission({ mode: "read" })) !== "granted"
       )
         return;
+
       check();
       await this.validateRecovery(
         recovery.handle,
@@ -333,74 +385,110 @@ export class FolderConnectionSession {
     picker: (options: { mode: "read" | "readwrite" }) => Promise<FolderHandle>,
   ): Promise<void> {
     if (kind === "recovery") throw Error("use-recovery-vault-action");
+
     const operation = this.begin(kind);
+
     try {
       const selected = await picker({ mode: modeFor(kind) });
+
       operation.assertCurrent();
       validateFolderHandle(selected);
+
       if (
         (await selected.queryPermission({ mode: modeFor(kind) })) !== "granted"
       ) {
         operation.assertCurrent();
+
         throw new DOMException("Folder permission required", "NotAllowedError");
       }
+
       operation.assertCurrent();
+
       if (kind === "source" || kind === "ai-records") {
         const others = kind === "source" ? [this.slots["ai-records"].handle] : [this.slots.source.handle, this.slots.recovery.handle];
+
         if (kind === "ai-records" && "listSource" in this.repository) {
           const sources = await (this.repository as SourceFolderRepository).listSource(operation.owner);
+
           operation.assertCurrent();
           others.push(...sources.map(source => source.handle));
         }
+
         for (const other of others) {
           if (!other) continue;
+
           if (await selected.isSameEntry(other) || await selected.resolve(other) !== null || await other.resolve(selected) !== null) {
             throw new Error("ai-records-overlap");
           }
+
           operation.assertCurrent();
         }
       }
+
       if (kind === "source" && "writeSource" in this.repository) {
         const repository = this.repository as SourceFolderRepository;
         const connections = await repository.listSource(operation.owner);
+
         operation.assertCurrent();
+
         let id = `source-${crypto.randomUUID()}`;
+
         for (const connection of connections) {
-          if (await selected.isSameEntry(connection.handle)) { id = connection.connectionId; break; }
+          if (await selected.isSameEntry(connection.handle)) {
+            id = connection.connectionId;
+
+            break;
+          }
+
           operation.assertCurrent();
         }
+
         if (id !== "legacy") await repository.writeSource(operation.owner, id, selected);
+
         await repository.setActiveSource(operation.owner, id);
         operation.assertCurrent();
         this.sourceConnectionId = id;
       } else {
         await this.repository.write(operation.owner, kind, selected);
       }
+
       operation.assertCurrent();
       operation.slot.handle = selected;
       operation.slot.connected = true;
     } catch (error) {
       operation.assertCurrent();
+
       throw error;
     }
   }
 
   async listSourceConnections(): Promise<readonly SourceFolderConnection[]> {
     if (!("listSource" in this.repository) || !this.owner) return [];
+
     return (this.repository as SourceFolderRepository).listSource(this.owner);
   }
 
   async activateSourceConnection(connectionId: string, permission?: Promise<PermissionState>): Promise<void> {
     const operation = this.begin("source");
+
     if (!("readSource" in this.repository)) throw new Error("source-connections-unavailable");
+
     const repository = this.repository as SourceFolderRepository;
     const handle = await repository.readSource(operation.owner, connectionId);
+
     operation.assertCurrent();
+
     if (!handle) throw new Error("source-connection-not-found");
+
     const records = this.slots["ai-records"].handle;
-    if (records && (await records.isSameEntry(handle) || await records.resolve(handle) !== null || await handle.resolve(records) !== null)) throw new Error("ai-records-overlap");
+
+    if (records
+      && (await records.isSameEntry(handle) || await records.resolve(handle) !== null || await handle.resolve(records) !== null)) throw new Error("ai-records-overlap");
+
     operation.assertCurrent();
+
     if ((await (permission ?? handle.queryPermission({ mode: "read" }))) !== "granted") throw new DOMException("Folder permission required", "NotAllowedError");
+
     operation.assertCurrent();
     await repository.setActiveSource(operation.owner, connectionId);
     operation.assertCurrent();
@@ -411,19 +499,33 @@ export class FolderConnectionSession {
 
   async disconnectSourceConnection(connectionId: string): Promise<void> {
     const operation = this.begin("source");
+
     if (!("removeSource" in this.repository)) throw new Error("source-connections-unavailable");
+
     const repository = this.repository as SourceFolderRepository;
+
     await repository.removeSource(operation.owner, connectionId);
     operation.assertCurrent();
-    await new LocalTextIndex().retain({ owner: operation.owner.userId, workspace: operation.owner.workspaceId, connection: connectionId }, [], operation.assertCurrent).catch(() => { operation.assertCurrent(); });
+    await new LocalTextIndex().retain(
+      { owner: operation.owner.userId, workspace: operation.owner.workspaceId, connection: connectionId },
+      [],
+      operation.assertCurrent
+    ).catch(() => {
+      operation.assertCurrent();
+    });
     operation.assertCurrent();
+
     const remaining = await repository.listSource(operation.owner);
+
     if (remaining.length === 0) {
       operation.slot.handle = undefined;
       operation.slot.connected = false;
+
       return;
     }
+
     const next = remaining.find(item => item.active) ?? remaining[0];
+
     await repository.setActiveSource(operation.owner, next.connectionId);
     operation.assertCurrent();
     operation.slot.handle = next.handle;
@@ -436,21 +538,29 @@ export class FolderConnectionSession {
     if (kind === "recovery") {
       return this.reconnectRecovery();
     }
+
     const operation = this.begin(kind);
     const handle = operation.slot.handle;
+
     if (!handle) throw new Error("no-folder-connection");
+
     operation.slot.connected = false;
+
     try {
       // Deliberately no await before requestPermission: called by an explicit user gesture.
       const permission = await handle.requestPermission({
         mode: modeFor(kind),
       });
+
       operation.assertCurrent();
+
       if (permission !== "granted")
         throw new DOMException("Folder permission required", "NotAllowedError");
+
       operation.slot.connected = true;
     } catch (error) {
       operation.assertCurrent();
+
       throw error;
     }
   }
@@ -476,9 +586,12 @@ export class FolderConnectionSession {
     const source = this.slots.source;
     const root = source.handle;
     const sequence = source.sequence;
+
     if (!root || !source.connected) throw Error("source-folder-not-connected");
+
     const check = () => {
       operation.assertCurrent();
+
       if (
         source.handle !== root ||
         source.sequence !== sequence ||
@@ -487,6 +600,7 @@ export class FolderConnectionSession {
         throw Error("stale-connection-operation");
       }
     };
+
     return { ...operation, roots: [root], check };
   }
 
@@ -499,18 +613,21 @@ export class FolderConnectionSession {
     const selected = await recoveryStage("select-location", () =>
       picker({ mode: create ? "readwrite" : "read" }),
     );
+
     operation.check();
     validateFolderHandle(selected);
+
     const directory = create
       ? await navigator.locks.request("moa-recovery-vault-creation", () =>
-          createRecoveryVault(
-            selected,
-            operation.owner,
-            operation.roots,
-            operation.check,
-          ),
-        )
+        createRecoveryVault(
+          selected,
+          operation.owner,
+          operation.roots,
+          operation.check,
+        ),
+      )
       : selected;
+
     operation.check();
     await recoveryStage("verify-identity", () =>
       this.validateRecovery(
@@ -533,10 +650,12 @@ export class FolderConnectionSession {
     picker: (options: { mode: "read" | "readwrite" }) => Promise<FolderHandle>,
   ) => {
     this.pendingRecoveryCreation = null;
+
     const operation = this.recoveryOperation();
     const parent = await recoveryStage("select-location", () =>
       picker({ mode: "read" }),
     );
+
     operation.check();
     validateFolderHandle(parent);
     await recoveryStage("check-location", () =>
@@ -544,25 +663,32 @@ export class FolderConnectionSession {
     );
     operation.check();
     this.pendingRecoveryCreation = { parent, operation };
+
     return { folderName: parent.name };
   };
 
   /** 별도 생성 클릭에서 권한을 먼저 요청한다. picker 선택을 실제 생성으로 표시하지 않는다. */
   createPreparedRecovery = async () => {
     const pending = this.pendingRecoveryCreation;
+
     if (!pending) throw Error("recovery-creation-location-required");
+
     const { parent, operation } = pending;
+
     operation.check();
     await recoveryStage("request-write", async () => {
       // 이 호출 앞에는 await가 없다. 생성 버튼의 사용자 제스처를 유지한다.
       const permission = await parent.requestPermission({ mode: "readwrite" });
+
       operation.check();
+
       if (permission !== "granted")
         throw new DOMException(
           "Vault write permission required",
           "NotAllowedError",
         );
     });
+
     const directory = await recoveryStage("create-directory", () =>
       navigator.locks.request("moa-recovery-vault-creation", () =>
         createRecoveryVault(
@@ -573,6 +699,7 @@ export class FolderConnectionSession {
         ),
       ),
     );
+
     operation.check();
     await recoveryStage("verify-identity", () =>
       this.validateRecovery(
@@ -598,22 +725,32 @@ export class FolderConnectionSession {
     check: () => void,
   ) {
     await assertVaultLocation(directory, roots, check);
+
     const identity = await readVaultIdentity(directory, owner, check);
+
     check();
+
     if (identity.status !== "ready")
       throw Error(`recovery-vault-${identity.status}`);
+
     await assertVaultLocation(directory, roots, check);
   }
 
   reconnectRecovery = async () => {
     const operation = this.recoveryOperation();
     const directory = operation.slot.handle;
+
     if (!directory) throw Error("no-folder-connection");
+
     operation.slot.connected = false;
+
     const permission = await directory.requestPermission({ mode: "read" });
+
     operation.check();
+
     if (permission !== "granted")
       throw new DOMException("Vault permission required", "NotAllowedError");
+
     await this.validateRecovery(
       directory,
       operation.owner,
@@ -629,6 +766,7 @@ export class FolderConnectionSession {
     "connected" | "missing" | "permission" | "invalid" | "idle"
   > => {
     const slot = this.slots.recovery;
+
     if (
       !slot.connected ||
       !slot.handle ||
@@ -636,20 +774,26 @@ export class FolderConnectionSession {
       !this.owner
     )
       return "idle";
+
     const context = this.backupContext();
     let failure: "missing" | "permission" | "invalid" = "invalid";
+
     try {
       const identity = await readVaultIdentity(
         context.vault,
         context.owner,
         context.check,
       );
+
       context.check();
+
       if (identity.status === "ready") {
         await assertVaultLocation(context.vault, [context.root], context.check);
         context.check();
+
         return "connected";
       }
+
       failure = identity.status === "missing" ? "missing" : "invalid";
     } catch (error) {
       context.check();
@@ -657,12 +801,14 @@ export class FolderConnectionSession {
         error instanceof Error && error.name === "NotFoundError"
           ? "missing"
           : error instanceof Error &&
-              ["NotAllowedError", "SecurityError"].includes(error.name)
+            ["NotAllowedError", "SecurityError"].includes(error.name)
             ? "permission"
             : "invalid";
     }
+
     context.check();
     this.cancelRecovery();
+
     return failure;
   };
 
@@ -676,6 +822,7 @@ export class FolderConnectionSession {
     const slot = this.slots.source;
     const sequence = slot.sequence;
     const handle = slot.handle;
+
     if (!this.owner || !this.ready || !slot.connected || !handle) {
       throw new Error("source-folder-not-connected");
     }
@@ -684,26 +831,33 @@ export class FolderConnectionSession {
       if (
         generation !== this.generation ||
         sequence !== slot.sequence ||
-        listingSequence !== this.listingSequence ||
+        listingSequence !== this.listingSequence
+        ||
         handle !== slot.handle
       ) {
         throw new Error("stale-connection-operation");
       }
+
       if (signal?.aborted)
         throw new DOMException("Folder listing cancelled", "AbortError");
     };
 
     try {
       assertCurrent();
+
       const result = await readSourceFolderListing(handle, path, assertCurrent);
+
       assertCurrent();
+
       return result;
     } catch (error) {
       // Old failures must not revoke a replacement connection's permission state.
       assertCurrent();
+
       if (error instanceof DOMException && error.name === "NotAllowedError") {
         slot.connected = false;
       }
+
       throw error;
     }
   }
@@ -722,24 +876,32 @@ export class FolderConnectionSession {
     const slot = this.slots.source;
     const sequence = slot.sequence;
     const handle = slot.handle;
+
     if (!owner || !this.ready || !slot.connected || !handle)
       throw Error("source-folder-not-connected");
+
     const check = () => {
       if (signal.aborted)
         throw new DOMException("Snapshot cancelled", "AbortError");
+
       if (
         owner !== this.owner ||
         generation !== this.generation ||
-        sequence !== slot.sequence ||
-        handle !== slot.handle ||
-        !slot.connected ||
+        sequence !== slot.sequence
+        ||
+        handle !== slot.handle
+        ||
+        !slot.connected
+        ||
         snapshotSequence !== this.snapshotSequence
       ) {
         throw Error("stale-connection-operation");
       }
     };
+
     try {
       check();
+
       const result = await readSourceSnapshot(
         handle,
         scope,
@@ -749,15 +911,20 @@ export class FolderConnectionSession {
         find,
         { owner: owner.userId, workspace: owner.workspaceId, connection: this.sourceConnectionId },
       );
+
       check();
+
       if (!reference) return result;
+
       const tree = await readOrganizationFolders(
         handle,
         reference,
         check,
         signal,
       );
+
       check();
+
       return {
         ...result,
         reference: tree,
@@ -768,11 +935,13 @@ export class FolderConnectionSession {
       };
     } catch (error) {
       check();
+
       if (
         error instanceof DOMException &&
         ["NotAllowedError", "SecurityError"].includes(error.name)
       )
         slot.connected = false;
+
       throw error;
     }
   };
@@ -789,6 +958,7 @@ export class FolderConnectionSession {
       undefined,
       query,
     );
+
     return {
       documents: result.findings ?? [],
       complete: result.complete,
@@ -805,8 +975,10 @@ export class FolderConnectionSession {
     reference?: ReferenceSnapshot,
   ): Promise<ConnectionOwner> => {
     const owner = this.owner;
+
     if (!owner || documents.length === 0 || documents.length > 40)
       throw Error("invalid-snapshot-selection");
+
     const current = await this.inspectSourceSnapshot(
       {
         kind: "selected",
@@ -819,35 +991,47 @@ export class FolderConnectionSession {
       signal,
       reference?.root,
     );
+
     if (
-      (!current.complete &&
+      (!current.complete
+        &&
         (!reference ||
-          current.excluded.length > 0 ||
-          current.limits.some((limit) => limit !== "reference-limit"))) ||
-      current.documents.length !== documents.length ||
+          current.excluded.length > 0
+          ||
+          current.limits.some((limit) => limit !== "reference-limit")))
+      ||
+      current.documents.length !== documents.length
+      ||
       owner !== this.owner
     )
       throw Error("source-changed");
+
     for (const expected of documents) {
       const actual = current.documents.find(
         (document) =>
           JSON.stringify(document.path) === JSON.stringify(expected.path),
       );
+
       if (
         !actual ||
         actual.sha256 !== expected.sha256 ||
-        actual.excerptHash !== expected.excerptHash ||
-        actual.excerpt !== expected.excerpt ||
-        actual.size !== expected.size ||
+        actual.excerptHash !== expected.excerptHash
+        ||
+        actual.excerpt !== expected.excerpt
+        ||
+        actual.size !== expected.size
+        ||
         actual.lastModified !== expected.lastModified
       )
         throw Error("source-changed");
     }
+
     if (
       reference &&
       JSON.stringify(current.reference) !== JSON.stringify(reference)
     )
       throw Error("source-changed");
+
     return { ...owner };
   };
 
@@ -857,21 +1041,28 @@ export class FolderConnectionSession {
       owner = this.owner;
     const generation = this.generation,
       sequence = source.sequence;
+
     if (!this.ready || !owner || !root || !source.connected)
       throw Error("source-folder-not-connected");
+
     const check = () => {
       signal.throwIfAborted();
+
       if (
         owner !== this.owner ||
         root !== source.handle ||
-        generation !== this.generation ||
-        sequence !== source.sequence ||
+        generation !== this.generation
+        ||
+        sequence !== source.sequence
+        ||
         !source.connected
       )
         throw Error("stale-connection-operation");
     };
     const tree = await readOrganizationFolders(root, [], check, signal, 2);
+
     check();
+
     return inferOrganizationConditions(request, root.name, tree.directories);
   };
 
@@ -885,18 +1076,23 @@ export class FolderConnectionSession {
     const slot = this.slots.source,
       sequence = slot.sequence,
       handle = slot.handle;
+
     if (!this.owner || !this.ready || !slot.connected || !handle)
       throw Error("source-folder-not-connected");
+
     const check = () => {
       if (
         signal.aborted ||
         generation !== this.generation ||
-        sequence !== slot.sequence ||
-        handle !== slot.handle ||
+        sequence !== slot.sequence
+        ||
+        handle !== slot.handle
+        ||
         searchSequence !== this.searchSequence
       )
         throw new DOMException("Search cancelled", "AbortError");
     };
+
     try {
       return await searchFolderTree(
         path,
@@ -906,8 +1102,10 @@ export class FolderConnectionSession {
       );
     } catch (error) {
       check();
+
       if (error instanceof DOMException && error.name === "NotAllowedError")
         slot.connected = false;
+
       throw error;
     }
   };
@@ -923,31 +1121,46 @@ export class FolderConnectionSession {
     const slot = this.slots.source;
     const sequence = slot.sequence;
     const handle = slot.handle;
+
     if (!this.owner || !this.ready || !slot.connected || !handle)
       throw new Error("source-folder-not-connected");
+
     const expectation = expected ? sourceFileExpectationSchema.parse(expected) : undefined;
-    if (expectation && (expectation.owner.userId !== this.owner.userId || expectation.owner.workspaceId !== this.owner.workspaceId || expectation.connectionId !== this.sourceConnectionId || JSON.stringify(expectation.path) !== JSON.stringify(path))) throw new Error("citation-connection-mismatch");
+
+    if (expectation
+      && (expectation.owner.userId !== this.owner.userId || expectation.owner.workspaceId !== this.owner.workspaceId
+        || expectation.connectionId !== this.sourceConnectionId
+        || JSON.stringify(expectation.path) !== JSON.stringify(path))) throw new Error("citation-connection-mismatch");
+
     const assertCurrent = () => {
       if (
         generation !== this.generation ||
         sequence !== slot.sequence ||
-        previewSequence !== this.previewSequence ||
+        previewSequence !== this.previewSequence
+        ||
         handle !== slot.handle
       ) {
         throw new Error("stale-connection-operation");
       }
+
       if (signal?.aborted)
         throw new DOMException("File preview cancelled", "AbortError");
     };
+
     try {
       assertCurrent();
+
       const result = await readSourceFilePreview(handle, path, assertCurrent, signal, expectation);
+
       assertCurrent();
+
       return result;
     } catch (error) {
       assertCurrent();
+
       if (error instanceof DOMException && error.name === "NotAllowedError")
         slot.connected = false;
+
       throw error;
     }
   }
@@ -958,27 +1171,35 @@ export class FolderConnectionSession {
     signal?: AbortSignal,
   ): Promise<CopyInspection> {
     this.inspectedCopy = null;
+
     const inspectionSequence = ++this.inspectionSequence;
     const generation = this.generation;
     const slot = this.slots.source;
     const sequence = slot.sequence;
     const handle = slot.handle;
+
     if (!this.owner || !this.ready || !slot.connected || !handle)
       throw new Error("source-folder-not-connected");
+
     const assertCurrent = () => {
       if (
         generation !== this.generation ||
-        sequence !== slot.sequence ||
-        inspectionSequence !== this.inspectionSequence ||
+        sequence !== slot.sequence
+        ||
+        inspectionSequence !== this.inspectionSequence
+        ||
         handle !== slot.handle
       ) {
         throw new Error("stale-connection-operation");
       }
+
       if (signal?.aborted)
         throw new DOMException("Copy inspection cancelled", "AbortError");
     };
+
     try {
       const result = await inspectCopyPlan(handle, plan, assertCurrent, signal);
+
       assertCurrent();
       this.inspectedCopy = {
         plan: JSON.stringify(plan),
@@ -986,11 +1207,14 @@ export class FolderConnectionSession {
         generation,
         sequence,
       };
+
       return result;
     } catch (error) {
       assertCurrent();
+
       if (error instanceof DOMException && error.name === "NotAllowedError")
         slot.connected = false;
+
       throw error;
     }
   }
@@ -1008,26 +1232,34 @@ export class FolderConnectionSession {
       sequence = slot.sequence;
     const root = slot.handle,
       owner = this.owner;
+
     if (
       !root ||
       !owner ||
       !slot.connected ||
       !prepared ||
       this.copying ||
-      this.backingUp ||
-      this.restoring ||
-      prepared.generation !== generation ||
-      prepared.sequence !== sequence ||
-      prepared.plan !== JSON.stringify(plan) ||
+      this.backingUp
+      ||
+      this.restoring
+      ||
+      prepared.generation !== generation
+      ||
+      prepared.sequence !== sequence
+      ||
+      prepared.plan !== JSON.stringify(plan)
+      ||
       JSON.stringify(prepared.report) !== JSON.stringify(report)
     )
       throw Error("copy-inspection-required");
+
     if (
       typeof navigator !== "undefined" &&
       navigator.userActivation &&
       !navigator.userActivation.isActive
     )
       throw Error("copy-user-action-required");
+
     const check = () => {
       if (
         generation !== this.generation ||
@@ -1036,8 +1268,10 @@ export class FolderConnectionSession {
       )
         throw Error("stale-connection-operation");
     };
+
     this.copying = true;
     this.inspectedCopy = null;
+
     try {
       return await executeCopy(
         root,
@@ -1062,6 +1296,7 @@ export class FolderConnectionSession {
     const generation = this.generation;
     const sourceSequence = source.sequence;
     const vaultSequence = recovery.sequence;
+
     if (
       !this.ready ||
       !owner ||
@@ -1072,19 +1307,26 @@ export class FolderConnectionSession {
     ) {
       throw Error("backup-connections-required");
     }
+
     const check = () => {
       if (
         generation !== this.generation ||
-        sourceSequence !== source.sequence ||
-        vaultSequence !== recovery.sequence ||
-        root !== source.handle ||
-        vault !== recovery.handle ||
-        !source.connected ||
+        sourceSequence !== source.sequence
+        ||
+        vaultSequence !== recovery.sequence
+        ||
+        root !== source.handle
+        ||
+        vault !== recovery.handle
+        ||
+        !source.connected
+        ||
         !recovery.connected
       ) {
         throw Error("stale-connection-operation");
       }
     };
+
     return {
       root,
       vault,
@@ -1101,12 +1343,17 @@ export class FolderConnectionSession {
 
   readRecoveryArchiveList = async (signal: AbortSignal) => {
     if (this.restoring) throw Error("restore-operation-running");
+
     this.discardRecoveryRestore();
+
     const context = this.backupContext();
     const sequence = ++this.archiveSequence;
+
     this.archiveSnapshot = null;
+
     const check = () => {
       context.check();
+
       if (sequence !== this.archiveSequence)
         throw Error("stale-connection-operation");
     };
@@ -1117,17 +1364,24 @@ export class FolderConnectionSession {
       check,
       signal,
     );
+
     check();
     this.archiveSnapshot = snapshot;
+
     return structuredClone(snapshot.view);
   };
 
   inspectRecoveryArchiveDetail = async (id: string, signal: AbortSignal) => {
     if (this.restoring) throw Error("restore-operation-running");
+
     const snapshot = this.archiveSnapshot;
+
     if (!snapshot) throw Error("archive-list-required");
+
     snapshot.check();
+
     const hasher = createCopyHasher(signal);
+
     try {
       return await inspectRecoveryArchiveItem(
         snapshot,
@@ -1147,14 +1401,17 @@ export class FolderConnectionSession {
     const context = this.backupContext();
     const check = () => {
       context.check();
+
       if (signal.aborted)
         throw new DOMException("Restore browsing cancelled", "AbortError");
     };
+
     return readSourceFolderListing(context.root, path, check);
   };
 
   discardRecoveryRestore = () => {
     this.preparedRestore = null;
+
     if (!this.restoring) this.restoreSequence++;
   };
 
@@ -1165,17 +1422,23 @@ export class FolderConnectionSession {
   ) => {
     if (this.restoring || this.copying || this.backingUp)
       throw Error("restore-operation-running");
+
     const context = this.backupContext();
     const snapshot = this.archiveSnapshot;
+
     if (!snapshot) throw Error("archive-list-required");
+
     this.preparedRestore = null;
+
     const sequence = ++this.restoreSequence;
     const check = () => {
       context.check();
+
       if (sequence !== this.restoreSequence)
         throw Error("stale-connection-operation");
     };
     const hasher = createCopyHasher(signal);
+
     try {
       const prepared = await prepareRecoveryRestore(
         snapshot,
@@ -1185,8 +1448,10 @@ export class FolderConnectionSession {
         signal,
         hasher.hash,
       );
+
       check();
       this.preparedRestore = prepared;
+
       return structuredClone(prepared.view);
     } finally {
       hasher.dispose();
@@ -1200,30 +1465,38 @@ export class FolderConnectionSession {
   ) => {
     const context = this.backupContext();
     const prepared = this.preparedRestore;
+
     if (
       !prepared ||
       this.restoring ||
       this.copying ||
-      this.backingUp ||
+      this.backingUp
+      ||
       JSON.stringify(prepared.view) !== JSON.stringify(view)
     )
       throw Error("restore-inspection-required");
+
     prepared.snapshot.check();
+
     if (
       typeof navigator !== "undefined" &&
       navigator.userActivation &&
       !navigator.userActivation.isActive
     )
       throw Error("restore-user-action-required");
+
     this.preparedRestore = null;
     this.restoring = true;
+
     const sequence = ++this.restoreSequence;
     const check = () => {
       context.check();
+
       if (sequence !== this.restoreSequence)
         throw Error("stale-connection-operation");
     };
     const hasher = createCopyHasher(signal);
+
     try {
       const result = await executeRecoveryRestore(
         prepared,
@@ -1233,7 +1506,9 @@ export class FolderConnectionSession {
         progress,
         hasher.hash,
       );
+
       check();
+
       return result;
     } finally {
       hasher.dispose();
@@ -1248,13 +1523,16 @@ export class FolderConnectionSession {
   ): Promise<BackupInspection> => {
     if (this.backingUp || this.copying || this.restoring)
       throw Error("backup-operation-running");
+
     this.completedBackup = null;
     this.inspectedBackup = null;
+
     const sequence = ++this.backupSequence;
     const context = this.backupContext();
     const fixedPlan = structuredClone(plan);
     const check = () => {
       context.check();
+
       if (sequence !== this.backupSequence)
         throw Error("stale-connection-operation");
     };
@@ -1266,6 +1544,7 @@ export class FolderConnectionSession {
       check,
       signal,
     );
+
     check();
     this.inspectedBackup = {
       plan: JSON.stringify(fixedPlan),
@@ -1274,6 +1553,7 @@ export class FolderConnectionSession {
       sourceSequence: context.sourceSequence,
       vaultSequence: context.vaultSequence,
     };
+
     return report;
   };
 
@@ -1286,19 +1566,26 @@ export class FolderConnectionSession {
   ) => {
     const context = this.backupContext();
     const inspected = this.inspectedBackup;
+
     if (
       !inspected ||
       this.copying ||
       this.backingUp ||
-      this.restoring ||
-      inspected.plan !== JSON.stringify(plan) ||
-      JSON.stringify(inspected.report) !== JSON.stringify(report) ||
-      inspected.generation !== context.generation ||
-      inspected.sourceSequence !== context.sourceSequence ||
+      this.restoring
+      ||
+      inspected.plan !== JSON.stringify(plan)
+      ||
+      JSON.stringify(inspected.report) !== JSON.stringify(report)
+      ||
+      inspected.generation !== context.generation
+      ||
+      inspected.sourceSequence !== context.sourceSequence
+      ||
       inspected.vaultSequence !== context.vaultSequence
     ) {
       throw Error("backup-inspection-required");
     }
+
     if (
       typeof navigator !== "undefined" &&
       navigator.userActivation &&
@@ -1306,15 +1593,20 @@ export class FolderConnectionSession {
     ) {
       throw Error("backup-user-action-required");
     }
+
     const sequence = ++this.backupSequence;
+
     this.inspectedBackup = null;
     this.backingUp = true;
     this.completedBackup = null;
+
     const check = () => {
       context.check();
+
       if (sequence !== this.backupSequence)
         throw Error("stale-connection-operation");
     };
+
     try {
       let identity: BackupEntryIdentity | null = null;
       const result = await executeRecoveryBackup(
@@ -1332,11 +1624,14 @@ export class FolderConnectionSession {
           identity = value;
         },
       );
+
       check();
+
       if (
         identity &&
         result.phase === "completed" &&
-        result.journalComplete &&
+        result.journalComplete
+        &&
         result.items.every((item) => item.status === "verified")
       ) {
         this.completedBackup = {
@@ -1346,6 +1641,7 @@ export class FolderConnectionSession {
           identity,
         };
       }
+
       return result;
     } finally {
       this.backingUp = false;
@@ -1366,35 +1662,48 @@ export class FolderConnectionSession {
   ) => {
     const context = this.backupContext();
     const completed = this.completedBackup;
+
     if (
       !completed ||
       this.copying ||
       this.backingUp ||
-      this.restoring ||
-      completed.plan !== JSON.stringify(plan) ||
-      JSON.stringify(completed.report) !== JSON.stringify(report) ||
-      JSON.stringify(completed.result) !== JSON.stringify(backup) ||
-      completed.generation !== context.generation ||
-      completed.sourceSequence !== context.sourceSequence ||
-      completed.vaultSequence !== context.vaultSequence ||
+      this.restoring
+      ||
+      completed.plan !== JSON.stringify(plan)
+      ||
+      JSON.stringify(completed.report) !== JSON.stringify(report)
+      ||
+      JSON.stringify(completed.result) !== JSON.stringify(backup)
+      ||
+      completed.generation !== context.generation
+      ||
+      completed.sourceSequence !== context.sourceSequence
+      ||
+      completed.vaultSequence !== context.vaultSequence
+      ||
       completed.sequence !== this.backupSequence
     )
       throw Error("overwrite-backup-required");
+
     if (
       typeof navigator !== "undefined" &&
       navigator.userActivation &&
       !navigator.userActivation.isActive
     )
       throw Error("overwrite-user-action-required");
+
     this.completedBackup = null;
     this.inspectedBackup = null;
     this.backingUp = true;
+
     const sequence = ++this.backupSequence;
     const check = () => {
       context.check();
+
       if (sequence !== this.backupSequence)
         throw Error("stale-connection-operation");
     };
+
     try {
       const result = await executeRecoveryOverwrite(
         context.root,
@@ -1410,7 +1719,9 @@ export class FolderConnectionSession {
         undefined,
         completed.identity,
       );
+
       check();
+
       return result;
     } finally {
       this.backingUp = false;
@@ -1419,15 +1730,20 @@ export class FolderConnectionSession {
 
   async disconnect(kind: FolderKind): Promise<void> {
     if (kind === "source" && "removeSource" in this.repository) return this.disconnectSourceConnection(this.sourceConnectionId);
+
     const operation = this.begin(kind);
+
     operation.slot.handle = undefined;
     operation.slot.connected = false;
+
     try {
       await this.repository.remove(operation.owner, kind);
     } catch (error) {
       operation.assertCurrent();
+
       throw error;
     }
+
     operation.assertCurrent();
   }
 
@@ -1439,13 +1755,16 @@ export class FolderConnectionSession {
   ): Promise<readonly string[]> => {
     if (this.restoring || this.backingUp || this.copying)
       throw Error("managed-operation-running");
+
     const generation = this.generation,
       slot = this.slots.source,
       sequence = slot.sequence;
     const root = slot.handle,
       owner = this.owner;
+
     if (!owner || !this.ready || !slot.connected || !root)
       throw new Error("source-folder-not-connected");
+
     const assertCurrent = () => {
       if (
         generation !== this.generation ||
@@ -1454,6 +1773,7 @@ export class FolderConnectionSession {
       )
         throw new Error("stale-connection-operation");
     };
+
     return createEntry(
       root,
       path,
@@ -1479,8 +1799,10 @@ export class FolderConnectionSession {
       sequence = slot.sequence;
     const root = slot.handle,
       owner = this.owner;
+
     if (!owner || !this.ready || !slot.connected || !root)
       throw new Error("source-folder-not-connected");
+
     const assertCurrent = () => {
       if (
         generation !== this.generation ||
@@ -1488,13 +1810,16 @@ export class FolderConnectionSession {
         root !== slot.handle
       )
         throw new Error("stale-connection-operation");
+
       if (signal?.aborted)
         throw new DOMException("History reading cancelled", "AbortError");
     };
     const result = await readFolderHistory(root, path, owner, assertCurrent);
     const copies = await readCopyHistory(root, path, owner, assertCurrent);
     const restores = await readRestoreHistory(root, path, owner, assertCurrent);
+
     assertCurrent();
+
     return { ...result, copies, restores };
   };
 
@@ -1508,8 +1833,10 @@ export class FolderConnectionSession {
       sequence = slot.sequence;
     const root = slot.handle,
       owner = this.owner;
+
     if (!owner || !this.ready || !slot.connected || !root)
       throw new Error("source-folder-not-connected");
+
     const assertCurrent = () => {
       if (
         generation !== this.generation ||
@@ -1517,6 +1844,7 @@ export class FolderConnectionSession {
         root !== slot.handle
       )
         throw new Error("stale-connection-operation");
+
       if (signal.aborted)
         throw new DOMException(
           "History target inspection cancelled",
@@ -1530,7 +1858,9 @@ export class FolderConnectionSession {
       group,
       assertCurrent,
     );
+
     assertCurrent();
+
     return result;
   };
 
@@ -1544,8 +1874,10 @@ export class FolderConnectionSession {
       sequence = slot.sequence,
       root = slot.handle,
       owner = this.owner;
+
     if (!root || !owner || !slot.connected || !this.ready)
       throw Error("source-folder-not-connected");
+
     const check = () => {
       if (
         generation !== this.generation ||
@@ -1554,6 +1886,7 @@ export class FolderConnectionSession {
       )
         throw Error("stale-connection-operation");
     };
+
     return inspectCopyHistoryTargets(root, path, group, owner, check, signal);
   };
 
@@ -1567,8 +1900,10 @@ export class FolderConnectionSession {
     const sequence = slot.sequence;
     const root = slot.handle;
     const owner = this.owner;
+
     if (!root || !owner || !slot.connected || !this.ready)
       throw Error("source-folder-not-connected");
+
     const check = () => {
       if (
         generation !== this.generation ||
@@ -1576,13 +1911,16 @@ export class FolderConnectionSession {
         root !== slot.handle
       )
         throw Error("stale-connection-operation");
+
       if (signal.aborted) throw new DOMException("cancelled", "AbortError");
     };
+
     return inspectRestoredFile(root, path, group, owner, check, signal);
   };
 
   discardManaged = () => {
     this.managedPrepared = null;
+
     if (!this.managedExecuting) this.managedSequence++;
   };
 
@@ -1594,8 +1932,10 @@ export class FolderConnectionSession {
     const root = slot.handle;
     const generation = this.generation;
     const sequence = slot.sequence;
+
     if (!root || !slot.connected || !this.ready || !this.owner)
       throw Error("source-folder-not-connected");
+
     const check = () => {
       if (
         generation !== this.generation ||
@@ -1603,8 +1943,10 @@ export class FolderConnectionSession {
         root !== slot.handle
       )
         throw Error("stale-connection-operation");
+
       if (signal.aborted) throw new DOMException("cancelled", "AbortError");
     };
+
     return readSourceFolderListing(root, path, check);
   };
 
@@ -1612,9 +1954,11 @@ export class FolderConnectionSession {
     const context = this.backupContext();
     const check = () => {
       context.check();
+
       if (signal.aborted) throw new DOMException("cancelled", "AbortError");
     };
     const hasher = createCopyHasher(signal);
+
     try {
       return await readManagedArchiveList({ ...context, check }, hasher.hash);
     } finally {
@@ -1625,25 +1969,32 @@ export class FolderConnectionSession {
   openManagedEditor = async (path: readonly string[], signal: AbortSignal) => {
     if (this.copying || this.backingUp || this.restoring)
       throw Error("managed-operation-running");
+
     this.editBaseline = null;
     this.managedPrepared = null;
+
     const context = this.backupContext();
     const sequence = ++this.managedSequence;
     const check = () => {
       context.check();
+
       if (sequence !== this.managedSequence)
         throw Error("stale-connection-operation");
+
       if (signal.aborted) throw new DOMException("cancelled", "AbortError");
     };
     const hasher = createCopyHasher(signal);
+
     try {
       const value = await readManagedEdit(
         { ...context, check },
         path,
         hasher.hash,
       );
+
       check();
       this.editBaseline = value;
+
       return { id: value.id, text: value.text, path: [...path] };
     } finally {
       hasher.dispose();
@@ -1653,21 +2004,28 @@ export class FolderConnectionSession {
   prepareManaged = async (request: ManagedRequest, signal: AbortSignal) => {
     if (this.copying || this.backingUp || this.restoring)
       throw Error("managed-operation-running");
+
     this.managedPrepared = null;
+
     const context = this.backupContext();
     const sequence = ++this.managedSequence;
     const check = () => {
       context.check();
+
       if (sequence !== this.managedSequence)
         throw Error("stale-connection-operation");
+
       if (signal.aborted) throw new DOMException("cancelled", "AbortError");
     };
+
     if (
       request.kind === "edit" &&
       (!this.editBaseline || this.editBaseline.id !== request.editId)
     )
       throw Error("managed-edit-required");
+
     const hasher = createCopyHasher(signal);
+
     try {
       const prepared = await prepareManagedOperation(
         { ...context, check },
@@ -1675,10 +2033,12 @@ export class FolderConnectionSession {
         hasher.hash,
         this.editBaseline ?? undefined,
       );
+
       check();
       // 검사의 AbortSignal 대신 연결 세대를 실행 수명의 기준으로 보관한다.
       prepared.context = context;
       this.managedPrepared = prepared;
+
       return structuredClone(prepared.view);
     } finally {
       hasher.dispose();
@@ -1693,19 +2053,25 @@ export class FolderConnectionSession {
   ) => {
     try {
       await this.recheckSourceSnapshot(documents, instruction, signal);
+
       const preview = await this.prepareManaged(request, signal);
       const prepared = this.managedPrepared;
+
       if (!prepared) throw Error("managed-inspection-required");
+
       prepared.context.check();
       assertOrganizationBaseline(
         documents,
         prepared.nodes.map((node) => node.view),
       );
+
       return preview;
     } catch (error) {
       this.discardManaged();
+
       if (error instanceof Error && error.message === "source-changed")
         throw Error("managed-changed");
+
       throw error;
     }
   };
@@ -1716,25 +2082,32 @@ export class FolderConnectionSession {
     progress: (result: ManagedResult) => void,
   ) => {
     const prepared = this.managedPrepared;
+
     if (
       !prepared ||
       JSON.stringify(prepared.view) !== JSON.stringify(view) ||
       this.copying ||
-      this.backingUp ||
+      this.backingUp
+      ||
       this.restoring
     )
       throw Error("managed-inspection-required");
+
     prepared.context.check();
+
     if (
       typeof navigator !== "undefined" &&
       navigator.userActivation &&
       !navigator.userActivation.isActive
     )
       throw Error("managed-user-action-required");
+
     this.managedPrepared = null;
     this.managedExecuting = true;
     this.backingUp = true;
+
     const hasher = createCopyHasher(signal);
+
     try {
       const result = await executeManagedOperation(
         prepared,
@@ -1742,7 +2115,9 @@ export class FolderConnectionSession {
         hasher.hash,
         progress,
       );
+
       prepared.context.check();
+
       return result;
     } finally {
       hasher.dispose();
@@ -1755,8 +2130,10 @@ export class FolderConnectionSession {
     const source = this.slots.source;
     const root = source.handle;
     const owner = this.owner;
+
     if (!root || !owner || !source.connected)
       throw Error("source-folder-not-connected");
+
     await this.drafts.write(
       owner,
       root,
@@ -1771,16 +2148,21 @@ export class FolderConnectionSession {
     const root = source.handle;
     const owner = this.owner;
     const generation = this.generation;
+
     if (!root || !owner || !source.connected)
       throw Error("source-folder-not-connected");
+
     const stored = await this.drafts.read(owner, root, id);
+
     if (generation !== this.generation || root !== this.slots.source.handle)
       throw Error("stale-connection-operation");
+
     return stored?.value ?? null;
   };
   removeWorkflow = async (id: string) => {
     const root = this.slots.source.handle;
     const owner = this.owner;
+
     if (root && owner && (await this.drafts.read(owner, root, id)))
       await this.drafts.remove(id);
   };
@@ -1793,20 +2175,27 @@ export class FolderConnectionSession {
     const stored = draftId
       ? await this.drafts.read(context.owner, context.root, draftId)
       : null;
+
     context.check();
+
     if (
-      stored &&
-      (stored.value.flow !== "edit" ||
+      stored
+      &&
+      (stored.value.flow !== "edit"
+        ||
         JSON.stringify([...stored.value.source, ...stored.value.names]) !==
-          JSON.stringify(path))
+        JSON.stringify(path))
     )
       throw Error("editor-draft-mismatch");
+
     const result = await this.inlineEditor.open(
       path,
       signal,
       stored ? { id: stored.value.id, checkpoint: stored.editor } : undefined,
     );
+
     context.check();
+
     return {
       ...result,
       originalText: result.text,

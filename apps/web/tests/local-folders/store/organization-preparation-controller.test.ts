@@ -29,13 +29,19 @@ describe("local organization preparation and consent", () => {
   it("asks for scope before reading and keeps reference/destination independent", async () => {
     const read = vi.fn(async () => snapshot());
     const controller = new OrganizationPreparationController(read, vi.fn());
+
     controller.update({ request: "회사 전체에서 보고서 폴더 기준으로 정리" });
     await controller.prepare();
     expect(controller.getSnapshot().phase).toBe("scope");
     expect(read).not.toHaveBeenCalled();
     controller.update({ scope: { kind: "all" }, reference: ["보고서"], destination: ["정리"] });
     await controller.prepare();
-    expect(read).toHaveBeenCalledWith({ kind: "all" }, expect.any(String), expect.any(AbortSignal), ["보고서"]);
+    expect(read).toHaveBeenCalledWith(
+      { kind: "all" },
+      expect.any(String),
+      expect.any(AbortSignal),
+      ["보고서"]
+    );
     expect(controller.getSnapshot()).toMatchObject({
       scope: { kind: "all" },
       reference: ["보고서"],
@@ -57,6 +63,7 @@ describe("local organization preparation and consent", () => {
         vi.fn(async () => snapshot()),
         vi.fn()
       );
+
       controller.update({ request: "성능 보고", scope: { kind: "all" } });
       await controller.prepare();
       controller.consent(true);
@@ -72,6 +79,7 @@ describe("local organization preparation and consent", () => {
       vi.fn(async () => snapshot(false)),
       vi.fn()
     );
+
     controller.update({ request: "성능 보고", scope: { kind: "all" } });
     await controller.prepare();
     controller.consent(true);
@@ -93,14 +101,19 @@ describe("local organization preparation and consent", () => {
           })
       );
       const controller = new OrganizationPreparationController(read, vi.fn());
+
       controller.update({ request: "성능 보고", scope: { kind: "all" } });
+
       const pending = controller.prepare();
+
       if (action === "update") controller.update({ basis: "다른 기준" });
       else controller[action]();
+
       resolve(snapshot());
       await pending;
       expect(controller.getSnapshot().snapshot).toBeNull();
       expect(controller.getSnapshot().consentKey).toBeNull();
+
       if (action === "reset") expect(controller.getSnapshot().request).toBe("");
     }
   });
@@ -108,6 +121,7 @@ describe("local organization preparation and consent", () => {
   it("re-reading a changed version cannot retain previous consent and errors are not empty success", async () => {
     const read = vi.fn(async () => snapshot());
     const controller = new OrganizationPreparationController(read, vi.fn());
+
     controller.update({ request: "성능 보고", scope: { kind: "all" } });
     await controller.prepare();
     controller.consent(true);

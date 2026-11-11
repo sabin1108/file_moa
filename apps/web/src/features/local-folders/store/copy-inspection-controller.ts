@@ -12,7 +12,9 @@ export type CopyInspectionState = Readonly<{
 }>;
 
 const initialState: CopyInspectionState = {
-  phase: "idle", result: null, issue: null
+  phase: "idle",
+  result: null,
+  issue: null
 };
 
 const inspectionFailures = ["copy-limit", "copy-conflict", "source-changed", "unsupported-hash"] as const;
@@ -26,7 +28,7 @@ export class CopyInspectionController {
   constructor(
     private readonly read: (plan: FileChangePlan, signal: AbortSignal) => Promise<CopyInspection>,
     private readonly onPermissionLost: () => void,
-  ) {}
+  ) { }
   getSnapshot = () => this.state;
   getServerSnapshot = () => initialState;
 
@@ -53,15 +55,21 @@ export class CopyInspectionController {
   inspect = async (plan: FileChangePlan) => {
     const startedAt = Date.now();
     const generation = ++this.generation;
+
     this.abort?.abort();
+
     const abort = new AbortController();
+
     this.abort = abort;
     this.publish({
-      phase: "loading", result: null, issue: null
+      phase: "loading",
+      result: null,
+      issue: null
     });
 
     try {
       const result = await this.read(plan, abort.signal);
+
       await waitForPendingFeedback(startedAt, abort.signal);
 
       if (generation !== this.generation) {
@@ -70,7 +78,9 @@ export class CopyInspectionController {
 
       this.abort = null;
       this.publish({
-        phase: "ready", result, issue: null
+        phase: "ready",
+        result,
+        issue: null
       });
     } catch (error) {
       if (generation !== this.generation) {
@@ -78,6 +88,7 @@ export class CopyInspectionController {
       }
 
       this.abort = null;
+
       let issue: CopyInspectionIssue = "read";
 
       if (error instanceof Error) {
@@ -89,7 +100,9 @@ export class CopyInspectionController {
       }
 
       this.publish({
-        phase: "error", result: null, issue
+        phase: "error",
+        result: null,
+        issue
       });
 
       if (issue === "permission") {

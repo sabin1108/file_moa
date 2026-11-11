@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { Icon } from "../../../../components/ui/Icon";
 import { actionClasses } from "../../../../components/ui/action-classes";
@@ -10,6 +11,7 @@ import {
 import styles from "./file-change-comparison.module.css";
 
 /** 일반 계획·AI 제안·시안이 공유하는 읽기 전용 비교. 실행 상태나 파일 핸들을 소유하지 않는다. */
+
 export function FileChangeComparison({
   changes,
   rootName,
@@ -23,6 +25,7 @@ export function FileChangeComparison({
   const [all, setAll] = useState(false);
   const visible = all ? changes : changes.slice(0, 8);
   const trees = buildComparisonTrees(visible, operation);
+
   return (
     <section
       className={styles.preview}
@@ -71,11 +74,12 @@ export function FileChangeComparison({
           />
         </section>
       </div>
-      {changes.length > 8 && (
-        <button className={actionClasses("ghost")} onClick={() => setAll(!all)}>
-          {all ? "미리보기로 접기" : `전체 ${changes.length}개 구조 보기`}
-        </button>
-      )}
+      {changes.length > 8
+        && (
+          <button className={actionClasses("ghost")} onClick={() => setAll(!all)}>
+            {all ? "미리보기로 접기" : `전체 ${changes.length}개 구조 보기`}
+          </button>
+        )}
       {changes.length === 0 && <p>비교할 항목이 없습니다.</p>}
     </section>
   );
@@ -107,9 +111,12 @@ function PathTree({
           {node.name}
           {node.count > 1 && <small>대상 {node.count}개</small>}
         </span>
-        {node.children.length > 0 && <ul>{rows(node.children)}</ul>}
+        {node.children.length > 0 && <ul>
+          {rows(node.children)}
+        </ul>}
       </li>
     ));
+
   return (
     <ul className={styles.tree} aria-label={label}>
       <li>
@@ -117,7 +124,9 @@ function PathTree({
           <Icon name="folder" size={17} />
           {rootName}
         </span>
-        <ul>{rows(nodes)}</ul>
+        <ul>
+          {rows(nodes)}
+        </ul>
       </li>
     </ul>
   );

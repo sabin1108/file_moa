@@ -20,6 +20,7 @@ export type RestoreHistory = Readonly<{
 }>;
 
 /** 저장된 한 작업의 일관성만 요약한다. 현재 파일/보관함 검사 결과로 사용하지 않는다. */
+
 export function summarizeRestoreRecords(id: string, records: readonly RestoreRecord[],
   parentPath: readonly string[], incomplete: boolean): RestoreHistoryGroup {
   const prepared = records.find(record => record.type === "prepared");
@@ -30,13 +31,18 @@ export function summarizeRestoreRecords(id: string, records: readonly RestoreRec
   const types = new Set(records.map(record => record.type));
   const matchingPath = prepared?.to.length === parentPath.length + 1
     && parentPath.every((part, index) => prepared.to[index] === part);
-  const matchingBase = !!anchor && records.every(record => record.operationId === id
-    && record.backupOperationId === anchor.backupOperationId && record.itemId === anchor.itemId
-    && record.recoveryId === anchor.recoveryId && record.vaultId === anchor.vaultId
-    && record.createdAt === anchor.createdAt && record.owner.userId === anchor.owner.userId
-    && record.owner.workspaceId === anchor.owner.workspaceId);
+  const matchingBase = !!anchor
+    && records.every(record => record.operationId === id
+      && record.backupOperationId === anchor.backupOperationId
+      && record.itemId === anchor.itemId
+      && record.recoveryId === anchor.recoveryId
+      && record.vaultId === anchor.vaultId
+      && record.createdAt === anchor.createdAt
+      && record.owner.userId === anchor.owner.userId
+      && record.owner.workspaceId === anchor.owner.workspaceId);
   const invalid = incomplete || !prepared || !stopped || !matchingPath || !matchingBase
-    || types.size !== records.length || (verified && !started)
+    || types.size !== records.length
+    || (verified && !started)
     || (stopped.status === "not-run" && verified)
     || (stopped.reason === "completed" && (!started || !verified))
     || (stopped.reason !== "completed" && stopped.status === "verified");

@@ -5,10 +5,15 @@ import { AI_LIMITS, requireAiProvider } from "./ai-provider";
 import { generateGeminiJson } from "./gemini-generation";
 import { generateOpenAiJson } from "./openai-generation";
 
-export async function generateAiJson(request: AiJsonRequest, signal: AbortSignal,
-  limits: { inputTokens: number } = AI_LIMITS, provider: AiProvider = requireAiProvider()) {
+export async function generateAiJson(
+  request: AiJsonRequest,
+  signal: AbortSignal,
+  limits: { inputTokens: number } = AI_LIMITS,
+  provider: AiProvider = requireAiProvider()) {
   requireAiProvider(provider);
+
   if (provider === "openai") return generateOpenAiJson(request, signal, limits);
+
   return generateGeminiJson(request, signal, limits);
 }
 
@@ -23,17 +28,29 @@ export async function generateClassification(request: ClassificationRequest, sig
     input: JSON.stringify(request),
     outputTokens: AI_LIMITS.outputTokens,
     schema: {
-      type: "object", additionalProperties: false, required: ["proposals"],
-      properties: { proposals: { type: "array", minItems: request.documents.length, maxItems: request.documents.length,
-        items: { type: "object", additionalProperties: false, required: ["documentId", "folderId", "reason", "reviewRequired"],
-          properties: {
-            documentId: { type: "string", enum: request.documents.map(document => document.id) },
-            folderId: { type: ["string", "null"], enum: [...request.folders.map(folder => folder.id), null] },
-            reason: { type: "string" }, reviewRequired: { type: "boolean" },
+      type: "object",
+      additionalProperties: false,
+      required: ["proposals"],
+      properties: {
+        proposals: {
+          type: "array",
+          minItems: request.documents.length,
+          maxItems: request.documents.length,
+          items: {
+            type: "object",
+            additionalProperties: false,
+            required: ["documentId", "folderId", "reason", "reviewRequired"],
+            properties: {
+              documentId: { type: "string", enum: request.documents.map(document => document.id) },
+              folderId: { type: ["string", "null"], enum: [...request.folders.map(folder => folder.id), null] },
+              reason: { type: "string" },
+              reviewRequired: { type: "boolean" },
+            },
           },
-        },
-      } },
+        }
+      },
     },
   }, signal, AI_LIMITS, provider);
+
   return { ...parseClassificationResponse(result.value, request), model: result.model, usage: result.usage };
 }

@@ -3,6 +3,7 @@ import {
   buildOrganizationBatches,
   assertOrganizationBaseline
 } from "../../../src/features/local-folders/lib/organization-operation";
+
 const documents = [
   {
     id: "document-1",
@@ -35,8 +36,10 @@ const organization = {
     date: null
   }))
 };
+
 it("projects multiple source parents into existing managed requests without expanding the selected files", () => {
   const batches = buildOrganizationBatches(organization, documents, ["정리"], "move");
+
   expect(batches.map(batch => batch.request)).toEqual([
     { kind: "move", source: ["회사"], names: ["a.md"], destination: ["정리", "성능"] },
     { kind: "move", source: ["연구"], names: ["b.md"], destination: ["정리", "성능"] }
@@ -57,7 +60,9 @@ it("refuses collisions across groups and any source baseline changed since the m
     name: "same.md",
     path: [...document.path.slice(0, -1), "same.md"]
   }));
+
   expect(() => buildOrganizationBatches(organization, copy, [], "copy")).toThrow();
+
   const nodes = documents.map(document => ({
     path: document.path,
     kind: "file" as const,
@@ -65,6 +70,7 @@ it("refuses collisions across groups and any source baseline changed since the m
     modified: document.lastModified,
     sha256: document.sha256
   }));
+
   expect(() => assertOrganizationBaseline(documents, nodes)).not.toThrow();
   expect(() =>
     assertOrganizationBaseline(documents, [{ ...nodes[0], sha256: "f".repeat(64) }, nodes[1]])

@@ -7,6 +7,7 @@ import { getDatabase } from "../../src/server/database/client";
 import { getAuth } from "../../src/server/auth";
 
 // Explicit opt-in configuration only: ordinary tests never load real credentials.
+
 process.loadEnvFile(resolve(process.cwd(), ".env.local"));
 
 afterAll(async () => {
@@ -18,7 +19,11 @@ it("connects with the bundled CA and restricted role without reading user record
     await getDatabase().$transaction(async transaction => {
       await transaction.$executeRaw`SET TRANSACTION READ ONLY`;
 
-      const [role] = await transaction.$queryRaw<{ runtime: boolean; elevated: boolean; rls: boolean }[]>`
+      const [role] = await transaction.$queryRaw<{
+        runtime: boolean;
+        elevated: boolean;
+        rls: boolean
+      }[]>`
         SELECT current_user = 'moa_runtime' AS runtime,
           (rolsuper OR rolbypassrls OR rolcreatedb OR rolcreaterole) AS elevated,
           (SELECT relrowsecurity AND relforcerowsecurity FROM pg_class

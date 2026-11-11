@@ -1,4 +1,5 @@
 "use client";
+
 import type { SceneProps } from "./scene-data";
 import { ConnectScenes } from "./scenes/ConnectScenes";
 import { DocumentScenes } from "./scenes/DocumentScenes";
@@ -16,16 +17,27 @@ import { FolderConnectionDemo } from "./scenes/FolderConnectionDemo";
 
 export function SceneBody(props: SceneProps) {
   if (props.scene === "folder-connection") return <FolderConnectionDemo />;
+
   if (props.scene === "startup") return <StartupDemo />;
+
   if (props.scene === "content-loading") return <ContentLoadingDemo />;
+
   if (props.scene === "answer-progress") return <AnswerDemo />;
+
   if (props.scene === "action-feedback") return <ActionFeedbackDemo />;
+
   if (props.scene === "session-recovery") return <SessionRecoveryDemo />;
+
   if (props.scene === "file-issues") return <FileIssuesDemo />;
+
   if (props.scene === "search") return <SearchScene />;
+
   if (["export", "export-ready", "delete-confirm", "deleted"].includes(props.scene)) return <DataScenes key={props.scene} {...props} />;
+
   if (["connect", "connected", "permission"].includes(props.scene)) return <ConnectScenes key={props.scene} {...props} />;
+
   if (["document", "transfer", "indexing"].includes(props.scene)) return <DocumentScenes key={props.scene} {...props} />;
+
   if (
     [
       "destination",
@@ -38,5 +50,6 @@ export function SceneBody(props: SceneProps) {
     ].includes(props.scene)
   )
     return <MoveScenes key={props.scene} {...props} />;
+
   return <RecoveryScenes key={props.scene} {...props} />;
 }

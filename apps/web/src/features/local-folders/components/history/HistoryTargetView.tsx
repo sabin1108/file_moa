@@ -13,22 +13,38 @@ const issues = {
 };
 
 /** 과거 기록과 현재 관측을 분리한다. 현재 존재 여부를 작업 성공/실패로 바꾸지 않는다. */
+
 export function HistoryTargetView({ group, state, onInspect, onCancel }: {
-  group: HistoryGroup; state: TargetInspectionState | null; onInspect: (id: string) => void; onCancel: () => void;
+  group: HistoryGroup;
+  state: TargetInspectionState | null;
+  onInspect: (id: string) => void;
+  onCancel: () => void;
 }) {
   if (!group.path || !group.kind) return <p className={styles.note}>경로 또는 종류 기록이 서로 달라 현재 대상을 지정할 수 없어요.</p>;
+
   const pending = state?.phase === "loading";
   const result = state?.result;
   const actual = result?.actualKind === "directory" ? "폴더가" : "파일이";
-  const title = result?.status === "missing" ? "지금은 이 이름의 항목이 없어요."
+  const title = result?.status === "missing"
+    ? "지금은 이 이름의 항목이 없어요."
     : result?.status === "kind-mismatch" ? `기록과 다른 종류의 ${actual} 있어요.` : `기록한 위치에 ${actual} 있어요.`;
+
   return <div className={styles.inspection} data-target-phase={state?.phase ?? "idle"}>
-    <button type="button" className={actionClasses("secondary")} aria-label={`${group.path.at(-1)} ${pending ? "현재 상태 확인 취소" : "현재 상태 확인"}`}
-      onClick={pending ? onCancel : () => onInspect(group.id)}>{pending ? "확인 취소" : "현재 상태 확인"}</button>
+    <button
+      type="button"
+      className={actionClasses("secondary")}
+      aria-label={`${group.path.at(-1)} ${pending ? "현재 상태 확인 취소" : "현재 상태 확인"}`}
+      onClick={pending ? onCancel : () => onInspect(group.id)}
+    >
+      {pending ? "확인 취소" : "현재 상태 확인"}
+    </button>
     {pending && <StatusNotice state="pending" title="기록과 현재 대상을 확인하고 있어요." />}
     {state?.phase === "cancelled" && <StatusNotice state="attention" title="현재 상태 확인을 취소했어요." />}
     {state?.phase === "error" && state.issue && <StatusNotice state="attention" title={issues[state.issue]} />}
-    {result && <StatusNotice state={result.status === "present" ? "success" : "attention"} title={title}
-      detail={`확인 시각 · ${new Date(result.checkedAt).toLocaleString("ko-KR", { hour12: false })}. 생성 주체나 과거 성공·실패를 판정한 결과는 아닙니다.`} />}
+    {result && <StatusNotice
+      state={result.status === "present" ? "success" : "attention"}
+      title={title}
+      detail={`확인 시각 · ${new Date(result.checkedAt).toLocaleString("ko-KR", { hour12: false })}. 생성 주체나 과거 성공·실패를 판정한 결과는 아닙니다.`}
+    />}
   </div>;
 }

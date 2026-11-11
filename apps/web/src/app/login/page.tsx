@@ -7,7 +7,8 @@ import { socialErrorMessage } from "../../server/auth-social";
 import { socialProviders } from "../../shared/social-auth";
 import { GuestSessionObserver } from "../../features/auth/components/GuestSessionObserver";
 
-export default async function Page({searchParams,}: {searchParams: Promise<Record<string, string | string[] | undefined>>;}) {await requireGuest();
+export default async function Page({ searchParams, }: { searchParams: Promise<Record<string, string | string[] | undefined>>; }) {
+  await requireGuest();
 
   const configuration = socialProviderConfiguration();
   const params = await searchParams;

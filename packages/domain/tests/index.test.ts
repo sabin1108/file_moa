@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { checkDocumentCandidate, DOCUMENT_LIMITS } from "../src/index";
+
 describe("document candidate policy", () => {
   it("accepts supported extensions through the exact byte boundary", () => {
     expect(checkDocumentCandidate("한글.MD", DOCUMENT_LIMITS.fileBytes)).toBeNull();

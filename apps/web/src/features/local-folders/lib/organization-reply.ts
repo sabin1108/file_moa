@@ -19,6 +19,7 @@ function documentPrefix(
       document.name,
       document.name.replace(/\.(md|txt)$/iu, ""),
     ];
+
     return aliases.flatMap((alias) => {
       const pattern = [...compact(alias)].map(escapePattern).join("\\s*");
       const match = text.match(
@@ -27,12 +28,15 @@ function documentPrefix(
           "u",
         ),
       );
+
       return match
         ? [{ documentId: document.id, length: match[0].length }]
         : [];
     });
   });
+
   if (!matches.length) return { text, documentId: null };
+
   const length = Math.max(...matches.map((match) => match.length));
   const ids = [
     ...new Set(
@@ -41,17 +45,21 @@ function documentPrefix(
         .map((match) => match.documentId),
     ),
   ];
+
   if (ids.length !== 1) throw Error("ambiguous-review-document");
+
   return { text: text.slice(length), documentId: ids[0] };
 }
 
 /** 현재 질문의 근거와 명시 경로만 해석한다. 미지원 문장은 일부 반영하지 않는다. */
+
 export function parseOrganizationReply(
   text: string,
   questions: readonly ReviewQuestion[],
   documents: readonly OrganizationDocument[],
 ): ReviewAnswer[] {
   if (!text.trim() || text.length > 800) throw Error("invalid-review-reply");
+
   const targets = documents.filter((document) =>
     questions.some((question) => question.documentId === document.id),
   );
@@ -60,9 +68,12 @@ export function parseOrganizationReply(
     .split(/[,;\n]+|\s+그리고\s+|\s+하고\s+/u)
     .map((clause) => clause.trim())
     .filter(Boolean);
+
   if (!clauses.length || clauses.length > 80)
     throw Error("invalid-review-reply");
+
   const answers = new Map<string, ReviewAnswer>();
+
   for (const clause of clauses) {
     const target = documentPrefix(clause, targets);
     const value = target.text
@@ -80,6 +91,7 @@ export function parseOrganizationReply(
       .flatMap<ReviewAnswer>((question) => {
         if (compact(value) === "날짜로나누지않기")
           return [{ documentId: question.documentId, date: null }];
+
         return question.dates
           .filter((date) =>
             [
@@ -101,6 +113,7 @@ export function parseOrganizationReply(
           }));
       });
     let candidates: ReviewAnswer[] = dateChoices;
+
     if (!candidates.length) {
       if (compact(value) === "제외" || compact(value) === "이번정리에서제외") {
         candidates = [
@@ -110,14 +123,18 @@ export function parseOrganizationReply(
         const destination = value
           .match(/^(.+?)\s*폴더(?:으로|로)$/u)?.[1]
           .trim();
+
         if (destination && target.documentId) {
           const quoted = /^"[^"]+"$|^'[^']+'$/u.test(destination);
+
           if (!quoted && /\s/u.test(destination))
             throw Error("unsupported-review-destination");
+
           const path = destination
             .replace(/^"(.*)"$/u, "$1")
             .replace(/^'(.*)'$/u, "$1")
             .split("/");
+
           candidates = available
             .filter((question) => question.kind === "destination")
             .map((question) => ({
@@ -127,10 +144,13 @@ export function parseOrganizationReply(
         }
       }
     }
+
     if (candidates.length !== 1)
       throw Error("ambiguous-or-unsupported-review-reply");
+
     const answer = candidates[0];
     const previous = answers.get(answer.documentId);
+
     if (previous) {
       for (const key of [
         "date",
@@ -140,13 +160,16 @@ export function parseOrganizationReply(
       ] as const) {
         if (
           previous[key] !== undefined &&
-          answer[key] !== undefined &&
+          answer[key] !== undefined
+          &&
           JSON.stringify(previous[key]) !== JSON.stringify(answer[key])
         )
           throw Error("conflicting-review-reply");
       }
     }
+
     answers.set(answer.documentId, { ...previous, ...answer });
   }
+
   return validateReviewAnswers([...answers.values()], documents);
 }

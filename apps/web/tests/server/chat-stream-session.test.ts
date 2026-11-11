@@ -1,15 +1,27 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
 vi.mock("server-only", () => ({}));
+
 const execute = vi.hoisted(() => vi.fn());
 const query = vi.hoisted(() => vi.fn());
 const transaction = vi.hoisted(() => vi.fn());
-vi.mock("../../src/server/database/client", () => ({ getDatabase: () => ({ $transaction: transaction }) }));
+
+vi.mock(
+  "../../src/server/database/client",
+  () => ({ getDatabase: () => ({ $transaction: transaction }) })
+);
+
 import { revalidateChatStream } from "../../src/server/chat-session";
 
 const snapshot = () => ({
-  userId: "owner-A", workspaceId: "workspace-A", sessionUserId: "login-A",
-  sessionId: "session-A", sessionToken: "fixture-token", expiresAt: Date.now() + 60_000,
+  userId: "owner-A",
+  workspaceId: "workspace-A",
+  sessionUserId: "login-A",
+  sessionId: "session-A",
+  sessionToken: "fixture-token",
+  expiresAt: Date.now() + 60_000,
 });
+
 beforeEach(() => {
   execute.mockReset().mockResolvedValue(1);
   query.mockReset().mockResolvedValue([{ name: "이름" }]);
@@ -24,9 +36,13 @@ describe("fresh stream authorization without repeated workspace preparation", ()
     expect(query).toHaveBeenCalledOnce();
     expect(execute.mock.calls[0].slice(1)).toEqual(["login-A"]);
     expect(execute.mock.invocationCallOrder[0]).toBeLessThan(query.mock.invocationCallOrder[0]);
+
     const parameters = query.mock.calls[0].slice(1);
+
     expect(parameters).toEqual(expect.arrayContaining(["session-A", "fixture-token", "login-A", "workspace-A", "owner-A"]));
+
     const sql = query.mock.calls[0][0].join("?");
+
     expect(sql).not.toMatch(/INSERT|UPDATE|DELETE/u);
     expect(sql).not.toContain("fixture-token");
     await revalidateChatStream(snapshot());

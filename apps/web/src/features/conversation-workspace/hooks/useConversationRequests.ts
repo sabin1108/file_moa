@@ -18,14 +18,21 @@ export function useConversationRequests(connection: ReturnType<typeof useSharedS
 
   const submitRequest = (request: string, choice?: ConversationRequestIntent) => {
     const available = connected && organizationExecution.managed.getSnapshot().phase !== "running";
-    if (available && !choice && finding.getSnapshot().phase !== "idle" && !/찾|검색|정리|분류|이동|복사|모아/u.test(request) && finding.submitReply(request)) {
+
+    if (available && !choice && finding.getSnapshot().phase !== "idle" && !/찾|검색|정리|분류|이동|복사|모아/u.test(request)
+      && finding.submitReply(request)) {
       setPendingRequest(null);
       preview.close();
+
       return;
     }
+
     const outcome = routeConversationRequest(request, { finding, organization, preview }, available, choice);
+
     if (outcome === "blocked") return;
+
     setPendingRequest(outcome === "choose" ? request : null);
+
     if (outcome === "find") {
       requestAnimationFrame(() => document.querySelector<HTMLElement>("[data-document-find] summary")?.focus());
     } else if (outcome === "organize") focusComposer();
@@ -36,7 +43,10 @@ export function useConversationRequests(connection: ReturnType<typeof useSharedS
     pendingRequest: connected && pendingRequest === draft ? pendingRequest : null,
     submitRequest,
     prepareFound() {
-      if (prepareFoundDocuments({ finding, organization, preview }, connected && organizationExecution.managed.getSnapshot().phase !== "running")) {
+      if (prepareFoundDocuments(
+        { finding, organization, preview },
+        connected && organizationExecution.managed.getSnapshot().phase !== "running"
+      )) {
         setPendingRequest(null);
         focusComposer();
       }
@@ -55,6 +65,7 @@ export function useConversationRequests(connection: ReturnType<typeof useSharedS
     },
     returnToOrganization() {
       if (organizationExecution.managed.getSnapshot().phase === "running") return;
+
       setPendingRequest(null);
       preview.close();
       organization.cancel();

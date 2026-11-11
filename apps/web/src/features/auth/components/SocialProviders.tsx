@@ -9,11 +9,20 @@ import { announceAuthSessionChange } from "../../../shared/auth-session-events";
 import styles from "../../../components/layout/auth-shell.module.css";
 import { PageLoading } from "../../../components/ui/feedback/PageLoading";
 
-export function SocialProviders({ providers, action, intent = "signup" }: { providers: readonly SocialProvider[]; action: AuthFormAction; intent?: "signin" | "signup" }) {
+export function SocialProviders({ providers, action, intent = "signup" }: {
+  providers: readonly SocialProvider[];
+  action: AuthFormAction;
+  intent?: "signin" | "signup"
+}) {
   const [state, formAction, pending] = useActionState(async (previous: AuthFormState, data: FormData) => {
     announceAuthSessionChange();
-    try { return await action(previous, data); }
-    finally { announceAuthSessionChange(); }
+
+    try {
+      return await action(previous, data);
+    }
+    finally {
+      announceAuthSessionChange();
+    }
   }, { status: "idle" });
 
   return (

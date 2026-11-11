@@ -4,6 +4,7 @@
  * /files의 기능 조합점이다. Provider의 목록/본문 store를 구독해 탐색·선택·원문 화면을 연결한다.
  * 파일 접근은 services가 담당하며, 여기서는 미리보기 전환과 초점/스크롤 복귀를 관리한다. 연결 설정은 connection의 dialog를 재사용한다.
  */
+
 import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
 import { useSharedSourceFolderConnection } from "../../providers/SourceFolderProvider";
 import { SourceFolderSettingsDialog } from "../connection/SourceFolderSettingsDialog";
@@ -25,14 +26,19 @@ import { useWorkspaceWorkflow } from "../../hooks/use-workspace-workflow";
 import { DismissibleNotice } from "../../../../components/ui/feedback/DismissibleNotice";
 import { SourceFolderTree } from "./SourceFolderTree";
 /** 화면 조합과 초점·스크롤만 맡는다. 파일 접근과 요청 수명은 controller/session이 소유한다. */
+
 export function SourceFolderBrowser() {
   const { state: connection, listing, preview, plan, navigation, trail, search, recoveryView, recoveryKey } = useSharedSourceFolderConnection();
   const managed = useManagedFiles();
   const editor = useInlineEditor();
   const restoredNotice = useWorkspaceWorkflow(managed, editor);
   const editorState = useSyncExternalStore(editor.subscribe, editor.getSnapshot, editor.getServerSnapshot);
-  const refreshEdited = useCallback(() => { void preview.refresh(); }, [preview]);
+  const refreshEdited = useCallback(() => {
+    void preview.refresh();
+  }, [preview]);
+
   useSourceNavigation(navigation);
+
   const state = useSyncExternalStore(listing.subscribe, listing.getSnapshot, listing.getServerSnapshot);
   const previewState = useSyncExternalStore(preview.subscribe, preview.getSnapshot, preview.getServerSnapshot);
   const ancestors = useSyncExternalStore(trail.subscribe, trail.getSnapshot, trail.getServerSnapshot);
@@ -41,26 +47,32 @@ export function SourceFolderBrowser() {
   const documentHeading = useRef<HTMLHeadingElement>(null);
   const documentKey = JSON.stringify(previewState.path);
   const isPreviewOpen = previewState.path !== null;
+
   useEffect(() => {
     if (isPreviewOpen) {
       documentHeading.current?.focus({ preventScroll: true });
     }
   }, [documentKey, isPreviewOpen]);
+
   const previousPhase = useRef(state.phase);
   const previousPreviewPhase = useRef(previewState.phase);
+
   useEffect(() => {
     // 탐색/취소 버튼이 사라졌을 때만 복구한다. 사용자가 옮긴 초점은 빼앗지 않는다.
     if (previousPhase.current === "loading" && state.phase !== "loading"
-      && window.document.activeElement === window.document.body && heading.current?.getClientRects().length) {
+      && window.document.activeElement === window.document.body
+      && heading.current?.getClientRects().length) {
       heading.current.focus({ preventScroll: true });
     }
 
     previousPhase.current = state.phase;
   }, [state.phase]);
+
   useEffect(() => {
     // 비동기 완료나 취소로 버튼이 제거되어 body로 빠진 초점을 문서 제목으로 돌린다.
     if (previousPreviewPhase.current === "loading" && previewState.phase !== "loading"
-      && window.document.activeElement === window.document.body && documentHeading.current?.getClientRects().length) {
+      && window.document.activeElement === window.document.body
+      && documentHeading.current?.getClientRects().length) {
       documentHeading.current.focus({ preventScroll: true });
     }
 
@@ -69,13 +81,14 @@ export function SourceFolderBrowser() {
 
   return (
     <>
-      {restoredNotice && (
-        <DismissibleNotice
-          state="attention"
-          title={restoredNotice.text}
-          autoDismissMs={restoredNotice.blocking ? 0 : 5000}
-        />
-      )}
+      {restoredNotice
+        && (
+          <DismissibleNotice
+            state="attention"
+            title={restoredNotice.text}
+            autoDismissMs={restoredNotice.blocking ? 0 : 5000}
+          />
+        )}
       <FolderWorkspaceFrame
         folderTree={<SourceFolderTree />}
         rootName={connection.view?.folderName ?? "내 폴더"}
@@ -103,28 +116,31 @@ export function SourceFolderBrowser() {
               } else navigation.closeFile();
             }}
           >
-            {editorState.open ? (
-              <InlineDocumentEditor
-                controller={editor}
-                folderName={connection.view?.folderName ?? "연결 폴더"}
-                onClosed={refreshEdited}
-                onSaved={refreshEdited}
-              />
-            ) : (
-              <SourceDocumentPreview
-                key={documentKey}
-                state={previewState}
-                folderName={connection.view?.folderName ?? null}
-                headingRef={documentHeading}
-                onClose={navigation.closeFile}
-                onRefresh={preview.refresh}
-                onCancel={preview.cancel}
-                onEdit={() => {
-                  const path = preview.getSnapshot().path;
-                  if (path) void editor.open(path);
-                }}
-              />
-            )}
+            {editorState.open
+              ? (
+                <InlineDocumentEditor
+                  controller={editor}
+                  folderName={connection.view?.folderName ?? "연결 폴더"}
+                  onClosed={refreshEdited}
+                  onSaved={refreshEdited}
+                />
+              )
+              : (
+                <SourceDocumentPreview
+                  key={documentKey}
+                  state={previewState}
+                  folderName={connection.view?.folderName ?? null}
+                  headingRef={documentHeading}
+                  onClose={navigation.closeFile}
+                  onRefresh={preview.refresh}
+                  onCancel={preview.cancel}
+                  onEdit={() => {
+                    const path = preview.getSnapshot().path;
+
+                    if (path) void editor.open(path);
+                  }}
+                />
+              )}
           </FilePreviewPane>
         }
       >
@@ -186,6 +202,7 @@ export function SourceFolderBrowser() {
             const folders = current.result?.entries.some(
               entry => entry.kind === "directory" && current.selectedNames.includes(entry.name),
             );
+
             if (operation === "move" || folders) {
               void managed.open({
                 kind: operation,
@@ -197,6 +214,7 @@ export function SourceFolderBrowser() {
           }}
           onTrash={() => {
             const current = listing.getSnapshot();
+
             void managed.open({
               kind: "trash",
               source: current.result?.path ?? [],
@@ -222,8 +240,11 @@ export function SourceFolderBrowser() {
         vaultName={recoveryView.folderName ?? "연결되지 않음"}
         onMove={() => {
           const previous = plan.getSnapshot();
+
           plan.close();
+
           const current = listing.getSnapshot();
+
           void managed.open(
             {
               kind: "move",
@@ -245,6 +266,7 @@ export function SourceFolderBrowser() {
         disabled={connection.view?.status !== "connected" || !!connection.pending}
         onChanged={() => {
           listing.refresh();
+
           if (preview.getSnapshot().path) preview.refresh();
         }}
       />

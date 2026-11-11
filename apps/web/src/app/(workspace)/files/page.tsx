@@ -12,6 +12,10 @@ export const metadata: Metadata = { title: "내 파일 — 모아" };
 
 export default function FilesPage() {
   return (
-    <div className={`${ui.system} ${styles.theme}`}><Suspense fallback={<p>파일 작업 공간을 준비하고 있습니다.</p>}><SourceFolderBrowser /></Suspense></div>
+    <div className={`${ui.system} ${styles.theme}`}>
+      <Suspense fallback={<p>파일 작업 공간을 준비하고 있습니다.</p>}>
+        <SourceFolderBrowser />
+      </Suspense>
+    </div>
   );
 }

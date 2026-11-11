@@ -28,12 +28,17 @@ export function databasePoolConfig(databaseUrl: string | undefined, ca: string):
 
   if (!["postgres:", "postgresql:"].includes(url.protocol)
     || !/^moa_runtime(?:\.[a-z0-9-]+)?$/.test(url.username)
-    || !url.password || !url.hostname || url.pathname.length <= 1
-    || url.hash || !ca.trim() || !validParameters) {
+    || !url.password
+    || !url.hostname
+    || url.pathname.length <= 1
+    || url.hash
+    || !ca.trim()
+    || !validParameters) {
     throw new Error(configurationError);
   }
 
   // pg URL TLS parameters replace the ssl object, including its trusted CA.
+
   url.search = "";
 
   return {

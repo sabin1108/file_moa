@@ -29,7 +29,12 @@ const paths = {
 
 export type IconName = keyof typeof paths;
 
-export function Icon({ name, size = 18, className, style }: { name: IconName; size?: number; className?: string; style?: CSSProperties }) {
+export function Icon({ name, size = 18, className, style }: {
+  name: IconName;
+  size?: number;
+  className?: string;
+  style?: CSSProperties
+}) {
   return (
     <svg
       width={size}
@@ -51,7 +56,12 @@ export function Icon({ name, size = 18, className, style }: { name: IconName; si
 
 export function MoaMark({ size = 30 }: { size?: number }) {
   return <svg width={size} height={size} viewBox="0 0 36 36" fill="none" aria-hidden="true">
-    <path d="M6 24V12c0-4 5-5 8-2l4 4 4-4c3-3 8-2 8 2v12c0 4-5 5-8 2l-4-4-4 4c-3 3-8 2-8-2Z" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" />
+    <path
+      d="M6 24V12c0-4 5-5 8-2l4 4 4-4c3-3 8-2 8 2v12c0 4-5 5-8 2l-4-4-4 4c-3 3-8 2-8-2Z"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinejoin="round"
+    />
     <path d="m13 13 10 10" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
   </svg>;
 }

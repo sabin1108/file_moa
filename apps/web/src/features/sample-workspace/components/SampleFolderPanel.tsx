@@ -1,4 +1,5 @@
 "use client";
+
 import type { SampleCatalog } from "../../../shared/sample-contract";
 import type { SampleState } from "../lib/sample-state";
 import { sampleFolderPath } from "../lib/sample-state";
@@ -8,31 +9,40 @@ import { actionClasses } from "../../../components/ui/action-classes";
 import styles from "./sample-workspace.module.css";
 
 export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onToggle, disabled }: {
-  catalog: SampleCatalog; state: SampleState; path: readonly string[]; onOpen: (path: string[]) => void;
-  onPreview: (id: string) => void; onToggle: (id: string) => void; disabled: boolean;
+  catalog: SampleCatalog;
+  state: SampleState;
+  path: readonly string[];
+  onOpen: (path: string[]) => void;
+  onPreview: (id: string) => void;
+  onToggle: (id: string) => void;
+  disabled: boolean;
 }) {
   const paths = catalog.documents.map(document => ({ document, path: sampleFolderPath(catalog, state.locations[document.id]) }));
   const descendant = paths.filter(item => path.every((part, index) => item.path[index] === part));
   const folders = [...new Set(descendant.filter(item => item.path.length > path.length).map(item => item.path[path.length]))].sort();
   const documents = descendant.filter(item => item.path.length === path.length).map(item => item.document);
+
   return (
     <section aria-label="샘플 폴더 탐색" data-sample-folder={JSON.stringify(path)}>
       <div className={styles.sectionHeading}>
         <div>
-          <h2>{path.at(-1) ?? "샘플 자료"}</h2>
+          <h2>
+            {path.at(-1) ?? "샘플 자료"}
+          </h2>
           <p>
             {catalog.documents.length}개 파일 · {catalog.folders.length}개 분류 폴더
           </p>
         </div>
-        {path.length > 0 && (
-          <button
-            type="button"
-            className={actionClasses("ghost")}
-            onClick={() => onOpen(path.slice(0, -1))}
-          >
-            상위 폴더
-          </button>
-        )}
+        {path.length > 0
+          && (
+            <button
+              type="button"
+              className={actionClasses("ghost")}
+              onClick={() => onOpen(path.slice(0, -1))}
+            >
+              상위 폴더
+            </button>
+          )}
       </div>
       <ul className={styles.folderList}>
         {folders.map(name => (
@@ -44,8 +54,8 @@ export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onT
               disabled={false}
               selectionDisabled
               onOpen={() => onOpen([...path, name])}
-              onToggle={() => {}}
-              onLongSelect={() => {}}
+              onToggle={() => { }}
+              onLongSelect={() => { }}
             />
           </li>
         ))}

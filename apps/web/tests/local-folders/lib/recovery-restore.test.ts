@@ -13,6 +13,7 @@ describe("restore destination naming", () => {
   it("bounds a long name without splitting a Unicode point", () => {
     const name = "가".repeat(250) + ".txt";
     const next = restoreFileName(name, [name]);
+
     expect(next.length).toBeLessThanOrEqual(255);
     expect(next.endsWith(" (복원 1).txt")).toBe(true);
   });

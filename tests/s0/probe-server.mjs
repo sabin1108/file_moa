@@ -48,26 +48,46 @@ const zodRoot = dirname(webRequire.resolve('zod/package.json'));
 
 function moduleUrl(specifier, sourceUrl) {
   const known = moduleUrls.get(specifier);
+
   if (known) return '/' + known.replace(/^\.\//, '');
+
   const fixtureEndpoint = '/' + specifier.replace(/^\.\//, '');
+
   if (sourceUrl.href.startsWith(new URL('./', import.meta.url).href) && files.has(fixtureEndpoint)) return fixtureEndpoint;
+
   if (specifier === 'zod') {
-    files.set('/vendor/zod/index.js', [pathToFileURL(resolve(zodRoot, 'index.js')).href, 'text/javascript']);
+    files.set(
+      '/vendor/zod/index.js',
+      [pathToFileURL(resolve(zodRoot, 'index.js')).href, 'text/javascript']
+    );
+
     return '/vendor/zod/index.js';
   }
+
   if (!specifier.startsWith('.')) return null;
+
   const target = new URL(specifier, sourceUrl);
+
   if (!/\.(ts|js|mjs)$/u.test(target.pathname)) target.pathname += '.ts';
+
   const path = resolve(fileURLToPath(target));
+
   if (path.startsWith(zodRoot + sep) && existsSync(path)) {
     const endpoint = '/vendor/zod/' + relative(zodRoot, path).split(sep).join('/');
+
     files.set(endpoint, [target.href, 'text/javascript']);
+
     return endpoint;
   }
+
   const local = relative(repositoryRoot, path).split(sep).join('/');
+
   if (!allowedRoots.some(root => local.startsWith(root)) || !existsSync(path)) throw new Error('Unmapped probe source dependency');
+
   const endpoint = '/__source/' + local.replace(/\.ts$/u, '.js');
+
   files.set(endpoint, [target.href, 'text/javascript']);
+
   return endpoint;
 }
 
@@ -75,34 +95,63 @@ function rewriteProbeImports(source, sourceUrl) {
   const file = ts.createSourceFile('probe.js', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
   const edits = file.statements.flatMap(node => {
     if ((!ts.isImportDeclaration(node) && !ts.isExportDeclaration(node)) || !node.moduleSpecifier) return [];
+
     const target = moduleUrl(node.moduleSpecifier.text, sourceUrl);
-    return target ? [{ start: node.moduleSpecifier.getStart(file), end: node.moduleSpecifier.end, text: JSON.stringify(target) }] : [];
+
+    return target
+      ? [{
+        start: node.moduleSpecifier.getStart(file),
+        end: node.moduleSpecifier.end,
+        text: JSON.stringify(target)
+      }]
+      : [];
   });
   // 뒤에서부터 바꿔 AST 위치를 보존하고, 코드의 다른 문자열에는 손대지 않는다.
+
   for (const edit of edits.reverse()) source = source.slice(0, edit.start) + edit.text + source.slice(edit.end);
+
   return source;
 }
 
 export async function startProbe(port = 0) {
   const server = createServer(async (request, response) => {
     const entry = files.get(new URL(request.url, 'http://localhost').pathname);
-    if (!entry) { response.writeHead(404).end(); return; }
+
+    if (!entry) {
+      response.writeHead(404).end();
+
+      return;
+    }
+
     try {
       const sourceUrl = new URL(entry[0], import.meta.url);
       let source = await readFile(sourceUrl, 'utf8');
+
       if (entry[0].endsWith('.ts')) source = rewriteProbeImports(ts.transpileModule(source, {
         compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
       }).outputText, sourceUrl);
       else if (entry[1] === 'text/javascript') source = rewriteProbeImports(source, sourceUrl);
-      response.writeHead(200, { 'Content-Type': entry[1], 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
+
+      response.writeHead(
+        200,
+        { 'Content-Type': entry[1], 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }
+      );
       response.end(source);
-    } catch { response.writeHead(500).end('Probe source unavailable'); }
+    } catch {
+      response.writeHead(500).end('Probe source unavailable');
+    }
   });
-  await new Promise((resolve, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', resolve); });
+
+  await new Promise((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(port, '127.0.0.1', resolve);
+  });
+
   return { server, url: `http://127.0.0.1:${server.address().port}` };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const { url } = await startProbe(4318);
+
   console.log(`S0 manual probe: ${url} (local only; no AI/API requests)`);
 }

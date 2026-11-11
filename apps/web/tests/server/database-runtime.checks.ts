@@ -32,6 +32,7 @@ function sessionHeaders(token: string, signingSecret = secret) {
 
 function deletionHeaders(token: string) {
   const headers = sessionHeaders(token);
+
   headers.set("origin", "http://127.0.0.1:3034");
 
   return headers;
@@ -46,6 +47,7 @@ function deletionFixtureToken() {
 
 function deletionForm(token: string) {
   const form = new FormData();
+
   form.set("confirm", "on");
   form.set("token", token);
 
@@ -91,9 +93,24 @@ beforeAll(async () => {
   });
   await database.session.createMany({
     data: [
-      { id: "runtime-session-a", token: tokenA, userId: userA, expiresAt: new Date(Date.now() + 3_600_000) },
-      { id: "runtime-session-b", token: tokenB, userId: userB, expiresAt: new Date(Date.now() + 3_600_000) },
-      { id: "runtime-expired", token: expiredToken, userId: userA, expiresAt: new Date(Date.now() - 60_000) },
+      {
+        id: "runtime-session-a",
+        token: tokenA,
+        userId: userA,
+        expiresAt: new Date(Date.now() + 3_600_000)
+      },
+      {
+        id: "runtime-session-b",
+        token: tokenB,
+        userId: userB,
+        expiresAt: new Date(Date.now() + 3_600_000)
+      },
+      {
+        id: "runtime-expired",
+        token: expiredToken,
+        userId: userA,
+        expiresAt: new Date(Date.now() - 60_000)
+      },
     ],
   });
 });
@@ -117,8 +134,10 @@ describe("real PrismaPg and Better Auth adapter", () => {
         { key: `${prefix}:workspace`, max: 10, window: 3600 },
         { key: `${prefix}:request:${index}`, max: 1, window: 3600 },
       ];
+
       return stores[index % 2].consumeAll(index % 2 ? rules.reverse() : rules);
     }));
+
     expect(results.filter(result => result.allowed)).toHaveLength(10);
     expect(results.filter(result => !result.allowed)).toHaveLength(1);
     expect(results.find(result => !result.allowed)?.retryAfter).toBeGreaterThan(0);
@@ -132,6 +151,7 @@ describe("real PrismaPg and Better Auth adapter", () => {
     const rules = [{ key: `${prefix}:a-shared`, max: 10, window: 3600 }, { key: `${prefix}:z-request`, max: 1, window: 3600 }];
     const stores = [createAuthRateLimiter(() => database, secret), createAuthRateLimiter(() => secondDatabase, secret)];
     const results = await Promise.all(Array.from({ length: 8 }, (_, index) => stores[index % 2].consumeAll(rules)));
+
     expect(results.filter(result => result.allowed)).toHaveLength(1);
     expect(await database.rateLimit.findUnique({ where: { key: hash(rules[0].key) } })).toMatchObject({ count: 1 });
   });
@@ -141,8 +161,11 @@ describe("real PrismaPg and Better Auth adapter", () => {
     const hash = (key: string) => createHmac("sha256", secret).update("moa-rate-limit-v1\0").update(key).digest("hex");
     const store = createAuthRateLimiter(() => database, secret);
     const fullKey = `${prefix}:z-full`;
+
     await store.consume(fullKey, { max: 1, window: 3600 });
+
     const before = await database.rateLimit.findUniqueOrThrow({ where: { key: hash(fullKey) } });
+
     expect(await store.consumeAll([
       { key: `${prefix}:a-new`, max: 10, window: 3600 }, { key: fullKey, max: 1, window: 3600 },
     ])).toMatchObject({ allowed: false });
@@ -153,6 +176,7 @@ describe("real PrismaPg and Better Auth adapter", () => {
   it("resets an expired multi-rule counter using the unchanged HMAC key", async () => {
     const key = `multi-expired:${randomUUID()}`;
     const hashed = createHmac("sha256", secret).update("moa-rate-limit-v1\0").update(key).digest("hex");
+
     await database.rateLimit.create({ data: { id: randomUUID(), key: hashed, count: 10, lastRequest: BigInt(Date.now() - 3_601_000) } });
     expect(await createAuthRateLimiter(() => database, secret).consumeAll([{ key, max: 10, window: 3600 }])).toMatchObject({ allowed: true });
     expect(await database.rateLimit.findUnique({ where: { key: hashed } })).toMatchObject({ count: 1 });
@@ -162,10 +186,13 @@ describe("real PrismaPg and Better Auth adapter", () => {
     const key = `192.0.2.30:/fixture/${randomUUID()}`;
     const stores = [createAuthRateLimiter(() => database, secret), createAuthRateLimiter(() => secondDatabase, secret)];
     const results = await Promise.all(Array.from({ length: 12 }, (_, index) => stores[index % 2].consume(key, { max: 5, window: 60 })));
+
     expect(results.filter(result => result.allowed)).toHaveLength(5);
     expect(results.filter(result => !result.allowed).every(result => result.retryAfter && result.retryAfter > 0 && result.retryAfter <= 60)).toBe(true);
     expect(await database.rateLimit.findUnique({ where: { key } })).toBeNull();
+
     const hashedKey = createHmac("sha256", secret).update("moa-rate-limit-v1\0").update(key).digest("hex");
+
     expect((await database.rateLimit.findUniqueOrThrow({ where: { key: hashedKey } })).count).toBe(5);
   });
   it("AUTHDB-004 resolves a signed session without a workspace user context", async () => {
@@ -178,6 +205,7 @@ describe("real PrismaPg and Better Auth adapter", () => {
 
   it("AUTHDB-005 uses the session user, ignores forged owner headers, and returns only owner IDs", async () => {
     const headers = sessionHeaders(tokenA);
+
     headers.set("x-user-id", userB);
     headers.set("x-workspace-id", "workspace-b");
 
@@ -214,7 +242,10 @@ describe("real PrismaPg and Better Auth adapter", () => {
       await transaction.workspace.update({ where: { id: a.workspaceId }, data: { ownerUserId: userB } });
     })).rejects.toThrow();
 
-    const [after] = await database.$queryRaw<{ pid: number; owner: string | null }[]>`
+    const [after] = await database.$queryRaw<{
+      pid: number;
+      owner: string | null
+    }[]>`
       SELECT pg_backend_pid() AS pid, current_setting('moa.user_id', true) AS owner`;
 
     expect(after.pid).toBe(before.pid);
@@ -225,8 +256,18 @@ describe("real PrismaPg and Better Auth adapter", () => {
 
   it("AUTHDB-007 concurrent initialization through separate pools returns one workspace", async () => {
     const token = randomUUID();
-    await database.session.create({ data: { id: "runtime-race-session", token, userId: "runtime-race", expiresAt: new Date(Date.now() + 3_600_000) } });
+
+    await database.session.create({
+      data: {
+        id: "runtime-race-session",
+        token,
+        userId: "runtime-race",
+        expiresAt: new Date(Date.now() + 3_600_000)
+      }
+    });
+
     let calls = 0;
+
     vi.mocked(getDatabase).mockImplementation(() => calls++ % 2 === 0 ? database : secondDatabase);
 
     try {
@@ -257,7 +298,9 @@ describe("real PrismaPg and Better Auth adapter", () => {
     const owner = await getAuthenticatedWorkspace(sessionHeaders(tokenA));
     const other = await getAuthenticatedWorkspace(sessionHeaders(tokenB));
     const requestId = `usage-${randomUUID()}`;
+
     vi.stubEnv("AI_USAGE_LEDGER_ENABLED", "true");
+
     try {
       await startUsage(owner, requestId, "openai", "chat");
       await expect(startUsage(owner, requestId, "openai", "chat")).rejects.toThrow();
@@ -268,15 +311,32 @@ describe("real PrismaPg and Better Auth adapter", () => {
       });
       await expect(database.$transaction(async tx => {
         await tx.$executeRaw`SELECT set_config('moa.user_id', ${other.sessionUserId}, true)`;
-        return tx.aiUsageEvent.create({ data: { id: randomUUID(), workspaceId: owner.workspaceId, requestId: randomUUID(), provider: "openai", operation: "chat", status: "reserved" } });
+
+        return tx.aiUsageEvent.create({
+          data: {
+            id: randomUUID(),
+            workspaceId: owner.workspaceId,
+            requestId: randomUUID(),
+            provider: "openai",
+            operation: "chat",
+            status: "reserved"
+          }
+        });
       })).rejects.toThrow();
       await finishUsage(owner, requestId, "fixture-model", { inputTokens: 7, outputTokens: 3, totalTokens: 10 });
-      await finishUsage(owner, requestId, "overwritten", { inputTokens: 100, outputTokens: 1, totalTokens: 101 });
+      await finishUsage(
+        owner,
+        requestId,
+        "overwritten",
+        { inputTokens: 100, outputTokens: 1, totalTokens: 101 }
+      );
       await database.$transaction(async tx => {
         await tx.$executeRaw`SELECT set_config('moa.user_id', ${owner.sessionUserId}, true)`;
         expect(await tx.aiUsageEvent.findFirst({ where: { requestId } })).toMatchObject({ status: "completed", model: "fixture-model", totalTokens: 10 });
       });
-    } finally { delete process.env.AI_USAGE_LEDGER_ENABLED; }
+    } finally {
+      delete process.env.AI_USAGE_LEDGER_ENABLED;
+    }
   });
 
   it("recovers only this workspace's old usage reservation and preserves fresh or foreign reservations", async () => {
@@ -288,27 +348,69 @@ describe("real PrismaPg and Better Auth adapter", () => {
     const staleAt = new Date(Date.now() - 600_001);
 
     vi.stubEnv("AI_USAGE_LEDGER_ENABLED", "true");
+
     try {
       await database.$transaction(async tx => {
         await tx.$executeRaw`SELECT set_config('moa.user_id', ${owner.sessionUserId}, true)`;
-        await tx.aiUsageEvent.createMany({ data: [
-          { id: randomUUID(), workspaceId: owner.workspaceId, requestId: staleRequestId, provider: "openai", operation: "chat", status: "reserved", createdAt: staleAt },
-          { id: randomUUID(), workspaceId: owner.workspaceId, requestId: freshRequestId, provider: "openai", operation: "chat", status: "reserved" },
-        ] });
+        await tx.aiUsageEvent.createMany({
+          data: [
+            {
+              id: randomUUID(),
+              workspaceId: owner.workspaceId,
+              requestId: staleRequestId,
+              provider: "openai",
+              operation: "chat",
+              status: "reserved",
+              createdAt: staleAt
+            },
+            {
+              id: randomUUID(),
+              workspaceId: owner.workspaceId,
+              requestId: freshRequestId,
+              provider: "openai",
+              operation: "chat",
+              status: "reserved"
+            },
+          ]
+        });
       });
       await database.$transaction(async tx => {
         await tx.$executeRaw`SELECT set_config('moa.user_id', ${other.sessionUserId}, true)`;
-        await tx.aiUsageEvent.create({ data: { id: randomUUID(), workspaceId: other.workspaceId, requestId: foreignRequestId, provider: "openai", operation: "chat", status: "reserved", createdAt: staleAt } });
+        await tx.aiUsageEvent.create({
+          data: {
+            id: randomUUID(),
+            workspaceId: other.workspaceId,
+            requestId: foreignRequestId,
+            provider: "openai",
+            operation: "chat",
+            status: "reserved",
+            createdAt: staleAt
+          }
+        });
       });
 
       const first = await readUsage(sessionHeaders(tokenA));
+
       expect(first?.entries).toEqual(expect.arrayContaining([
-        expect.objectContaining({ requestId: staleRequestId, status: "unknown", inputTokens: null, outputTokens: null, totalTokens: null }),
+        expect.objectContaining({
+          requestId: staleRequestId,
+          status: "unknown",
+          inputTokens: null,
+          outputTokens: null,
+          totalTokens: null
+        }),
         expect.objectContaining({ requestId: freshRequestId, status: "reserved" }),
       ]));
+
       const second = await readUsage(sessionHeaders(tokenA));
+
       expect(second?.entries.find(entry => entry.requestId === staleRequestId)).toMatchObject({ status: "unknown", inputTokens: null, outputTokens: null, totalTokens: null });
-      await finishUsage(owner, staleRequestId, "late-model", { inputTokens: 9, outputTokens: 4, totalTokens: 13 });
+      await finishUsage(
+        owner,
+        staleRequestId,
+        "late-model",
+        { inputTokens: 9, outputTokens: 4, totalTokens: 13 }
+      );
 
       await database.$transaction(async tx => {
         await tx.$executeRaw`SELECT set_config('moa.user_id', ${owner.sessionUserId}, true)`;
@@ -317,7 +419,9 @@ describe("real PrismaPg and Better Auth adapter", () => {
         await tx.$executeRaw`SELECT set_config('moa.user_id', ${other.sessionUserId}, true)`;
         expect(await tx.aiUsageEvent.findFirst({ where: { workspaceId: other.workspaceId, requestId: foreignRequestId } })).toMatchObject({ status: "reserved" });
       });
-    } finally { delete process.env.AI_USAGE_LEDGER_ENABLED; }
+    } finally {
+      delete process.env.AI_USAGE_LEDGER_ENABLED;
+    }
   });
 
   it("deletes only the confirmed user and cascades that user's account, session, workspace, and usage rows", async () => {
@@ -331,21 +435,43 @@ describe("real PrismaPg and Better Auth adapter", () => {
     const survivorAccountId = randomUUID();
     const { token, identifier } = deletionFixtureToken();
 
-    await database.user.createMany({ data: [deletedUserId, survivorUserId].map(id => ({ id, name: id, email: `${id}@example.invalid`, emailVerified: true })) });
-    await database.account.createMany({ data: [
-      { id: deletedAccountId, userId: deletedUserId, accountId: deletedUserId, providerId: "google" },
-      { id: survivorAccountId, userId: survivorUserId, accountId: survivorUserId, providerId: "naver" },
-    ] });
-    await database.session.createMany({ data: [
-      { id: deletedSessionId, token: deletedSessionToken, userId: deletedUserId, expiresAt: new Date(Date.now() + 3_600_000) },
-      { id: randomUUID(), token: survivorSessionToken, userId: survivorUserId, expiresAt: new Date(Date.now() + 3_600_000) },
-    ] });
+    await database.user.createMany({
+      data: [deletedUserId, survivorUserId].map(id => ({ id, name: id, email: `${id}@example.invalid`, emailVerified: true }))
+    });
+    await database.account.createMany({
+      data: [
+        { id: deletedAccountId, userId: deletedUserId, accountId: deletedUserId, providerId: "google" },
+        { id: survivorAccountId, userId: survivorUserId, accountId: survivorUserId, providerId: "naver" },
+      ]
+    });
+    await database.session.createMany({
+      data: [
+        {
+          id: deletedSessionId,
+          token: deletedSessionToken,
+          userId: deletedUserId,
+          expiresAt: new Date(Date.now() + 3_600_000)
+        },
+        {
+          id: randomUUID(),
+          token: survivorSessionToken,
+          userId: survivorUserId,
+          expiresAt: new Date(Date.now() + 3_600_000)
+        },
+      ]
+    });
+
     const deletedOwner = await getAuthenticatedWorkspace(sessionHeaders(deletedSessionToken));
     const survivorOwner = await getAuthenticatedWorkspace(sessionHeaders(survivorSessionToken));
+
     vi.stubEnv("AI_USAGE_LEDGER_ENABLED", "true");
+
     try {
       await startUsage(deletedOwner, `delete-cascade-usage-${randomUUID()}`, "openai", "chat");
-    } finally { delete process.env.AI_USAGE_LEDGER_ENABLED; }
+    } finally {
+      delete process.env.AI_USAGE_LEDGER_ENABLED;
+    }
+
     await addDeletionVerification(deletedUserId, deletedSessionId, token);
 
     expect(await finishAccountDeletion(deletionForm(token), deletionHeaders(deletedSessionToken))).toMatchObject({ status: "success" });
@@ -370,8 +496,19 @@ describe("real PrismaPg and Better Auth adapter", () => {
     const staleSessionId = randomUUID();
     const staleSessionToken = randomUUID();
     const stale = deletionFixtureToken();
-    await database.user.create({ data: { id: staleUserId, name: staleUserId, email: `${staleUserId}@example.invalid`, emailVerified: true } });
-    await database.session.create({ data: { id: staleSessionId, token: staleSessionToken, userId: staleUserId, createdAt: new Date(Date.now() - 86_401_000), expiresAt: new Date(Date.now() + 3_600_000) } });
+
+    await database.user.create({
+      data: { id: staleUserId, name: staleUserId, email: `${staleUserId}@example.invalid`, emailVerified: true }
+    });
+    await database.session.create({
+      data: {
+        id: staleSessionId,
+        token: staleSessionToken,
+        userId: staleUserId,
+        createdAt: new Date(Date.now() - 86_401_000),
+        expiresAt: new Date(Date.now() + 3_600_000)
+      }
+    });
     await addDeletionVerification(staleUserId, staleSessionId, stale.token);
     expect((await finishAccountDeletion(deletionForm(stale.token), deletionHeaders(staleSessionToken))).status).toBe("error");
     expect(await database.verification.findFirst({ where: { identifier: stale.identifier } })).not.toBeNull();
@@ -382,11 +519,26 @@ describe("real PrismaPg and Better Auth adapter", () => {
     const foreignSessionToken = randomUUID();
     const ownerSessionId = randomUUID();
     const foreign = deletionFixtureToken();
-    await database.user.createMany({ data: [foreignUserId, ownerUserId].map(id => ({ id, name: id, email: `${id}@example.invalid`, emailVerified: true })) });
-    await database.session.createMany({ data: [
-      { id: foreignSessionId, token: foreignSessionToken, userId: foreignUserId, expiresAt: new Date(Date.now() + 3_600_000) },
-      { id: ownerSessionId, token: randomUUID(), userId: ownerUserId, expiresAt: new Date(Date.now() + 3_600_000) },
-    ] });
+
+    await database.user.createMany({
+      data: [foreignUserId, ownerUserId].map(id => ({ id, name: id, email: `${id}@example.invalid`, emailVerified: true }))
+    });
+    await database.session.createMany({
+      data: [
+        {
+          id: foreignSessionId,
+          token: foreignSessionToken,
+          userId: foreignUserId,
+          expiresAt: new Date(Date.now() + 3_600_000)
+        },
+        {
+          id: ownerSessionId,
+          token: randomUUID(),
+          userId: ownerUserId,
+          expiresAt: new Date(Date.now() + 3_600_000)
+        },
+      ]
+    });
     await addDeletionVerification(ownerUserId, ownerSessionId, foreign.token);
     expect((await finishAccountDeletion(deletionForm(foreign.token), deletionHeaders(foreignSessionToken))).status).toBe("error");
     expect(await database.verification.findFirst({ where: { identifier: foreign.identifier } })).not.toBeNull();
@@ -398,24 +550,58 @@ describe("real PrismaPg and Better Auth adapter", () => {
     const peerSessionToken = randomUUID();
     const password = "fixture-delete-connection-password";
     const passwordHash = await hashPassword(password);
-    await database.user.createMany({ data: [sourceUserId, peerUserId].map(id => ({ id, name: id, email: `${id}@example.invalid`, emailVerified: true })) });
-    await database.account.createMany({ data: [
-      { id: randomUUID(), userId: sourceUserId, accountId: sourceUserId, providerId: "google" },
-      { id: randomUUID(), userId: peerUserId, accountId: peerUserId, providerId: "credential", password: passwordHash },
-    ] });
-    await database.session.createMany({ data: [
-      { id: sourceSessionId, token: sourceSessionToken, userId: sourceUserId, expiresAt: new Date(Date.now() + 3_600_000) },
-      { id: randomUUID(), token: peerSessionToken, userId: peerUserId, expiresAt: new Date(Date.now() + 3_600_000) },
-    ] });
+
+    await database.user.createMany({
+      data: [sourceUserId, peerUserId].map(id => ({ id, name: id, email: `${id}@example.invalid`, emailVerified: true }))
+    });
+    await database.account.createMany({
+      data: [
+        { id: randomUUID(), userId: sourceUserId, accountId: sourceUserId, providerId: "google" },
+        {
+          id: randomUUID(),
+          userId: peerUserId,
+          accountId: peerUserId,
+          providerId: "credential",
+          password: passwordHash
+        },
+      ]
+    });
+    await database.session.createMany({
+      data: [
+        {
+          id: sourceSessionId,
+          token: sourceSessionToken,
+          userId: sourceUserId,
+          expiresAt: new Date(Date.now() + 3_600_000)
+        },
+        {
+          id: randomUUID(),
+          token: peerSessionToken,
+          userId: peerUserId,
+          expiresAt: new Date(Date.now() + 3_600_000)
+        },
+      ]
+    });
     await database.$transaction(async tx => {
       await tx.$executeRaw`SELECT set_config('moa.user_id', ${sourceUserId}, true)`;
+
       const [connected] = await tx.$queryRaw<{ connected: boolean }[]>`SELECT moa_auth.connect_login_accounts(${sourceSessionId}, ${peerSessionToken}, ${passwordHash}, true) AS connected`;
+
       expect(connected.connected).toBe(true);
     });
+
     const connectedSessionId = randomUUID();
     const connectedSessionToken = randomUUID();
     const connected = deletionFixtureToken();
-    await database.session.create({ data: { id: connectedSessionId, token: connectedSessionToken, userId: sourceUserId, expiresAt: new Date(Date.now() + 3_600_000) } });
+
+    await database.session.create({
+      data: {
+        id: connectedSessionId,
+        token: connectedSessionToken,
+        userId: sourceUserId,
+        expiresAt: new Date(Date.now() + 3_600_000)
+      }
+    });
     await addDeletionVerification(sourceUserId, connectedSessionId, connected.token);
     expect((await finishAccountDeletion(deletionForm(connected.token), deletionHeaders(connectedSessionToken))).status).toBe("error");
     expect(await database.verification.findFirst({ where: { identifier: connected.identifier } })).not.toBeNull();
@@ -432,35 +618,74 @@ describe("real PrismaPg and Better Auth adapter", () => {
     const password = "fixture-delete-race-password";
     const passwordHash = await hashPassword(password);
     const deletion = deletionFixtureToken();
-    await database.user.createMany({ data: [sourceUserId, peerUserId].map(id => ({ id, name: id, email: `${id}@example.invalid`, emailVerified: true })) });
-    await database.account.createMany({ data: [
-      { id: randomUUID(), userId: sourceUserId, accountId: sourceUserId, providerId: "google" },
-      { id: randomUUID(), userId: peerUserId, accountId: peerUserId, providerId: "credential", password: passwordHash },
-    ] });
-    await database.session.createMany({ data: [
-      { id: sourceSessionId, token: sourceSessionToken, userId: sourceUserId, expiresAt: new Date(Date.now() + 3_600_000) },
-      { id: randomUUID(), token: peerSessionToken, userId: peerUserId, expiresAt: new Date(Date.now() + 3_600_000) },
-    ] });
+
+    await database.user.createMany({
+      data: [sourceUserId, peerUserId].map(id => ({ id, name: id, email: `${id}@example.invalid`, emailVerified: true }))
+    });
+    await database.account.createMany({
+      data: [
+        { id: randomUUID(), userId: sourceUserId, accountId: sourceUserId, providerId: "google" },
+        {
+          id: randomUUID(),
+          userId: peerUserId,
+          accountId: peerUserId,
+          providerId: "credential",
+          password: passwordHash
+        },
+      ]
+    });
+    await database.session.createMany({
+      data: [
+        {
+          id: sourceSessionId,
+          token: sourceSessionToken,
+          userId: sourceUserId,
+          expiresAt: new Date(Date.now() + 3_600_000)
+        },
+        {
+          id: randomUUID(),
+          token: peerSessionToken,
+          userId: peerUserId,
+          expiresAt: new Date(Date.now() + 3_600_000)
+        },
+      ]
+    });
     await addDeletionVerification(sourceUserId, sourceSessionId, deletion.token);
 
     let release!: () => void;
     let linked!: () => void;
-    const gate = new Promise<void>(resolve => { release = resolve; });
-    const connectionLinked = new Promise<void>(resolve => { linked = resolve; });
+    const gate = new Promise<void>(resolve => {
+      release = resolve;
+    });
+    const connectionLinked = new Promise<void>(resolve => {
+      linked = resolve;
+    });
     const connecting = secondDatabase.$transaction(async tx => {
       await tx.$executeRaw`SELECT set_config('moa.user_id', ${sourceUserId}, true)`;
+
       const [connected] = await tx.$queryRaw<{ connected: boolean }[]>`SELECT moa_auth.connect_login_accounts(${sourceSessionId}, ${peerSessionToken}, ${passwordHash}, true) AS connected`;
+
       expect(connected.connected).toBe(true);
-      await tx.session.create({ data: { id: sourceSessionId, token: sourceSessionToken, userId: sourceUserId, expiresAt: new Date(Date.now() + 3_600_000) } });
+      await tx.session.create({
+        data: {
+          id: sourceSessionId,
+          token: sourceSessionToken,
+          userId: sourceUserId,
+          expiresAt: new Date(Date.now() + 3_600_000)
+        }
+      });
       linked();
       await gate;
     });
+
     await connectionLinked;
+
     const finishing = finishAccountDeletion(deletionForm(deletion.token), deletionHeaders(sourceSessionToken));
     const finishedWhileLocked = await Promise.race([
       finishing.then(() => true),
       new Promise<boolean>(resolve => setTimeout(() => resolve(false), 50)),
     ]);
+
     expect(finishedWhileLocked).toBe(false);
     release();
     await connecting;
@@ -481,8 +706,11 @@ describe("real PrismaPg and Better Auth adapter", () => {
   it("an unverified account cannot initialize a workspace even with a stored session", async () => {
     const userId = "runtime-unverified";
     const token = randomUUID();
+
     await database.user.create({ data: { id: userId, name: "Unverified", email: "runtime-unverified@example.invalid" } });
-    await database.session.create({ data: { id: "runtime-unverified-session", userId, token, expiresAt: new Date(Date.now() + 3_600_000) } });
+    await database.session.create({
+      data: { id: "runtime-unverified-session", userId, token, expiresAt: new Date(Date.now() + 3_600_000) }
+    });
 
     await expect(getAuthenticatedWorkspace(sessionHeaders(token))).rejects.toThrow("Authentication required.");
     await database.$transaction(async transaction => {

@@ -1,11 +1,31 @@
 import type { ClassificationResponse } from "./ai-classification";
 
 export type SampleAiErrorCode = "session" | "origin" | "input" | "limit" | "timeout" | "unavailable";
-export type SampleAiUsage = Readonly<{ inputTokens: number; outputTokens: number; totalTokens: number }>;
-export type SampleAiAction = (input: { requestId: string; documentIds: string[]; consent: true }) => Promise<SampleAiResult>;
+
+export type SampleAiUsage = Readonly<{
+  inputTokens: number;
+  outputTokens: number;
+  totalTokens: number
+}>;
+
+export type SampleAiAction = (input: {
+  requestId: string;
+  documentIds: string[];
+  consent: true
+}) => Promise<SampleAiResult>;
+
 export type SampleAiResult =
-  | Readonly<{ ok: true; proposals: ClassificationResponse["proposals"]; usage: SampleAiUsage; model: string }>
-  | Readonly<{ ok: false; code: SampleAiErrorCode; retryAfter?: number }>;
+  | Readonly<{
+    ok: true;
+    proposals: ClassificationResponse["proposals"];
+    usage: SampleAiUsage;
+    model: string
+  }>
+  | Readonly<{
+    ok: false;
+    code: SampleAiErrorCode;
+    retryAfter?: number
+  }>;
 
 export const SAMPLE_AI_MESSAGES: Record<SampleAiErrorCode, string> = {
   session: "샘플 세션이 만료되었어요. 새 세션으로 시작해 주세요.",

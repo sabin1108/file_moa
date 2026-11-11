@@ -15,17 +15,25 @@ const serverBoundaryRule = {
     const filename = context.filename.replaceAll("\\", "/");
     const server = filename.includes("/src/server/");
     const action = filename.includes("/src/app/actions/");
+
     return {
       Identifier(node) {
         if (!filename.endsWith('/src/features/conversation-workspace/services/chat-stream.ts') || node.name !== 'fetch') return;
+
         const call = node.parent;
         const options = call.arguments?.[1];
         const property = name => {
           if (options?.type !== 'ObjectExpression' || options.properties.some(value => value.type !== 'Property')) return undefined;
+
           const matches = options.properties.filter(value => (value.key.name ?? value.key.value) === name);
+
           return matches.length === 1 ? matches[0].value?.value : undefined;
         };
-        if (call.type !== 'CallExpression' || call.callee !== node || call.arguments[0]?.value !== '/api/chat' || property('method') !== 'POST' || property('credentials') !== 'same-origin' || property('redirect') !== 'error') {
+
+        if (call.type !== 'CallExpression' || call.callee !== node || call.arguments[0]?.value !== '/api/chat'
+          || property('method') !== 'POST'
+          || property('credentials') !== 'same-origin'
+          || property('redirect') !== 'error') {
           context.report({ node, messageId: 'chat' });
         }
       },
@@ -37,8 +45,11 @@ const serverBoundaryRule = {
           && statement.source.value === "server-only"
           && statement.importKind !== "type"
           && statement.specifiers.length === 0);
+
         if ((server || action) && !hasMarker) context.report({ node, messageId: "marker" });
+
         if ((server || action) && hasDirective("use client")) context.report({ node, messageId: "client" });
+
         if (action && !hasDirective("use server")) context.report({ node, messageId: "action" });
       },
       // Also catches inline function directives, which otherwise create unreviewed entry points.

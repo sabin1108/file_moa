@@ -21,6 +21,7 @@ describe("FIND-001: explicit search conditions", () => {
     expect(isFindRequest("10월쯤 한 회의자료 있는데 그것좀 찾아줄래")).toBe(
       true,
     );
+
     for (const value of [
       "회의자료를 찾아서 정리해 줘",
       "회의 자료를 찾지 말고",
@@ -84,6 +85,7 @@ describe("FIND-003/004: full body evidence, not an excerpt/date guess", () => {
       "설명 ".repeat(1000) +
       "\n회의일: 2026-10-15\n결정 사항입니다.";
     const result = findTextEvidence(text, query());
+
     expect(result).toMatchObject({ kind: "matched", dates: ["2026-10-15"] });
     expect(
       result?.evidence.some((line) => line.includes("회의일: 2026-10-15")),
@@ -129,6 +131,7 @@ describe("FIND-003/004: full body evidence, not an excerpt/date guess", () => {
   });
   it("uses confirmed inclusive boundaries and can search without a date filter", () => {
     const around = confirmFindQuery({ ...filters, window: "around" });
+
     expect(findTextEvidence("회의\n회의일: 2026-09-24", around)?.kind).toBe(
       "matched",
     );
@@ -150,6 +153,7 @@ describe("FIND-003/004: full body evidence, not an excerpt/date guess", () => {
       ).join("") +
       "회의일: 2026-10-15";
     const result = findTextEvidence(text, query());
+
     expect(result?.kind).toBe("date-conflict");
     expect(result?.dates[0]).toBe("2026-10-15");
     expect(result?.evidence[0]).toContain("회의일: 2026-10-15");
@@ -170,6 +174,7 @@ describe("FIND-002/005: read-only search lifecycle", () => {
     };
     const read = vi.fn(async () => result);
     const c = new DocumentFindController(read);
+
     c.start("10월쯤 한 회의자료 찾아줘");
     await c.search();
     expect(read).not.toHaveBeenCalled();
@@ -201,9 +206,12 @@ describe("FIND-002/005: read-only search lifecycle", () => {
             finish = resolve;
           }),
       );
+
       c.start("2026년 10월 회의 자료 찾아줘");
       c.configure(filters);
+
       const pending = c.search();
+
       action(c);
       finish({
         documents: [],

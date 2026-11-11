@@ -1,11 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
+
 const calls = vi.hoisted(() => ({ headers: vi.fn(), session: vi.fn(), workspace: vi.fn(), redirect: vi.fn(), social: vi.fn() }));
-vi.mock("../../src/server/database/client", () => ({ getDatabase: () => ({ account: { findFirst: calls.social } }) }));
+
+vi.mock(
+  "../../src/server/database/client",
+  () => ({ getDatabase: () => ({ account: { findFirst: calls.social } }) })
+);
 vi.mock("next/headers", () => ({ headers: calls.headers }));
 vi.mock("next/navigation", () => ({ redirect: calls.redirect }));
-vi.mock("../../src/server/auth", () => ({ getAuth: () => ({ api: { getSession: calls.session } }) }));
+vi.mock(
+  "../../src/server/auth",
+  () => ({ getAuth: () => ({ api: { getSession: calls.session } }) })
+);
 vi.mock("../../src/server/workspace", () => ({ getAuthenticatedWorkspace: calls.workspace }));
 
 import { requireGuest, requireWorkspace } from "../../src/server/session-guards";
@@ -14,12 +22,17 @@ beforeEach(() => {
   vi.resetAllMocks();
   calls.headers.mockResolvedValue(new Headers());
   calls.social.mockResolvedValue(null);
-  calls.redirect.mockImplementation((path: string) => { throw new Error(`fixture-redirect:${path}`); });
+  calls.redirect.mockImplementation((path: string) => {
+    throw new Error(`fixture-redirect:${path}`);
+  });
 });
 
 describe("server route session guards", () => {
   it("requires a name only after authentication and before opening a workspace", async () => {
-    calls.session.mockResolvedValue({ user: { id: "user-a", name: "", emailVerified: true }, session: { expiresAt: new Date("2027-01-01") } });
+    calls.session.mockResolvedValue({
+      user: { id: "user-a", name: "", emailVerified: true },
+      session: { expiresAt: new Date("2027-01-01") }
+    });
     await expect(requireWorkspace()).rejects.toThrow("fixture-redirect:/account");
     expect(calls.workspace).not.toHaveBeenCalled();
   });
@@ -35,7 +48,10 @@ describe("server route session guards", () => {
   });
 
   it("does not send an authenticated social user back to email verification", async () => {
-    calls.session.mockResolvedValue({ user: { id: "user-a", name: "소셜 사용자", emailVerified: false }, session: { expiresAt: new Date("2027-01-01") } });
+    calls.session.mockResolvedValue({
+      user: { id: "user-a", name: "소셜 사용자", emailVerified: false },
+      session: { expiresAt: new Date("2027-01-01") }
+    });
     calls.social.mockResolvedValue({ id: "social-a" });
     calls.workspace.mockResolvedValue({ userId: "user-a", workspaceId: "workspace-a" });
     await expect(requireWorkspace()).resolves.toMatchObject({ userId: "user-a" });
@@ -60,7 +76,10 @@ describe("server route session guards", () => {
   });
 
   it("uses only the authenticated server workspace identity", async () => {
-    calls.session.mockResolvedValue({ user: { id: "user-a", name: "기존 사용자", emailVerified: true }, session: { expiresAt: new Date("2027-01-01") } });
+    calls.session.mockResolvedValue({
+      user: { id: "user-a", name: "기존 사용자", emailVerified: true },
+      session: { expiresAt: new Date("2027-01-01") }
+    });
     calls.workspace.mockResolvedValue({ userId: "user-a", workspaceId: "workspace-a" });
     await expect(requireWorkspace()).resolves.toMatchObject({ userId: "user-a", workspaceId: "workspace-a" });
   });

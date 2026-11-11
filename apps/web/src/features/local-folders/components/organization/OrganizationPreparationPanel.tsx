@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useSyncExternalStore } from "react";
 import Link from "next/link";
@@ -71,25 +71,27 @@ export function OrganizationPreparationPanel({
         <Link href="/files">내 파일 열기</Link>
       </header>
 
-      {reading && (
-        <button
-          type="button"
-          className={actionClasses("secondary")}
-          onClick={controller.cancel}
-        >
-          {state.phase === "sending"
-            ? "응답 대기 중지"
-            : state.phase === "checking"
-              ? "전송 준비 중지"
-              : "자료 읽기 중지"}
-        </button>
-      )}
-      {state.issue && (
-        <StatusNotice
-          state={state.phase === "error" ? "error" : "attention"}
-          title={state.issue}
-        />
-      )}
+      {reading
+        && (
+          <button
+            type="button"
+            className={actionClasses("secondary")}
+            onClick={controller.cancel}
+          >
+            {state.phase === "sending"
+              ? "응답 대기 중지"
+              : state.phase === "checking"
+                ? "전송 준비 중지"
+                : "자료 읽기 중지"}
+          </button>
+        )}
+      {state.issue
+        && (
+          <StatusNotice
+            state={state.phase === "error" ? "error" : "attention"}
+            title={state.issue}
+          />
+        )}
       <OrganizationQuestionsView controller={controller} state={state} />
       <OrganizationSnapshotView
         key={state.snapshot ? "ready" : "empty"}

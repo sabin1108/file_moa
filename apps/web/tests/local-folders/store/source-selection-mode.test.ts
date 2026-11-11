@@ -6,6 +6,7 @@ it("keeps bulk-clear mode, but exits after the last individual deselection", asy
     async () => ({ path: [], entries: [{ name: "a.md", kind: "file" }], truncated: false }),
     vi.fn()
   );
+
   controller.reset(true);
   await controller.open([]);
   controller.toggleSelection("a.md");

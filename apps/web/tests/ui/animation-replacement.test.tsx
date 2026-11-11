@@ -8,10 +8,13 @@ const steps = [{ id: "email", label: "이메일" }, { id: "password", label: "�
 
 it("replaces the decorative logo with ten papers while the parent announces loading once", () => {
   const visual = renderToStaticMarkup(<MoaLoader />);
+
   expect(visual.match(/data-loader-paper=/gu)).toHaveLength(10);
   expect(visual).toContain('aria-hidden="true"');
   expect(visual).not.toContain("<svg");
+
   const page = renderToStaticMarkup(<PageLoading compact message="로그인 확인 중" />);
+
   expect(page.match(/role="status"/gu)).toHaveLength(1);
   expect(page).toContain('aria-busy="true"');
   expect(page).toContain("로그인 확인 중");
@@ -20,6 +23,7 @@ it("replaces the decorative logo with ten papers while the parent announces load
 
 it("keeps real step names and current-step semantics without introducing form or URL ownership", () => {
   const html = renderToStaticMarkup(<PaperStepper steps={steps} current="password" label="회원가입 진행 단계" />);
+
   expect(html).toContain('aria-label="회원가입 진행 단계"');
   expect(html.match(/aria-current="step"/gu)).toHaveLength(1);
   expect(html).toContain("2 / 3 · 비밀번호");

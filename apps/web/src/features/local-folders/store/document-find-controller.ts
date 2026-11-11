@@ -26,9 +26,11 @@ const initial = {
   submittedReply: "",
   selectedPaths: [] as readonly (readonly string[])[],
 };
+
 export type DocumentFindState = typeof initial;
 
 /** Provider 수명의 로컬 찾기 상태. 파일 접근은 주입된 session reader만 수행한다. */
+
 export class DocumentFindController {
   private state = initial;
   private listeners = new Set<() => void>();
@@ -40,12 +42,13 @@ export class DocumentFindController {
       query: FindQuery,
       signal: AbortSignal,
     ) => Promise<FindResult>,
-    private readonly permissionLost: () => void = () => {},
-  ) {}
+    private readonly permissionLost: () => void = () => { },
+  ) { }
   getSnapshot = () => this.state;
   getServerSnapshot = () => initial;
   subscribe = (listener: () => void) => {
     this.listeners.add(listener);
+
     return () => {
       this.listeners.delete(listener);
     };
@@ -72,13 +75,18 @@ export class DocumentFindController {
   updateDraft = (draft: string) => this.publish({ ...this.state, draft });
   submitReply = (reply: string) => {
     const parsed = parseFindReply(reply, new Date().getFullYear());
+
     if (parsed.kind === "none") return false;
+
     if (parsed.kind === "invalid") {
       this.publish({ ...this.state, issue: "조건을 전부 확인하지 못했어요. 연도·월·날짜 기준을 나누어 적거나 아래 조건에서 선택해 주세요." });
+
       return true;
     }
+
     this.configure(parsed.filters);
     this.publish({ ...this.state, submittedReply: reply.trim(), draft: "" });
+
     return true;
   };
   configure = (filters: Partial<FindFilters>) => {
@@ -108,7 +116,9 @@ export class DocumentFindController {
   };
   search = async () => {
     if (this.state.phase === "searching") return;
+
     let query: FindQuery;
+
     try {
       query = confirmFindQuery(this.state.filters);
     } catch {
@@ -116,11 +126,15 @@ export class DocumentFindController {
         ...this.state,
         issue: "검색어와 연도·날짜 기준·기간을 확인해 주세요.",
       });
+
       return;
     }
+
     this.stop();
+
     const generation = this.generation,
       abort = new AbortController();
+
     this.abort = abort;
     this.publish({
       ...this.state,
@@ -129,12 +143,16 @@ export class DocumentFindController {
       result: null,
       selectedPaths: [],
     });
+
     try {
       const result = await this.read(this.state.scope, query, abort.signal);
+
       if (abort.signal.aborted || generation !== this.generation) return;
+
       this.publish({ ...this.state, phase: "ready", result });
     } catch (error) {
       if (abort.signal.aborted || generation !== this.generation) return;
+
       this.publish({
         ...this.state,
         phase: "error",
@@ -142,6 +160,7 @@ export class DocumentFindController {
         issue:
           "자료를 찾는 중 읽기 문제가 생겼어요. 폴더 권한과 연결 상태를 확인해 주세요.",
       });
+
       if (
         error instanceof DOMException &&
         ["NotAllowedError", "SecurityError"].includes(error.name)
@@ -166,11 +185,16 @@ export class DocumentFindController {
     this.publish(initial);
   };
   toggle = (path: readonly string[]) => {
-    if (this.state.phase !== "ready" || !this.state.result?.documents.some(document => JSON.stringify(document.path) === JSON.stringify(path))) return;
+    if (this.state.phase !== "ready"
+      || !this.state.result?.documents.some(document => JSON.stringify(document.path) === JSON.stringify(path))) return;
+
     const selected = this.state.selectedPaths.some(value => JSON.stringify(value) === JSON.stringify(path));
-    this.publish({ ...this.state, selectedPaths: selected
-      ? this.state.selectedPaths.filter(value => JSON.stringify(value) !== JSON.stringify(path))
-      : [...this.state.selectedPaths, copyFolderPath(path)],
+
+    this.publish({
+      ...this.state,
+      selectedPaths: selected
+        ? this.state.selectedPaths.filter(value => JSON.stringify(value) !== JSON.stringify(path))
+        : [...this.state.selectedPaths, copyFolderPath(path)],
     });
   };
 }

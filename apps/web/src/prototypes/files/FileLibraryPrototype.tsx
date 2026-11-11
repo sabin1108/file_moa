@@ -18,16 +18,22 @@ export function FileLibraryPrototype() {
         <div className={styles.content}>
           <div className={styles.pageHeading}>
             <h1>내 폴더</h1>
-            <PrototypeDialog initial="connect" variant="secondary"><Icon name="plus" size={17} />폴더 연결</PrototypeDialog>
+            <PrototypeDialog initial="connect" variant="secondary">
+              <Icon name="plus" size={17} />
+              폴더 연결
+            </PrototypeDialog>
           </div>
           <div className={styles.workArea}>
-            <div className={styles.explorerColumn}><section className={styles.explorer} aria-label="파일 탐색 공간">
-              <FolderToolbar />
-              <FolderCanvas />
-            </section><RecentActivity /></div>
+            <div className={styles.explorerColumn}>
+              <section className={styles.explorer} aria-label="파일 탐색 공간">
+                <FolderToolbar />
+                <FolderCanvas />
+              </section>
+              <RecentActivity />
+            </div>
             <MovePlanPreview />
           </div>
-          
+
         </div>
       </main>
     </div>

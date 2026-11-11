@@ -5,7 +5,6 @@
  * 자료 연결 뒤 보관함 설정으로 이어가고, 완료 버튼에서 /files 이동 또는 dialog 닫기를 요청한다. 직접 파일 API나 IndexedDB를 열지 않는다.
  */
 
-
 import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { actionClasses } from "../../../../components/ui/action-classes";
@@ -29,12 +28,18 @@ export function SourceFolderSettings({ onConnected }: { onConnected?: () => void
   const pathname = usePathname();
   const mounted = useRef(false);
   const vaultTitle = useRef<HTMLHeadingElement>(null);
+
   useEffect(() => {
     mounted.current = true;
-    return () => { mounted.current = false; };
+
+    return () => {
+      mounted.current = false;
+    };
   }, []);
+
   const connectAndContinue = async (action: () => Promise<boolean>) => {
     const completed = await action();
+
     if (completed && mounted.current) {
       vaultTitle.current?.focus({ preventScroll: true });
       vaultTitle.current?.scrollIntoView({ block: "nearest" });
@@ -42,22 +47,27 @@ export function SourceFolderSettings({ onConnected }: { onConnected?: () => void
   };
   const finish = () => {
     onConnected?.();
+
     if (pathname !== "/files") router.push("/files");
   };
   const region = useRef<HTMLDivElement>(null);
   const previousPending = useRef(state.pending);
+
   useEffect(() => {
     // A successful selection removes its button. Restore keyboard focus only if it was lost.
     const actionFinished = previousPending.current && !state.pending;
     const focusWasLost = document.activeElement === document.body;
     const regionIsVisible = region.current?.getClientRects().length;
+
     if (actionFinished && focusWasLost && regionIsVisible) {
       region.current?.focus();
     }
+
     previousPending.current = state.pending;
   }, [state.pending]);
 
   let retryAction;
+
   if (state.phase === "load-error") {
     retryAction = (
       <button type="button" className={actionClasses("secondary")} onClick={reload}>
@@ -85,23 +95,43 @@ export function SourceFolderSettings({ onConnected }: { onConnected?: () => void
     {state.phase === "loading" && (
       <StatusNotice state="pending" title="저장된 연결 정보를 확인하고 있어요." />
     )}
-    {state.view && (
-      <SourceFolderConnection
-        view={state.view}
-        disabled={!!state.pending || state.phase === "disconnect-error"}
-        onConnect={() => { void connectAndContinue(connect); }}
-        onReconnect={() => { void connectAndContinue(reconnect); }}
-        onDisconnect={disconnect}
-      />
-    )}
+    {state.view
+      && (
+        <SourceFolderConnection
+          view={state.view}
+          disabled={!!state.pending || state.phase === "disconnect-error"}
+          onConnect={() => {
+            void connectAndContinue(connect);
+          }}
+          onReconnect={() => {
+            void connectAndContinue(reconnect);
+          }}
+          onDisconnect={disconnect}
+        />
+      )}
     {state.pending && <StatusNotice state="pending" title={pendingTitles[state.pending]} />}
     {state.notice && state.notice.state !== "success" && <StatusNotice {...state.notice} action={retryAction} />}
     {sources.length > 1 && <div aria-label="연결된 자료 폴더 목록">
       <p>연결된 자료 폴더</p>
       {sources.map(source => <div key={source.connectionId}>
-        <span>{source.name}{source.active ? " (사용 중)" : ""}</span>
-        {!source.active && <button type="button" disabled={!!state.pending} onClick={() => { void activateSource(source.connectionId); }}>사용</button>}
-        <button type="button" disabled={!!state.pending} onClick={() => { void disconnectSource(source.connectionId); }}>연결 해제</button>
+        <span>
+          {source.name}
+          {source.active ? " (사용 중)" : ""}
+        </span>
+        {!source.active && <button
+          type="button"
+          disabled={!!state.pending}
+          onClick={() => {
+            void activateSource(source.connectionId);
+          }}
+        >사용</button>}
+        <button
+          type="button"
+          disabled={!!state.pending}
+          onClick={() => {
+            void disconnectSource(source.connectionId);
+          }}
+        >연결 해제</button>
       </div>)}
     </div>}
     <OcrControl disabled={!!state.pending} />
@@ -112,7 +142,9 @@ export function SourceFolderSettings({ onConnected }: { onConnected?: () => void
         className={actionClasses(recoveryView.status === "connected" ? "primary" : "secondary")}
         disabled={!!state.pending || !!recoveryState.pending}
         onClick={finish}
-      >{recoveryView.status === "connected" ? "연결 마치기" : "보관함은 나중에 연결"}</button>
+      >
+        {recoveryView.status === "connected" ? "연결 마치기" : "보관함은 나중에 연결"}
+      </button>
     </div>}
   </div>;
 }

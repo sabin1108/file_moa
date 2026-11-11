@@ -14,6 +14,7 @@ export async function getAuthenticatedWorkspace(headers: Headers) {
 }
 
 /** Called only after a fresh server session has authenticated this user. */
+
 export async function getWorkspaceForAuthenticatedUser(userId: string) {
 
   return getDatabase().$transaction(async transaction => {
@@ -27,7 +28,9 @@ export async function getWorkspaceForAuthenticatedUser(userId: string) {
 
     const membership = await transaction.loginConnectionMember.findUnique({ where: { userId }, include: { connection: { include: { members: true } } } });
     const selectedOwner = membership?.connection.primaryOwnerUserId ?? userId;
+
     if (membership && !membership.connection.members.some(member => member.userId === selectedOwner)) throw new Error("Workspace access unavailable.");
+
     const workspace = await transaction.workspace.findUniqueOrThrow({
       where: { ownerUserId: selectedOwner },
       select: { id: true, ownerUserId: true },

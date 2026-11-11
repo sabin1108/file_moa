@@ -1,6 +1,11 @@
-type Candidate = Readonly<{ id: string; name: string; excerpt: string }>;
+type Candidate = Readonly<{
+  id: string;
+  name: string;
+  excerpt: string
+}>;
 
 // This only bounds provider input; the AI still decides relevance and must quote the body.
+
 function organizationTerms(instruction: string) {
   const words = instruction.toLocaleLowerCase("ko").match(/[가-힣a-z0-9]+/gu) ?? [];
   const generic = new Set([
@@ -29,19 +34,23 @@ function organizationTerms(instruction: string) {
     ["통계", "표본", "평균", "분산"],
     ["공부", "학습", "강의", "복습"]
   ];
+
   for (const topic of topics)
     if (topic.some(term => instruction.toLowerCase().includes(term)))
       for (const term of topic) terms.add(term);
+
   return terms;
 }
 
 /** A bounded body window, not a semantic relevance decision. Runs in the file Worker. */
+
 export function organizationExcerpt(text: string, instruction: string): string {
   const lower = text.toLocaleLowerCase("ko");
   const positions = [...organizationTerms(instruction)]
     .map(term => lower.indexOf(term))
     .filter(index => index >= 0);
   const start = positions.length ? Math.max(0, Math.min(...positions) - 180) : 0;
+
   return text.slice(start, start + 1200);
 }
 
@@ -57,7 +66,7 @@ export function selectOrganizationCandidates<T extends Candidate>(
       const title = document.name.toLocaleLowerCase("ko");
       const monthScore =
         month &&
-        (body.includes(`-${month.padStart(2, "0")}-`) || body.includes(`${Number(month)}월`))
+          (body.includes(`-${month.padStart(2, "0")}-`) || body.includes(`${Number(month)}월`))
           ? 8
           : 0;
       const score =
@@ -66,19 +75,25 @@ export function selectOrganizationCandidates<T extends Candidate>(
           (sum, term) => sum + (body.includes(term) ? 4 : 0) + (title.includes(term) ? 1 : 0),
           0
         );
+
       return { document, index, score };
     })
     .sort((a, b) => b.score - a.score || a.index - b.index);
   const selected: T[] = [];
   let characters = instruction.length;
+
   for (const { document } of ranked) {
     const cost =
       JSON.stringify({ id: document.id, name: document.name, excerpt: document.excerpt }).length +
       100;
+
     if (characters + cost > 6000) continue;
+
     selected.push(document);
     characters += cost;
+
     if (selected.length === 40) break;
   }
+
   return selected;
 }

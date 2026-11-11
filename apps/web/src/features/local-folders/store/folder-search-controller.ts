@@ -8,6 +8,7 @@ export type FolderSearchState = Readonly<{
 
 const initial: FolderSearchState = { phase: "idle", result: null };
 /** 검색 요청은 현재 목록/선택과 독립적이며 연결·경로·검색어 변경에서 취소된다. */
+
 export class FolderSearchController {
   private state = initial;
   private key = "";
@@ -63,6 +64,7 @@ export class FolderSearchController {
     }
 
     const abort = new AbortController();
+
     this.abort = abort;
     this.publish({ phase: "loading", result: null });
     this.timer = setTimeout(() => {

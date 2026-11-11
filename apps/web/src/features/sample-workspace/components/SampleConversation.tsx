@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { AI_PROVIDER_LABELS, type AiProvider } from "../../../shared/ai-provider";
 import Link from "next/link";
@@ -20,31 +21,52 @@ import styles from "./sample-workspace.module.css";
 import { SampleFolderTree } from "./SampleFolderTree";
 
 const steps = [{ id: "select", label: "대화로 요청" }, { id: "review", label: "근거·계획 검토" }, { id: "result", label: "정리 결과" }];
-export function SampleConversation({ catalog, store, organizeAction, aiProvider = "gemini" }: { catalog: SampleCatalog; store: SampleWorkspaceStore; organizeAction: SampleOrganizationAction; aiProvider?: AiProvider | null }) {
+
+export function SampleConversation({ catalog, store, organizeAction, aiProvider = "gemini" }: {
+  catalog: SampleCatalog;
+  store: SampleWorkspaceStore;
+  organizeAction: SampleOrganizationAction;
+  aiProvider?: AiProvider | null
+}) {
   const { state, ready, expired, notice, aiPending } = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
   const activeCatalog = sampleActiveCatalog(catalog, state);
   const [scope, setScope] = useState<"all" | "selected" | "folder">("all");
   const [consent, setConsent] = useState<string | null>(null);
   const [consentProvider, setConsentProvider] = useState(aiProvider);
+
   if (consentProvider !== aiProvider) {
     setConsentProvider(aiProvider);
     setConsent(null);
   }
+
   const [path, setPath] = useState<string[]>(["받은 자료"]);
   const [previewId, setPreviewId] = useState<string | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
-  const scopedDocuments = catalog.documents.filter(document => scope === "all" || (scope === "selected" ? state.selected.includes(document.id)
-    : path.every((part, index) => sampleFolderPath(activeCatalog, state.locations[document.id])[index] === part)));
+  const scopedDocuments = catalog.documents.filter(document => scope === "all"
+    || (scope === "selected"
+      ? state.selected.includes(document.id)
+      : path.every((part, index) => sampleFolderPath(activeCatalog, state.locations[document.id])[index] === part)));
   const documentIds = selectOrganizationCandidates(scopedDocuments, state.draft).map(document => document.id);
   const consentKey = JSON.stringify([aiProvider, state.draft.trim(), [...documentIds].sort()]);
   const consented = !!aiProvider && consent === consentKey;
   const providerLabel = aiProvider ? AI_PROVIDER_LABELS[aiProvider] : "설정되지 않은 외부 AI";
   const disabled = !ready || expired || aiPending;
   const document = catalog.documents.find(document => document.id === previewId);
-  useEffect(() => { if (previewId) heading.current?.focus({ preventScroll: false }); }, [previewId]);
-  const fill = (value: string) => { store.dispatch({ type: "draft", value }); setConsent(null); };
-  const openPreview = (id: string) => { setPreviewId(id); setPanelOpen(true); };
+
+  useEffect(() => {
+    if (previewId) heading.current?.focus({ preventScroll: false });
+  }, [previewId]);
+
+  const fill = (value: string) => {
+    store.dispatch({ type: "draft", value });
+    setConsent(null);
+  };
+  const openPreview = (id: string) => {
+    setPreviewId(id);
+    setPanelOpen(true);
+  };
+
   return (
     <WorkspaceShell
       title="채팅"
@@ -123,13 +145,14 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
         notice={
           <>
             {notice && <StatusNotice state="attention" title="요청 안내" detail={notice} />}
-            {expired && (
-              <StatusNotice
-                state="attention"
-                title="샘플 세션이 만료됐어요"
-                action={<a href="/demo/start">새 세션 시작</a>}
-              />
-            )}
+            {expired
+              && (
+                <StatusNotice
+                  state="attention"
+                  title="샘플 세션이 만료됐어요"
+                  action={<a href="/demo/start">새 세션 시작</a>}
+                />
+              )}
           </>
         }
         scope={
@@ -186,68 +209,77 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
           <>
             <WorkflowStepper steps={steps} current={state.phase} />
             <WorkflowTransition step={`${state.phase}:${aiPending}`}>
-              {state.phase === "review" && (
-                <>
-                  {state.organization && (
-                    <div className={styles.evidence}>
-                      <h2>내용에서 찾은 근거</h2>
-                      {state.organization.response.matches.map(match => (
-                        <div key={match.documentId}>
-                          <button type="button" onClick={() => openPreview(match.documentId)}>
-                            {
-                              catalog.documents.find(document => document.id === match.documentId)
-                                ?.name
-                            }
-                          </button>
-                          <blockquote>{match.evidence}</blockquote>
-                          {match.date && (
-                            <p>
-                              {"본문 기준일 "}
-                              {match.date}
-                            </p>
-                          )}
+              {state.phase === "review"
+                && (
+                  <>
+                    {state.organization
+                      && (
+                        <div className={styles.evidence}>
+                          <h2>내용에서 찾은 근거</h2>
+                          {state.organization.response.matches.map(match => (
+                            <div key={match.documentId}>
+                              <button type="button" onClick={() => openPreview(match.documentId)}>
+                                {
+                                  catalog.documents.find(document => document.id === match.documentId)
+                                    ?.name
+                                }
+                              </button>
+                              <blockquote>
+                                {match.evidence}
+                              </blockquote>
+                              {match.date
+                                && (
+                                  <p>
+                                    {"본문 기준일 "}
+                                    {match.date}
+                                  </p>
+                                )}
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  )}
-                  <SamplePlanReview
-                    catalog={activeCatalog}
-                    state={state}
-                    disabled={disabled}
-                    dispatch={store.dispatch}
+                      )}
+                    <SamplePlanReview
+                      catalog={activeCatalog}
+                      state={state}
+                      disabled={disabled}
+                      dispatch={store.dispatch}
+                    />
+                  </>
+                )}
+              {state.organization?.response.held.length
+                ? (
+                  <StatusNotice
+                    state="attention"
+                    title={`확인이 필요한 자료 ${state.organization.response.held.length}개`}
+                    detail={state.organization.response.held
+                      .map(
+                        item =>
+                          `${catalog.documents.find(document => document.id === item.documentId)?.name}: ${item.reason}`,
+                      )
+                      .join("\n")}
                   />
-                </>
-              )}
-              {state.organization?.response.held.length ? (
-                <StatusNotice
-                  state="attention"
-                  title={`확인이 필요한 자료 ${state.organization.response.held.length}개`}
-                  detail={state.organization.response.held
-                    .map(
-                      item =>
-                        `${catalog.documents.find(document => document.id === item.documentId)?.name}: ${item.reason}`,
-                    )
-                    .join("\n")}
-                />
-              ) : null}
-              {state.phase === "result" && (
-                <StatusNotice
-                  state="success"
-                  title={`${state.lastApplied?.documentIds.length ?? 0}개 자료 정리 완료`}
-                  detail="검토한 계획만 샘플에 적용했어요."
-                />
-              )}
-              {state.lastApplied && state.phase !== "review" && (
-                <button
-                  type="button"
-                  data-action="sample-undo"
-                  className={actionClasses("secondary")}
-                  disabled={disabled}
-                  onClick={() => store.dispatch({ type: "undo" })}
-                >
-                  이번 정리 되돌리기
-                </button>
-              )}
+                )
+                : null}
+              {state.phase === "result"
+                && (
+                  <StatusNotice
+                    state="success"
+                    title={`${state.lastApplied?.documentIds.length ?? 0}개 자료 정리 완료`}
+                    detail="검토한 계획만 샘플에 적용했어요."
+                  />
+                )}
+              {state.lastApplied && state.phase !== "review"
+                && (
+                  <button
+                    type="button"
+                    data-action="sample-undo"
+                    className={actionClasses("secondary")}
+                    disabled={disabled}
+                    onClick={() => store.dispatch({ type: "undo" })}
+                  >
+                    이번 정리 되돌리기
+                  </button>
+                )}
               <SampleFolderPanel
                 catalog={activeCatalog}
                 state={state}
@@ -265,18 +297,19 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
                   });
                 }}
               />
-              {document && (
-                <div className={styles.conversationPreview}>
-                  <button
-                    type="button"
-                    className={actionClasses("ghost")}
-                    onClick={() => setPreviewId(null)}
-                  >
-                    미리보기 닫기
-                  </button>
-                  <SampleDocumentPreview document={document} headingRef={heading} />
-                </div>
-              )}
+              {document
+                && (
+                  <div className={styles.conversationPreview}>
+                    <button
+                      type="button"
+                      className={actionClasses("ghost")}
+                      onClick={() => setPreviewId(null)}
+                    >
+                      미리보기 닫기
+                    </button>
+                    <SampleDocumentPreview document={document} headingRef={heading} />
+                  </div>
+                )}
             </WorkflowTransition>
           </>
         }

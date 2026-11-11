@@ -4,7 +4,9 @@ import { spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 
 const out = 'docs/verification/file-change-plan';
+
 mkdirSync(out, { recursive: true });
+
 const mutations = [
   {
     name: 'exact-name-conflict',
@@ -22,13 +24,22 @@ const mutations = [
   },
 ];
 const results = [];
+
 for (const mutation of mutations) {
   const original = readFileSync(mutation.file);
   const source = original.toString('utf8');
+
   assert.equal(source.split(mutation.from).length, 2, 'Mutation target must be unique');
+
   try {
     writeFileSync(mutation.file, source.replace(mutation.from, mutation.to));
-    const run = spawnSync(process.execPath, ['node_modules/vitest/vitest.mjs', 'run', mutation.test], { encoding: 'utf8' });
+
+    const run = spawnSync(
+      process.execPath,
+      ['node_modules/vitest/vitest.mjs', 'run', mutation.test],
+      { encoding: 'utf8' }
+    );
+
     writeFileSync(`${out}/mutation-${mutation.name}.txt`, `${run.stdout}\n${run.stderr}`);
     assert.equal(run.error, undefined);
     assert.notEqual(run.status, 0, 'Deliberately broken behavior must fail');
@@ -39,5 +50,9 @@ for (const mutation of mutations) {
     assert.deepEqual(readFileSync(mutation.file), original);
   }
 }
-writeFileSync(`${out}/mutation-checks.json`, JSON.stringify({ at: new Date().toISOString(), results, restored: true }, null, 2));
+
+writeFileSync(
+  `${out}/mutation-checks.json`,
+  JSON.stringify({ at: new Date().toISOString(), results, restored: true }, null, 2)
+);
 console.log(JSON.stringify(results));

@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { StartupState } from "../../../feedback/StartupState";
 import { ActionLink } from "../../../../components/ui/ActionLink";
@@ -16,19 +17,24 @@ const options = [{ value: "loading", label: "접속 중" }, { value: "slow", lab
 
 export function StartupDemo() {
   const [state, setState] = useState<keyof typeof states>("loading");
+
   return (
     <div className={styles.stack}>
       <StartupState
         state={state}
         {...states[state]}
         action={
-          state === "ready" ? (
-            <ActionLink href="/" variant="primary">
-              대화로 들어가기
-            </ActionLink>
-          ) : state !== "loading" ? (
-            <DemoButton onClick={() => setState("loading")}>다시 연결</DemoButton>
-          ) : undefined
+          state === "ready"
+            ? (
+              <ActionLink href="/" variant="primary">
+                대화로 들어가기
+              </ActionLink>
+            )
+            : state !== "loading"
+              ? (
+                <DemoButton onClick={() => setState("loading")}>다시 연결</DemoButton>
+              )
+              : undefined
         }
       />
       <ScenarioControls value={state} options={options} onChange={setState} />

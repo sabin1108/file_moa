@@ -13,6 +13,7 @@ type Outcome = Readonly<{
   kind: "copy" | "move";
   result: ManagedResult;
 }>;
+
 const initial = {
   operation: null as "copy" | "move" | null,
   base: null as readonly string[] | null,
@@ -23,6 +24,7 @@ const initial = {
 };
 
 /** Projects reviewed local capabilities into the existing managed engine; never runs on model completion. */
+
 export class OrganizationExecutionController {
   readonly managed: ManagedFilesController;
   readonly picker: DestinationPickerController;
@@ -33,34 +35,44 @@ export class OrganizationExecutionController {
   constructor(
     private readonly preparation: OrganizationPreparationController,
     session: FolderConnectionSession,
-    permissionLost: () => void = () => {}
+    permissionLost: () => void = () => { }
   ) {
     this.result = preparation.getSnapshot().result;
-    this.picker = new DestinationPickerController(session.readManagedDestination, () => {});
+    this.picker = new DestinationPickerController(session.readManagedDestination, () => { });
+
     const current = () => {
       if (
         !this.result ||
         this.state.stale ||
-        this.preparation.getSnapshot().result !== this.result ||
+        this.preparation.getSnapshot().result !== this.result
+        ||
         !this.active
       )
         throw Error("managed-changed");
+
       return this.active;
     };
+
     this.managed = new ManagedFilesController(
       session.readManagedDestination,
       session.openManagedEditor,
       (request, signal) => {
         if (request.kind === "recover") return session.prepareManaged(request, signal);
+
         const batch = current();
+
         if (
-          !["copy", "move"].includes(request.kind) ||
-          JSON.stringify(request.source) !== JSON.stringify(batch.request.source) ||
+          !["copy", "move"].includes(request.kind)
+          ||
+          JSON.stringify(request.source) !== JSON.stringify(batch.request.source)
+          ||
           JSON.stringify(request.names) !== JSON.stringify(batch.request.names)
         )
           throw Error("managed-changed");
+
         const source = this.preparation.getSnapshot();
         const result = this.result;
+
         return session
           .prepareOrganizationManaged(
             request,
@@ -86,12 +98,14 @@ export class OrganizationExecutionController {
                     "원본이 제안 당시와 달라졌어요. 기존 계획은 실행할 수 없습니다. 자료를 다시 읽고 제안을 준비해 주세요."
                 });
             }
+
             throw error;
           });
       },
       (view, signal, progress) => {
         if (view.kind !== "recover") current();
         // No await: keep the existing engine's permission requests inside the user's gesture.
+
         return session.executeManaged(view, signal, progress);
       },
       session.readManagedArchives,
@@ -99,24 +113,31 @@ export class OrganizationExecutionController {
     );
     preparation.subscribe(() => {
       const result = preparation.getSnapshot().result;
+
       if (result === this.result) return;
+
       this.result = result;
       this.active = null;
+
       if (this.managed.getSnapshot().phase === "running") this.managed.cancel();
       else this.managed.dispose();
+
       this.picker.close();
       this.publish({ ...initial, base: preparation.getSnapshot().destination });
     });
     this.managed.subscribe(() => {
       const { result, request, phase } = this.managed.getSnapshot();
+
       if (
         !this.active ||
         !result ||
         !request ||
-        phase === "running" ||
+        phase === "running"
+        ||
         !["copy", "move"].includes(request.kind)
       )
         return;
+
       const outcome: Outcome = {
         key: this.active.key,
         destination: request.destination,
@@ -124,6 +145,7 @@ export class OrganizationExecutionController {
         result
       };
       const changed = result.issue === "managed-changed" || result.issue === "source-changed";
+
       this.publish({
         ...this.state,
         stale: this.state.stale || changed,
@@ -138,6 +160,7 @@ export class OrganizationExecutionController {
   getServerSnapshot = () => initial;
   subscribe = (listener: () => void) => {
     this.listeners.add(listener);
+
     return () => {
       this.listeners.delete(listener);
     };
@@ -148,12 +171,14 @@ export class OrganizationExecutionController {
   }
   setOperation = (operation: "copy" | "move") => {
     if (this.managed.getSnapshot().phase === "running" || this.state.stale) return;
+
     this.managed.dispose();
     this.active = null;
     this.publish({ ...initial, operation, base: this.state.base, stale: this.state.stale });
   };
   setBase = (base: readonly string[]) => {
     if (this.managed.getSnapshot().phase === "running" || this.state.stale) return;
+
     this.managed.dispose();
     this.active = null;
     this.publish({
@@ -168,24 +193,31 @@ export class OrganizationExecutionController {
     this.picker.show(this.state.base ?? this.preparation.getSnapshot().destination ?? []);
   choose = () => {
     const path = this.picker.selectedPath();
+
     if (path) this.setBase(path);
   };
   review = () => {
     if (this.managed.getSnapshot().phase === "running" || this.state.stale) return;
+
     const source = this.preparation.getSnapshot();
+
     if (
       !source.result ||
       !source.snapshot ||
-      hasUnansweredReview(source.questions, source.answers) ||
-      !this.state.operation ||
+      hasUnansweredReview(source.questions, source.answers)
+      ||
+      !this.state.operation
+      ||
       this.state.base === null
     ) {
       this.publish({
         ...this.state,
         issue: "확인 질문에 답하고 복사/이동과 실제 목적지를 선택해 주세요."
       });
+
       return;
     }
+
     try {
       const batches = buildOrganizationBatches(
         source.result.organization,
@@ -193,6 +225,7 @@ export class OrganizationExecutionController {
         this.state.base,
         this.state.operation
       );
+
       this.managed.dispose();
       this.active = null;
       this.publish({ ...this.state, batches, outcomes: [], issue: null });
@@ -207,17 +240,22 @@ export class OrganizationExecutionController {
   openBatch = async (key: string) => {
     if (
       this.state.stale ||
-      this.managed.getSnapshot().phase === "running" ||
+      this.managed.getSnapshot().phase === "running"
+      ||
       this.state.outcomes.some(item => item.key === key && item.result.phase === "completed")
     )
       return;
+
     const batch = this.state.batches.find(batch => batch.key === key);
+
     if (!batch || this.preparation.getSnapshot().result !== this.result) return;
+
     this.active = batch;
     await this.managed.open(batch.request, true);
   };
   showArchives = () => {
     this.active = null;
+
     return this.managed.showArchives();
   };
 }

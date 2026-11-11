@@ -16,6 +16,7 @@ export function waitForPendingFeedback(startedAt: number, signal: AbortSignal): 
     };
 
     const timer = setTimeout(finish, remaining);
+
     signal.addEventListener("abort", finish, { once: true });
   });
 }

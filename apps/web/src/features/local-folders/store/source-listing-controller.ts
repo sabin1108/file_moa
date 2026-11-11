@@ -26,9 +26,19 @@ export type SourceListingView = Pick<SourceListingState, "query" | "selectedName
 };
 
 const initialState: SourceListingState = {
-  available: false, phase: "idle", result: null, requestedPath: [], stale: false, issue: null, selectedNames: [], query: "", searchOpen: false, selectionOpen: false,
+  available: false,
+  phase: "idle",
+  result: null,
+  requestedPath: [],
+  stale: false,
+  issue: null,
+  selectedNames: [],
+  query: "",
+  searchOpen: false,
+  selectionOpen: false,
 };
 /** 현재 폴더의 탐색·선택 상태를 소유한다. 연결 수명은 connection controller/session이 관리한다. */
+
 export class SourceListingController {
   private state = initialState;
   private generation = 0;
@@ -40,7 +50,7 @@ export class SourceListingController {
   constructor(
     private readonly read: (path: readonly string[], signal: AbortSignal) => Promise<FolderListing>,
     private readonly onPermissionLost: () => void,
-  ) {}
+  ) { }
   getSnapshot = () => this.state;
   getEpoch = () => this.epoch;
   getServerSnapshot = () => initialState;
@@ -90,14 +100,18 @@ export class SourceListingController {
   suspend() {
     this.invalidate();
     this.publish({
-      ...this.state, available: false, phase: this.state.result ? "ready" : "idle",
+      ...this.state,
+      available: false,
+      phase: this.state.result ? "ready" : "idle",
       stale: this.state.result !== null,
     });
   }
 
   resume(available: boolean, refresh = false) {
     this.publish({
-      ...this.state, available, phase: refresh ? "idle" : this.state.phase
+      ...this.state,
+      available,
+      phase: refresh ? "idle" : this.state.phase
     });
     this.ensureLoaded();
   }
@@ -105,7 +119,11 @@ export class SourceListingController {
   permissionLost() {
     this.invalidate();
     this.publish({
-      ...this.state, available: false, phase: "error", issue: "permission", stale: this.state.result !== null
+      ...this.state,
+      available: false,
+      phase: "error",
+      issue: "permission",
+      stale: this.state.result !== null
     });
   }
 
@@ -123,7 +141,9 @@ export class SourceListingController {
 
   setSearchOpen = (searchOpen: boolean) => {
     this.publish({
-      ...this.state, searchOpen, query: searchOpen ? this.state.query : ""
+      ...this.state,
+      searchOpen,
+      query: searchOpen ? this.state.query : ""
     });
   };
   /** 방문 기록의 표시 상태만 복원한다. 재조회에서 사라진 파일은 재선택하지 않는다. */
@@ -131,8 +151,11 @@ export class SourceListingController {
   restoreView(view: SourceListingView) {
     const { selectedKinds, ...display } = view;
     const entries = new Map(this.state.result?.entries.map(entry => [entry.name, entry.kind]));
+
     this.publish({
-      ...this.state, ...display, selectedNames: view.selectedNames.filter(name => entries.has(name) && selectedKinds[name] === entries.get(name))
+      ...this.state,
+      ...display,
+      selectedNames: view.selectedNames.filter(name => entries.has(name) && selectedKinds[name] === entries.get(name))
     });
   }
 
@@ -141,13 +164,15 @@ export class SourceListingController {
   }
 
   toggleSelection = (name: string) => {
-    if (!this.canSelect() || !filterFolderEntries(this.state.result?.entries ?? [], this.state.query).some(entry => entry.name === name)) {
+    if (!this.canSelect()
+      || !filterFolderEntries(this.state.result?.entries ?? [], this.state.query).some(entry => entry.name === name)) {
       return;
     }
 
     const selectedNames = this.state.selectedNames.includes(name)
       ? this.state.selectedNames.filter(selected => selected !== name)
       : [...this.state.selectedNames, name];
+
     this.publish({ ...this.state, selectedNames, selectionOpen: selectedNames.length > 0 });
   };
 
@@ -157,6 +182,7 @@ export class SourceListingController {
     }
 
     const selectedNames = [...new Set([...this.state.selectedNames, ...this.visibleFiles().map(entry => entry.name)])];
+
     this.publish({ ...this.state, selectedNames });
   };
 
@@ -166,6 +192,7 @@ export class SourceListingController {
     }
 
     const visible = new Set(this.visibleFiles().map(entry => entry.name));
+
     this.publish({ ...this.state, selectedNames: this.state.selectedNames.filter(name => !visible.has(name)) });
   };
 
@@ -183,16 +210,25 @@ export class SourceListingController {
     }
 
     this.invalidate();
+
     const generation = this.generation;
     const abort = new AbortController();
+
     this.abort = abort;
+
     const requestedPath = [...path];
     const samePath = JSON.stringify(requestedPath) === JSON.stringify(this.state.result?.path ?? []);
+
     this.publish({
-      ...this.state, phase: "loading", requestedPath, issue: null, stale: this.state.result !== null,
+      ...this.state,
+      phase: "loading",
+      requestedPath,
+      issue: null,
+      stale: this.state.result !== null,
       selectedNames: samePath ? this.state.selectedNames : [],
       query: samePath ? this.state.query : "",
-      searchOpen: samePath && this.state.searchOpen, selectionOpen: samePath && this.state.selectionOpen,
+      searchOpen: samePath && this.state.searchOpen,
+      selectionOpen: samePath && this.state.selectionOpen,
     });
 
     try {
@@ -204,11 +240,20 @@ export class SourceListingController {
 
       this.abort = null;
       // 성공한 표시 결과 안의 항목만 유지한다. 상한 밖 항목은 원본 삭제로 판정하지 않는다.
+
       const previousKinds = new Map(this.state.result?.entries.map(entry => [entry.name, entry.kind]));
       const entries = new Map(result.entries.map(entry => [entry.name, entry.kind]));
       const selectedNames = this.state.selectedNames.filter(name => entries.has(name) && previousKinds.get(name) === entries.get(name));
+
       this.publish({
-        ...this.state, available: true, phase: "ready", result, requestedPath, stale: false, issue: null, selectedNames,
+        ...this.state,
+        available: true,
+        phase: "ready",
+        result,
+        requestedPath,
+        stale: false,
+        issue: null,
+        selectedNames,
         selectionOpen: this.state.selectedNames.length > 0 && selectedNames.length === 0 ? false : this.state.selectionOpen
       });
     } catch (error) {
@@ -217,6 +262,7 @@ export class SourceListingController {
       }
 
       this.abort = null;
+
       const name = error instanceof Error ? error.name : "";
       let issue: ListingIssue = "read";
 
@@ -250,7 +296,9 @@ export class SourceListingController {
 
     this.invalidate();
     this.publish({
-      ...this.state, phase: "cancelled", issue: "cancelled"
+      ...this.state,
+      phase: "cancelled",
+      issue: "cancelled"
     });
   };
 }

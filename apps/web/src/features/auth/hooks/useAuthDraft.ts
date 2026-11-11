@@ -9,6 +9,7 @@ export function useAuthDraft() {
 
   function update(field: keyof AuthDraft, value: string) {
     const next = { ...parseAuthDraft(authDraftStore.read()), [field]: value };
+
     authDraftStore.write(serializeAuthDraft(next));
   }
 

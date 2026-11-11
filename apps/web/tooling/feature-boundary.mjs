@@ -8,13 +8,17 @@ const featureBoundaryRule = {
   meta: {
     type: 'problem',
     schema: [],
-    messages: { direction: '{{from}} cannot depend on {{to}}. Common UI belongs in src/components; examples and tests stay outside production dependencies.' },
+    messages: {
+      direction: '{{from}} cannot depend on {{to}}. Common UI belongs in src/components; examples and tests stay outside production dependencies.'
+    },
   },
   create(context) {
     const sourceRoot = resolve(context.cwd, 'src');
     const from = slash(relative(sourceRoot, context.filename));
+
     function check(node) {
       if (!node || typeof node.value !== 'string' || !node.value.startsWith('.')) return;
+
       const to = slash(relative(sourceRoot, resolve(dirname(context.filename), node.value)));
       const shared = from.startsWith('components/') || from.startsWith('styles/') || from.startsWith('shared/');
       const feature = from.startsWith('features/') && !inPrototype(from);
@@ -25,8 +29,10 @@ const featureBoundaryRule = {
         || (shared && (to.startsWith('features/') || to.startsWith('app/')))
         || (feature && to.startsWith('app/'))
         || (server && to.startsWith('features/'));
+
       if (forbidden) context.report({ node, messageId: 'direction', data: { from, to } });
     }
+
     return {
       ImportDeclaration: node => check(node.source),
       ExportNamedDeclaration: node => check(node.source),

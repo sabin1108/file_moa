@@ -21,6 +21,7 @@ type Props = {
 };
 
 /** 선택 상태는 목록 controller가 소유한다. native checkbox의 혼합 표시만 DOM에 연결한다. */
+
 export function FileSelectionToolbar({
   selectedCount,
   visibleSelectedCount,
@@ -36,10 +37,12 @@ export function FileSelectionToolbar({
   onTrash,
 }: Props) {
   const all = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (all.current)
       all.current.indeterminate = visibleSelectedCount > 0 && visibleSelectedCount < fileCount;
   }, [visibleSelectedCount, fileCount]);
+
   return (
     <div className={styles.toolbar} role="group" aria-label="파일 선택">
       <label className={styles.selectAll}>
@@ -87,24 +90,26 @@ export function FileSelectionToolbar({
           <Icon name="arrow" className={styles.moveIcon} />
           이동
         </button>
-        {onTrash && (
-          <button
-            type="button"
-            className={actionClasses("secondary")}
-            disabled={disabled || !selectedCount}
-            aria-haspopup="dialog"
-            onClick={onTrash}
-          >
-            휴지통으로 보내기
-          </button>
-        )}
+        {onTrash
+          && (
+            <button
+              type="button"
+              className={actionClasses("secondary")}
+              disabled={disabled || !selectedCount}
+              aria-haspopup="dialog"
+              onClick={onTrash}
+            >
+              휴지통으로 보내기
+            </button>
+          )}
       </div>
-      {selectedFolderCount > 0 && (
-        <p className={styles.selectionHint}>
-          폴더 {selectedFolderCount}개 포함 · 하위 자료까지 검사하며 이름 충돌과 관리 폴더를
-          확인합니다.
-        </p>
-      )}
+      {selectedFolderCount > 0
+        && (
+          <p className={styles.selectionHint}>
+            폴더 {selectedFolderCount}개 포함 · 하위 자료까지 검사하며 이름 충돌과 관리 폴더를
+            확인합니다.
+          </p>
+        )}
       {hiddenSelectedCount > 0 && (
         <p className={styles.selectionHint}>검색 밖 항목을 포함한 전체 선택입니다.</p>
       )}

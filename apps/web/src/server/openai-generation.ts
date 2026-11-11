@@ -30,8 +30,11 @@ export async function generateOpenAiJson(
   limits: { inputTokens: number } = AI_LIMITS,
 ) {
   signal.throwIfAborted();
+
   const key = process.env.OPENAI_API_KEY?.trim();
+
   if (!key) throw new SampleAiError("unavailable");
+
   const input = {
     model: OPENAI_MODEL,
     instructions: request.instructions,
@@ -40,26 +43,41 @@ export async function generateOpenAiJson(
   };
   const call = async (path: "responses/input_tokens" | "responses", body: unknown) => {
     signal.throwIfAborted();
+
     const response = await fetch(`https://api.openai.com/v1/${path}`, {
       method: "POST",
       headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
-      body: JSON.stringify(body), signal, cache: "no-store", redirect: "error",
+      body: JSON.stringify(body),
+      signal,
+      cache: "no-store",
+      redirect: "error",
     });
+
     return readProviderJson(response);
   };
   const count = z.object({ input_tokens: z.number().int().nonnegative() }).parse(
     await call("responses/input_tokens", input),
   );
+
   if (count.input_tokens > limits.inputTokens) throw new SampleAiError("input");
 
   const response = envelope.parse(await call("responses", {
-    ...input, store: false, reasoning: { effort: "none" }, max_output_tokens: request.outputTokens,
+    ...input,
+    store: false,
+    reasoning: { effort: "none" },
+    max_output_tokens: request.outputTokens,
   }));
   const texts = response.output.flatMap(item => item.type === "message" ? item.content.map(part => part.text) : []);
+
   if (!texts.length) throw new SampleAiError("unavailable");
+
   return {
     value: JSON.parse(texts.join("")) as unknown,
     model: response.model,
-    usage: { inputTokens: response.usage.input_tokens, outputTokens: response.usage.output_tokens, totalTokens: response.usage.total_tokens },
+    usage: {
+      inputTokens: response.usage.input_tokens,
+      outputTokens: response.usage.output_tokens,
+      totalTokens: response.usage.total_tokens
+    },
   };
 }

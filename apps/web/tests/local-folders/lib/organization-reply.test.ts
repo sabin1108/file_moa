@@ -109,6 +109,7 @@ describe("CF-003: grounded local chat replies", () => {
       ...questions,
       { ...questions[0], documentId: "other", id: "other:date" },
     ];
+
     expect(() =>
       parseOrganizationReply("검토 기준일로", duplicatedQuestions, [
         ...documents,
@@ -128,6 +129,7 @@ describe("CF-003: grounded local chat replies", () => {
         [...documents, duplicate],
       )[0].documentId,
     ).toBe("other");
+
     const sameDate = {
       ...questions[0],
       dates: questions[0].dates.map((date) => ({
@@ -135,6 +137,7 @@ describe("CF-003: grounded local chat replies", () => {
         date: "2026-10-15",
       })),
     };
+
     expect(() =>
       parseOrganizationReply("2026-10-15로", [sameDate], documents),
     ).toThrow();
@@ -172,10 +175,12 @@ async function prepared() {
     vi.fn(),
     vi.fn(async () => ({ userId: "A", workspaceId: "A" })),
   );
+
   controller.update({ request: "성능 결과 정리", scope: { kind: "all" } });
   await controller.prepare();
   controller.consent(true);
   await controller.send(action);
+
   return { controller, action, read };
 }
 
@@ -183,6 +188,7 @@ describe("CF-003: reply state and existing consent boundary", () => {
   it("rejects oversized replies without truncating away a later negation", async () => {
     const { controller } = await prepared();
     const reply = "검토 기준일로".padEnd(801, " ") + "하지 마";
+
     controller.updateReply(reply);
     controller.submitReply();
     expect(controller.getSnapshot()).toMatchObject({
@@ -196,6 +202,7 @@ describe("CF-003: reply state and existing consent boundary", () => {
     const { controller, action, read } = await prepared();
     const before = controller.getSnapshot();
     const draft = "검토 기준일로 하고, 혼합자료는 학습 폴더로";
+
     controller.updateReply(draft);
     expect(controller.getSnapshot()).toMatchObject({
       request: before.request,
@@ -241,8 +248,11 @@ describe("CF-003: reply state and existing consent boundary", () => {
 
   it("keeps all previous answers, proposal and consent if any clause is unsupported", async () => {
     const { controller } = await prepared();
+
     controller.answer({ documentId: "mixed", destination: ["기존"] });
+
     const before = controller.getSnapshot();
+
     controller.updateReply("검토 기준일로, 혼합자료는 알아서");
     controller.submitReply();
     expect(controller.getSnapshot()).toMatchObject({
@@ -263,6 +273,7 @@ describe("CF-003: reply state and existing consent boundary", () => {
       (c: OrganizationPreparationController) => c.reset(),
     ]) {
       const { controller } = await prepared();
+
       controller.updateReply("검토 기준일로");
       change(controller);
       expect(controller.getSnapshot()).toMatchObject({
@@ -274,6 +285,7 @@ describe("CF-003: reply state and existing consent boundary", () => {
 
   it("replaces a dated answer with no date and clears old evidence labels", async () => {
     const { controller } = await prepared();
+
     controller.answer({
       documentId: "date",
       date: "2026-10-15",
@@ -290,9 +302,12 @@ describe("CF-003: reply state and existing consent boundary", () => {
   it("blocks replies while sending and discards a late result after cancellation", async () => {
     const { controller, action } = await prepared();
     const response = await action.mock.results[0].value;
+
     controller.updateReply("검토 기준일로, 혼합자료는 학습 폴더로");
     controller.submitReply();
+
     let finish!: (value: typeof response) => void;
+
     action.mockImplementationOnce(
       () =>
         new Promise((resolve) => {
@@ -300,10 +315,14 @@ describe("CF-003: reply state and existing consent boundary", () => {
         }),
     );
     controller.consent(true);
+
     const sending = controller.send(action);
+
     await Promise.resolve();
     expect(controller.getSnapshot().phase).toBe("sending");
+
     const answers = controller.getSnapshot().answers;
+
     controller.updateReply("날짜보고는 작성일로");
     controller.submitReply();
     expect(controller.getSnapshot()).toMatchObject({

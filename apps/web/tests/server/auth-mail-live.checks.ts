@@ -8,6 +8,7 @@ process.loadEnvFile(".env.local");
 
 it("Resend accepts the two explicitly requested delivery-test emails without changing an account", async () => {
   const to = process.env.MOA_MAIL_TEST_RECIPIENT;
+
   if (!to) throw new Error("An explicitly authorized test recipient is required.");
 
   for (const kind of ["이메일 인증", "비밀번호 재설정"]) {

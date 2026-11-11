@@ -13,7 +13,12 @@ describe("reused authentication workflow display", () => {
   });
 
   it("keeps only editable identity fields in a draft", () => {
-    const raw = JSON.stringify({ name: "이름", email: "fixture@example.invalid", token: "private-token", password: "private-password" });
+    const raw = JSON.stringify({
+      name: "이름",
+      email: "fixture@example.invalid",
+      token: "private-token",
+      password: "private-password"
+    });
     const draft = parseAuthDraft(raw);
 
     expect(draft).toEqual({ name: "이름", email: "fixture@example.invalid" });

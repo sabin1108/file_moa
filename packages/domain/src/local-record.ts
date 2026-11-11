@@ -1,4 +1,8 @@
-export type RecordScope = { type: "global" } | { type: "project" | "task"; id: string };
+export type RecordScope = { type: "global" } | {
+  type: "project" | "task";
+  id: string
+};
+
 export type LocalRecord = {
   schemaVersion: 1;
   recordId: string;
@@ -19,6 +23,7 @@ export function isRecordId(value: unknown): value is string {
 
 function object(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("invalid-record-object");
+
   return value as Record<string, unknown>;
 }
 
@@ -30,24 +35,42 @@ function exactKeys(value: Record<string, unknown>, keys: string[]) {
 
 export function parseLocalRecord(input: unknown): LocalRecord {
   const data = object(input);
-  exactKeys(data, ["schemaVersion", "recordId", "revisionId", "parentRevisionId", "kind", "scope", "state", "createdAt", "contentFile", "contentSha256"]);
+
+  exactKeys(
+    data,
+    ["schemaVersion", "recordId", "revisionId", "parentRevisionId", "kind", "scope", "state", "createdAt", "contentFile", "contentSha256"]
+  );
+
   if (data.schemaVersion !== 1) throw new Error("unsupported-record-version");
+
   if (!isRecordId(data.recordId) || !isRecordId(data.revisionId)
     || (data.parentRevisionId !== null && !isRecordId(data.parentRevisionId))
     || data.parentRevisionId === data.revisionId) throw new Error("invalid-record-id");
+
   if (data.contentFile !== `${data.revisionId}.md`) throw new Error("invalid-content-path");
+
   if (typeof data.contentSha256 !== "string" || !/^[a-f0-9]{64}$/.test(data.contentSha256)) throw new Error("invalid-content-hash");
+
   if (typeof data.createdAt !== "string" || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(data.createdAt)
-    || !Number.isFinite(Date.parse(data.createdAt)) || new Date(data.createdAt).toISOString() !== data.createdAt) throw new Error("invalid-created-at");
+    || !Number.isFinite(Date.parse(data.createdAt))
+    || new Date(data.createdAt).toISOString() !== data.createdAt) throw new Error("invalid-created-at");
+
   const scope = object(data.scope);
+
   if (scope.type === "global") exactKeys(scope, ["type"]);
   else {
     exactKeys(scope, ["type", "id"]);
+
     if ((scope.type !== "project" && scope.type !== "task") || !isRecordId(scope.id)) throw new Error("invalid-record-scope");
   }
+
   if (typeof data.kind !== "string" || !["conversation", "memory", "artifact", "operation"].includes(data.kind)) throw new Error("invalid-record-kind");
+
   const allowedStates = data.kind === "memory" ? ["proposed", "approved", "inactive"] : ["draft", "final"];
-  if (typeof data.state !== "string" || !allowedStates.includes(data.state) || (data.kind === "memory" && scope.type === "task")) throw new Error("invalid-record-state");
+
+  if (typeof data.state !== "string" || !allowedStates.includes(data.state)
+    || (data.kind === "memory" && scope.type === "task")) throw new Error("invalid-record-state");
+
   return { ...data, scope: { ...scope } } as LocalRecord;
 }
 

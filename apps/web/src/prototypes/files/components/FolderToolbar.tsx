@@ -6,7 +6,10 @@ export function FolderToolbar() {
   return (
     <div className={styles.canvasToolbar}>
       <strong>연결한 폴더</strong>
-      <PreviewButton>이름순<Icon name="down" size={13} /></PreviewButton>
+      <PreviewButton>
+        이름순
+        <Icon name="down" size={13} />
+      </PreviewButton>
     </div>
   );
 }

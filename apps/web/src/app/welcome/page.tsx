@@ -9,6 +9,7 @@ import { SignupMethods } from "../../features/auth/components/SignupMethods";
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   await requireGuest();
+
   const step = (await searchParams).step;
   const operation = signupOperation(step);
   const configured = socialProviderConfiguration();
@@ -17,18 +18,21 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   return (
     <AuthShell guest>
       <GuestSessionObserver checkSessionAction={checkAuthSessionAction} />
-      {step === undefined ? (
-        <SignupMethods providers={providers} action={socialSigninAction} />
-      ) : (
-        <AuthScreen
-          key={operation}
-          operation={operation}
-          action={operation === "signup" ? signupAction : resendAction}
-          providers={providers}
-          socialAction={socialSigninAction}
-        />
-      )}
+      {step === undefined
+        ? (
+          <SignupMethods providers={providers} action={socialSigninAction} />
+        )
+        : (
+          <AuthScreen
+            key={operation}
+            operation={operation}
+            action={operation === "signup" ? signupAction : resendAction}
+            providers={providers}
+            socialAction={socialSigninAction}
+          />
+        )}
     </AuthShell>
   );
 }
+
 import { GuestSessionObserver } from "../../features/auth/components/GuestSessionObserver";

@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { AuthShell } from "../../components/layout/AuthShell";
 import { ActionLink } from "../../components/ui/ActionLink";
@@ -9,6 +10,7 @@ import shared from "../demo/demo.module.css";
 export function WelcomePrototype() {
   const [name, setName] = useState("sabin");
   const [acknowledged, setAcknowledged] = useState(false);
+
   return (
     <AuthShell preview>
       <div className={styles.form}>
@@ -39,15 +41,17 @@ export function WelcomePrototype() {
           />
           자료 사용 안내를 확인했어요.
         </label>
-        {acknowledged && name.trim() ? (
-          <ActionLink href="/preview/screens/chat" variant="primary" className={styles.start}>
-            대화 시작하기
-          </ActionLink>
-        ) : (
-          <DemoButton variant="primary" disabled className={styles.start}>
-            대화 시작하기
-          </DemoButton>
-        )}
+        {acknowledged && name.trim()
+          ? (
+            <ActionLink href="/preview/screens/chat" variant="primary" className={styles.start}>
+              대화 시작하기
+            </ActionLink>
+          )
+          : (
+            <DemoButton variant="primary" disabled className={styles.start}>
+              대화 시작하기
+            </DemoButton>
+          )}
         <ActionLink href="/preview/screens/login">로그인 화면으로</ActionLink>
       </div>
     </AuthShell>

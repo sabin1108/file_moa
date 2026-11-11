@@ -5,7 +5,10 @@ import type { ReviewAnswer, ReviewQuestion } from "./live-organization-review";
 
 export type LiveOrganizationInput = Readonly<{
   requestId: string;
-  owner: Readonly<{ userId: string; workspaceId: string }>;
+  owner: Readonly<{
+    userId: string;
+    workspaceId: string
+  }>;
   consent: true;
   request: string;
   basis: string;
@@ -19,13 +22,18 @@ export type LiveOrganizationInput = Readonly<{
 
 export type LiveOrganizationResult =
   | Readonly<{
-      ok: true;
-      organization: OrganizationResponse;
-      model: string;
-      usage: SampleAiUsage;
-      questions?: readonly ReviewQuestion[];
-    }>
-  | Readonly<{ ok: false; code: SampleAiErrorCode; retryAfter?: number }>;
+    ok: true;
+    organization: OrganizationResponse;
+    model: string;
+    usage: SampleAiUsage;
+    questions?: readonly ReviewQuestion[];
+  }>
+  | Readonly<{
+    ok: false;
+    code: SampleAiErrorCode;
+    retryAfter?: number
+  }>;
+
 export type LiveOrganizationAction = (
   input: LiveOrganizationInput
 ) => Promise<LiveOrganizationResult>;

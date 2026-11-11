@@ -28,6 +28,7 @@ const vaultIdentitySchema = z.strictObject({
 });
 
 /** 형식과 타입을 같은 스키마에서 정한다. 권한/복구본 검증/쓰기 승인은 별도다. */
+
 export type VaultIdentity = Readonly<z.infer<typeof vaultIdentitySchema>>;
 
 export function parseVaultIdentity(value: unknown): VaultIdentity | null {

@@ -6,6 +6,7 @@ import type {
 import { parseLiveOrganizationResponse } from "../../src/shared/live-organization-review";
 
 // Only the provider/Action transport is synthetic; the actual controller, disk reader and Worker run.
+
 declare global {
   interface Window {
     liveTransferProbe: {
@@ -24,9 +25,11 @@ export function liveOrganizationFixtureAction(): LiveOrganizationAction {
     finish: null as (() => void) | null,
     total: Number(sessionStorage.getItem("fixture-live-calls") ?? 0)
   });
+
   return async input => {
     probe.calls.push(structuredClone(input));
     sessionStorage.setItem("fixture-live-calls", String(++probe.total));
+
     if (probe.mode === "review") {
       const documents = input.documents.filter(document =>
         ["날짜보고.md", "혼합.txt"].includes(document.name)
@@ -53,6 +56,7 @@ export function liveOrganizationFixtureAction(): LiveOrganizationAction {
             )
             .map(document => {
               const answer = answers.find(answer => answer.documentId === document.id)!;
+
               return {
                 documentId: document.id,
                 destination: answer.destination ?? [
@@ -78,6 +82,7 @@ export function liveOrganizationFixtureAction(): LiveOrganizationAction {
         request,
         answers
       );
+
       return {
         ok: true,
         ...reviewed,
@@ -85,6 +90,7 @@ export function liveOrganizationFixtureAction(): LiveOrganizationAction {
         usage: { inputTokens: 100, outputTokens: 20, totalTokens: 120 }
       };
     }
+
     const response: LiveOrganizationResult = {
       ok: true,
       model: "fixture-provider",
@@ -105,11 +111,14 @@ export function liveOrganizationFixtureAction(): LiveOrganizationAction {
         }))
       }
     };
+
     if (probe.mode === "failure") return { ok: false, code: "limit", retryAfter: 60 };
+
     if (probe.mode === "hold")
       await new Promise<void>(resolve => {
         probe.finish = resolve;
       });
+
     return response;
   };
 }

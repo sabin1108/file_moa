@@ -9,7 +9,9 @@ export const resetSteps = [
   { id: "request", label: "메일 받기" }, { id: "password", label: "비밀번호 변경" }, { id: "complete", label: "완료" },
 ] as const satisfies readonly WorkflowStep[];
 
-export function signupOperation(step: unknown) { return step === "verification" ? "resend" : "signup"; }
+export function signupOperation(step: unknown) {
+  return step === "verification" ? "resend" : "signup";
+}
 
 export function authProgress(operation: AuthOperation, success: boolean, signupStage: SignupStage = "email") {
   if (operation === "signup" || operation === "resend" || operation === "verify") {
@@ -17,6 +19,7 @@ export function authProgress(operation: AuthOperation, success: boolean, signupS
 
     return { steps: signupSteps, current, label: "회원가입 진행 단계" };
   }
+
   if (operation === "request-reset" || operation === "reset") {
     const current = operation === "reset" ? success ? "complete" : "password" : "request";
 
@@ -24,14 +27,34 @@ export function authProgress(operation: AuthOperation, success: boolean, signupS
   }
 }
 
-export type Field = { name: Exclude<AuthFieldName, "token">; label: string; type: "text" | "email" | "password"; autoComplete: string; minLength?: number; maxLength: number };
+export type Field = {
+  name: Exclude<AuthFieldName, "token">;
+  label: string;
+  type: "text" | "email" | "password";
+  autoComplete: string;
+  minLength?: number;
+  maxLength: number
+};
+
 const email: Field = { name: "email", label: "이메일", type: "email", autoComplete: "email", maxLength: 254 };
-const newPassword: Field = { name: "password", label: "비밀번호", type: "password", autoComplete: "new-password", minLength: 12, maxLength: 128 };
+const newPassword: Field = {
+  name: "password",
+  label: "비밀번호",
+  type: "password",
+  autoComplete: "new-password",
+  minLength: 12,
+  maxLength: 128
+};
 const confirm: Field = { ...newPassword, name: "passwordConfirm", label: "비밀번호 확인" };
 
 export const authForms: Record<
   AuthOperation,
-  { title: string; description: string; submit: string; fields: readonly Field[] }
+  {
+    title: string;
+    description: string;
+    submit: string;
+    fields: readonly Field[]
+  }
 > = {
   login: {
     title: "모아 로그인",

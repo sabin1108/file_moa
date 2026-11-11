@@ -6,23 +6,31 @@ import { Prisma } from "../../generated/prisma/client";
 import { socialProviders } from "../shared/social-auth";
 
 /** A fresh Headers identity bypasses request memoization at every stream authorization check. */
+
 export async function readChatSession(requestHeaders: Headers) {
   const freshHeaders = new Headers(requestHeaders);
   const session = await getAuthenticatedSession(freshHeaders);
   const expiresAt = session?.session.expiresAt.getTime();
+
   if (!session || !session.user.name.trim() || !expiresAt || expiresAt <= Date.now()) return null;
+
   const owner = await getWorkspaceForAuthenticatedUser(session.user.id);
+
   if (owner.sessionUserId !== session.user.id) return null;
+
   return { ...owner, sessionId: session.session.id, sessionToken: session.session.token, expiresAt };
 }
 
 type ChatSession = NonNullable<Awaited<ReturnType<typeof readChatSession>>>;
 
 /** Keep every publication fresh without preparing a workspace or rereading the cookie protocol. */
+
 export async function revalidateChatStream(snapshot: ChatSession): Promise<boolean> {
   if (snapshot.expiresAt <= Date.now()) return false;
+
   const rows = await getDatabase().$transaction(async transaction => {
     await transaction.$executeRaw`SELECT set_config('moa.user_id', ${snapshot.sessionUserId}, true)`;
+
     return transaction.$queryRaw<{ name: string }[]>`
       SELECT u.name
       FROM moa_auth.session s
@@ -46,5 +54,6 @@ export async function revalidateChatStream(snapshot: ChatSession): Promise<boole
           ))
         )`;
   });
+
   return rows.length === 1 && rows[0].name.trim().length > 0;
 }

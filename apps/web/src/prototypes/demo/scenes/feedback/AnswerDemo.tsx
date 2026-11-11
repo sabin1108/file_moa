@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { AnswerStatus, type AnswerPhase } from "../../../feedback/AnswerStatus";
 import { DemoButton } from "../../DemoButton";
@@ -21,11 +22,15 @@ export function AnswerDemo() {
   const [text, setText] = useState(partial);
   const change = (next: AnswerPhase) => {
     if (next === "queued" || next === "reading") setText("");
+
     if (next === "writing") setText(partial);
+
     if (next === "complete") setText(complete);
+
     setPhase(next);
   };
   const active = phase === "queued" || phase === "reading" || phase === "writing";
+
   return (
     <div className={styles.stack}>
       <div className={styles.question}>
@@ -37,11 +42,15 @@ export function AnswerDemo() {
         text={text}
         sources={text ? ["리액트 성능 향상.md"] : []}
         action={
-          active ? (
-            <DemoButton onClick={() => setPhase("stopped")}>답변 중지</DemoButton>
-          ) : phase !== "complete" ? (
-            <DemoButton onClick={() => setPhase("writing")}>이어서 작성 예시</DemoButton>
-          ) : undefined
+          active
+            ? (
+              <DemoButton onClick={() => setPhase("stopped")}>답변 중지</DemoButton>
+            )
+            : phase !== "complete"
+              ? (
+                <DemoButton onClick={() => setPhase("writing")}>이어서 작성 예시</DemoButton>
+              )
+              : undefined
         }
       />
       <ScenarioControls value={phase} options={options} onChange={change} />

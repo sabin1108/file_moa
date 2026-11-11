@@ -6,26 +6,35 @@ import ui from "../../styles/workspace-ui.module.css";
 
 export function sceneLayout(scene: SceneId) {
   if (scene === "document") return "reader";
+
   if (["conflict", "search", "empty", "error", "login-error", "delete-confirm", "deleted"].includes(scene)) return "compact";
+
   return "standard";
 }
 
 // Shared presentation; page and modal retain their own navigation/focus lifecycles.
+
 export function SceneSurface({ headingId, ...props }: SceneProps & { headingId?: string }) {
   const Heading = headingId ? "h2" : "h1";
   const title = props.scene === "document" && props.documentName ? props.documentName : scenes[props.scene].title;
+
   return (
     <>
       <header className={ui.surfaceHeader}>
         <div>
-          <Heading id={headingId}>{title}</Heading>
-          {props.scene !== "document" && <p>{scenes[props.scene].description}</p>}
+          <Heading id={headingId}>
+            {title}
+          </Heading>
+          {props.scene !== "document" && <p>
+            {scenes[props.scene].description}
+          </p>}
         </div>
-        {props.dismiss && (
-          <DemoButton variant="ghost" aria-label="닫기" onClick={props.dismiss}>
-            <Icon name="close" size={18} />
-          </DemoButton>
-        )}
+        {props.dismiss
+          && (
+            <DemoButton variant="ghost" aria-label="닫기" onClick={props.dismiss}>
+              <Icon name="close" size={18} />
+            </DemoButton>
+          )}
       </header>
       <div
         className={ui.surfaceBody}

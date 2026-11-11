@@ -41,7 +41,14 @@ export function SourceFolderRow({ name, selected, selecting, disabled, selection
       onClick={onOpen}
       aria-label={`${name} 폴더 열기`}
     >
-      <Icon name="folder" size={22} /><span className={styles.name}>{name}</span><span className={styles.kind}>{selected ? "선택됨" : "폴더"}</span><Icon name="chevron" size={16} />
+      <Icon name="folder" size={22} />
+      <span className={styles.name}>
+        {name}
+      </span>
+      <span className={styles.kind}>
+        {selected ? "선택됨" : "폴더"}
+      </span>
+      <Icon name="chevron" size={16} />
     </button>
   </div>;
 }

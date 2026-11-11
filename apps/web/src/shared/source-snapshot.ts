@@ -1,10 +1,16 @@
 export type OrganizationScope = Readonly<
   | { kind: "all" }
-  | { kind: "folder"; path: readonly string[] }
   | {
-      kind: "selected";
-      entries: readonly Readonly<{ path: readonly string[]; kind: "file" | "directory" }>[];
-    }
+    kind: "folder";
+    path: readonly string[]
+  }
+  | {
+    kind: "selected";
+    entries: readonly Readonly<{
+      path: readonly string[];
+      kind: "file" | "directory"
+    }>[];
+  }
 >;
 
 export type SnapshotDocument = Readonly<{
@@ -16,14 +22,23 @@ export type SnapshotDocument = Readonly<{
   sha256: string;
   size: number;
   lastModified: number;
-  pdf?: Readonly<{ pages: number; complete: boolean }>;
-  ocr?: Readonly<{ pages: number; complete: boolean }>;
+  pdf?: Readonly<{
+    pages: number;
+    complete: boolean
+  }>;
+  ocr?: Readonly<{
+    pages: number;
+    complete: boolean
+  }>;
 }>;
 
 export type SourceSnapshot = Readonly<{
   reference?: ReferenceSnapshot;
   documents: readonly SnapshotDocument[];
-  excluded: readonly Readonly<{ path: readonly string[]; reason: string }>[];
+  excluded: readonly Readonly<{
+    path: readonly string[];
+    reason: string
+  }>[];
   complete: boolean;
   limits: readonly string[];
   discoveredFiles: number;

@@ -10,7 +10,13 @@ import { SettingsTabs } from "../../../components/layout/SettingsTabs";
 import { headers } from "next/headers";
 import { readSettingsDisplay } from "../../../server/settings-display";
 import { socialErrorMessage } from "../../../server/auth-social";
-import { accountDeletionAction, socialAccountAction, connectExistingAccountAction, selectConnectedWorkspaceAction, disconnectAccountConnectionAction } from "../../actions/auth";
+import {
+  accountDeletionAction,
+  socialAccountAction,
+  connectExistingAccountAction,
+  selectConnectedWorkspaceAction,
+  disconnectAccountConnectionAction
+} from "../../actions/auth";
 import { AccountLoginSettings } from "../../../features/auth/components/AccountLoginSettings";
 import { AccountConnectionSettings } from "../../../features/auth/components/AccountConnectionSettings";
 import { AccountDeletionSettings } from "../../../features/auth/components/AccountDeletionSettings";
@@ -44,10 +50,16 @@ export default function Page({ searchParams }: Props) {
 
 async function AccountSettings({ searchParams }: Props) {
   await requireAccountSession();
+
   const params = await searchParams;
   const { account, connection } = await readSettingsDisplay(await headers());
+
   return <>
-    <AccountLoginSettings account={account} action={socialAccountAction} notice={socialErrorMessage(params.error)} />
+    <AccountLoginSettings
+      account={account}
+      action={socialAccountAction}
+      notice={socialErrorMessage(params.error)}
+    />
     <AccountConnectionSettings
       connection={connection}
       canConnect={!account.hasPassword && account.providers.some(provider => provider.connected)}

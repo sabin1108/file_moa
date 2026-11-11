@@ -39,14 +39,17 @@ async function prepared() {
     vi.fn(),
     recheck
   );
+
   controller.update({ request: "성능 자료 정리", scope: { kind: "all" } });
   await controller.prepare();
+
   return { controller, recheck, action: vi.fn<LiveOrganizationAction>(async () => response) };
 }
 
 describe("LT-T07/08/10: explicit live transfer lifecycle", () => {
   it("stores answers without an automatic request and invalidates the old proposal/consent", async () => {
     const { controller, action } = await prepared();
+
     action.mockResolvedValueOnce({
       ...response,
       organization: {
@@ -97,6 +100,7 @@ describe("LT-T07/08/10: explicit live transfer lifecycle", () => {
       undefined,
       infer
     );
+
     controller.update({ request: "회사에서 보고서 기준으로", reference: null });
     await controller.prepare();
     expect(controller.getSnapshot()).toMatchObject({
@@ -112,6 +116,7 @@ describe("LT-T07/08/10: explicit live transfer lifecycle", () => {
 
   it("does not recheck or transmit without consent and never auto-transmits on consent", async () => {
     const { controller, recheck, action } = await prepared();
+
     await controller.send(action);
     expect(recheck).not.toHaveBeenCalled();
     expect(action).not.toHaveBeenCalled();
@@ -139,6 +144,7 @@ describe("LT-T07/08/10: explicit live transfer lifecycle", () => {
 
   it("invalidates the snapshot and consent when the original or permission changed", async () => {
     const { controller, recheck, action } = await prepared();
+
     controller.consent(true);
     recheck.mockRejectedValueOnce(Error("source-changed"));
     await controller.send(action);
@@ -155,7 +161,11 @@ describe("LT-T07/08/10: explicit live transfer lifecycle", () => {
     "discards late rechecks after %s before any action",
     async change => {
       const { controller, recheck, action } = await prepared();
-      let done!: (value: { userId: string; workspaceId: string }) => void;
+      let done!: (value: {
+        userId: string;
+        workspaceId: string
+      }) => void;
+
       recheck.mockImplementationOnce(
         () =>
           new Promise(resolve => {
@@ -163,13 +173,21 @@ describe("LT-T07/08/10: explicit live transfer lifecycle", () => {
           })
       );
       controller.consent(true);
+
       const pending = controller.send(action);
+
       if (change === "conditions") controller.update({ basis: "다른 기준" });
+
       if (change === "selection") controller.toggleDocument("document-1");
+
       if (change === "consent") controller.consent(false);
+
       if (change === "partial") controller.acceptPartial(false);
+
       if (change === "cancel") controller.cancel();
+
       if (change === "reset") controller.reset();
+
       done({ userId: "A", workspaceId: "workspace-A" });
       await pending;
       expect(action).not.toHaveBeenCalled();
@@ -180,6 +198,7 @@ describe("LT-T07/08/10: explicit live transfer lifecycle", () => {
   it("allows one in-flight request and ignores its late reply after cancel", async () => {
     const { controller, action } = await prepared();
     let done!: (value: typeof response) => void;
+
     action.mockImplementationOnce(
       () =>
         new Promise(resolve => {
@@ -187,7 +206,9 @@ describe("LT-T07/08/10: explicit live transfer lifecycle", () => {
         })
     );
     controller.consent(true);
+
     const pending = controller.send(action);
+
     await vi.waitFor(() => expect(action).toHaveBeenCalledOnce());
     await controller.send(action);
     controller.cancel();
@@ -200,6 +221,7 @@ describe("LT-T07/08/10: explicit live transfer lifecycle", () => {
 
   it("does not retry errors, and requires a new consent and new explicit request", async () => {
     const { controller, action } = await prepared();
+
     action.mockRejectedValueOnce(Error("lost response"));
     controller.consent(true);
     await controller.send(action);
@@ -220,6 +242,7 @@ describe("LT-T07/08/10: explicit live transfer lifecycle", () => {
 
   it("clears private drafts, excerpts and consent if the server reports a changed or expired session", async () => {
     const { controller, action } = await prepared();
+
     action.mockResolvedValueOnce({ ok: false, code: "session" });
     controller.consent(true);
     await controller.send(action);

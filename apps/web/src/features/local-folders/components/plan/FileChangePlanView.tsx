@@ -28,7 +28,9 @@ export function FileChangePlanView({
 
   return (
     <section className={styles.result} aria-label="변경 계획 결과">
-      <h3>{executionStarted ? "검토한 계획" : "예상 결과"}</h3>
+      <h3>
+        {executionStarted ? "검토한 계획" : "예상 결과"}
+      </h3>
       <p role="status">
         {"대상 "}
         {plan.rows.length.toLocaleString("ko-KR")}
@@ -40,16 +42,19 @@ export function FileChangePlanView({
           ? "실행 전 검토한 계획입니다. 파일별 처리 결과는 복사 결과를 확인하세요."
           : `${plan.operation === "copy" ? "원본을 유지하고 목적지에 복사하는 계획입니다." : "파일을 도착 위치로 옮기는 계획입니다."} 아직 적용하지 않았습니다.`}
       </p>
-      {plan.directoriesToCreate.length > 0 && (
-        <div className={styles.folders}>
-          <h4>생성 예정 폴더</h4>
-          <ul>
-            {plan.directoriesToCreate.map((path) => (
-              <li key={JSON.stringify(path)}>{pathLabel(path)}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {plan.directoriesToCreate.length > 0
+        && (
+          <div className={styles.folders}>
+            <h4>생성 예정 폴더</h4>
+            <ul>
+              {plan.directoriesToCreate.map((path) => (
+                <li key={JSON.stringify(path)}>
+                  {pathLabel(path)}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       <FileChangeComparison
         rootName={folderName}
         operation={plan.operation === "classify" ? null : plan.operation}
@@ -66,7 +71,9 @@ export function FileChangePlanView({
             <li key={JSON.stringify(row.from)}>
               <div className={styles.planFileHeading}>
                 <Icon name="file" size={22} />
-                <strong>{row.from.at(-1)}</strong>
+                <strong>
+                  {row.from.at(-1)}
+                </strong>
                 <span>
                   {plan.operation === "copy" ? "원본 유지" : "이동 예정"}
                 </span>
@@ -112,21 +119,23 @@ export function FileChangePlanView({
                 </div>
               </dl>
               <p className={row.issues.length ? styles.issue : styles.note}>
-                {row.issues.length ? (
-                  <>
-                    <Icon name="warning" size={18} />
-                    <span>
-                      {row.issues
-                        .map((issue) => issueLabels[issue])
-                        .join(" · ")}
+                {row.issues.length
+                  ? (
+                    <>
+                      <Icon name="warning" size={18} />
+                      <span>
+                        {row.issues
+                          .map((issue) => issueLabels[issue])
+                          .join(" · ")}
+                      </span>
+                    </>
+                  )
+                  : (
+                    <span className={styles.clearName}>
+                      <Icon name="check" size={16} />
+                      이름 충돌 없음
                     </span>
-                  </>
-                ) : (
-                  <span className={styles.clearName}>
-                    <Icon name="check" size={16} />
-                    이름 충돌 없음
-                  </span>
-                )}
+                  )}
               </p>
             </li>
           ))}

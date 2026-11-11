@@ -29,7 +29,9 @@ export function RecoveryScenes({ scene, navigate }: SceneProps) {
       </div>
     </div>
   );
+
   const login = scene === "login-error";
+
   return (
     <div className={styles.stack}>
       <RiskNotice

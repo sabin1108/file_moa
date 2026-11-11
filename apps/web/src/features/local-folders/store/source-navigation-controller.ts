@@ -25,6 +25,7 @@ type Visit = {
 
 const samePath = (a: readonly string[], b: readonly string[]) => JSON.stringify(a) === JSON.stringify(b);
 /** Provider 수명의 탐색 기록. 파일 정보는 메모리에만 두며 browser port에는 불투명 ID만 전달한다. */
+
 export class SourceNavigationController {
   private visits = new Map<string, Visit>();
   private current: string | null = null;
@@ -58,10 +59,14 @@ export class SourceNavigationController {
       folder: [...(state.phase === "loading" || state.issue ? state.requestedPath : state.result?.path ?? [])],
       file: this.preview.getSnapshot().path,
       view: {
-        query: state.query, selectedNames: [...state.selectedNames], searchOpen: state.searchOpen, selectionOpen: state.selectionOpen,
+        query: state.query,
+        selectedNames: [...state.selectedNames],
+        searchOpen: state.searchOpen,
+        selectionOpen: state.selectionOpen,
         selectedKinds: Object.fromEntries((state.result?.entries ?? []).filter(entry => state.selectedNames.includes(entry.name)).map(entry => [entry.name, entry.kind]))
       },
-      viewport: this.port?.capture() ?? { scrollY: 0, focusLabel: null }, parent,
+      viewport: this.port?.capture() ?? { scrollY: 0, focusLabel: null },
+      parent,
     };
   }
 
@@ -75,6 +80,7 @@ export class SourceNavigationController {
 
   private record(visit: Visit, replace: boolean) {
     const id = this.createId();
+
     this.visits.set(id, visit);
     this.current = id;
 
@@ -184,9 +190,17 @@ export class SourceNavigationController {
 
     this.preview.close();
     this.record({
-      ...visit, folder: [...path], file: null, view: {
-        query: "", selectedNames: [], selectedKinds: {}, searchOpen: false, selectionOpen: false
-      }, viewport: { scrollY: 0, focusLabel: null }
+      ...visit,
+      folder: [...path],
+      file: null,
+      view: {
+        query: "",
+        selectedNames: [],
+        selectedKinds: {},
+        searchOpen: false,
+        selectionOpen: false
+      },
+      viewport: { scrollY: 0, focusLabel: null }
     }, false);
     await this.listing.open(path);
   };
@@ -195,6 +209,7 @@ export class SourceNavigationController {
   selectFromPrevious = async (path: readonly string[], name: string, kind: "file" | "directory") => {
     const pending = this.openFolder(path, true);
     const generation = this.generation;
+
     await pending;
 
     if (generation !== this.generation || !this.port?.active()) {
@@ -230,7 +245,9 @@ export class SourceNavigationController {
     }
 
     this.record({
-      ...visit, file: [...path], viewport: { scrollY: 0, focusLabel: null }
+      ...visit,
+      file: [...path],
+      viewport: { scrollY: 0, focusLabel: null }
     }, false);
     await this.preview.open(path);
   };

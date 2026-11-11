@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parsePastedFolderPath } from "../../../src/features/local-folders/lib/pasted-folder-path";
+
 describe("pasted destination path", () => {
   it("supports relative slash and Windows separators", () => {
     expect(parsePastedFolderPath("자료\\노트", "root")).toEqual({ path: ["자료", "노트"], requiresConfirmation: false });

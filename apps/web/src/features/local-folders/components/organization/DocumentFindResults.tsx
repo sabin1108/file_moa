@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { actionClasses } from "../../../../components/ui/action-classes";
 import { StatusNotice } from "../../../../components/ui/feedback/StatusNotice";
@@ -47,6 +48,7 @@ export function DocumentFindResults({
     (document) => document.finding.kind !== "matched",
   );
   const visible = [...confirmed, ...uncertain].slice(0, limit);
+
   return (
     <section data-find-results aria-label="본문 근거 검색 결과">
       <h3>찾은 후보 {result.documents.length}개</h3>
@@ -58,13 +60,14 @@ export function DocumentFindResults({
         단어·날짜 근거로 찾은 후보입니다. 검색 시점의 내용이므로 원문에서 다시
         확인해 주세요.
       </p>
-      {!result.complete && (
-        <StatusNotice
-          state="attention"
-          title="검색 범위 일부만 확인했어요"
-          detail="읽기 실패 또는 탐색 한도로 빠진 자료가 있습니다. 범위를 좁혀 다시 검색할 수 있어요."
-        />
-      )}
+      {!result.complete
+        && (
+          <StatusNotice
+            state="attention"
+            title="검색 범위 일부만 확인했어요"
+            detail="읽기 실패 또는 탐색 한도로 빠진 자료가 있습니다. 범위를 좁혀 다시 검색할 수 있어요."
+          />
+        )}
       {!result.documents.length && (
         <p>확인한 범위에서 조건에 맞는 후보를 찾지 못했어요.</p>
       )}
@@ -96,41 +99,48 @@ export function DocumentFindResults({
                 ` · ${document.finding.dates.join(", ")}`}
             </p>
             {document.finding.evidence.slice(0, 2).map((line, index) => (
-              <blockquote key={index}>{line}</blockquote>
+              <blockquote key={index}>
+                {line}
+              </blockquote>
             ))}
-            {document.finding.evidence.length > 2 && (
-              <details>
-                <summary>근거 더 보기</summary>
-                {document.finding.evidence.slice(2).map((line, index) => (
-                  <blockquote key={index}>{line}</blockquote>
-                ))}
-              </details>
-            )}
+            {document.finding.evidence.length > 2
+              && (
+                <details>
+                  <summary>근거 더 보기</summary>
+                  {document.finding.evidence.slice(2).map((line, index) => (
+                    <blockquote key={index}>
+                      {line}
+                    </blockquote>
+                  ))}
+                </details>
+              )}
           </li>
         ))}
       </ul>
-      {visible.length < result.documents.length && (
-        <button
-          type="button"
-          className={actionClasses("secondary")}
-          onClick={() => setLimit(limit + 20)}
-        >
-          다음 후보 20개 보기
-        </button>
-      )}
-      {result.excluded.length > 0 && (
-        <details>
-          <summary>제외·읽기 문제 {result.excluded.length}개</summary>
-          <ul>
-            {result.excluded.map((entry, index) => (
-              <li key={index}>
-                {entry.path.join(" / ")} ·{" "}
-                {reasons[entry.reason] ?? "읽기 또는 탐색 한도 문제"}
-              </li>
-            ))}
-          </ul>
-        </details>
-      )}
+      {visible.length < result.documents.length
+        && (
+          <button
+            type="button"
+            className={actionClasses("secondary")}
+            onClick={() => setLimit(limit + 20)}
+          >
+            다음 후보 20개 보기
+          </button>
+        )}
+      {result.excluded.length > 0
+        && (
+          <details>
+            <summary>제외·읽기 문제 {result.excluded.length}개</summary>
+            <ul>
+              {result.excluded.map((entry, index) => (
+                <li key={index}>
+                  {entry.path.join(" / ")} ·{" "}
+                  {reasons[entry.reason] ?? "읽기 또는 탐색 한도 문제"}
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
     </section>
   );
 }

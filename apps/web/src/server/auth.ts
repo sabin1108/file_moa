@@ -25,7 +25,10 @@ function createAuth() {
   const local = ["127.0.0.1", "localhost"].includes(origin.hostname);
 
   if ((origin.protocol !== "https:" && !(local && origin.protocol === "http:"))
-    || origin.username || origin.password || origin.search || origin.hash || origin.pathname !== "/") {
+    || origin.username || origin.password
+    || origin.search
+    || origin.hash
+    || origin.pathname !== "/") {
     throw new Error("BETTER_AUTH_URL must be a trusted application origin.");
   }
 
@@ -60,7 +63,9 @@ function createAuth() {
           },
           select: { id: true },
         });
+
         if (!credential) return;
+
         await sendAuthenticationEmail({
           to: user.email,
           subject: "모아 비밀번호 재설정",
@@ -75,7 +80,9 @@ function createAuth() {
       expiresIn: 3_600,
       sendVerificationEmail: async ({ user, token }, request) => {
         if (request && /^\/api\/auth\/callback\/(google|naver|kakao)$/.test(new URL(request.url).pathname)) return;
+
         const url = new URL("/verify-email", origin.origin);
+
         url.searchParams.set("token", token);
         await sendAuthenticationEmail({
           to: user.email,
@@ -86,37 +93,63 @@ function createAuth() {
     },
     account: {
       encryptOAuthTokens: true,
-      accountLinking: { enabled: true, disableImplicitLinking: true, allowDifferentEmails: true, trustedProviders: [...socialProviders] },
+      accountLinking: {
+        enabled: true,
+        disableImplicitLinking: true,
+        allowDifferentEmails: true,
+        trustedProviders: [...socialProviders]
+      },
     },
     session: { cookieCache: { enabled: false } },
     verification: { storeIdentifier: "hashed" },
     databaseHooks: {
       user: {
-        update: { after: async () => { expireConnectedSettingsDisplay(); } },
+        update: {
+          after: async () => {
+            expireConnectedSettingsDisplay();
+          }
+        },
       },
       account: {
         // ID tokens are consumed during the callback; this app has no later use for them.
         create: {
           before: async account => {
-            if (account.providerId === "credential" && await getDatabase().account.findFirst({
-              where: { userId: account.userId, providerId: { in: [...socialProviders] } }, select: { id: true },
-            })) throw new Error("A social account requires explicit credential linking.");
+            if (account.providerId === "credential"
+              && await getDatabase().account.findFirst({
+                where: { userId: account.userId, providerId: { in: [...socialProviders] } },
+                select: { id: true },
+              })) throw new Error("A social account requires explicit credential linking.");
+
             return { data: { ...account, idToken: null } };
           },
-          after: async account => { expireSettingsDisplay(account.userId); },
+          after: async account => {
+            expireSettingsDisplay(account.userId);
+          },
         },
         update: {
           before: async account => ({ data: { ...account, idToken: null } }),
-          after: async account => { expireSettingsDisplay(account.userId); },
+          after: async account => {
+            expireSettingsDisplay(account.userId);
+          },
         },
-        delete: { after: async account => { expireSettingsDisplay(account.userId); } },
+        delete: {
+          after: async account => {
+            expireSettingsDisplay(account.userId);
+          }
+        },
       },
       session: {
         create: {
           before: async session => ({ data: { ...session, ipAddress: null, userAgent: null } }),
-          after: async session => { expireSettingsDisplay(session.userId); },
+          after: async session => {
+            expireSettingsDisplay(session.userId);
+          },
         },
-        delete: { after: async session => { expireSettingsDisplay(session.userId); } },
+        delete: {
+          after: async session => {
+            expireSettingsDisplay(session.userId);
+          }
+        },
       },
     },
     rateLimit: {
@@ -140,11 +173,18 @@ function createAuth() {
       ipAddress: { ipAddressHeaders: ["x-vercel-forwarded-for"] },
       backgroundTasks: {
         handler: task => {
-          after(task.catch(() => { console.error("Authentication email delivery failed."); }));
+          after(task.catch(() => {
+            console.error("Authentication email delivery failed.");
+          }));
         },
       },
     },
-    logger: { level: "error", log: (level, ...values) => { if (level === "error") reportAuthenticationFailure("library", values); } },
+    logger: {
+      level: "error",
+      log: (level, ...values) => {
+        if (level === "error") reportAuthenticationFailure("library", values);
+      }
+    },
   });
 }
 

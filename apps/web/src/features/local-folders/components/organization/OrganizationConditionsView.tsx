@@ -1,4 +1,5 @@
-﻿"use client";
+"use client";
+
 import { actionClasses } from "../../../../components/ui/action-classes";
 import type {
   OrganizationPreparationController,
@@ -8,6 +9,7 @@ import type { SourceListingState } from "../../store/source-listing-controller";
 import styles from "./organization-preparation.module.css";
 
 /** 자료 범위·참고·목적지 조건 입력만 담당한다. 파일 읽기/전송 상태는 기존 controller가 소유한다. */
+
 export function OrganizationConditionsView({
   controller,
   state,
@@ -34,9 +36,10 @@ export function OrganizationConditionsView({
     files.phase === "ready" && !files.stale && !!files.result;
   const selected = availableSelection
     ? files.result!.entries.filter((entry) =>
-        files.selectedNames.includes(entry.name),
-      )
+      files.selectedNames.includes(entry.name),
+    )
     : [];
+
   return (
     <details
       data-organization-conditions
@@ -50,21 +53,24 @@ export function OrganizationConditionsView({
       <summary>찾을 범위·정리 조건 · {scopeLabel}</summary>
       <fieldset disabled={reading}>
         <legend>어디에서 찾을까요?</legend>
-        {state.questions.length > 0 && (
-          <div>
-            <button
-              type="button"
-              className={actionClasses("secondary")}
-              onClick={() => controller.update({ request: state.request })}
-            >
-              최초 정리 요청 수정
-            </button>
-            <p className={styles.note}>
-              수정하면 자료와 답변을 다시 준비합니다.
-            </p>
-          </div>
-        )}
-        <p aria-label="현재 탐색 범위">{scopeLabel}</p>
+        {state.questions.length > 0
+          && (
+            <div>
+              <button
+                type="button"
+                className={actionClasses("secondary")}
+                onClick={() => controller.update({ request: state.request })}
+              >
+                최초 정리 요청 수정
+              </button>
+              <p className={styles.note}>
+                수정하면 자료와 답변을 다시 준비합니다.
+              </p>
+            </div>
+          )}
+        <p aria-label="현재 탐색 범위">
+          {scopeLabel}
+        </p>
         <div className={styles.actions}>
           <button
             type="button"
@@ -118,7 +124,9 @@ export function OrganizationConditionsView({
               <h3>
                 {kind === "reference" ? "참고할 폴더 구조" : "최종 목적지"}
               </h3>
-              <p>{pathLabel(state[kind])}</p>
+              <p>
+                {pathLabel(state[kind])}
+              </p>
             </div>
             <button
               type="button"
@@ -128,15 +136,16 @@ export function OrganizationConditionsView({
             >
               폴더 선택
             </button>
-            {state[kind] !== null && (
-              <button
-                type="button"
-                className={actionClasses("ghost")}
-                onClick={() => controller.update({ [kind]: null })}
-              >
-                지우기
-              </button>
-            )}
+            {state[kind] !== null
+              && (
+                <button
+                  type="button"
+                  className={actionClasses("ghost")}
+                  onClick={() => controller.update({ [kind]: null })}
+                >
+                  지우기
+                </button>
+              )}
           </div>
         ))}
         <p className={styles.note}>
@@ -144,19 +153,20 @@ export function OrganizationConditionsView({
           주제가 섞인 자료는 AI 분석 뒤 함께 확인합니다.
         </p>
       </fieldset>
-      {!reading && (
-        <button
-          type="button"
-          data-local-prepare
-          className={actionClasses("secondary")}
-          disabled={!state.request.trim() || !state.scope}
-          onClick={() => void controller.prepare()}
-        >
-          {state.phase === "ready"
-            ? "자료 다시 읽기"
-            : "설정한 범위의 TXT/MD 읽기"}
-        </button>
-      )}
+      {!reading
+        && (
+          <button
+            type="button"
+            data-local-prepare
+            className={actionClasses("secondary")}
+            disabled={!state.request.trim() || !state.scope}
+            onClick={() => void controller.prepare()}
+          >
+            {state.phase === "ready"
+              ? "자료 다시 읽기"
+              : "설정한 범위의 TXT/MD 읽기"}
+          </button>
+        )}
     </details>
   );
 }

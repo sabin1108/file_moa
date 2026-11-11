@@ -28,6 +28,14 @@ export const scenes = {
   "delete-confirm": { title: "계정 삭제", group: "계정과 데이터", description: "삭제할 범위를 먼저 확인하세요." },
   deleted: { title: "삭제 요청 접수", group: "계정과 데이터", description: "처리 상태 화면 예시 · 실제 계정은 삭제되지 않습니다." },
 } as const;
+
 export type SceneId = keyof typeof scenes;
-export type SceneProps = { documentName?: string; scene: SceneId; navigate: (scene: SceneId) => void; dismiss?: () => void };
+
+export type SceneProps = {
+  documentName?: string;
+  scene: SceneId;
+  navigate: (scene: SceneId) => void;
+  dismiss?: () => void
+};
+
 export const sceneIds = Object.keys(scenes) as SceneId[];

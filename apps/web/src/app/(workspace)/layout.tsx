@@ -15,18 +15,29 @@ import ui from "../../styles/workspace-ui.module.css";
 import { ConversationStateProvider } from "../../features/conversation-workspace/providers/ConversationStateProvider";
 
 // 시안·로그인·가입은 이 layout 밖에 둔다. URL에는 (workspace)가 포함되지 않는다.
+
 export default function WorkspaceLayout({ children }: { children: ReactNode }) {
-  return <Suspense fallback={
-    <WorkspaceShell title="작업 공간" quickMenu={false}>
-      <div className={ui.canvas}><p role="status">로그인과 작업 공간을 확인하고 있어요.</p></div>
-    </WorkspaceShell>
-  }><AuthenticatedWorkspace>{children}</AuthenticatedWorkspace></Suspense>;
+  return <Suspense
+    fallback={
+      <WorkspaceShell title="작업 공간" quickMenu={false}>
+        <div className={ui.canvas}>
+          <p role="status">로그인과 작업 공간을 확인하고 있어요.</p>
+        </div>
+      </WorkspaceShell>
+    }
+  >
+    <AuthenticatedWorkspace>
+      {children}
+    </AuthenticatedWorkspace>
+  </Suspense>;
 }
 
 async function AuthenticatedWorkspace({ children }: { children: ReactNode }) {
   const { sessionExpiresAt, sessionUserId, ...owner } = await requireWorkspace();
   const requestHeaders = await headers();
+
   after(() => prepareSettingsDisplay(requestHeaders));
+
   return (
     <SessionBoundary
       key={sessionUserId}
@@ -35,7 +46,9 @@ async function AuthenticatedWorkspace({ children }: { children: ReactNode }) {
       checkSessionAction={checkAuthSessionAction}
     >
       <SourceFolderProvider key={`${owner.userId}:${owner.workspaceId}`} owner={owner}>
-        <ConversationStateProvider>{children}</ConversationStateProvider>
+        <ConversationStateProvider>
+          {children}
+        </ConversationStateProvider>
       </SourceFolderProvider>
     </SessionBoundary>
   );

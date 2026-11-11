@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
 vi.mock("server-only", () => ({}));
 
 const calls = vi.hoisted(() => ({ headers: vi.fn(), auth: vi.fn(), session: vi.fn(), redirect: vi.fn() }));
+
 vi.mock("next/headers", () => ({ headers: calls.headers }));
 vi.mock("next/navigation", () => ({ redirect: calls.redirect }));
 vi.mock("../../src/server/auth", () => ({ getAuth: calls.auth }));
@@ -14,7 +16,9 @@ import AccountPage from "../../src/app/account/page";
 beforeEach(() => {
   vi.resetAllMocks();
   calls.auth.mockReturnValue({ api: { getSession: calls.session } });
-  calls.redirect.mockImplementation(() => { throw new Error("fixture-redirect"); });
+  calls.redirect.mockImplementation(() => {
+    throw new Error("fixture-redirect");
+  });
 });
 
 describe("account request boundary", () => {
@@ -28,7 +32,9 @@ describe("account request boundary", () => {
 
   it("keeps runtime authentication configuration failures visible", async () => {
     calls.headers.mockResolvedValue(new Headers());
-    calls.auth.mockImplementation(() => { throw new Error("fixture-configuration-error"); });
+    calls.auth.mockImplementation(() => {
+      throw new Error("fixture-configuration-error");
+    });
 
     await expect(AccountPage()).rejects.toThrow("로그인 상태를 확인하지 못했습니다.");
     expect(calls.auth).toHaveBeenCalledOnce();
@@ -36,6 +42,7 @@ describe("account request boundary", () => {
 
   it("redirects a request without a session and disables cached or refreshed session writes", async () => {
     const requestHeaders = new Headers();
+
     calls.headers.mockResolvedValue(requestHeaders);
     calls.session.mockResolvedValue(null);
 

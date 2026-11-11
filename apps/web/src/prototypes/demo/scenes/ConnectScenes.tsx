@@ -1,4 +1,5 @@
 "use client";
+
 import { ActionLink } from "../../../components/ui/ActionLink";
 import { Icon } from "../../../components/ui/Icon";
 import { DemoButton } from "../DemoButton";
@@ -41,19 +42,22 @@ export function ConnectScenes({ scene, navigate, dismiss }: SceneProps) {
           지금은 연결 완료 모습만 보여줍니다. 기기 폴더에는 접근하지 않았습니다.
         </p>
         <div className={styles.actions}>
-          {dismiss ? (
-            <DemoButton variant="primary" onClick={dismiss}>
-              폴더 화면으로
-            </DemoButton>
-          ) : (
-            <ActionLink href="/files" variant="primary">
-              폴더 화면으로
-            </ActionLink>
-          )}
+          {dismiss
+            ? (
+              <DemoButton variant="primary" onClick={dismiss}>
+                폴더 화면으로
+              </DemoButton>
+            )
+            : (
+              <ActionLink href="/files" variant="primary">
+                폴더 화면으로
+              </ActionLink>
+            )}
         </div>
       </div>
     </div>
   );
+
   if (scene === "permission") return (
     <div className={styles.stack}>
       <RiskNotice label="읽기 권한 필요" title={`${studyFolder} 폴더를 읽을 수 없어요`}>
@@ -80,6 +84,7 @@ export function ConnectScenes({ scene, navigate, dismiss }: SceneProps) {
       </div>
     </div>
   );
+
   return (
     <div className={styles.stack}>
       <RiskNotice label="권한 요청 전 확인" title="선택한 폴더의 읽기 권한을 사용해요">

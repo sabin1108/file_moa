@@ -2,8 +2,11 @@ import { actionClasses } from "../../../../components/ui/action-classes";
 import styles from "./folder-up-button.module.css";
 
 /** 두 탐색 목록에서 같은 위치/동작을 갖는 상위 이동 행. */
+
 export function FolderUpButton({ parentName, disabled, onClick }: {
-  parentName: string; disabled: boolean; onClick: () => void;
+  parentName: string;
+  disabled: boolean;
+  onClick: () => void;
 }) {
   return (
     <button
@@ -28,7 +31,9 @@ export function FolderUpButton({ parentName, disabled, onClick }: {
         <path d="M19 19h-7a4 4 0 0 1-4-4V5m-5 5 5-5 5 5" />
       </svg>
       <strong>위 폴더로</strong>
-      <span>{parentName}</span>
+      <span>
+        {parentName}
+      </span>
     </button>
   );
 }

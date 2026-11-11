@@ -19,6 +19,7 @@ describe("server authentication configuration", () => {
   ])("rejects an invalid trusted origin without echoing values (%#)", async origin => {
     vi.stubEnv("BETTER_AUTH_URL", origin);
     vi.stubEnv("BETTER_AUTH_SECRET", "fixture-secret-that-is-long-enough-for-tests");
+
     const { getAuth } = await import("../../src/server/auth");
 
     expect(() => getAuth()).toThrow("BETTER_AUTH_URL must be a trusted application origin.");
@@ -27,6 +28,7 @@ describe("server authentication configuration", () => {
   it("rejects a missing or short secret before accessing the database", async () => {
     vi.stubEnv("BETTER_AUTH_URL", "http://127.0.0.1:3034");
     vi.stubEnv("BETTER_AUTH_SECRET", "fixture-secret");
+
     const { getAuth } = await import("../../src/server/auth");
     const { getDatabase } = await import("../../src/server/database/client");
 

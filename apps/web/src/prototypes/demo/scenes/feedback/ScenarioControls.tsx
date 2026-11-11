@@ -2,7 +2,12 @@ import { DemoButton } from "../../DemoButton";
 import styles from "./feedback-scenes.module.css";
 
 export function ScenarioControls<T extends string>({ value, options, onChange }: {
-  value: T; options: readonly { value: T; label: string }[]; onChange: (value: T) => void;
+  value: T;
+  options: readonly {
+    value: T;
+    label: string
+  }[];
+  onChange: (value: T) => void;
 }) {
   return (
     <fieldset className={styles.controls}>

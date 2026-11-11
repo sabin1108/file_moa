@@ -27,19 +27,51 @@ const rows = [
   ["empty-note", "확인필요.txt", "source-mail", null, ""],
   ["report-ambiguous", "10월-보고서-충돌.md", "source-download", null, "# 업무 보고서\n작성일은 2026-10-12 또는 2026-11-12라고 서로 다르게 적혀 있으며 원본 기준일은 확인되지 않았다. 날짜 확정 전에는 날짜 폴더에 넣지 않는다."],
 ];
-const proposalFolder = id => id.startsWith("perf-") && !["perf-titled-only", "perf-hardware", "perf-intent-injection"].includes(id) ? "engineering" : id.startsWith("report-") ? "meeting" : null;
+const proposalFolder = id => id.startsWith("perf-") && !["perf-titled-only", "perf-hardware", "perf-intent-injection"].includes(id)
+  ? "engineering"
+  : id.startsWith("report-") ? "meeting" : null;
 const documents = rows.map(([id, name, sourceFolderId, date, excerpt]) => ({
-  id, name, sourceFolderId, format: name.endsWith(".md") ? "md" : "txt", excerpt,
-  proposal: { folderId: proposalFolder(id), reason: "준비된 예시 제안입니다. 실제 정리는 대화의 요청과 내용 근거를 확인하세요.", reviewRequired: proposalFolder(id) === null },
-  assetBase64: Buffer.from(excerpt).toString("base64"), sha256: createHash("sha256").update(excerpt).digest("hex"),
+  id,
+  name,
+  sourceFolderId,
+  format: name.endsWith(".md") ? "md" : "txt",
+  excerpt,
+  proposal: {
+    folderId: proposalFolder(id),
+    reason: "준비된 예시 제안입니다. 실제 정리는 대화의 요청과 내용 근거를 확인하세요.",
+    reviewRequired: proposalFolder(id) === null
+  },
+  assetBase64: Buffer.from(excerpt).toString("base64"),
+  sha256: createHash("sha256").update(excerpt).digest("hex"),
 }));
-writeFileSync("apps/web/src/server/sample-data/organization-documents.json", JSON.stringify(documents, null, 2) + "\n");
+
+writeFileSync(
+  "apps/web/src/server/sample-data/organization-documents.json",
+  JSON.stringify(documents, null, 2) + "\n"
+);
 writeFileSync("tests/fixtures/classification/organization-expectations.json", JSON.stringify({
-  version: "1", provenance: "original synthetic documents; expectations are unreviewed assistant drafts", seed: "organization-2026-11-07-v1",
+  version: "1",
+  provenance: "original synthetic documents; expectations are unreviewed assistant drafts",
+  seed: "organization-2026-11-07-v1",
   scenarios: [
-    { instruction: "10월달 보고서를 본문 작성일 기준으로 날짜별로 정리해 줘", matchedIds: rows.filter(([id, , , date]) => id.startsWith("report-") && date?.startsWith("2026-10")).map(([id]) => id), heldIds: ["report-unknown", "report-ambiguous"] },
-    { instruction: "웹사이트 성능 테스트 자료만 내용으로 찾아 성능 테스트 폴더에 모아 줘", matchedIds: ["perf-lcp", "perf-inp", "perf-network", "perf-bundle", "perf-longtask"], excludedIds: ["perf-titled-only", "perf-hardware", "perf-intent-injection", "learning-http"] },
-  ], documents: rows.map(([id, , , date, excerpt]) => ({ id, expectedContentDate: date && (excerpt.includes(date)
-    || excerpt.includes(`${date.slice(0, 4)}년 ${Number(date.slice(5, 7))}월 ${Number(date.slice(8))}일`)) ? date : null })),
+    {
+      instruction: "10월달 보고서를 본문 작성일 기준으로 날짜별로 정리해 줘",
+      matchedIds: rows.filter(([id, , , date]) => id.startsWith("report-") && date?.startsWith("2026-10")).map(([id]) => id),
+      heldIds: ["report-unknown", "report-ambiguous"]
+    },
+    {
+      instruction: "웹사이트 성능 테스트 자료만 내용으로 찾아 성능 테스트 폴더에 모아 줘",
+      matchedIds: ["perf-lcp", "perf-inp", "perf-network", "perf-bundle", "perf-longtask"],
+      excludedIds: ["perf-titled-only", "perf-hardware", "perf-intent-injection", "learning-http"]
+    },
+  ],
+  documents: rows.map(([id, , , date, excerpt]) => ({
+    id,
+    expectedContentDate: date
+      && (excerpt.includes(date)
+        || excerpt.includes(`${date.slice(0, 4)}년 ${Number(date.slice(5, 7))}월 ${Number(date.slice(8))}일`))
+      ? date
+      : null
+  })),
 }, null, 2) + "\n");
 console.log(`Generated ${documents.length} synthetic organization documents.`);

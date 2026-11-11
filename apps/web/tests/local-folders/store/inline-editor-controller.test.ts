@@ -3,10 +3,17 @@ import { InlineEditorController } from "../../../src/features/local-folders/stor
 
 function fixture() {
   const write = vi.fn(async () => ({ hasBackup: true, savedAt: "2026-11-04T12:00:00Z" }));
-  const remove = vi.fn(async () => {});
-  const controller = new InlineEditorController(async () => ({ id: crypto.randomUUID(), path: ["a.md"],
-    text: "original", originalText: "original", hasBackup: false, conflict: false }), write,
-  async () => {}, remove, () => {});
+  const remove = vi.fn(async () => { });
+  const controller = new InlineEditorController(async () => ({
+    id: crypto.randomUUID(),
+    path: ["a.md"],
+    text: "original",
+    originalText: "original",
+    hasBackup: false,
+    conflict: false
+  }), write,
+    async () => { }, remove, () => { });
+
   return { controller, write, remove };
 }
 
@@ -14,12 +21,15 @@ describe("inline editor interaction boundaries", () => {
   it("keeps input typed during a pending save dirty after completion", async () => {
     const { controller, write } = fixture();
     let finish!: () => void;
+
     write.mockImplementationOnce(() => new Promise(resolve => {
       finish = () => resolve({ hasBackup: true, savedAt: "2026-11-04T12:00:00Z" });
     }));
     await controller.open(["a.md"]);
     controller.setText("first");
+
     const saving = controller.save();
+
     controller.setText("first plus second");
     expect(controller.close()).toBe(false);
     finish();
@@ -29,6 +39,7 @@ describe("inline editor interaction boundaries", () => {
 
   it("skips periodic saves before first backup and during IME composition", async () => {
     const { controller, write } = fixture();
+
     await controller.open(["a.md"]);
     controller.setText("changed");
     expect(await controller.save(false)).toBe(false);
@@ -41,6 +52,7 @@ describe("inline editor interaction boundaries", () => {
 
   it("requires explicit dirty discard before removing the local draft", async () => {
     const { controller, remove } = fixture();
+
     await controller.open(["a.md"]);
     controller.setText("draft");
     expect(controller.close()).toBe(false);

@@ -1,5 +1,6 @@
 import { parsePlanDestination } from "./file-change-plan";
 /** OS 접두 경로의 동일성을 주장하지 않고 연결 루트 아래 상대 후보만 반환한다. */
+
 export function parsePastedFolderPath(input: string, rootName: string): {
   path: string[];
   requiresConfirmation: boolean;

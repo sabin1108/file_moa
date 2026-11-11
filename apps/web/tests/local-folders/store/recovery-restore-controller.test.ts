@@ -3,7 +3,14 @@ import { RecoveryRestoreController } from "../../../src/features/local-folders/s
 import type { RestoreExecution, RestorePreview } from "../../../src/features/local-folders/lib/recovery-restore";
 
 const preview: RestorePreview = { id: "item", name: "a.txt", originalName: "a.txt", destination: [], renamed: false, size: 1 };
-const result: RestoreExecution = { id: "op", path: ["a.txt"], phase: "completed", status: "verified", issue: null, journalComplete: true };
+const result: RestoreExecution = {
+  id: "op",
+  path: ["a.txt"],
+  phase: "completed",
+  status: "verified",
+  issue: null,
+  journalComplete: true
+};
 const listing = { path: [], entries: [], truncated: false };
 
 describe("restore UI execution lifetime", () => {
@@ -11,6 +18,7 @@ describe("restore UI execution lifetime", () => {
     const prepare = vi.fn(async () => preview);
     const run = vi.fn(async () => result);
     const controller = new RecoveryRestoreController(async () => listing, prepare, run);
+
     await controller.resume("item", [], "result", false, result);
     expect(controller.getSnapshot()).toMatchObject({ phase: "completed", result, preview: null });
     await controller.start();
@@ -23,6 +31,7 @@ describe("restore UI execution lifetime", () => {
   it("prepares only a selected destination and executes once after a final action", async () => {
     const run = vi.fn(async () => result);
     const controller = new RecoveryRestoreController(async () => listing, async () => preview, run);
+
     await controller.start();
     expect(run).not.toHaveBeenCalled();
     await controller.open("item", []);
@@ -39,11 +48,17 @@ describe("restore UI execution lifetime", () => {
     let signal!: AbortSignal;
     const controller = new RecoveryRestoreController(async () => listing, async () => preview, async (_view, abort) => {
       signal = abort;
-      return new Promise(done => { resolve = done; });
+
+      return new Promise(done => {
+        resolve = done;
+      });
     });
+
     await controller.open("item", []);
     await controller.chooseDestination();
+
     const task = controller.start();
+
     await controller.open("other", []);
     controller.cancel();
     expect(signal.aborted).toBe(true);
@@ -56,9 +71,19 @@ describe("restore UI execution lifetime", () => {
   it("discards a late preview after disposal", async () => {
     let resolve!: (value: RestorePreview) => void;
     const discard = vi.fn();
-    const controller = new RecoveryRestoreController(async () => listing, () => new Promise(done => { resolve = done; }), async () => result, discard);
+    const controller = new RecoveryRestoreController(
+      async () => listing,
+      () => new Promise(done => {
+        resolve = done;
+      }),
+      async () => result,
+      discard
+    );
+
     await controller.open("item", []);
+
     const task = controller.chooseDestination();
+
     controller.dispose();
     resolve(preview);
     await task;

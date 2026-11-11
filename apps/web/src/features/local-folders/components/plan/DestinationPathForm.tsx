@@ -5,6 +5,7 @@ import { actionClasses } from "../../../../components/ui/action-classes";
 import { parsePastedFolderPath } from "../../lib/pasted-folder-path";
 import styles from "./destination-folder-picker.module.css";
 /** 직접 입력도 폴더 탐색 안에서 검증한다. 경로를 연 다음 명시적 폴더 선택을 거쳐 확정한다. */
+
 export function DestinationPathForm({ path, rootName, disabled, onOpen, purpose = "목적지" }: {
   path: readonly string[];
   rootName: string;
@@ -35,6 +36,7 @@ export function DestinationPathForm({ path, rootName, disabled, onOpen, purpose 
 
       try {
         const next = parsePastedFolderPath(value, rootName);
+
         setInvalid(false);
 
         if (next.requiresConfirmation) {
@@ -80,11 +82,15 @@ export function DestinationPathForm({ path, rootName, disabled, onOpen, purpose 
       id={hint}
       className={styles.note}
       role={invalid ? "alert" : undefined}
-    >{invalid
-      ? "연결 폴더 이름을 한 번 포함한 Windows 경로나 폴더 안의 상대 경로를 입력해 주세요. .. 및 네트워크 경로는 지원하지 않습니다."
-      : "Windows 경로 붙여넣기 또는 /·\\로 구분한 상대 경로를 입력하세요. 비우면 연결 폴더를 엽니다."}</p>
+    >
+      {invalid
+        ? "연결 폴더 이름을 한 번 포함한 Windows 경로나 폴더 안의 상대 경로를 입력해 주세요. .. 및 네트워크 경로는 지원하지 않습니다."
+        : "Windows 경로 붙여넣기 또는 /·\\로 구분한 상대 경로를 입력하세요. 비우면 연결 폴더를 엽니다."}
+    </p>
     {candidate && <div className={styles.pathConfirmation}>
-      <p>연결한 폴더에서 열 위치: <strong>{[rootName, ...candidate].join(" / ")}</strong></p>
+      <p>연결한 폴더에서 열 위치: <strong>
+        {[rootName, ...candidate].join(" / ")}
+      </strong></p>
       <p className={styles.note}>브라우저는 드라이브 경로를 확인할 수 없습니다. 연결한 폴더 안에서 위 위치를 엽니다.</p>
       <button
         type="button"

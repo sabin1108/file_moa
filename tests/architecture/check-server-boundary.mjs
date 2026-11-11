@@ -5,7 +5,9 @@ import { fileURLToPath } from 'node:url';
 const requireWeb = createRequire(new URL('../../apps/web/package.json', import.meta.url));
 const { ESLint } = requireWeb('eslint');
 const webRoot = fileURLToPath(new URL('../../apps/web', import.meta.url));
+
 process.chdir(webRoot);
+
 const eslint = new ESLint({ cwd: webRoot });
 const boundaryRules = new Set([
   'project/server-boundary', 'no-restricted-globals', 'no-restricted-properties', 'no-restricted-imports',
@@ -43,8 +45,12 @@ const cases = [
 
 for (const [name, filePath, code, allowed] of cases) {
   const [result] = await eslint.lintText(code, { filePath });
+
   assert.equal(result.fatalErrorCount, 0, `${name}: invalid test syntax`);
+
   const errors = result.messages.filter(message => boundaryRules.has(message.ruleId));
+
   assert.equal(errors.length === 0, allowed, `${name}: ${JSON.stringify(errors)}`);
 }
+
 console.log(`Server boundary: ${cases.length} checks passed (synthetic lint fixtures; no live authentication/DB claims).`);

@@ -4,8 +4,10 @@ import { FolderConnectionSession } from "../../../src/features/local-folders/ser
 import { SourceConnectionController } from "../../../src/features/local-folders/store/source-connection-controller";
 // 실제 controller와 session을 검사한다. 저장소·폴더 권한 응답만 가짜다.
 // 이 테스트가 통과해도 브라우저 저장소나 실제 권한 창을 검증한 것은 아니다.
+
 const owner = { userId: "test-a", workspaceId: "workspace" };
 // 파일 읽기/쓰기는 제공하지 않는 최소 가짜 핸들이다. 테스트 밖에서 사용하지 않는다.
+
 function folder(name = "자료") {
   return {
     kind: "directory",
@@ -16,6 +18,7 @@ function folder(name = "자료") {
 }
 
 // 비동기 응답을 원하는 시점까지 멈춰 늦은 완료·실패를 재현한다.
+
 function deferred<T>() {
   let resolve!: (value: T) => void;
   let reject!: (reason: unknown) => void;
@@ -23,25 +26,30 @@ function deferred<T>() {
     resolve = onSuccess;
     reject = onFailure;
   });
+
   return { promise, resolve, reject };
 }
 
 function setup() {
   const repo: HandleRepository = {
     read: vi.fn(async () => undefined),
-    write: vi.fn(async () => {}),
-    remove: vi.fn(async () => {}),
+    write: vi.fn(async () => { }),
+    remove: vi.fn(async () => { }),
   };
   const picker = vi.fn(async () => folder());
   const controller = new SourceConnectionController(new FolderConnectionSession(repo), picker);
+
   return { repo, picker, controller };
 }
+
 describe("settings source connection state", () => {
 
   it("keeps preload distinct from disconnected and exposes a cached snapshot", async () => {
     const { repo, picker, controller } = setup();
     const waiting = deferred<FolderHandle | undefined>();
+
     vi.mocked(repo.read).mockReturnValueOnce(waiting.promise);
+
     const loading = controller.load(owner);
 
     expect(controller.getSnapshot()).toMatchObject({ phase: "loading", view: null });
@@ -49,7 +57,9 @@ describe("settings source connection state", () => {
     await controller.connect();
 
     expect(picker).not.toHaveBeenCalled();
+
     const saved = folder();
+
     waiting.resolve(saved);
     await loading;
 
@@ -61,6 +71,7 @@ describe("settings source connection state", () => {
   it("keeps an expired stored permission disconnected without opening a permission prompt", async () => {
     const { repo, controller } = setup();
     const saved = folder();
+
     vi.mocked(saved.queryPermission).mockResolvedValue("prompt");
     vi.mocked(repo.read).mockResolvedValueOnce(saved);
     await controller.load(owner);
@@ -70,9 +81,13 @@ describe("settings source connection state", () => {
 
   it("calls picker before the first await and blocks double activation", async () => {
     const { controller, picker } = setup();
+
     await controller.load(owner);
+
     const waiting = deferred<FolderHandle>();
+
     picker.mockReturnValueOnce(waiting.promise);
+
     const pending = controller.connect();
 
     expect(picker).toHaveBeenCalledExactlyOnceWith({ mode: "read" });
@@ -88,10 +103,15 @@ describe("settings source connection state", () => {
 
   it("does not publish the selected name before saving succeeds", async () => {
     const { controller, repo } = setup();
+
     await controller.load(owner);
+
     const waiting = deferred<void>();
+
     vi.mocked(repo.write).mockReturnValueOnce(waiting.promise);
+
     const pending = controller.connect();
+
     await vi.waitFor(() => expect(repo.write).toHaveBeenCalled());
     expect(controller.getSnapshot().view).toEqual({ status: "disconnected", folderName: null });
     waiting.resolve();
@@ -103,6 +123,7 @@ describe("settings source connection state", () => {
   it("preserves the old connection on cancellation and does not claim a definite cause", async () => {
     // 준비: 실제 상태 관리자에 가짜 폴더를 연결해 둔다.
     const { controller, picker } = setup();
+
     await controller.load(owner);
     await controller.connect();
     // 실행: 다음 폴더 선택만 취소된 것처럼 응답한다.
@@ -116,6 +137,7 @@ describe("settings source connection state", () => {
 
   it("shows storage failure while retaining prior connection and allows another selection", async () => {
     const { controller, repo } = setup();
+
     await controller.load(owner);
     await controller.connect();
     vi.mocked(repo.write).mockRejectedValueOnce(new DOMException("private quota details", "QuotaExceededError"));
@@ -130,9 +152,11 @@ describe("settings source connection state", () => {
   it("calls restored handle permission immediately, keeps denial and allows retry", async () => {
     const { controller, repo } = setup();
     const saved = folder();
+
     vi.mocked(repo.read).mockResolvedValueOnce(saved);
     vi.mocked(saved.requestPermission).mockResolvedValueOnce("denied");
     await controller.load(owner);
+
     const pending = controller.reconnect();
 
     expect(saved.requestPermission).toHaveBeenCalledExactlyOnceWith({ mode: "read" });
@@ -146,10 +170,14 @@ describe("settings source connection state", () => {
 
   it("clears memory immediately, blocks a new selection after failed removal, and retries removal", async () => {
     const { controller, repo, picker } = setup();
+
     await controller.load(owner);
     await controller.connect();
+
     const waiting = deferred<void>();
+
     vi.mocked(repo.remove).mockReturnValueOnce(waiting.promise);
+
     const pending = controller.disconnect();
 
     expect(controller.getSnapshot().view?.status).toBe("disconnected");
@@ -168,6 +196,7 @@ describe("settings source connection state", () => {
 
   it("allows preload retry without requesting permission", async () => {
     const { controller, repo, picker } = setup();
+
     vi.mocked(repo.read).mockRejectedValueOnce(new Error("blocked"));
     await controller.load(owner);
 
@@ -180,10 +209,15 @@ describe("settings source connection state", () => {
 
   it("ignores a late picker after leaving the settings lifecycle", async () => {
     const { controller, picker, repo } = setup();
+
     await controller.load(owner);
+
     const waiting = deferred<FolderHandle>();
+
     picker.mockReturnValueOnce(waiting.promise);
+
     const pending = controller.connect();
+
     controller.stop();
     waiting.resolve(folder());
     expect(await pending).toBe(false);
@@ -194,10 +228,15 @@ describe("settings source connection state", () => {
 
   it("ignores late success and failure after owner changes or effect restarts", async () => {
     const { controller, picker } = setup();
+
     await controller.load(owner);
+
     const waiting = deferred<FolderHandle>();
+
     picker.mockReturnValueOnce(waiting.promise);
+
     const pending = controller.connect();
+
     controller.stop();
     await controller.load({ ...owner, userId: "test-b" });
     waiting.reject(new Error("old error"));
@@ -210,6 +249,7 @@ describe("settings source connection state", () => {
     const { controller, repo, picker } = setup();
     const listener = vi.fn();
     const unsubscribe = controller.subscribe(listener);
+
     controller.unavailable("미지원");
 
     expect(listener).toHaveBeenCalledTimes(1);

@@ -17,9 +17,11 @@ const owners = [
   { userId: "organization-A", workspaceId: "fixture" },
   { userId: "organization-B", workspaceId: "fixture" }
 ];
+
 function Fixture() {
   const [view, setView] = useState(location.pathname === "/files" ? "files" : "chat");
   const [owner, setOwner] = useState(0);
+
   return (
     <>
       <div>
@@ -34,17 +36,24 @@ function Fixture() {
       </div>
       <SourceFolderProvider key={owner} owner={owners[owner]}>
         <ConversationStateProvider>
-        {view === "chat" ? (
-          <LiveConversation aiProvider="openai" organizeAction={organizeAction} />
-        ) : view === "files" ? (
-          <div data-workspace-quick-menu className={`${ui.system} ${files.theme}`}><SourceFolderBrowser /></div>
-        ) : (
-          <SourceFolderSettings />
-        )}
+          {view === "chat"
+            ? (
+              <LiveConversation aiProvider="openai" organizeAction={organizeAction} />
+            )
+            : view === "files"
+              ? (
+                <div data-workspace-quick-menu className={`${ui.system} ${files.theme}`}>
+                  <SourceFolderBrowser />
+                </div>
+              )
+              : (
+                <SourceFolderSettings />
+              )}
         </ConversationStateProvider>
       </SourceFolderProvider>
       <WorkspaceQuickSwitch />
     </>
   );
 }
+
 createRoot(document.getElementById("fixture")!).render(<Fixture />);

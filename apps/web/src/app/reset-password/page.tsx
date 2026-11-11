@@ -5,6 +5,7 @@ import { requireGuest } from "../../server/session-guards";
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   await requireGuest();
+
   const token = (await searchParams).token;
 
   return (
@@ -18,4 +19,5 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     </AuthShell>
   );
 }
+
 import { GuestSessionObserver } from "../../features/auth/components/GuestSessionObserver";

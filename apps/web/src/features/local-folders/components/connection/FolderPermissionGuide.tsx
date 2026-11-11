@@ -2,6 +2,7 @@ import { Icon } from "../../../../components/ui/Icon";
 import styles from "./source-folder-connection.module.css";
 
 /** 실제 브라우저 권한창과 구별되는 짧은 앱 안내다. 추가 승인 동작은 만들지 않는다. */
+
 export function FolderPermissionGuide() {
   return <aside className={styles.permissionGuide} aria-label="폴더 접근 안내">
     <Icon name="folder" size={22} />

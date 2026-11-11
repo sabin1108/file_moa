@@ -2,7 +2,15 @@
  * 계획 검토의 입력·읽기·취소 수명이다. connection store가 조립하고 dialog가 구독한다.
  * 선택의 소유자는 listing이다. 그 상태가 바뀌면 계획도 즉시 폐기해 연결/소유자 경계를 함께 따른다.
  */
-import { buildFileChangePlan, classificationFolder, comparableName, parsePlanDestination, type FileChangePlan, type PlanDirectory, type PlanOperation } from "../lib/file-change-plan";
+import {
+  buildFileChangePlan,
+  classificationFolder,
+  comparableName,
+  parsePlanDestination,
+  type FileChangePlan,
+  type PlanDirectory,
+  type PlanOperation
+} from "../lib/file-change-plan";
 import type { FolderListing } from "../services/source-folder-listing";
 import type { SourceListingController } from "./source-listing-controller";
 import { DestinationPickerController } from "./destination-picker-controller";
@@ -30,7 +38,15 @@ export type SourcePlanState = Readonly<{
 }>;
 
 const initialState: SourcePlanState = {
-  open: false, operation: "move", destination: "", destinationConfirmed: false, sourcePath: [], selectedNames: [], phase: "draft", result: null, issue: null
+  open: false,
+  operation: "move",
+  destination: "",
+  destinationConfirmed: false,
+  sourcePath: [],
+  selectedNames: [],
+  phase: "draft",
+  result: null,
+  issue: null
 };
 
 export class SourcePlanController {
@@ -53,7 +69,11 @@ export class SourcePlanController {
     execute: CopyRunner = async () => {
       throw new Error("copy-unavailable");
     },
-    backup = new RecoveryBackupController(async () => { throw Error("backup-unavailable"); }, async () => { throw Error("backup-unavailable"); }, () => false),
+    backup = new RecoveryBackupController(async () => {
+      throw Error("backup-unavailable");
+    }, async () => {
+      throw Error("backup-unavailable");
+    }, () => false),
   ) {
     this.backup = backup;
     this.execution = new CopyExecutionController(execute);
@@ -77,8 +97,10 @@ export class SourcePlanController {
 
         return;
       }
+
       if (this.backup.getSnapshot().phase === "running" && listing.getSnapshot().available) {
         this.backup.cancel();
+
         return;
       }
 
@@ -126,15 +148,22 @@ export class SourcePlanController {
     this.destinationPicker.close();
     this.invalidate();
     this.publish({
-      ...initialState, open: true, operation, sourcePath: [...listing.result.path], selectedNames: [...listing.selectedNames], destination: listing.result.path.join("/")
+      ...initialState,
+      open: true,
+      operation,
+      sourcePath: [...listing.result.path],
+      selectedNames: [...listing.selectedNames],
+      destination: listing.result.path.join("/")
     });
   };
 
   close = () => {
     if (this.backup.getSnapshot().phase === "running") {
       this.backup.cancel();
+
       return;
     }
+
     if (this.execution.getSnapshot().running) {
       this.execution.cancel();
 
@@ -148,6 +177,7 @@ export class SourcePlanController {
 
   cancel = () => {
     if (this.backup.getSnapshot().phase === "running") return;
+
     if (this.execution.getSnapshot().running) {
       return;
     }
@@ -155,12 +185,17 @@ export class SourcePlanController {
     this.destinationPicker.close();
     this.invalidate();
     this.publish({
-      ...this.state, phase: "draft", result: null, issue: null, resumedOutcome: null
+      ...this.state,
+      phase: "draft",
+      result: null,
+      issue: null,
+      resumedOutcome: null
     });
   };
 
   setOperation = (operation: PlanOperation) => {
     if (this.backup.getSnapshot().phase === "running") return;
+
     if (this.execution.getSnapshot().running) {
       return;
     }
@@ -171,18 +206,22 @@ export class SourcePlanController {
 
   setDestination = (destination: string, confirmed = true) => {
     if (this.backup.getSnapshot().phase === "running") return;
+
     if (this.execution.getSnapshot().running) {
       return;
     }
 
     this.cancel();
     this.publish({
-      ...this.state, destination, destinationConfirmed: confirmed
+      ...this.state,
+      destination,
+      destinationConfirmed: confirmed
     });
   };
 
   browseDestination = async (pathOverride?: readonly string[]) => {
     if (this.backup.getSnapshot().phase === "running") return;
+
     if (this.execution.getSnapshot().running) {
       return;
     }
@@ -192,6 +231,7 @@ export class SourcePlanController {
     }
 
     this.cancel();
+
     let path: string[] = [];
 
     try {
@@ -215,14 +255,17 @@ export class SourcePlanController {
 
   inspectCopy = async () => {
     if (this.backup.getSnapshot().phase === "running") return;
+
     if (this.execution.getSnapshot().running) {
       return;
     }
 
     this.execution.reset();
+
     const { open, phase, result } = this.state;
 
-    if (!open || phase !== "ready" || !result || result.operation !== "copy" || result.conflictCount || this.destinationPicker.getSnapshot().open) {
+    if (!open || phase !== "ready" || !result || result.operation !== "copy" || result.conflictCount
+      || this.destinationPicker.getSnapshot().open) {
       return;
     }
 
@@ -231,6 +274,7 @@ export class SourcePlanController {
 
   executeCopy = async () => {
     if (this.backup.getSnapshot().phase === "running") return;
+
     const { result, phase, open } = this.state;
     const inspected = this.inspection.getSnapshot().result;
 
@@ -246,7 +290,8 @@ export class SourcePlanController {
     const execution = this.execution.getSnapshot();
 
     if (!this.state.open || this.state.result?.operation !== "copy" || execution.running
-      || execution.result?.phase !== "completed" || !execution.result.journalComplete) {
+      || execution.result?.phase !== "completed"
+      || !execution.result.journalComplete) {
       return null;
     }
 
@@ -257,6 +302,7 @@ export class SourcePlanController {
     }
 
     const destination = [...row.to.slice(0, -1)];
+
     this.close();
 
     return destination;
@@ -264,6 +310,7 @@ export class SourcePlanController {
 
   generate = async () => {
     if (this.backup.getSnapshot().phase === "running") return;
+
     if (this.execution.getSnapshot().running) {
       return;
     }
@@ -273,14 +320,19 @@ export class SourcePlanController {
     }
 
     this.invalidate();
+
     const generation = this.generation;
     const request = this.state;
     const startedAt = Date.now();
     const abort = new AbortController();
+
     this.abort = abort;
     this.publish({
-      ...request, phase: "loading", issue: null
+      ...request,
+      phase: "loading",
+      issue: null
     });
+
     const read = async (path: readonly string[]) => {
       const result = await this.read(path, abort.signal);
 
@@ -314,20 +366,31 @@ export class SourcePlanController {
             destinations.push({ ...await read(path), availability: "existing" });
           } else if (matches.length) {
             destinations.push({
-              path, entries: [], truncated: false, availability: "blocked"
+              path,
+              entries: [],
+              truncated: false,
+              availability: "blocked"
             });
           } else {
             // An absent folder in an incomplete parent is unknown, never a safe creation proposal.
             destinations.push({
-              path, entries: [], truncated: base.truncated, availability: base.truncated ? "existing" : "planned"
+              path,
+              entries: [],
+              truncated: base.truncated,
+              availability: base.truncated ? "existing" : "planned"
             });
           }
         }
       }
 
       const result = buildFileChangePlan({
-        operation: request.operation, source, selectedNames: request.selectedNames, destinationPath, destinations
+        operation: request.operation,
+        source,
+        selectedNames: request.selectedNames,
+        destinationPath,
+        destinations
       });
+
       await waitForPendingFeedback(startedAt, abort.signal);
 
       if (generation !== this.generation) {
@@ -336,7 +399,10 @@ export class SourcePlanController {
 
       this.abort = null;
       this.publish({
-        ...request, phase: "ready", result, issue: null
+        ...request,
+        phase: "ready",
+        result,
+        issue: null
       });
     } catch (error) {
       if (generation !== this.generation) {
@@ -363,15 +429,21 @@ export class SourcePlanController {
       }
 
       this.publish({
-        ...request, phase: "error", result: null, issue
+        ...request,
+        phase: "error",
+        result: null,
+        issue
       });
     }
   };
 
   inspectBackup = async () => {
     if (!this.state.open || this.state.phase !== "ready" || !this.state.result
-      || this.execution.getSnapshot().running || this.destinationPicker.getSnapshot().open) return;
+      || this.execution.getSnapshot().running
+      || this.destinationPicker.getSnapshot().open) return;
+
     const plan = conflictingBackupPlan(this.state.result);
+
     if (plan) await this.backup.inspect(plan);
   };
   restoreOutcome = (outcome: ManagedResult) => this.publish({ ...this.state, resumedOutcome: outcome });

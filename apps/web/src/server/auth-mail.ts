@@ -15,7 +15,11 @@ export function authenticationMailConfig() {
   return { key, from };
 }
 
-export async function sendAuthenticationEmail(message: { to: string; subject: string; text: string }) {
+export async function sendAuthenticationEmail(message: {
+  to: string;
+  subject: string;
+  text: string
+}) {
   const { key, from } = authenticationMailConfig();
 
   if (!z.email().safeParse(message.to).success) {
@@ -37,6 +41,7 @@ export async function sendAuthenticationEmail(message: { to: string; subject: st
       body,
       signal: AbortSignal.timeout(10_000),
     });
+
     providerStatus = response.status;
 
     if (!response.ok) throw new Error("Email provider rejected the request.");
@@ -44,6 +49,7 @@ export async function sendAuthenticationEmail(message: { to: string; subject: st
     return z.object({ id: z.string().min(1) }).parse(await response.json());
   } catch {
     console.error("Authentication email delivery failed.", { providerStatus });
+
     throw new Error("Authentication email delivery failed.");
   }
 }

@@ -14,15 +14,17 @@ export default async function Page() {
       checkSessionAction={checkAuthSessionAction}
     >
       <AuthShell>
-        {session.user.name.trim() ? (
-          <AuthScreen
-            operation="signout"
-            action={signoutAction}
-            account={{ name: session.user.name, email: session.user.email }}
-          />
-        ) : (
-          <AuthScreen operation="profile" action={profileAction} />
-        )}
+        {session.user.name.trim()
+          ? (
+            <AuthScreen
+              operation="signout"
+              action={signoutAction}
+              account={{ name: session.user.name, email: session.user.email }}
+            />
+          )
+          : (
+            <AuthScreen operation="profile" action={profileAction} />
+          )}
       </AuthShell>
     </SessionBoundary>
   );

@@ -8,14 +8,22 @@ import { ScenePreview } from "../../src/prototypes/demo/ScenePreview";
 import { sceneIds, type SceneId } from "../../src/prototypes/demo/scene-data";
 import "../../src/styles/globals.css";
 
-const screens = { chat: WorkspacePrototype, files: FileLibraryPrototype, settings: SettingsPrototype,
-  login: LoginPrototype, welcome: WelcomePrototype };
+const screens = {
+  chat: WorkspacePrototype,
+  files: FileLibraryPrototype,
+  settings: SettingsPrototype,
+  login: LoginPrototype,
+  welcome: WelcomePrototype
+};
 const scenario = new URLSearchParams(location.search).get("case") ?? "files";
 const Screen = screens[scenario as keyof typeof screens];
+
 if (!Screen && !sceneIds.includes(scenario as SceneId)) {
   throw new Error("Unknown prototype fixture case");
 }
 
 createRoot(document.getElementById("fixture")!).render(
-  <div data-prototype-fixture={scenario}>{Screen ? <Screen /> : <ScenePreview initial={scenario as SceneId} />}</div>,
+  <div data-prototype-fixture={scenario}>
+    {Screen ? <Screen /> : <ScenePreview initial={scenario as SceneId} />}
+  </div>,
 );

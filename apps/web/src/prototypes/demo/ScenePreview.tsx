@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { ActionLink } from "../../components/ui/ActionLink";
 import { WorkspaceSidebar } from "../components/WorkspaceSidebar";
@@ -8,10 +9,21 @@ import ui from "../../styles/workspace-ui.module.css";
 
 export function ScenePreview({ initial }: { initial: SceneId }) {
   const [scene, setScene] = useState(initial);
+
   if (scene === "startup") return <div className={`${ui.system} ${ui.entryPreview}`}>
-    <header className={ui.topbar}><span>모아 · 첫 접속 시안</span><nav><ActionLink href="/preview">전체 시안</ActionLink></nav></header>
-    <main className={ui.canvas}><section className={ui.sheet} data-scene={scene}><SceneSurface scene={scene} navigate={setScene} /></section></main>
+    <header className={ui.topbar}>
+      <span>모아 · 첫 접속 시안</span>
+      <nav>
+        <ActionLink href="/preview">전체 시안</ActionLink>
+      </nav>
+    </header>
+    <main className={ui.canvas}>
+      <section className={ui.sheet} data-scene={scene}>
+        <SceneSurface scene={scene} navigate={setScene} />
+      </section>
+    </main>
   </div>;
+
   return (
     <div className={`${ui.system} ${ui.workspace}`}>
       <WorkspaceSidebar
@@ -26,7 +38,9 @@ export function ScenePreview({ initial }: { initial: SceneId }) {
       />
       <main className={ui.main}>
         <header className={ui.topbar}>
-          <span>{scenes[scene].group}</span>
+          <span>
+            {scenes[scene].group}
+          </span>
           <nav>
             <ActionLink href="/preview">전체 시안</ActionLink>
             <ActionLink href="/files">내 폴더</ActionLink>

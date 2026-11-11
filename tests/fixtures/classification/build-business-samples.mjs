@@ -5,8 +5,11 @@ import { resolve } from "node:path";
 import { Workbook, SpreadsheetFile } from "@oai/artifact-tool";
 
 // Run with the bundled artifact runtime linked into this script's node_modules; no app dependency.
+
 const out = resolve("tests/fixtures/classification/business-v1");
+
 await mkdir(out, { recursive: true });
+
 const groups = [
   ["company", "source-company", "finance", [
     ["분기 영업 요약", "가상기업A 3분기 매출 보고서. 온라인 판매 8400만원, 오프라인 판매 6100만원이다. 채널별 매출과 반품을 구분하고 영업이익 계산에는 원가를 별도로 반영한다."],
@@ -67,15 +70,26 @@ const groups = [
 ];
 const documents = [];
 const hash = bytes => createHash("sha256").update(bytes).digest("hex");
+
 for (const [group, sourceFolderId, folderId, entries] of groups) for (const [i, [title, body]] of entries.entries()) {
   const format = i % 2 ? "txt" : "md";
   const excerpt = `${format === "md" ? "# " : ""}${title}\n작성일: 2026-09-${String(i + 3).padStart(2, "0")}\n${body}\n출처: MOA 원본 합성 샘플 business-v1. 실제 기관·개인 자료가 아닙니다.`;
   const bytes = Buffer.from(excerpt + "\n");
   const name = `${title}.${format}`;
+
   await writeFile(resolve(out, `${group}-${name}`), bytes);
-  documents.push({ id: `business-${group}-${i + 1}`, name, format, excerpt, sourceFolderId,
-    proposal: { folderId, reason: "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.", reviewRequired: false }, assetBase64: bytes.toString("base64"), sha256: hash(bytes) });
+  documents.push({
+    id: `business-${group}-${i + 1}`,
+    name,
+    format,
+    excerpt,
+    sourceFolderId,
+    proposal: { folderId, reason: "준비된 샘플 제안입니다. 대화에서는 요청과 본문 근거를 다시 확인합니다.", reviewRequired: false },
+    assetBase64: bytes.toString("base64"),
+    sha256: hash(bytes)
+  });
 }
+
 const sheets = [
   ["sales", "채널별 매출", "source-company", "finance", ["채널", "매출(만원)", "원가(만원)", "이익(만원)"], [["온라인", 8400, 5100], ["오프라인", 6100, 3900], ["도매", 4200, 3100]], "B-C"],
   ["visits", "방문과 구매", "source-visits", "finance", ["유입", "방문(세션)", "구매(건)", "전환율"], [["검색", 1200, 60], ["직접", 650, 39], ["소셜", 420, 21]], "C/B"],
@@ -87,9 +101,11 @@ const sheets = [
   ["service", "웹서비스 오류 집계", "source-webdocs", "engineering", ["구간", "요청(건)", "오류(건)", "오류율"], [["로그인", 2400, 12], ["목록", 3800, 19], ["검색", 1600, 16]], "C/B"],
 ];
 const manifest = [];
+
 for (const [id, title, sourceFolderId, folderId, headers, inputs, operation] of sheets) {
   const wb = Workbook.create();
   const sheet = wb.worksheets.add("요약");
+
   sheet.showGridLines = false;
   sheet.getRange("A2").values = [[title]];
   sheet.getRange("A3").values = [["2026년 9월 · MOA 합성 자료 · 실제 기관 데이터 아님"]];
@@ -111,27 +127,77 @@ for (const [id, title, sourceFolderId, folderId, headers, inputs, operation] of 
   sheet.getRange("B:D").format.columnWidth = 19;
   sheet.getRange("B6:D9").format.horizontalAlignment = "right";
   sheet.getRange("B6:D9").setNumberFormat("#,##0.0");
+
   if (operation === "C/B") sheet.getRange("D6:D9").setNumberFormat("0.0%");
+
   wb.recalculate();
+
   const rows = sheet.getRange("A5:D9").values;
+
   assert.equal(rows.length, 5);
+
   for (const row of rows.slice(1)) for (const cell of row.slice(1)) assert.equal(typeof cell, "number");
+
   const expectedB = inputs.reduce((sum, row) => sum + row[1], 0);
   const expectedC = inputs.reduce((sum, row) => sum + row[2], 0);
+
   assert.ok(Math.abs(rows[4][3] - (operation === "B-C" ? expectedB - expectedC : expectedC / expectedB)) < 1e-9);
+
   const name = `${title}.xlsx`;
   const file = await SpreadsheetFile.exportXlsx(wb);
+
   await file.save(resolve(out, name));
+
   const bytes = await readFile(resolve(out, name));
+
   if (id === "sales" || id === "visits") {
     const preview = await wb.render({ sheetName: "요약", range: "A1:D10", scale: 1.5, format: "png" });
-    await writeFile(resolve("test-results", `business-${id}.png`), new Uint8Array(await preview.arrayBuffer()));
+
+    await writeFile(
+      resolve("test-results", `business-${id}.png`),
+      new Uint8Array(await preview.arrayBuffer())
+    );
   }
+
   const excerpt = `${title}\n기준월: 2026년 9월. MOA 원본 합성 수치 자료.\n${rows.map(row => row.join(" | ")).join("\n")}\nD열은 ${operation === "B-C" ? "B열에서 C열을 뺀 값" : "C열을 B열로 나눈 비율"}이며 합계는 원자료를 합산한 뒤 계산한다.${id === "service" ? " 요청 건수와 오류 비율 통계이며 사이트 속도 측정이나 성능 테스트 결과가 아니다." : ""}`;
-  documents.push({ id: `business-xlsx-${id}`, name, format: "xlsx", excerpt, sourceFolderId, sheet: { name: "요약", rows }, proposal: { folderId, reason: "준비된 수치 자료 제안입니다. 내용과 단위를 확인하세요.", reviewRequired: false }, assetBase64: bytes.toString("base64"), sha256: hash(bytes) });
-  manifest.push({ id: `business-xlsx-${id}`, name, sha256: hash(bytes), rows, totalFormula: operation === "B-C" ? "=B9-C9" : "=C9/B9" });
+
+  documents.push({
+    id: `business-xlsx-${id}`,
+    name,
+    format: "xlsx",
+    excerpt,
+    sourceFolderId,
+    sheet: { name: "요약", rows },
+    proposal: { folderId, reason: "준비된 수치 자료 제안입니다. 내용과 단위를 확인하세요.", reviewRequired: false },
+    assetBase64: bytes.toString("base64"),
+    sha256: hash(bytes)
+  });
+  manifest.push({
+    id: `business-xlsx-${id}`,
+    name,
+    sha256: hash(bytes),
+    rows,
+    totalFormula: operation === "B-C" ? "=B9-C9" : "=C9/B9"
+  });
 }
+
 assert.equal(documents.length, 50);
-await writeFile(resolve("apps/web/src/server/sample-data/business-documents.json"), JSON.stringify(documents, null, 2) + "\n");
-await writeFile(resolve(out, "manifest.json"), JSON.stringify({ version: "business-v1", seed: "manual-business-v1", provenance: "Original synthetic documents; no external/private data; no evaluation answers", spreadsheets: manifest, documents: documents.map(({ id, name, format, sha256 }) => ({ id, name, format, sha256 })) }, null, 2) + "\n");
+await writeFile(
+  resolve("apps/web/src/server/sample-data/business-documents.json"),
+  JSON.stringify(documents, null, 2) + "\n"
+);
+await writeFile(
+  resolve(out, "manifest.json"),
+  JSON.stringify(
+    {
+      version: "business-v1",
+      seed: "manual-business-v1",
+      provenance: "Original synthetic documents; no external/private data; no evaluation answers",
+      spreadsheets: manifest,
+      documents: documents.map(({ id, name, format, sha256 }) => ({ id, name, format, sha256 }))
+    },
+    null,
+    2
+  ) + "\n"
+);
 console.log(JSON.stringify({ documents: documents.length, spreadsheets: sheets.length, output: out }));

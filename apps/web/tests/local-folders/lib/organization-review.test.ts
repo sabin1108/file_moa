@@ -24,6 +24,7 @@ describe("grounded questions and user answers", () => {
     const questions = buildReviewQuestions(response, request, [
       { documentId: document.id, kind: "date" }
     ]);
+
     expect(questions).toHaveLength(1);
     expect(questions[0].dates.map(candidate => candidate.label)).toEqual(["작성일", "검토 기준일"]);
     expect(questions[0].dates.map(candidate => candidate.date)).toEqual([
@@ -46,6 +47,7 @@ describe("grounded questions and user answers", () => {
       ]
     ])
       expect(() => validateReviewAnswers(answers, request.documents)).toThrow();
+
     expect(() =>
       buildReviewQuestions(response, request, [{ documentId: "outside", kind: "date" }])
     ).toThrow();
@@ -65,6 +67,7 @@ describe("grounded questions and user answers", () => {
       held: [],
       questions: []
     };
+
     expect(parseLiveOrganizationResponse(value, request, answer).organization.matches[0].date).toBe(
       "2026-10-15"
     );
@@ -100,6 +103,7 @@ describe("grounded questions and user answers", () => {
       held: [],
       questions: []
     };
+
     expect(
       parseLiveOrganizationResponse(value, request, [
         { documentId: document.id, date: "2026-10-15", destination: ["직접 선택"] }
@@ -117,6 +121,7 @@ describe("grounded questions and user answers", () => {
 
 describe("bounded natural language conditions", () => {
   const folders = [[], ["회사"], ["보고서"], ["검토"]];
+
   it("separates explicit quoted source, reference and destination without broadening scope", () => {
     expect(
       inferOrganizationConditions(

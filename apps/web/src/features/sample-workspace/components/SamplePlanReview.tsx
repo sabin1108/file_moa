@@ -10,7 +10,10 @@ import styles from "./sample-workspace.module.css";
 import { SampleDestinationPicker } from "./SampleDestinationPicker";
 
 export function SamplePlanReview({ catalog, state, disabled, dispatch }: {
-  catalog: SampleCatalog; state: SampleState; disabled: boolean; dispatch: (action: SampleAction) => void;
+  catalog: SampleCatalog;
+  state: SampleState;
+  disabled: boolean;
+  dispatch: (action: SampleAction) => void;
 }) {
   const [browsingId, setBrowsingId] = useState<string | null>(null);
   const documents = catalog.documents.filter(document => state.selected.includes(document.id));
@@ -18,6 +21,7 @@ export function SamplePlanReview({ catalog, state, disabled, dispatch }: {
   const plan = unresolved ? null : sampleChangePlan(catalog, state);
   const closeBrowse = () => {
     const id = browsingId;
+
     setBrowsingId(null);
     requestAnimationFrame(() => document.getElementById(`browse-${id}`)?.focus());
   };
@@ -41,20 +45,22 @@ export function SamplePlanReview({ catalog, state, disabled, dispatch }: {
         {documents.map(document => (
           <div className={styles.destinationRow} key={document.id}>
             <label htmlFor={`destination-${document.id}`}>
-              <strong>{document.name}</strong>
+              <strong>
+                {document.name}
+              </strong>
               <span>
                 {state.organization
                   ? state.organization.response.matches.find(
-                      match => match.documentId === document.id,
-                    )?.evidence
+                    match => match.documentId === document.id,
+                  )?.evidence
                   : state.ai
                     ? state.ai.proposals.find(proposal => proposal.documentId === document.id)
-                        ?.reason
+                      ?.reason
                     : document.proposal.reason}
               </span>
               {(state.ai
                 ? state.ai.proposals.find(proposal => proposal.documentId === document.id)
-                    ?.reviewRequired
+                  ?.reviewRequired
                 : document.proposal.reviewRequired) && <span>검토가 필요한 제안이에요.</span>}
             </label>
             <select
@@ -88,28 +94,30 @@ export function SamplePlanReview({ catalog, state, disabled, dispatch }: {
             >
               폴더 탐색으로 선택
             </button>
-            {browsingId === document.id && (
-              <SampleDestinationPicker
-                catalog={catalog}
-                initialFolderId={state.targets[document.id] ?? null}
-                disabled={disabled}
-                onChoose={folderId => {
-                  dispatch({ type: "destination", id: document.id, folderId });
-                  closeBrowse();
-                }}
-                onClose={closeBrowse}
-              />
-            )}
+            {browsingId === document.id
+              && (
+                <SampleDestinationPicker
+                  catalog={catalog}
+                  initialFolderId={state.targets[document.id] ?? null}
+                  disabled={disabled}
+                  onChoose={folderId => {
+                    dispatch({ type: "destination", id: document.id, folderId });
+                    closeBrowse();
+                  }}
+                  onClose={closeBrowse}
+                />
+              )}
           </div>
         ))}
       </div>
-      {unresolved > 0 && (
-        <StatusNotice
-          state="attention"
-          title={`목적지 확인이 필요한 자료 ${unresolved}개`}
-          detail="내용이 섞인 자료의 목적지를 직접 선택해 주세요. 선택 전에는 적용되지 않아요."
-        />
-      )}
+      {unresolved > 0
+        && (
+          <StatusNotice
+            state="attention"
+            title={`목적지 확인이 필요한 자료 ${unresolved}개`}
+            detail="내용이 섞인 자료의 목적지를 직접 선택해 주세요. 선택 전에는 적용되지 않아요."
+          />
+        )}
       {plan && <FileChangePlanView plan={plan} folderName="샘플 자료" />}
       <div className={styles.actions}>
         <button

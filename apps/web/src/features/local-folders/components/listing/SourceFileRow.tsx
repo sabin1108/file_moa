@@ -18,10 +18,17 @@ type Props = {
   previewSupported?: boolean;
 };
 /** checkbox와 미리보기는 형제 조작이다. 파일 선택이 본문 읽기를 유발하지 않는다. */
+
 export function SourceFileRow({ name, selected, previewing, selecting, selectionDisabled, previewDisabled, onToggle, onPreview, onLongSelect, previewSupported }: Props) {
   const press = useLongPressSelection(selectionDisabled, onLongSelect);
   const keyboard = useSelectionRow(selecting, selectionDisabled, onToggle);
-  const contents = <><Icon name="file" size={20} /><span className={styles.name}>{name}{previewing && <small className={styles.rowState}>미리보기 중</small>}</span></>;
+  const contents = <>
+    <Icon name="file" size={20} />
+    <span className={styles.name}>
+      {name}
+      {previewing && <small className={styles.rowState}>미리보기 중</small>}
+    </span>
+  </>;
   const className = `${styles.entry} ${selectionStyles.fileAction}`;
   const kind = selected ? "선택됨" : name.includes(".") ? name.split(".").at(-1)!.toUpperCase() : "파일";
 
@@ -52,12 +59,20 @@ export function SourceFileRow({ name, selected, previewing, selecting, selection
         aria-current={previewing ? "true" : undefined}
         aria-label={`${name} 미리보기`}
       >
-        {contents}<span className={styles.kind}>{kind}</span>
+        {contents}
+        <span className={styles.kind}>
+          {kind}
+        </span>
       </button>
       : <div
         className={className}
         tabIndex={selectionDisabled ? -1 : 0}
         aria-label={`${name} · Space로 선택`}
-      >{contents}<span className={styles.kind}>{kind}</span></div>}
+      >
+        {contents}
+        <span className={styles.kind}>
+          {kind}
+        </span>
+      </div>}
   </div>;
 }

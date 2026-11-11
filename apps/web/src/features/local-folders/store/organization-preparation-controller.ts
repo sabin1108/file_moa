@@ -29,18 +29,20 @@ type Conditions = Readonly<{
   reference: readonly string[] | null;
   destination: readonly string[] | null;
 }>;
+
 type FolderChoice = "scope" | "reference" | "destination";
+
 export type OrganizationPreparationState = Conditions &
   Readonly<{
     phase:
-      | "draft"
-      | "scope"
-      | "reading"
-      | "ready"
-      | "checking"
-      | "sending"
-      | "review"
-      | "error";
+    | "draft"
+    | "scope"
+    | "reading"
+    | "ready"
+    | "checking"
+    | "sending"
+    | "review"
+    | "error";
     submittedRequest: string;
     snapshot: SourceSnapshot | null;
     candidateIds: readonly string[];
@@ -55,6 +57,7 @@ export type OrganizationPreparationState = Conditions &
     replyDraft: string;
     submittedReply: string;
   }>;
+
 const initial: OrganizationPreparationState = {
   request: "",
   scope: null,
@@ -78,6 +81,7 @@ const initial: OrganizationPreparationState = {
 };
 
 /** Provider-owned preparation and explicit transfer. No automatic requests or file writer. */
+
 export class OrganizationPreparationController {
   private state = initial;
   private listeners = new Set<() => void>();
@@ -97,7 +101,7 @@ export class OrganizationPreparationController {
       path: readonly string[],
       signal: AbortSignal,
     ) => Promise<FolderListing>,
-    private readonly permissionLost: () => void = () => {},
+    private readonly permissionLost: () => void = () => { },
     private readonly recheck?: (
       documents: readonly SnapshotDocument[],
       instruction: string,
@@ -116,6 +120,7 @@ export class OrganizationPreparationController {
   getServerSnapshot = () => initial;
   subscribe = (listener: () => void) => {
     this.listeners.add(listener);
+
     return () => {
       this.listeners.delete(listener);
     };
@@ -132,16 +137,23 @@ export class OrganizationPreparationController {
 
   update = (change: Partial<Conditions>) => {
     this.stop();
+
     const next = { ...this.state, ...change };
+
     for (const key of ["scope", "reference", "destination"] as const)
       if (Object.hasOwn(change, key)) this.explicitConditions.add(key);
+
     if (change.request !== undefined && change.request !== this.state.request) {
       if (!this.explicitConditions.has("scope")) next.scope = null;
+
       if (!this.explicitConditions.has("reference")) next.reference = null;
+
       if (!this.explicitConditions.has("destination")) next.destination = null;
     }
+
     if (next.scope?.kind === "folder")
       next.scope = { kind: "folder", path: copyFolderPath(next.scope.path) };
+
     if (next.scope?.kind === "selected")
       next.scope = {
         kind: "selected",
@@ -150,8 +162,11 @@ export class OrganizationPreparationController {
           path: copyFolderPath(entry.path),
         })),
       };
+
     if (next.reference) next.reference = copyFolderPath(next.reference);
+
     if (next.destination) next.destination = copyFolderPath(next.destination);
+
     this.publish({
       ...next,
       phase: "draft",
@@ -171,19 +186,26 @@ export class OrganizationPreparationController {
 
   prepare = async () => {
     this.stop();
+
     const { request, basis } = this.state;
     let { scope } = this.state;
+
     if (!request.trim()) return;
+
     if (
-      this.infer &&
-      ((!scope && !this.explicitConditions.has("scope")) ||
+      this.infer
+      &&
+      ((!scope && !this.explicitConditions.has("scope"))
+        ||
         (this.state.reference === null &&
-          !this.explicitConditions.has("reference")) ||
+          !this.explicitConditions.has("reference"))
+        ||
         (this.state.destination === null &&
           !this.explicitConditions.has("destination")))
     ) {
       const sequence = this.sequence;
       const abort = new AbortController();
+
       this.abort = abort;
       this.publish({
         ...this.state,
@@ -192,11 +214,15 @@ export class OrganizationPreparationController {
         result: null,
         consentKey: null,
       });
+
       try {
         const inferred = await this.infer(request, abort.signal);
+
         if (sequence !== this.sequence || abort.signal.aborted) return;
+
         if (!this.explicitConditions.has("scope"))
           scope ??= inferred.scope ?? null;
+
         this.publish({
           ...this.state,
           scope,
@@ -209,21 +235,25 @@ export class OrganizationPreparationController {
         });
       } catch (error) {
         if (sequence !== this.sequence || abort.signal.aborted) return;
+
         this.publish({
           ...this.state,
           phase: "error",
           issue: "폴더 조건을 확인하지 못했어요. 연결 권한을 확인해 주세요.",
         });
+
         if (
           error instanceof DOMException &&
           ["NotAllowedError", "SecurityError"].includes(error.name)
         )
           this.permissionLost();
+
         return;
       } finally {
         if (sequence === this.sequence) this.abort = null;
       }
     }
+
     if (!scope) {
       this.publish({
         ...this.state,
@@ -231,10 +261,13 @@ export class OrganizationPreparationController {
         submittedRequest: request.trim(),
         consentKey: null,
       });
+
       return;
     }
+
     const sequence = this.sequence;
     const abort = new AbortController();
+
     this.abort = abort;
     this.publish({
       ...this.state,
@@ -252,21 +285,25 @@ export class OrganizationPreparationController {
       submittedReply: "",
       issue: null,
     });
+
     try {
       const snapshot =
         this.state.reference === null
           ? await this.read(scope, `${request}\n${basis}`, abort.signal)
           : await this.read(
-              scope,
-              `${request}\n${basis}`,
-              abort.signal,
-              this.state.reference,
-            );
+            scope,
+            `${request}\n${basis}`,
+            abort.signal,
+            this.state.reference,
+          );
+
       if (sequence !== this.sequence || abort.signal.aborted) return;
+
       const candidateIds = selectOrganizationCandidates(
         snapshot.documents,
         `${request}\n${basis}`,
       ).map((document) => document.id);
+
       this.publish({
         ...this.state,
         phase: "ready",
@@ -276,12 +313,14 @@ export class OrganizationPreparationController {
       });
     } catch (error) {
       if (sequence !== this.sequence || abort.signal.aborted) return;
+
       this.publish({
         ...this.state,
         phase: "error",
         issue:
           "자료를 읽지 못했어요. 연결 권한과 폴더 상태를 확인한 뒤 다시 준비해 주세요.",
       });
+
       if (
         error instanceof DOMException &&
         ["NotAllowedError", "SecurityError"].includes(error.name)
@@ -294,10 +333,13 @@ export class OrganizationPreparationController {
 
   toggleDocument = (id: string) => {
     if (!this.state.snapshot || !this.state.candidateIds.includes(id)) return;
+
     this.stop();
+
     const selectedIds = this.state.selectedIds.includes(id)
       ? this.state.selectedIds.filter((value) => value !== id)
       : [...this.state.selectedIds, id];
+
     this.publish({
       ...this.state,
       phase: "ready",
@@ -329,6 +371,7 @@ export class OrganizationPreparationController {
         document.sha256,
         document.excerptHash,
       ]);
+
     return JSON.stringify([
       state.request,
       state.scope,
@@ -349,17 +392,23 @@ export class OrganizationPreparationController {
         consentKey: null,
         result: null,
       });
+
       return;
     }
+
     const state = this.state;
+
     if (
       state.phase !== "ready" ||
       !state.snapshot ||
-      (!state.snapshot.complete && !state.partialAccepted) ||
-      !state.selectedIds.length ||
+      (!state.snapshot.complete && !state.partialAccepted)
+      ||
+      !state.selectedIds.length
+      ||
       hasUnansweredReview(state.questions, state.answers)
     )
       return;
+
     this.publish({
       ...state,
       consentKey: this.confirmationKey(state),
@@ -369,42 +418,57 @@ export class OrganizationPreparationController {
 
   send = async (action: LiveOrganizationAction) => {
     const state = this.state;
+
     if (
       state.phase !== "ready" ||
       !state.snapshot ||
       !state.scope ||
-      !this.recheck ||
-      !state.selectedIds.length ||
-      (!state.snapshot.complete && !state.partialAccepted) ||
-      state.consentKey !== this.confirmationKey(state) ||
+      !this.recheck
+      ||
+      !state.selectedIds.length
+      ||
+      (!state.snapshot.complete && !state.partialAccepted)
+      ||
+      state.consentKey !== this.confirmationKey(state)
+      ||
       hasUnansweredReview(state.questions, state.answers)
     )
       return;
+
     this.stop();
+
     const sequence = this.sequence;
     const abort = new AbortController();
+
     this.abort = abort;
+
     const documents = state.snapshot.documents.filter((document) =>
       state.selectedIds.includes(document.id),
     );
+
     this.publish({ ...state, phase: "checking", result: null, issue: null });
+
     let transmitted = false;
+
     try {
       const owner = state.snapshot.reference
         ? await this.recheck(
-            documents,
-            `${state.request}\n${state.basis}`,
-            abort.signal,
-            state.snapshot.reference,
-          )
+          documents,
+          `${state.request}\n${state.basis}`,
+          abort.signal,
+          state.snapshot.reference,
+        )
         : await this.recheck(
-            documents,
-            `${state.request}\n${state.basis}`,
-            abort.signal,
-          );
+          documents,
+          `${state.request}\n${state.basis}`,
+          abort.signal,
+        );
+
       if (sequence !== this.sequence || abort.signal.aborted) return;
+
       this.publish({ ...this.state, phase: "sending", consentKey: null });
       transmitted = true;
+
       const result = await action({
         requestId: `${Date.now()}:${crypto.randomUUID()}`,
         owner,
@@ -420,7 +484,9 @@ export class OrganizationPreparationController {
           ? { referenceTree: state.snapshot.reference }
           : {}),
       });
+
       if (sequence !== this.sequence || abort.signal.aborted) return;
+
       if (!result.ok && result.code === "session") {
         this.reset();
         this.publish({
@@ -428,8 +494,10 @@ export class OrganizationPreparationController {
           phase: "error",
           issue: LIVE_AI_MESSAGES.session,
         });
+
         return;
       }
+
       this.publish({
         ...this.state,
         phase: result.ok ? "review" : "ready",
@@ -437,17 +505,18 @@ export class OrganizationPreparationController {
         result: result.ok ? result : null,
         questions: result.ok
           ? [
-              ...new Map(
-                [...this.state.questions, ...(result.questions ?? [])].map(
-                  (question) => [question.id, question],
-                ),
-              ).values(),
-            ]
+            ...new Map(
+              [...this.state.questions, ...(result.questions ?? [])].map(
+                (question) => [question.id, question],
+              ),
+            ).values(),
+          ]
           : this.state.questions,
         issue: result.ok ? null : LIVE_AI_MESSAGES[result.code],
       });
     } catch (error) {
       if (sequence !== this.sequence || abort.signal.aborted) return;
+
       this.publish({
         ...this.state,
         phase: transmitted ? "ready" : "error",
@@ -458,6 +527,7 @@ export class OrganizationPreparationController {
           ? LIVE_AI_MESSAGES.unavailable
           : "원본 내용이나 읽기 권한을 다시 확인해야 해요. 자료를 다시 준비하고 발췌를 확인해 주세요.",
       });
+
       if (!transmitted) {
         if (
           error instanceof DOMException &&
@@ -476,17 +546,20 @@ export class OrganizationPreparationController {
 
   updateReply = (replyDraft: string) => {
     if (["reading", "checking", "sending"].includes(this.state.phase)) return;
+
     this.publish({ ...this.state, replyDraft });
   };
 
   submitReply = () => {
     const state = this.state;
+
     if (
       !state.snapshot ||
       !state.questions.length ||
       !["ready", "review"].includes(state.phase)
     )
       return;
+
     try {
       const answers = parseOrganizationReply(
         state.replyDraft,
@@ -498,6 +571,7 @@ export class OrganizationPreparationController {
             sourcePath: document.path.slice(0, -1),
           })),
       );
+
       if (this.applyAnswers(answers))
         this.publish({
           ...this.state,
@@ -515,7 +589,8 @@ export class OrganizationPreparationController {
 
   private applyAnswers = (changes: readonly ReviewAnswer[]) => {
     if (
-      !this.state.snapshot ||
+      !this.state.snapshot
+      ||
       changes.some(
         (answer) =>
           !this.state.questions.some(
@@ -524,23 +599,27 @@ export class OrganizationPreparationController {
       )
     )
       return false;
+
     try {
       const merged = new Map(
         this.state.answers.map((answer) => [answer.documentId, answer]),
       );
+
       for (const answer of changes) {
         const previous = merged.get(answer.documentId);
+
         merged.set(
           answer.documentId,
           previous && !previous.exclude && !answer.exclude
             ? {
-                ...previous,
-                ...answer,
-                ...(answer.date === null ? { dateLabel: undefined } : {}),
-              }
+              ...previous,
+              ...answer,
+              ...(answer.date === null ? { dateLabel: undefined } : {}),
+            }
             : answer,
         );
       }
+
       const answers = validateReviewAnswers(
         [...merged.values()],
         this.state.snapshot.documents.map((document) => ({
@@ -548,6 +627,7 @@ export class OrganizationPreparationController {
           sourcePath: document.path.slice(0, -1),
         })),
       );
+
       this.stop();
       this.publish({
         ...this.state,
@@ -558,12 +638,14 @@ export class OrganizationPreparationController {
         submittedReply: "",
         issue: null,
       });
+
       return true;
     } catch {
       this.publish({
         ...this.state,
         issue: "답변의 날짜 근거나 목적지 경로를 확인해 주세요.",
       });
+
       return false;
     }
   };
@@ -584,18 +666,22 @@ export class OrganizationPreparationController {
 
   browse = async (picking: FolderChoice) => {
     this.publish({ ...this.state, picking });
+
     const path =
       picking === "scope"
         ? this.state.scope?.kind === "folder"
           ? this.state.scope.path
           : []
         : (this.state[picking] ?? []);
+
     await this.picker.show(path);
   };
   chooseFolder = () => {
     const { picking } = this.state;
     const path = this.picker.selectedPath();
+
     if (!picking || !path) return;
+
     this.update(
       picking === "scope"
         ? { scope: { kind: "folder", path } }
@@ -610,6 +696,7 @@ export class OrganizationPreparationController {
   cancel = () => {
     const transmitted = this.state.phase === "sending";
     const reading = this.state.phase === "reading";
+
     this.stop();
     this.publish({
       ...this.state,

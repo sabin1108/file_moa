@@ -1,4 +1,4 @@
-﻿import assert from "node:assert/strict";
+import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
@@ -10,9 +10,12 @@ import { installFolderBrowserFixture } from "../fixtures/folder-browser-fixture.
 const require = createRequire(import.meta.resolve("vitest"));
 const { createServer } = await import(pathToFileURL(require.resolve("vite")).href);
 const output = process.argv[2] ?? "docs/verification/live-local-preparation";
+
 mkdirSync(output, { recursive: true });
+
 const server = await createServer({
-  configFile: false, cacheDir: resolve(".omx/browser-cache/check-live-local-preparation"),
+  configFile: false,
+  cacheDir: resolve(".omx/browser-cache/check-live-local-preparation"),
   root: resolve("apps/web"),
   logLevel: "error",
   server: { host: "127.0.0.1", port: 0, fs: { allow: [resolve(".")] } },
@@ -38,7 +41,9 @@ const server = await createServer({
     }
   ]
 });
+
 await server.listen();
+
 const base = `http://127.0.0.1:${server.httpServer.address().port}`;
 const browser = await Browser.launch({
   extraArgs: [
@@ -58,11 +63,14 @@ const check = (name, passed, detail) => {
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 const body = "관련 없는 첫부분 ".repeat(500) + "LCP 성능 테스트 실측 결과\r\n합성 자료입니다.";
 let page;
+
 async function until(predicate) {
   for (let index = 0; index < 300; index++) {
     if (await page.eval(`Boolean((${predicate.toString()})())`)) return;
+
     await pause(30);
   }
+
   writeFileSync(
     `${output}/browser-failure.json`,
     JSON.stringify(
@@ -71,65 +79,91 @@ async function until(predicate) {
       2
     )
   );
+
   throw Error("Local preparation fixture timed out");
 }
+
 async function click(selector) {
   await page.eval(selector => {
     const node = document.querySelector(selector);
+
     for (let parent = node?.parentElement; parent; parent = parent.parentElement) {
       if (parent.tagName === "DETAILS" && parent.querySelector(":scope > summary") !== node) parent.open = true;
     }
   }, selector);
+
   for (let index = 0; index < 200; index++) {
     const ready = await page.eval(selector => {
       const node = document.querySelector(selector);
       const drawer = node?.closest("dialog");
+
       return (
         node?.checkVisibility() &&
         !node.disabled &&
         (!drawer || drawer.dataset.drawerState === "open")
       );
     }, selector);
+
     if (ready) break;
+
     if (index === 199) throw Error("Control not ready: " + selector);
+
     await pause(30);
   }
+
   const point = await page.eval(selector => {
     const node = document.querySelector(selector);
+
     assertNode(node, selector);
+
     function assertNode(node, selector) {
       if (!node) throw Error("Missing " + selector);
     }
+
     node.scrollIntoView({ block: "center", behavior: "instant" });
+
     const rect = node.getBoundingClientRect();
+
     return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
   }, selector);
+
   for (const type of ["mousePressed", "mouseReleased"])
     await page.send("Input.dispatchMouseEvent", { type, ...point, button: "left", clickCount: 1 });
 }
+
 async function fill(selector, text) {
   await page.eval(selector => {
     const node = document.querySelector(selector);
+
     node.focus();
     node.select();
   }, selector);
   await page.send("Input.insertText", { text });
 }
+
 async function openPanel() {
   await until(() => document.querySelector("[data-conversation-interaction]"));
+
   const closed = await page.eval(() => {
     const details = document.querySelector("[data-local-snapshot] > details");
+
     return details && !details.open;
   });
+
   if (closed) await click("[data-local-snapshot] > details > summary");
 }
+
 async function closePanel() {
   const open = await page.eval(() => !!document.querySelector("[data-local-snapshot] > details")?.open);
+
   if (open) await click("[data-local-snapshot] > details > summary");
 }
+
 async function prepare() {
   await until(() => document.querySelector("[data-local-prepare]"));
+
   const start = performance.now();
+
   await click("[data-local-prepare]");
   await until(() => document.querySelector("[data-local-snapshot]"));
   timings.push({
@@ -140,11 +174,14 @@ async function prepare() {
 
 try {
   page = await browser.newPage({ width: 1440, height: 1000 });
+
   let posts = 0,
     external = 0;
+
   await page.send("Network.enable");
   browser.on(page.sessionId, "Network.requestWillBeSent", event => {
     if (event.request.method === "POST") posts++;
+
     if (/^https?:/.test(event.request.url) && !event.request.url.startsWith(base)) external++;
   });
   await page.send("Page.addScriptToEvaluateOnNewDocument", {
@@ -159,14 +196,18 @@ try {
   await page.eval(async body => {
     await listingProbe.prepare();
     listingProbe.preparing = true;
+
     try {
       const file = await listingProbe.a.getFileHandle("중립문서.txt", { create: true });
       const stream = await file.createWritable();
+
       await stream.write(body);
       await stream.close();
+
       const history = await listingProbe.a.getDirectoryHandle(".moa-history", { create: true });
       const hidden = await history.getFileHandle("내부기록.txt", { create: true });
       const writer = await hidden.createWritable();
+
       await writer.write("내부 기록 본문");
       await writer.close();
     } finally {
@@ -225,7 +266,8 @@ try {
     "missing scope asks before body I/O",
     await page.eval(
       () =>
-        document.querySelector('[aria-label="현재 탐색 범위"]').textContent.includes("어디에서") &&
+        document.querySelector('[aria-label="현재 탐색 범위"]').textContent.includes("어디에서")
+        &&
         listingProbe.productBodyReads === 0
     )
   );
@@ -239,7 +281,8 @@ try {
     "reference folder never narrows the whole scope",
     await page.eval(
       () =>
-        document.querySelector('[aria-label="현재 탐색 범위"]').textContent.includes("전체") &&
+        document.querySelector('[aria-label="현재 탐색 범위"]').textContent.includes("전체")
+        &&
         document
           .querySelector("[data-local-preparation]")
           .textContent.includes("검증 자료 A / 하위 자료")
@@ -259,10 +302,12 @@ try {
       const names = [...document.querySelectorAll('[aria-label="자료별 발췌와 선택"] input')].map(
         input => input.getAttribute("aria-label")
       );
+
       return (
         names.includes("하위 문서.txt 선택") &&
         names.includes("중립문서.txt 선택") &&
-        !names.includes("내부기록.txt 선택") &&
+        !names.includes("내부기록.txt 선택")
+        &&
         !names.some(name => name.includes(".pdf"))
       );
     })
@@ -297,10 +342,12 @@ try {
   await click('[aria-label="중립문서.txt 선택"]');
   await click("[data-local-consent]");
   await closePanel();
+
   for (let index = 0; index < 10; index++) {
     await openPanel();
     await closePanel();
   }
+
   check(
     "ten material detail transitions preserve the composer and request",
     await page.eval(
@@ -324,10 +371,12 @@ try {
     await page.eval(
       () =>
         !!document.querySelector("[data-local-snapshot]") &&
-        document.querySelector("[data-local-consent]").checked &&
+        document.querySelector("[data-local-consent]").checked
+        &&
         document.getElementById("message-draft").value.includes("성능 테스트")
     )
   );
+
   for (const width of [390, 768, 1440, 1920]) {
     await page.setViewport({ width, height: 1000 });
     await page.eval(
@@ -335,7 +384,8 @@ try {
     );
     await until(
       () =>
-        document.querySelector("[data-conversation-interaction]").checkVisibility() &&
+        document.querySelector("[data-conversation-interaction]").checkVisibility()
+        &&
         document
           .querySelector("[data-conversation-interaction]")
           .getAnimations()
@@ -351,6 +401,7 @@ try {
       fullPage: true
     });
   }
+
   await page.setViewport({ width: 1440, height: 1000 });
   await click("[data-organization-conditions] > summary");
   await fill("[data-local-preparation] textarea", "보고일의 의미를 확인하고 정리");
@@ -387,21 +438,32 @@ try {
   await click('[data-fixture-view="files"]');
   await until(() => document.querySelector('[aria-label="중립문서.txt 미리보기"]'));
   await page.eval(() => document.querySelector('[aria-label="중립문서.txt 미리보기"]').focus());
-  await page.send("Input.dispatchKeyEvent", { type: "keyDown", key: " ", code: "Space", windowsVirtualKeyCode: 32 });
-  await page.send("Input.dispatchKeyEvent", { type: "keyUp", key: " ", code: "Space", windowsVirtualKeyCode: 32 });
+  await page.send(
+    "Input.dispatchKeyEvent",
+    { type: "keyDown", key: " ", code: "Space", windowsVirtualKeyCode: 32 }
+  );
+  await page.send(
+    "Input.dispatchKeyEvent",
+    { type: "keyUp", key: " ", code: "Space", windowsVirtualKeyCode: 32 }
+  );
   await until(() => document.querySelector('[aria-label="중립문서.txt 선택"]')?.checked);
   await click('[data-fixture-view="chat"]');
   await openPanel();
   await click('[data-local-preparation] details > summary');
   await page.eval(() => [...document.querySelectorAll('[data-local-preparation] button')].find(button => button.textContent.includes("내 파일에서 선택한 1개")).click());
   await prepare();
-  check("selected-file scope never expands to other folders or files", await page.eval(() => document.querySelectorAll('[aria-label="자료별 발췌와 선택"] input').length === 1 && !!document.querySelector('[aria-label="중립문서.txt 선택"]')));
+  check(
+    "selected-file scope never expands to other folders or files",
+    await page.eval(() => document.querySelectorAll('[aria-label="자료별 발췌와 선택"] input').length === 1
+      && !!document.querySelector('[aria-label="중립문서.txt 선택"]'))
+  );
   await closePanel();
   check(
     "original sentinel is unchanged and zero product writes",
     await page.eval(
       async () =>
-        JSON.stringify(await listingProbe.sentinel()) === JSON.stringify(listingProbe.before) &&
+        JSON.stringify(await listingProbe.sentinel()) === JSON.stringify(listingProbe.before)
+        &&
         listingProbe.productWrites === 0
     )
   );
@@ -436,9 +498,11 @@ try {
     (await page.eval(
       () =>
         document.getElementById("message-draft").value === "" &&
-        !document.querySelector("[data-local-snapshot]") &&
+        !document.querySelector("[data-local-snapshot]")
+        &&
         listingProbe.productBodyReads === 0
-    )) && posts === 0
+    ))
+    && posts === 0
   );
   check("no component or Worker exceptions", page.consoleErrors.length === 0, page.consoleErrors);
 } finally {
@@ -458,4 +522,5 @@ try {
     )
   );
 }
+
 console.log(JSON.stringify({ checks: checks.length, timings }));

@@ -7,10 +7,14 @@ import { sampleClassificationAction, sampleOrganizationAction } from "../../acti
 import { getSampleAiProvider } from "../../../server/ai-provider";
 
 export const metadata = { title: "내 파일 · 모아 샘플" };
+
 export default async function SampleFilesPage() {
   const access = readSampleAccess((await cookies()).get(SAMPLE_COOKIE)?.value);
+
   if (!access) redirect("/demo/start?view=files");
+
   const provider = getSampleAiProvider();
+
   return (
     <SampleWorkspace
       key={access.session.id}

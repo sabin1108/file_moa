@@ -1,7 +1,9 @@
 import { expect, it, vi } from "vitest";
 import { readOrganizationFolders } from "../../../src/features/local-folders/services/organization-reference";
 import type { FolderHandle } from "../../../src/features/local-folders/types";
+
 const listing = vi.hoisted(() => vi.fn());
+
 vi.mock("../../../src/features/local-folders/services/source-folder-listing", () => ({
   readSourceFolderListing: listing
 }));
@@ -13,11 +15,12 @@ it("reads only bounded directory metadata and reports incomplete traversal", asy
     entries:
       path.length < 2
         ? [
-            { kind: "directory", name: "월별" },
-            { kind: "file", name: "개인.txt" }
-          ]
+          { kind: "directory", name: "월별" },
+          { kind: "file", name: "개인.txt" }
+        ]
         : []
   }));
+
   const check = vi.fn();
   const tree = await readOrganizationFolders(
     {} as FolderHandle,
@@ -25,6 +28,7 @@ it("reads only bounded directory metadata and reports incomplete traversal", asy
     check,
     new AbortController().signal
   );
+
   expect(tree).toMatchObject({
     root: ["보고서"],
     directories: [["보고서"], ["보고서", "월별"]],
@@ -36,7 +40,9 @@ it("reads only bounded directory metadata and reports incomplete traversal", asy
     (await readOrganizationFolders({} as FolderHandle, [], check, new AbortController().signal))
       .complete
   ).toBe(false);
+
   const abort = new AbortController();
+
   abort.abort();
   await expect(
     readOrganizationFolders({} as FolderHandle, [], check, abort.signal)

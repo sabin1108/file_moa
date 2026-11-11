@@ -53,6 +53,7 @@ type Props = {
   onTrash?: () => void;
 };
 /** Display values and actions only: no handle, storage, permission or API access. */
+
 export function FolderListingView({
   state, searchState, folderName, headingRef, previewName,
   connectionControls, historyControls, creation,
@@ -60,7 +61,7 @@ export function FolderListingView({
   onOpen, onOpenFile, onRefresh, onRetry, onCancel,
   onToggleSelection, onSelectAll, onClearVisibleSelection, onClearSelection, onExitSelection, onReviewPlan, onTrash,
 }: Props) {
-  
+
   const searchId = useId();
   const selectionId = useId();
   const searchToggle = useRef<HTMLButtonElement>(null);
@@ -114,182 +115,199 @@ export function FolderListingView({
       </div>
 
       <div className={styles.feedback}>
-        {pending && !refreshing && (
-          <StatusNotice
-            state="pending"
-            title="폴더 목록을 읽고 있어요."
-            detail={state.requestedPath.length ? state.requestedPath.join(" / ") : undefined}
-          />
-        )}
-        {issue && (
-          <StatusNotice
-            state={issue === "read" || issue === "missing" ? "error" : "attention"}
-            title={issueTitles[issue]}
-            detail={
-              result
-                ? "아래는 이전에 확인한 목록입니다. 현재 폴더 상태와 다를 수 있어요."
-                : undefined
-            }
-            action={
-              state.available && (
-                <button type="button" className={actionClasses("secondary")} onClick={onRetry}>
-                  다시 시도
-                </button>
-              )
-            }
-          />
-        )}
-        {result?.truncated && (
-          <StatusNotice
-            state="attention"
-            title="항목이 많아 1,000개까지만 표시했어요."
-            detail="전체 목록이 아닙니다. 표시된 하위 폴더로 들어가 범위를 좁혀 주세요."
-          />
-        )}
+        {pending && !refreshing
+          && (
+            <StatusNotice
+              state="pending"
+              title="폴더 목록을 읽고 있어요."
+              detail={state.requestedPath.length ? state.requestedPath.join(" / ") : undefined}
+            />
+          )}
+        {issue
+          && (
+            <StatusNotice
+              state={issue === "read" || issue === "missing" ? "error" : "attention"}
+              title={issueTitles[issue]}
+              detail={
+                result
+                  ? "아래는 이전에 확인한 목록입니다. 현재 폴더 상태와 다를 수 있어요."
+                  : undefined
+              }
+              action={
+                state.available
+                && (
+                  <button type="button" className={actionClasses("secondary")} onClick={onRetry}>
+                    다시 시도
+                  </button>
+                )
+              }
+            />
+          )}
+        {result?.truncated
+          && (
+            <StatusNotice
+              state="attention"
+              title="항목이 많아 1,000개까지만 표시했어요."
+              detail="전체 목록이 아닙니다. 표시된 하위 폴더로 들어가 범위를 좁혀 주세요."
+            />
+          )}
       </div>
 
-      {result && (
-        <div className={styles.tools}>
-          <p className={styles.caption} role="status" aria-atomic="true">
-            {refreshing ? "갱신 중 · " : state.stale ? "이전 확인 목록 · " : ""}
-            {searching
-              ? "하위 폴더 포함"
-              : `${result.entries.length.toLocaleString("ko-KR")}개 항목`}
-            {result.truncated ? " · 일부 표시" : ""}
-          </p>
-          <button
-            ref={searchToggle}
-            type="button"
-            className={actionClasses("ghost")}
-            aria-expanded={state.searchOpen}
-            aria-controls={searchId}
-            disabled={pending}
-            onClick={() => onSearchOpen(!state.searchOpen)}
-          >
-            <Icon name="search" />
-            {state.searchOpen ? "검색 닫기" : "검색"}
-          </button>
-          {historyControls}
-        </div>
-      )}
-      <div id={searchId} hidden={!state.searchOpen}>
-        {result && state.searchOpen && (
-          <FileNameSearch
-            key={JSON.stringify(result.path)}
-            query={state.query}
-            disabled={pending}
-            onQueryChange={onQueryChange}
-            onClose={() => {
-              onSearchOpen(false);
-              searchToggle.current?.focus();
-            }}
-          />
+      {result
+        && (
+          <div className={styles.tools}>
+            <p className={styles.caption} role="status" aria-atomic="true">
+              {refreshing ? "갱신 중 · " : state.stale ? "이전 확인 목록 · " : ""}
+              {searching
+                ? "하위 폴더 포함"
+                : `${result.entries.length.toLocaleString("ko-KR")}개 항목`}
+              {result.truncated ? " · 일부 표시" : ""}
+            </p>
+            <button
+              ref={searchToggle}
+              type="button"
+              className={actionClasses("ghost")}
+              aria-expanded={state.searchOpen}
+              aria-controls={searchId}
+              disabled={pending}
+              onClick={() => onSearchOpen(!state.searchOpen)}
+            >
+              <Icon name="search" />
+              {state.searchOpen ? "검색 닫기" : "검색"}
+            </button>
+            {historyControls}
+          </div>
         )}
+      <div id={searchId} hidden={!state.searchOpen}>
+        {result && state.searchOpen
+          && (
+            <FileNameSearch
+              key={JSON.stringify(result.path)}
+              query={state.query}
+              disabled={pending}
+              onQueryChange={onQueryChange}
+              onClose={() => {
+                onSearchOpen(false);
+                searchToggle.current?.focus();
+              }}
+            />
+          )}
       </div>
       <div id={selectionId} hidden={!state.selectionOpen || searching}>
-        {result && (
-          <FileSelectionToolbar
-            selectedCount={selected.size}
-            visibleSelectedCount={visibleSelectedCount}
-            selectedFolderCount={selectedFolderCount}
-            hiddenSelectedCount={hiddenSelectedCount}
-            fileCount={visibleFiles.length}
-            disabled={selectionDisabled}
-            onSelectAll={onSelectAll}
-            onClearVisible={onClearVisibleSelection}
-            onClear={onClearSelection}
-            onExit={onExitSelection}
-            onReviewPlan={onReviewPlan}
-            onTrash={onTrash}
-          />
-        )}
+        {result
+          && (
+            <FileSelectionToolbar
+              selectedCount={selected.size}
+              visibleSelectedCount={visibleSelectedCount}
+              selectedFolderCount={selectedFolderCount}
+              hiddenSelectedCount={hiddenSelectedCount}
+              fileCount={visibleFiles.length}
+              disabled={selectionDisabled}
+              onSelectAll={onSelectAll}
+              onClearVisible={onClearVisibleSelection}
+              onClear={onClearSelection}
+              onExit={onExitSelection}
+              onReviewPlan={onReviewPlan}
+              onTrash={onTrash}
+            />
+          )}
       </div>
-      {searching && selected.size > 0 && (
-        <div className={styles.tools}>
-          <p>{selected.size}개 선택 유지</p>
-          <button type="button" className={actionClasses("secondary")} onClick={onClearSelection}>
-            전체 선택 해제
-          </button>
-        </div>
-      )}
+      {searching && selected.size > 0
+        && (
+          <div className={styles.tools}>
+            <p>{selected.size}개 선택 유지</p>
+            <button type="button" className={actionClasses("secondary")} onClick={onClearSelection}>
+              전체 선택 해제
+            </button>
+          </div>
+        )}
       {creation}
-      {!state.selectionOpen && !searching && result && (
-        <p className={styles.footnote}>
-          길게 누르거나 항목에 초점을 두고 Space를 누르면 선택합니다.
-        </p>
-      )}
+      {!state.selectionOpen && !searching && result
+        && (
+          <p className={styles.footnote}>
+            길게 누르거나 항목에 초점을 두고 Space를 누르면 선택합니다.
+          </p>
+        )}
       <div aria-busy={pending} className={styles.contents}>
-        {path.length > 0 && (
-          <FolderUpButton
-            parentName={path.at(-2) ?? folderName ?? "연결 폴더"}
-            disabled={disabled}
-            onClick={() => onOpen(path.slice(0, -1))}
-          />
-        )}
-        {!result && !pending && !issue && (
-          <p className={styles.empty}>
-            {state.available
-              ? "새로고침을 눌러 폴더 목록을 확인하세요."
-              : "폴더 연결 관리에서 자료 폴더를 연결하면 안의 파일과 하위 폴더를 볼 수 있어요."}
-          </p>
-        )}
-        {searching && (
-          <FolderSearchResults
-            state={searchState}
-            rootName={folderName ?? "연결 폴더"}
-            disabled={selectionDisabled}
-            onOpen={onOpen}
-            onOpenFile={onOpenFile}
-            onSelect={onSelectSearch}
-            onCancel={onSearchCancel}
-            onRetry={onSearchRetry}
-          />
-        )}
-        {!searching && result?.entries.length === 0 && (
-          <p className={styles.empty}>
-            {state.stale
-              ? "이전 조회에서는 항목이 없었어요."
-              : "이 폴더에는 파일이나 하위 폴더가 없어요."}
-          </p>
-        )}
-        {!searching && visibleEntries.length > 0 && (
-          <ul className={styles.entries} aria-label="파일과 하위 폴더">
-            {visibleEntries.map(entry => (
-              <li key={JSON.stringify([path, entry.name, entry.kind])}>
-                {entry.kind === "directory" ? (
-                  <SourceFolderRow
-                    name={entry.name}
-                    selected={selected.has(entry.name)}
-                    selecting={state.selectionOpen}
-                    disabled={disabled}
-                    selectionDisabled={selectionDisabled}
-                    onOpen={() => onOpen([...path, entry.name])}
-                    onToggle={() => onToggleSelection(entry.name)}
-                    onLongSelect={() => longSelect(entry.name)}
-                  />
-                ) : (
-                  <SourceFileRow
-                    name={entry.name}
-                    selected={selected.has(entry.name)}
-                    previewing={entry.name === previewName}
-                    selecting={state.selectionOpen}
-                    selectionDisabled={selectionDisabled}
-                    previewDisabled={disabled}
-                    onToggle={() => onToggleSelection(entry.name)}
-                    onPreview={() => onOpenFile([...path, entry.name])}
-                    onLongSelect={() => longSelect(entry.name)}
-                  />
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
+        {path.length > 0
+          && (
+            <FolderUpButton
+              parentName={path.at(-2) ?? folderName ?? "연결 폴더"}
+              disabled={disabled}
+              onClick={() => onOpen(path.slice(0, -1))}
+            />
+          )}
+        {!result && !pending && !issue
+          && (
+            <p className={styles.empty}>
+              {state.available
+                ? "새로고침을 눌러 폴더 목록을 확인하세요."
+                : "폴더 연결 관리에서 자료 폴더를 연결하면 안의 파일과 하위 폴더를 볼 수 있어요."}
+            </p>
+          )}
+        {searching
+          && (
+            <FolderSearchResults
+              state={searchState}
+              rootName={folderName ?? "연결 폴더"}
+              disabled={selectionDisabled}
+              onOpen={onOpen}
+              onOpenFile={onOpenFile}
+              onSelect={onSelectSearch}
+              onCancel={onSearchCancel}
+              onRetry={onSearchRetry}
+            />
+          )}
+        {!searching && result?.entries.length === 0
+          && (
+            <p className={styles.empty}>
+              {state.stale
+                ? "이전 조회에서는 항목이 없었어요."
+                : "이 폴더에는 파일이나 하위 폴더가 없어요."}
+            </p>
+          )}
+        {!searching && visibleEntries.length > 0
+          && (
+            <ul className={styles.entries} aria-label="파일과 하위 폴더">
+              {visibleEntries.map(entry => (
+                <li key={JSON.stringify([path, entry.name, entry.kind])}>
+                  {entry.kind === "directory"
+                    ? (
+                      <SourceFolderRow
+                        name={entry.name}
+                        selected={selected.has(entry.name)}
+                        selecting={state.selectionOpen}
+                        disabled={disabled}
+                        selectionDisabled={selectionDisabled}
+                        onOpen={() => onOpen([...path, entry.name])}
+                        onToggle={() => onToggleSelection(entry.name)}
+                        onLongSelect={() => longSelect(entry.name)}
+                      />
+                    )
+                    : (
+                      <SourceFileRow
+                        name={entry.name}
+                        selected={selected.has(entry.name)}
+                        previewing={entry.name === previewName}
+                        selecting={state.selectionOpen}
+                        selectionDisabled={selectionDisabled}
+                        previewDisabled={disabled}
+                        onToggle={() => onToggleSelection(entry.name)}
+                        onPreview={() => onOpenFile([...path, entry.name])}
+                        onLongSelect={() => longSelect(entry.name)}
+                      />
+                    )}
+                </li>
+              ))}
+            </ul>
+          )}
       </div>
-      {state.selectionOpen && (
-        <p className={styles.footnote}>
-          복사·이동·휴지통 작업은 범위 검사와 최종 확인 후 실행합니다.
-        </p>
-      )}
+      {state.selectionOpen
+        && (
+          <p className={styles.footnote}>
+            복사·이동·휴지통 작업은 범위 검사와 최종 확인 후 실행합니다.
+          </p>
+        )}
     </section>
   );
 }

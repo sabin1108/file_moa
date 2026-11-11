@@ -1,18 +1,30 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const calls = vi.hoisted(() => ({ guard: vi.fn(), headers: vi.fn(), after: vi.fn(), prepare: vi.fn() }));
+
 vi.mock("next/headers", () => ({ headers: calls.headers }));
 vi.mock("next/server", () => ({ after: calls.after }));
 vi.mock("../../src/server/session-guards", () => ({ requireWorkspace: calls.guard }));
 vi.mock("../../src/server/settings-display", () => ({ prepareSettingsDisplay: calls.prepare }));
 vi.mock("../../src/app/actions/auth", () => ({ checkAuthSessionAction: vi.fn() }));
-vi.mock("../../src/features/auth/components/SessionBoundary", () => ({ SessionBoundary: "session-boundary" }));
-vi.mock("../../src/features/local-folders/providers/SourceFolderProvider", () => ({ SourceFolderProvider: "source-folder-provider" }));
+vi.mock(
+  "../../src/features/auth/components/SessionBoundary",
+  () => ({ SessionBoundary: "session-boundary" })
+);
+vi.mock(
+  "../../src/features/local-folders/providers/SourceFolderProvider",
+  () => ({ SourceFolderProvider: "source-folder-provider" })
+);
 
 import WorkspaceLayout from "../../src/app/(workspace)/layout";
 import { Suspense } from "react";
 
-const owner = { userId: "owner-a", workspaceId: "workspace-a", sessionUserId: "user-a", sessionExpiresAt: "2027-01-01T00:00:00.000Z" };
+const owner = {
+  userId: "owner-a",
+  workspaceId: "workspace-a",
+  sessionUserId: "user-a",
+  sessionExpiresAt: "2027-01-01T00:00:00.000Z"
+};
 const requestHeaders = new Headers({ "x-fixture": "request-a" });
 
 beforeEach(() => {
@@ -24,11 +36,13 @@ beforeEach(() => {
 describe("workspace response before optional settings preparation", () => {
   const renderAuthenticated = async (children: string) => {
     const boundary = WorkspaceLayout({ children });
+
     return boundary.props.children.type(boundary.props.children.props);
   };
 
   it("returns only a public shell without starting the authentication work", () => {
     const boundary = WorkspaceLayout({ children: "private-screen" });
+
     expect(boundary.type).toBe(Suspense);
     expect(JSON.stringify(boundary.props.fallback)).not.toContain("private-screen");
     expect(calls.guard).not.toHaveBeenCalled();
@@ -51,11 +65,18 @@ describe("workspace response before optional settings preparation", () => {
 
   it("does not wait for slow preparation to return the main screen", async () => {
     let complete!: () => void;
-    calls.prepare.mockReturnValue(new Promise<void>(resolve => { complete = resolve; }));
+
+    calls.prepare.mockReturnValue(new Promise<void>(resolve => {
+      complete = resolve;
+    }));
+
     try {
       const view = await renderAuthenticated("usable-main-screen");
+
       expect(view.props.children.props.children.props.children).toBe("usable-main-screen");
+
       const preparation = calls.after.mock.calls[0][0]();
+
       expect(calls.prepare).toHaveBeenCalledOnce();
       complete();
       await preparation;

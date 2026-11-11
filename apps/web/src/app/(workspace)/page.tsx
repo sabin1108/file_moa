@@ -5,5 +5,11 @@ import { getAiProvider } from "../../server/ai-provider";
 
 export default function Home() {
   const provider = getAiProvider();
-  return <LiveConversation aiProvider={provider} organizeAction={liveOrganizationAction.bind(null, provider)} groundedAction={groundedChatAction.bind(null, provider)} readUsage={readUsageAction} />;
+
+  return <LiveConversation
+    aiProvider={provider}
+    organizeAction={liveOrganizationAction.bind(null, provider)}
+    groundedAction={groundedChatAction.bind(null, provider)}
+    readUsage={readUsageAction}
+  />;
 }

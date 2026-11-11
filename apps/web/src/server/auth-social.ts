@@ -19,9 +19,15 @@ const messages: Record<string, string> = {
   unable_to_link_account: "이 소셜 계정을 연결하지 못했습니다. 다른 모아 계정에 이미 연결됐는지 확인해 주세요.",
   account_already_linked_to_different_user: "이미 다른 모아 계정에 연결된 소셜 계정입니다. 계정을 자동으로 합치지 않습니다.",
 };
-export function socialErrorMessage(code: unknown) { return typeof code === "string" ? messages[code] : undefined; }
 
-const authorizationTargets: Record<SocialProvider, { host: string; path: string }> = {
+export function socialErrorMessage(code: unknown) {
+  return typeof code === "string" ? messages[code] : undefined;
+}
+
+const authorizationTargets: Record<SocialProvider, {
+  host: string;
+  path: string
+}> = {
   google: { host: "accounts.google.com", path: "/o/oauth2/v2/auth" },
   naver: { host: "nid.naver.com", path: "/oauth2.0/authorize" },
   kakao: { host: "kauth.kakao.com", path: "/oauth/authorize" },
@@ -29,15 +35,24 @@ const authorizationTargets: Record<SocialProvider, { host: string; path: string 
 
 const credentialParameters = new Set(["access_token", "refresh_token", "id_token", "client_secret", "oauth_token", "code"]);
 
-export async function beginSocialSignIn(form: FormData, headers: Headers, linking = false): Promise<{ state: AuthFormState; response?: Response; url?: string }> {
+export async function beginSocialSignIn(form: FormData, headers: Headers, linking = false): Promise<{
+  state: AuthFormState;
+  response?: Response;
+  url?: string
+}> {
   const provider = z.enum(socialProviders).safeParse(form.get("provider"));
+
   if (!provider.success) return { state: { status: "error", message: "지원하지 않는 로그인 수단입니다." } };
+
   const intent = form.get("intent") === "signup" ? "signup" : "signin";
+
   try {
     const origin = new URL(String(getAuth().options.baseURL)).origin;
     const requestHeaders = new Headers(headers);
+
     requestHeaders.delete("content-length");
     requestHeaders.set("content-type", "application/json");
+
     const response = await handleAuthRequest(
       new Request(`${origin}/api/auth/${linking ? "link-social" : "sign-in/social"}`, {
         method: "POST",
@@ -46,13 +61,19 @@ export async function beginSocialSignIn(form: FormData, headers: Headers, linkin
       }),
     );
     const data = z.object({ url: z.url().optional() }).safeParse(await response.clone().json());
+
     if (!response.ok || !data.success || !data.data.url) throw new Error("social-start-failed");
+
     const url = new URL(data.data.url);
     const expected = authorizationTargets[provider.data];
     const containsCredential = Array.from(url.searchParams.keys()).some(name => credentialParameters.has(name.toLowerCase()));
+
     if (url.protocol !== "https:" || url.hostname !== expected.host || url.port || url.username || url.password || url.hash
-      || containsCredential || url.pathname !== expected.path || !url.searchParams.get("state")
+      || containsCredential
+      || url.pathname !== expected.path
+      || !url.searchParams.get("state")
       || url.searchParams.get("redirect_uri") !== `${origin}/api/auth/callback/${provider.data}`) throw new Error("social-target-invalid");
+
     return { state: { status: "success" }, response, url: url.href };
   } catch {
     return { state: { status: "error", message: "소셜 로그인을 시작하지 못했습니다. 잠시 후 다시 시도해 주세요." } };

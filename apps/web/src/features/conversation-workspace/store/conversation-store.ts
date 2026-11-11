@@ -1,7 +1,13 @@
 import { chatReducer, initialChatState, type RestorableChatAction } from "../lib/general-chat-state";
 import type { GroundedAnswer } from "../../../shared/grounded-chat";
 
-export type GroundedConversationResult = { taskId: string; key: string; question: string; value: GroundedAnswer; model?: string };
+export type GroundedConversationResult = {
+  taskId: string;
+  key: string;
+  question: string;
+  value: GroundedAnswer;
+  model?: string
+};
 
 const initialSelection = { id: null as string | null, temporary: true, projectId: "", status: "임시 대화", lastSaved: "" };
 
@@ -26,13 +32,23 @@ export class ConversationStore {
   };
   subscribe = (listener: () => void) => {
     this.listeners.add(listener);
-    return () => { this.listeners.delete(listener); };
+
+    return () => {
+      this.listeners.delete(listener);
+    };
   };
   dispatch = (action: RestorableChatAction) => {
     const next = chatReducer(this.state, action);
+
     if (next === this.state && !(action.type === "reset" && (this.selection !== initialSelection || this.grounded))) return;
+
     this.state = next;
-    if (action.type === "reset") { this.selection = initialSelection; this.grounded = null; }
+
+    if (action.type === "reset") {
+      this.selection = initialSelection;
+      this.grounded = null;
+    }
+
     this.listeners.forEach(listener => listener());
   };
 }

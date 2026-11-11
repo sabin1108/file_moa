@@ -10,8 +10,11 @@ export const metadata = { title: "샘플 작업 공간 · 모아" };
 
 export default async function SamplePage() {
   const access = readSampleAccess((await cookies()).get(SAMPLE_COOKIE)?.value);
+
   if (!access) redirect("/demo/start");
+
   const provider = getSampleAiProvider();
+
   return (
     <SampleWorkspace
       key={access.session.id}

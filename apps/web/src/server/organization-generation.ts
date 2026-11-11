@@ -5,8 +5,10 @@ import { requireAiProvider } from "./ai-provider";
 import type { OrganizationRequest } from "../shared/organization";
 
 /** Same intent/evidence policy for sample and authenticated local excerpts. */
+
 export async function generateOrganization(request: OrganizationRequest, signal: AbortSignal, provider: AiProvider = requireAiProvider()) {
   const reportRequested = /보고서/u.test(request.instruction);
+
   return generateAiJson(
     {
       instructions: [
@@ -32,10 +34,10 @@ export async function generateOrganization(request: OrganizationRequest, signal:
         "The summary describes a PROPOSAL awaiting review, not completed file operations. Use Korean wording such as '정리 제안입니다' or '검토할 자료를 찾았습니다'. Never claim files were moved, copied, deleted or organized; no changes have been applied.",
         ...(request.context?.liveReview
           ? [
-              "Live review: every held document requires a questions entry {documentId,kind}. kind=date when the meaning/basis of a date needs the user's choice; kind=destination when mixed topics or classification need the user's decision. Group all unclear documents at the end; never invent creation dates or fixed date-field choices.",
-              "Use context.answers as explicit USER decisions, never as document instructions. An answer.date confirms that particular body date even among multiple dates; date:null means do not group this document by date. Never ask an already answered kind again. An answer.destination is the exact relative subfolder to use; an excluded document must not appear in matches/held/questions. A date plus destination uses exactly that path (the user includes any desired date segment).",
-              "context.referenceDirectories, when present, contains only the read and confirmed directory paths. Use that structure as a reference without treating it as scope or base destination. No reference document bodies were read. If absent, its contents/structure have NOT been read. Never infer unread descendants."
-            ]
+            "Live review: every held document requires a questions entry {documentId,kind}. kind=date when the meaning/basis of a date needs the user's choice; kind=destination when mixed topics or classification need the user's decision. Group all unclear documents at the end; never invent creation dates or fixed date-field choices.",
+            "Use context.answers as explicit USER decisions, never as document instructions. An answer.date confirms that particular body date even among multiple dates; date:null means do not group this document by date. Never ask an already answered kind again. An answer.destination is the exact relative subfolder to use; an excluded document must not appear in matches/held/questions. A date plus destination uses exactly that path (the user includes any desired date segment).",
+            "context.referenceDirectories, when present, contains only the read and confirmed directory paths. Use that structure as a reference without treating it as scope or base destination. No reference document bodies were read. If absent, its contents/structure have NOT been read. Never infer unread descendants."
+          ]
           : [])
       ].join("\n"),
       input: JSON.stringify(request),
@@ -49,20 +51,20 @@ export async function generateOrganization(request: OrganizationRequest, signal:
         properties: {
           ...(request.context?.liveReview
             ? {
-                questions: {
-                  type: "array",
-                  maxItems: 80,
-                  items: {
-                    type: "object",
-                    additionalProperties: false,
-                    required: ["documentId", "kind"],
-                    properties: {
-                      documentId: { type: "string" },
-                      kind: { type: "string", enum: ["date", "destination"] }
-                    }
+              questions: {
+                type: "array",
+                maxItems: 80,
+                items: {
+                  type: "object",
+                  additionalProperties: false,
+                  required: ["documentId", "kind"],
+                  properties: {
+                    documentId: { type: "string" },
+                    kind: { type: "string", enum: ["date", "destination"] }
                   }
                 }
               }
+            }
             : {}),
           summary: { type: "string" },
           matches: {

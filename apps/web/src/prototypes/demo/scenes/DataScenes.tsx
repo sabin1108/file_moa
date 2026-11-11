@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { ActionLink } from "../../../components/ui/ActionLink";
 import { Icon } from "../../../components/ui/Icon";
@@ -19,9 +20,11 @@ export function DataScenes({ scene, navigate }: SceneProps) {
   const [acknowledged, setAcknowledged] = useState(false);
   const [included, setIncluded] = useState<readonly string[]>(exportContents.map(item => item.title));
   const [ready, setReady] = useState(false);
+
   if (scene === "export" || scene === "export-ready") {
     const isReady = scene === "export-ready" || ready;
     const contents = exportContents.filter(item => included.includes(item.title));
+
     return (
       <div className={layout.decision}>
         <section className={layout.archive}>
@@ -29,68 +32,77 @@ export function DataScenes({ scene, navigate }: SceneProps) {
             <Icon name="file" size={24} />
             moa-export.zip
           </h3>
-          <p>{isReady ? "파일 구성 예시" : "선택한 자료의 보관 형태"}</p>
+          <p>
+            {isReady ? "파일 구성 예시" : "선택한 자료의 보관 형태"}
+          </p>
           <ul className={layout.scopeList}>
             {contents.map(item => (
               <li key={item.title}>
                 {item.title}
-                <small>{item.file}</small>
+                <small>
+                  {item.file}
+                </small>
               </li>
             ))}
           </ul>
           {!contents.length && <p>내보낼 자료를 선택해 주세요.</p>}
         </section>
         <div className={layout.decisionSide}>
-          {isReady ? (
-            <>
-              <h3>보관할 자료가 모였어요</h3>
-              <p>
-                실제 다운로드는 기능 구현 단계에서 연결됩니다. 이 화면은 준비 완료 상태를
-                보여줍니다.
-              </p>
-              <div className={styles.actions}>
-                <ActionLink href="/settings" variant="primary">
-                  설정으로 돌아가기
-                </ActionLink>
-              </div>
-            </>
-          ) : (
-            <>
-              <fieldset className={styles.choices}>
-                <legend>포함할 자료</legend>
-                {exportContents.map(item => (
-                  <label className={styles.choice} key={item.title}>
-                    <input
-                      type="checkbox"
-                      checked={included.includes(item.title)}
-                      onChange={event =>
-                        setIncluded(
-                          event.target.checked
-                            ? [...included, item.title]
-                            : included.filter(title => title !== item.title),
-                        )
-                      }
-                    />
-                    <span>{item.title}</span>
-                  </label>
-                ))}
-              </fieldset>
-              <p className={styles.note}>인증 정보와 기기의 폴더 권한은 포함하지 않아요.</p>
-              <div className={styles.actions}>
-                <DemoButton
-                  variant="primary"
-                  disabled={!included.length}
-                  onClick={() => setReady(true)}
-                >
-                  내보내기 준비
-                </DemoButton>
-              </div>
-            </>
-          )}
+          {isReady
+            ? (
+              <>
+                <h3>보관할 자료가 모였어요</h3>
+                <p>
+                  실제 다운로드는 기능 구현 단계에서 연결됩니다. 이 화면은 준비 완료 상태를
+                  보여줍니다.
+                </p>
+                <div className={styles.actions}>
+                  <ActionLink href="/settings" variant="primary">
+                    설정으로 돌아가기
+                  </ActionLink>
+                </div>
+              </>
+            )
+            : (
+              <>
+                <fieldset className={styles.choices}>
+                  <legend>포함할 자료</legend>
+                  {exportContents.map(item => (
+                    <label className={styles.choice} key={item.title}>
+                      <input
+                        type="checkbox"
+                        checked={included.includes(item.title)}
+                        onChange={event =>
+                          setIncluded(
+                            event.target.checked
+                              ? [...included, item.title]
+                              : included.filter(title => title !== item.title),
+                          )
+                        }
+                      />
+                      <span>
+                        {item.title}
+                      </span>
+                    </label>
+                  ))}
+                </fieldset>
+                <p className={styles.note}>인증 정보와 기기의 폴더 권한은 포함하지 않아요.</p>
+                <div className={styles.actions}>
+                  <DemoButton
+                    variant="primary"
+                    disabled={!included.length}
+                    onClick={() => setReady(true)}
+                  >
+                    내보내기 준비
+                  </DemoButton>
+                </div>
+              </>
+            )}
         </div>
       </div>
     );
   }
+
   if (scene === "deleted")
     return (
       <div className={layout.recovery}>
@@ -112,6 +124,7 @@ export function DataScenes({ scene, navigate }: SceneProps) {
         </div>
       </div>
     );
+
   return (
     <div className={styles.stack}>
       <RiskNotice

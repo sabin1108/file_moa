@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("pdfjs-dist/legacy/build/pdf.mjs", () => ({
-  PDFWorker: class { destroy() {} },
+  PDFWorker: class { destroy() { } },
   getDocument: () => ({
     promise: Promise.resolve({
       numPages: 1,
@@ -21,14 +21,17 @@ afterEach(() => {
 });
 
 async function worker() {
-  vi.stubGlobal("Worker", class { terminate() {} });
+  vi.stubGlobal("Worker", class { terminate() { } });
   // The real Worker handler runs here; browser threading is covered by the OPFS browser check.
+
   const self = {
     postMessage: vi.fn(),
     onmessage: null as null | ((event: { data: unknown }) => Promise<void>),
   };
+
   vi.stubGlobal("self", self);
   await import("../../../src/features/local-folders/services/copy-hash.worker");
+
   return self;
 }
 
@@ -36,8 +39,11 @@ describe("shared hash and text snapshot Worker", () => {
   it("extracts PDF text in the Worker and returns only a bounded excerpt", async () => {
     const self = await worker();
     const file = new File(["not the real bytes"], "자료.pdf");
+
     await self.onmessage!({ data: { file, instruction: "PDF 본문" } });
+
     const response = self.postMessage.mock.calls[0][0];
+
     expect(response.excerpt).toContain("PDF 본문 검색어");
     expect(response.pdf).toEqual({ pages: 1, complete: true });
   });
@@ -48,6 +54,7 @@ describe("shared hash and text snapshot Worker", () => {
       "회의 자료\n" + "앞부분 ".repeat(1000) + "\n회의일: 2026-10-15";
     const file = new File([text], "회의.md");
     const read = vi.spyOn(file, "arrayBuffer");
+
     await self.onmessage!({
       data: {
         file,
@@ -60,7 +67,9 @@ describe("shared hash and text snapshot Worker", () => {
         },
       },
     });
+
     const result = self.postMessage.mock.calls[0][0];
+
     expect(read).toHaveBeenCalledOnce();
     expect(result.finding).toMatchObject({
       kind: "matched",
@@ -77,6 +86,7 @@ describe("shared hash and text snapshot Worker", () => {
     const self = await worker();
     const file = new File(["abc"], "a.bin");
     const read = vi.spyOn(file, "arrayBuffer");
+
     await self.onmessage!({ data: file });
     expect(read).toHaveBeenCalledOnce();
     expect(self.postMessage).toHaveBeenCalledWith({
@@ -92,8 +102,11 @@ describe("shared hash and text snapshot Worker", () => {
       "무관한 앞부분 ".repeat(500) + "LCP 성능 실측 결과\r\n한글 원문";
     const file = new File([body], "중립이름.md");
     const read = vi.spyOn(file, "arrayBuffer");
+
     await self.onmessage!({ data: { file, instruction: "성능 실측 자료" } });
+
     const response = self.postMessage.mock.calls[0][0];
+
     expect(read).toHaveBeenCalledOnce();
     expect(response.excerpt).toContain("LCP 성능 실측 결과");
     expect(response.excerpt.length).toBeLessThanOrEqual(1200);
@@ -108,6 +121,7 @@ describe("shared hash and text snapshot Worker", () => {
   it("reports invalid UTF8 in text mode while binary hashing still works", async () => {
     const self = await worker();
     const file = new File([new Uint8Array([0xc3, 0x28])], "bad.md");
+
     await self.onmessage!({ data: { file, instruction: "자료" } });
     expect(self.postMessage.mock.calls[0][0]).toMatchObject({
       issue: "invalid-utf8",

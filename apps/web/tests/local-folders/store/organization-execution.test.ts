@@ -2,6 +2,7 @@ import { expect, it, vi } from "vitest";
 import { OrganizationPreparationController } from "../../../src/features/local-folders/store/organization-preparation-controller";
 import { OrganizationExecutionController } from "../../../src/features/local-folders/store/organization-execution-controller";
 import type { FolderConnectionSession } from "../../../src/features/local-folders/services/connection-session";
+
 const document = {
   id: "document-1",
   name: "a.md",
@@ -12,6 +13,7 @@ const document = {
   sha256: "a".repeat(64),
   excerptHash: "b".repeat(64)
 };
+
 async function setup() {
   const source = new OrganizationPreparationController(
     async () => ({
@@ -27,6 +29,7 @@ async function setup() {
     vi.fn(),
     async () => ({ userId: "A", workspaceId: "A" })
   );
+
   source.update({ request: "성능 정리", scope: { kind: "all" } });
   await source.prepare();
   source.consent(true);
@@ -43,6 +46,7 @@ async function setup() {
     model: "fixture",
     usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
   }));
+
   const session = {
     readManagedDestination: vi.fn(),
     openManagedEditor: vi.fn(),
@@ -74,10 +78,13 @@ async function setup() {
     source,
     session as unknown as FolderConnectionSession
   );
+
   return { source, session, controller };
 }
+
 it("requires operation and base confirmation, then reuses the managed review and explicit execution", async () => {
   const { controller, session } = await setup();
+
   controller.review();
   expect(controller.getSnapshot().batches).toHaveLength(0);
   controller.setOperation("copy");
@@ -100,6 +107,7 @@ it("requires operation and base confirmation, then reuses the managed review and
 });
 it("invalidates the reviewed plan on condition changes and cannot run an old prepared approval", async () => {
   const { controller, source, session } = await setup();
+
   controller.setOperation("move");
   controller.setBase([]);
   controller.review();
@@ -113,6 +121,7 @@ it("invalidates the reviewed plan on condition changes and cannot run an old pre
 
 it("retains failed outcomes but blocks every old batch after an execution detects changed source", async () => {
   const { controller, session } = await setup();
+
   session.executeManaged.mockResolvedValueOnce({
     id: "fixture",
     phase: "error",
@@ -125,7 +134,9 @@ it("retains failed outcomes but blocks every old batch after an execution detect
   controller.setOperation("copy");
   controller.setBase([]);
   controller.review();
+
   const key = controller.getSnapshot().batches[0].key;
+
   await controller.openBatch(key);
   await controller.managed.review();
   await controller.managed.start();

@@ -1,11 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
+
 const reserve = vi.hoisted(() => vi.fn());
 const generate = vi.hoisted(() => vi.fn());
-vi.mock("../../src/server/auth-rate-limit", () => ({ createAuthRateLimiter: () => ({ consumeAll: reserve }) }));
+
+vi.mock(
+  "../../src/server/auth-rate-limit",
+  () => ({ createAuthRateLimiter: () => ({ consumeAll: reserve }) })
+);
 vi.mock("../../src/server/database/client", () => ({ getDatabase: vi.fn() }));
-vi.mock("../../src/server/ai-generation", () => ({ generateAiJson: generate, generateClassification: generate }));
+vi.mock(
+  "../../src/server/ai-generation",
+  () => ({ generateAiJson: generate, generateClassification: generate })
+);
+
 import { getAiProvider, getSampleAiProvider } from "../../src/server/ai-provider";
 import { classifySample } from "../../src/server/sample-ai";
 import { organizeSample } from "../../src/server/sample-organization";
@@ -33,6 +42,7 @@ describe("public sample cost boundary", () => {
   it("rejects both direct sample actions before quota or provider access", async () => {
     const context = { token: createSampleSession().token, origin: "https://workspace.example.invalid" };
     const input = { requestId: crypto.randomUUID(), documentIds: ["report-1014"], consent: true };
+
     expect(await classifySample(input, context, "openai")).toMatchObject({ ok: false, code: "unavailable" });
     expect(await organizeSample({ ...input, instruction: "보고서를 정리해줘" }, context, "openai")).toMatchObject({ ok: false, code: "unavailable" });
     expect(reserve).not.toHaveBeenCalled();

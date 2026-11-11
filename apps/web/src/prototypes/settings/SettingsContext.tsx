@@ -3,7 +3,10 @@ import { PrototypeDialog } from "../demo/PrototypeDialog";
 import { studyFolder, studyGroups, portfolioFolder, portfolioGroups } from "../files/folder-groups";
 import styles from "./settings.module.css";
 
-export function ReplyPreview({ length, sources }: { length: string; sources: boolean }) {
+export function ReplyPreview({ length, sources }: {
+  length: string;
+  sources: boolean
+}) {
   return (
     <aside className={styles.replyPreview}>
       <span>답변 미리보기 · {length}</span>
@@ -15,12 +18,13 @@ export function ReplyPreview({ length, sources }: { length: string; sources: boo
       {length === "자세하게" && (
         <p>같은 데이터와 기기에서 변경 전후를 비교하고, 파일 수와 대화 길이도 함께 기록하세요.</p>
       )}
-      {sources && (
-        <div className={styles.source}>
-          <Icon name="file" size={16} />
-          리액트 성능 향상.md
-        </div>
-      )}
+      {sources
+        && (
+          <div className={styles.source}>
+            <Icon name="file" size={16} />
+            리액트 성능 향상.md
+          </div>
+        )}
       <small>선택한 설정에 따른 예시입니다.</small>
     </aside>
   );
@@ -31,19 +35,24 @@ export function ConnectedFolders() {
     { name: studyFolder, groups: studyGroups, scene: "permission" as const, action: "권한 확인" },
     { name: portfolioFolder, groups: portfolioGroups, scene: "connect" as const, action: "다시 연결" },
   ];
+
   return (
     <div className={styles.folderPair}>
       {folders.map(folder => (
         <section className={styles.folder} key={folder.name}>
           <header>
             <Icon name="folder" size={22} />
-            <h3>{folder.name}</h3>
+            <h3>
+              {folder.name}
+            </h3>
             <span>{folder.groups.reduce((sum, group) => sum + group.files.length, 0)}개 문서</span>
           </header>
           <ul>
             {folder.groups.map(group => (
               <li key={group.name}>
-                <span>{group.name}</span>
+                <span>
+                  {group.name}
+                </span>
                 <small>{group.files.length}개</small>
               </li>
             ))}
@@ -76,7 +85,8 @@ export function DataScope() {
         <h3>내 컴퓨터에 보관</h3>
         <p>
           연결한 폴더의 원본 문서
-          <br />이 기기의 폴더 접근 권한
+          <br />
+          이 기기의 폴더 접근 권한
         </p>
         <span>계정을 삭제해도 원본 파일은 남습니다.</span>
       </section>

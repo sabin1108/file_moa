@@ -5,7 +5,8 @@ export function canonicalDestination(requestURL: string, configuredOrigin: strin
     const origin = new URL(configuredOrigin);
     const request = new URL(requestURL);
 
-    if (origin.protocol !== "https:" || origin.username || origin.password || origin.search || origin.hash || origin.pathname !== "/"
+    if (origin.protocol !== "https:" || origin.username || origin.password || origin.search || origin.hash
+      || origin.pathname !== "/"
       || request.origin === origin.origin) return null;
 
     origin.pathname = request.pathname;
@@ -16,8 +17,13 @@ export function canonicalDestination(requestURL: string, configuredOrigin: strin
     return null;
   }
 }
+
 import "server-only";
 
 export function configuredCanonicalDestination(requestURL: string) {
-  return canonicalDestination(requestURL, process.env.BETTER_AUTH_URL, process.env.VERCEL_ENV === "production");
+  return canonicalDestination(
+    requestURL,
+    process.env.BETTER_AUTH_URL,
+    process.env.VERCEL_ENV === "production"
+  );
 }

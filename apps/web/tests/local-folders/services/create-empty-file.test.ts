@@ -7,15 +7,40 @@ import type { FolderHandle } from "../../../src/features/local-folders/types";
 import type { FolderCreationRecord } from "../../../src/features/local-folders/services/folder-creation-journal";
 
 function fixture() {
-  const entries: { name: string; kind: string }[] = [];
-  const file = { kind: "file", getFile: vi.fn(async () => ({ size: 0 })), isSameEntry: vi.fn(async () => true), createWritable: vi.fn() };
-  const root = { name: "root", queryPermission: vi.fn(async () => "granted"), requestPermission: vi.fn(async () => "granted"),
-    values: async function* () { yield* entries; }, isSameEntry: async () => true, getFileHandle: vi.fn(async () => file) } as unknown as FolderHandle;
+  const entries: {
+    name: string;
+    kind: string
+  }[] = [];
+  const file = {
+    kind: "file",
+    getFile: vi.fn(async () => ({ size: 0 })),
+    isSameEntry: vi.fn(async () => true),
+    createWritable: vi.fn()
+  };
+  const root = {
+    name: "root",
+    queryPermission: vi.fn(async () => "granted"),
+    requestPermission: vi.fn(async () => "granted"),
+    values: async function* () {
+      yield* entries;
+    },
+    isSameEntry: async () => true,
+    getFileHandle: vi.fn(async () => file)
+  } as unknown as FolderHandle;
   const records: FolderCreationRecord[] = [];
+
   withAbsentVaultMarker(root);
-  const journal = { put: vi.fn(async (record: FolderCreationRecord) => { records.push(record); }), assertWritable: vi.fn(async () => {}) };
+
+  const journal = {
+    put: vi.fn(async (record: FolderCreationRecord) => {
+      records.push(record);
+    }),
+    assertWritable: vi.fn(async () => { })
+  };
+
   return { entries, file, root, records, journal };
 }
+
 describe("new text and Markdown files", () => {
   it.each([
     ["aaa.txt", "folder", "txt"],
@@ -25,7 +50,7 @@ describe("new text and Markdown files", () => {
   ] as const)("honors explicit extension %s over selected %s through creation and journal", async (name, selectedKind, expectedKind) => {
     const f = fixture();
     const controller = new EntryCreationController((path, input, kind) =>
-      createEntry(f.root, path, input, () => {}, f.journal, undefined, kind));
+      createEntry(f.root, path, input, () => { }, f.journal, undefined, kind));
 
     expect(resolveEntryName(name, selectedKind)).toBe(name);
     expect(await controller.run([], name, selectedKind)).toBe(true);
@@ -40,15 +65,17 @@ describe("new text and Markdown files", () => {
 
   it("rejects an inferred file collision before mutation", async () => {
     const f = fixture();
+
     f.entries.push({ name: "AAA.TXT", kind: "directory" });
-    await expect(createEntry(f.root, [], "aaa.txt", () => {}, f.journal)).rejects.toThrow("entry-name-conflict");
+    await expect(createEntry(f.root, [], "aaa.txt", () => { }, f.journal)).rejects.toThrow("entry-name-conflict");
     expect(f.root.getFileHandle).not.toHaveBeenCalled();
     expect(f.journal.put).not.toHaveBeenCalled();
   });
 
   it("resolves explicit extension at the file-access boundary without the UI controller", async () => {
     const f = fixture();
-    await createEntry(f.root, [], "aaa.txt", () => {}, f.journal, undefined, "folder");
+
+    await createEntry(f.root, [], "aaa.txt", () => { }, f.journal, undefined, "folder");
     expect(f.root.getFileHandle).toHaveBeenCalledWith("aaa.txt", { create: true });
     expect(f.records.every(record => record.kind === "txt")).toBe(true);
     expect(f.file.createWritable).not.toHaveBeenCalled();
@@ -67,19 +94,26 @@ describe("new text and Markdown files", () => {
   });
   it.each(["txt", "md"] as const)("creates an empty %s without a writable stream", async kind => {
     const f = fixture();
-    expect(await createEntry(f.root, [], "메모", () => {}, f.journal, undefined, kind)).toEqual([`메모.${kind}`]);
+
+    expect(await createEntry(f.root, [], "메모", () => { }, f.journal, undefined, kind)).toEqual([`메모.${kind}`]);
     expect(f.root.getFileHandle).toHaveBeenCalledWith(`메모.${kind}`, { create: true });
     expect(f.file.createWritable).not.toHaveBeenCalled();
     expect(f.records.map(r => r.status)).toEqual(["pending", "ready"]);
   });
   it("rejects an existing filename before getFileHandle", async () => {
-    const f = fixture(); f.entries.push({ name: "MEMO.TXT", kind: "file" });
-    await expect(createEntry(f.root, [], "memo", () => {}, f.journal, undefined, "txt")).rejects.toThrow("entry-name-conflict");
-    expect(f.root.getFileHandle).not.toHaveBeenCalled(); expect(f.file.createWritable).not.toHaveBeenCalled();
+    const f = fixture();
+
+    f.entries.push({ name: "MEMO.TXT", kind: "file" });
+    await expect(createEntry(f.root, [], "memo", () => { }, f.journal, undefined, "txt")).rejects.toThrow("entry-name-conflict");
+    expect(f.root.getFileHandle).not.toHaveBeenCalled();
+    expect(f.file.createWritable).not.toHaveBeenCalled();
   });
   it("does not truncate a file created externally after conflict checking", async () => {
-    const f = fixture(); f.file.getFile.mockResolvedValue({ size: 42 });
-    await expect(createEntry(f.root, [], "memo", () => {}, f.journal, undefined, "txt")).rejects.toThrow("entry-result-uncertain");
-    expect(f.file.createWritable).not.toHaveBeenCalled(); expect(f.records.at(-1)?.status).toBe("uncertain");
+    const f = fixture();
+
+    f.file.getFile.mockResolvedValue({ size: 42 });
+    await expect(createEntry(f.root, [], "memo", () => { }, f.journal, undefined, "txt")).rejects.toThrow("entry-result-uncertain");
+    expect(f.file.createWritable).not.toHaveBeenCalled();
+    expect(f.records.at(-1)?.status).toBe("uncertain");
   });
 });

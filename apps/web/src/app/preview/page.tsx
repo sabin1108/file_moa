@@ -8,6 +8,7 @@ import ui from "../../styles/workspace-ui.module.css";
 
 export default function Page() {
   const groups = [...new Set(sceneIds.map(id => scenes[id].group))];
+
   return (
     <div className={`${ui.system} ${ui.workspace}`}>
       <WorkspaceSidebar showHistory={false} active="files" />
@@ -37,7 +38,9 @@ export default function Page() {
                   <Link key={href} href={href}>
                     <div>
                       {title}
-                      <p>{detail}</p>
+                      <p>
+                        {detail}
+                      </p>
                     </div>
                     <Icon name="chevron" size={16} />
                   </Link>
@@ -46,7 +49,9 @@ export default function Page() {
             </section>
             {groups.map(group => (
               <section className={styles.catalogGroup} key={group}>
-                <h2>{group}</h2>
+                <h2>
+                  {group}
+                </h2>
                 <div className={styles.catalog}>
                   {sceneIds
                     .filter(id => scenes[id].group === group)
@@ -54,7 +59,9 @@ export default function Page() {
                       <Link href={"/preview/" + id} key={id}>
                         <div>
                           {scenes[id].title}
-                          <p>{scenes[id].description}</p>
+                          <p>
+                            {scenes[id].description}
+                          </p>
                         </div>
                         <Icon name="chevron" size={16} />
                       </Link>

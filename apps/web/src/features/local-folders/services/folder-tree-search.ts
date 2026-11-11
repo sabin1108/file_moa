@@ -12,6 +12,7 @@ export type FolderSearchResult = Readonly<{
   scanned: number;
 }>;
 /** 이름만 너비 우선으로 검색한다. 본문/쓰기/권한 요청을 하지 않고 큰 트리는 일부임을 알린다. */
+
 export async function searchFolderTree(
   base: readonly string[],
   query: string,
@@ -27,7 +28,9 @@ export async function searchFolderTree(
 
   if (!query.trim()) {
     return {
-      entries, incomplete, scanned
+      entries,
+      incomplete,
+      scanned
     };
   }
 
@@ -36,6 +39,7 @@ export async function searchFolderTree(
 
     if (index >= 1000 || scanned >= 20000 || Date.now() - started > 15000) {
       incomplete = true;
+
       break;
     }
 
@@ -53,6 +57,7 @@ export async function searchFolderTree(
       }
 
       incomplete = true;
+
       continue;
     }
 
@@ -63,7 +68,9 @@ export async function searchFolderTree(
 
       if (scanned >= 20000 || entries.length >= 1000) {
         return {
-          entries, incomplete: true, scanned
+          entries,
+          incomplete: true,
+          scanned
         };
       }
 
@@ -90,6 +97,8 @@ export async function searchFolderTree(
   }
 
   return {
-    entries, incomplete, scanned
+    entries,
+    incomplete,
+    scanned
   };
 }

@@ -8,11 +8,14 @@ import { reportAuthenticationFailure } from "./auth-diagnostics";
 
 async function readGuardSession() {
   const requestHeaders = await headers();
+
   try {
     const session = await getAuthenticatedSession(requestHeaders);
+
     return { requestHeaders, session };
   } catch (error) {
     reportAuthenticationFailure("protocol", error);
+
     throw new Error("로그인 상태를 확인하지 못했습니다.");
   }
 }
@@ -25,7 +28,9 @@ export async function requireGuest() {
 
 export async function requireAccountSession() {
   const { session } = await readGuardSession();
+
   if (!session) redirect("/login");
+
   return session;
 }
 
@@ -37,9 +42,13 @@ export async function requireWorkspace() {
   if (!session.user.name.trim()) redirect("/account");
 
   try {
-    return { ...await getAuthenticatedWorkspace(requestHeaders), sessionExpiresAt: session.session.expiresAt.toISOString() };
+    return {
+      ...await getAuthenticatedWorkspace(requestHeaders),
+      sessionExpiresAt: session.session.expiresAt.toISOString()
+    };
   } catch (error) {
     reportAuthenticationFailure("protocol", error);
+
     throw new Error("작업 공간을 확인하지 못했습니다.");
   }
 }

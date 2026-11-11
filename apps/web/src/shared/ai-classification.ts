@@ -33,14 +33,21 @@ export const classificationResponseSchema = z.strictObject({
 });
 
 export type ClassificationDocument = z.infer<typeof documentSchema>;
+
 export type ClassificationFolder = z.infer<typeof folderSchema>;
+
 export type ClassificationRequest = z.infer<typeof requestSchema>;
+
 export type ClassificationResponse = z.infer<typeof classificationResponseSchema>;
 
 // The server must establish this scope from authorization; it is never a request field.
+
 export type ClassificationScope = Readonly<{ folders: readonly ClassificationFolder[] }> & (
   | Readonly<{ mode: "live" }>
-  | Readonly<{ mode: "sample"; documents: readonly ClassificationDocument[] }>
+  | Readonly<{
+    mode: "sample";
+    documents: readonly ClassificationDocument[]
+  }>
 );
 
 export function parseClassificationRequest(value: unknown, scope: ClassificationScope): ClassificationRequest {
@@ -65,10 +72,12 @@ export function parseClassificationRequest(value: unknown, scope: Classification
   for (const document of request.documents) {
     const extension = /\.([a-z0-9]+)$/iu.exec(document.name)?.[1].toLowerCase();
     const allowed = scope.mode === "live" ? ["md", "txt"] : ["md", "txt", "pdf", "xlsx"];
+
     if (!allowed.includes(extension ?? "")) throw new Error("unsupported-classification-format");
 
     if (scope.mode === "sample") {
       const sample = scope.documents.find(candidate => candidate.id === document.id);
+
       if (!sample || sample.name !== document.name || sample.excerpt !== document.excerpt) {
         throw new Error("unregistered-classification-sample");
       }
@@ -86,7 +95,9 @@ export function parseClassificationResponse(value: unknown, request: Classificat
 
   for (const proposal of response.proposals) {
     const document = documents.get(proposal.documentId);
+
     if (!document || seen.has(proposal.documentId)) throw new Error("invalid-classification-document");
+
     seen.add(proposal.documentId);
 
     if (proposal.folderId !== null && !folders.has(proposal.folderId)) {
@@ -99,5 +110,6 @@ export function parseClassificationResponse(value: unknown, request: Classificat
   }
 
   if (seen.size !== documents.size) throw new Error("missing-classification-document");
+
   return response;
 }

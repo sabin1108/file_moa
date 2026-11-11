@@ -8,7 +8,10 @@ const url = "postgresql://moa_runtime.project:fixture-secret@db.example.invalid:
 
 describe("runtime database connection boundary", () => {
   it("keeps the bundled CA authoritative instead of pg URL TLS parameters", () => {
-    const config = databasePoolConfig(`${url}?sslmode=verify-full&sslrootcert=ignored.crt&schema=moa_app`, "fixture-ca");
+    const config = databasePoolConfig(
+      `${url}?sslmode=verify-full&sslrootcert=ignored.crt&schema=moa_app`,
+      "fixture-ca"
+    );
 
     expect(config.ssl).toEqual({ ca: "fixture-ca", rejectUnauthorized: true });
     expect(new URL(config.connectionString!).search).toBe("");
