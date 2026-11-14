@@ -1,5 +1,7 @@
 # 사이트 전체 성능 측정 정책
 
+최신 로컬 검색 필드 결합: [기능 비용과11guest경로66표본](verification/search-fields-20261114/performance.md). 전체47JS/CSS3,557,749→3,562,977bytes(+5,228). 본문/이름/경로 누락 개선과 캐시 최적화를 구분하며 실제 인증 검색/실디스크/field INP/모델 속도 개선을 주장하지 않는다.
+
 최신 자료 질문 연결·검색 화면: [2026-11-14 비용과11경로66표본](verification/search-question-20261114/performance.md). 전체47JS/CSS 원본3,547,771→3,557,749bytes(+9,978). guest/redirect 경로의 실제 도착과 인증 검색을 구분하고 속도 개선율을 주장하지 않는다. 질문33·사용성136브라우저 검사와 범용 검색 후속 설계는 별도다.
 
 최신 첫 사용·채팅 조작 보완: [2026-11-14 전후11경로132표본](verification/chat-usability-20261114/performance.md). 전체 JS/CSS 원본은3,527,234→3,540,157bytes이며 최초 전송과 구분한다. 소개로 바뀐 비로그인 진입과 신규 안내 비용을 포함하며 순수 최적화 개선율은 주장하지 않는다. [사용성 검증81개와 한계](verification/chat-usability-20261114/README.md)를 함께 본다.
