@@ -23,7 +23,7 @@ const server = await createServer({
     configureServer(server) {
       server.middlewares.use("/__ocr", (_request, response) => {
         response.setHeader("content-type", "text/html; charset=utf-8");
-        response.end('<!doctype html><html lang="ko"><body><script type="module">import {createCopyHasher} from "/src/features/local-folders/services/copy-hash.ts";import {saveOcrEnabled} from "/src/features/local-folders/store/ocr-preferences.ts";window.readLocal=async(bytes,name)=>{const reader=createCopyHasher();try{return await reader.readText(new File([new Uint8Array(bytes)],name),"회의 LOCAL OCR");}finally{reader.dispose();}};window.ocrEnable=saveOcrEnabled;</script></body></html>');
+        response.end('<!doctype html><html lang="ko"><body><script type="module">import {createCopyHasher} from "/src/features/local-folders/content/copy-hash.ts";import {saveOcrEnabled} from "/src/features/local-folders/content/ocr/ocr-preferences.ts";window.readLocal=async(bytes,name)=>{const reader=createCopyHasher();try{return await reader.readText(new File([new Uint8Array(bytes)],name),"회의 LOCAL OCR");}finally{reader.dispose();}};window.ocrEnable=saveOcrEnabled;</script></body></html>');
       });
     }
   }],
@@ -274,7 +274,7 @@ try {
   );
 
   const cancellation = await page.eval(async () => {
-    const { createCopyHasher } = await import("/src/features/local-folders/services/copy-hash.ts");
+    const { createCopyHasher } = await import("/src/features/local-folders/content/copy-hash.ts");
     const operation = new AbortController();
     const reader = createCopyHasher(operation.signal);
     const pending = reader.readText(new File([new Uint8Array(scannedPdf(4))], "cancel.pdf"), "검증");

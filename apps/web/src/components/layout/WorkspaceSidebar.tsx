@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { GuardedLink as Link } from "../navigation/NavigationGuard";
 import type { ReactNode } from "react";
 import { Icon, MoaMark } from "../ui/Icon";
 import { NavigationProgress } from "../ui/feedback/NavigationProgress";

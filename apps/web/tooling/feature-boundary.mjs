@@ -23,12 +23,13 @@ const featureBoundaryRule = {
       const shared = from.startsWith('components/') || from.startsWith('styles/') || from.startsWith('shared/');
       const feature = from.startsWith('features/') && !inPrototype(from);
       const server = from.startsWith('server/');
-      const liveRoute = from.startsWith('app/') && !from.startsWith('app/preview/');
+      const liveRoute = from.startsWith('app/');
       const testDependency = to.split('/').includes('tests') || /\.(test|spec)(?:\.[^.]+)?$/.test(to);
       const forbidden = testDependency || ((feature || server || liveRoute || shared) && inPrototype(to))
         || (shared && (to.startsWith('features/') || to.startsWith('app/')))
         || (feature && to.startsWith('app/'))
-        || (server && to.startsWith('features/'));
+        || (server && to.startsWith('features/'))
+        || (from.startsWith('features/ai-records/') && to.startsWith('features/conversation-workspace/'));
 
       if (forbidden) context.report({ node, messageId: 'direction', data: { from, to } });
     }

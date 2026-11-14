@@ -1,5 +1,11 @@
 # 개발 주의사항과 원문 적용 판단
 
+## 현재 적용 범위 — 2026-11-13
+
+현재는 실제 인증·서버 DB·일반/자료 AI 호출·로컬 기록과 검증된 파일 작업이 연결돼 있다. 기능별 책임과 권한의 현재 기준은 [기술 경계](architecture.md#현재-구조와-상태-소유--2026-11-13)를 따른다. 아래 날짜별 미구현·시안 표현은 해당 시점의 기록이며 현재 제품 전체의 상태를 뜻하지 않는다.
+
+미저장 편집은 문서 이탈 경고와 내부 이동 확인을 함께 적용한다. 삭제는 종류가 확인된 내구성 있는 표식 뒤에만 화면의 저장 선택을 바꾸고, 초안과 현재 대화는 임시 상태로 보존한다. 기존 종류 충돌과 뜻을 확인할 수 없는 삭제 표식은 자동 삭제하지 않는다. 새 회귀의 [수정·검증 범위](verification/audit-data-preservation-20261113/README.md)를 따른다.
+
 ## 작성 언어 — 2026-11-08 사용자 요구
 
 답변·문서·코드 주석에 한자와 중국어·일본어 표현을 사용하지 않는다. 전문 용어는 일반적으로 통용되는 한국어 또는 영어로 작성한다. 기존 코드 주석도 같은 규칙을 적용하며 의미를 유지해 수정한다. 테스트 설명과 임의로 만든 자료 이름도 한국어 또는 영어로 작성한다.
@@ -16,9 +22,9 @@
 
 ## 서버 통신과 데이터 책임 — 사용자 요구 2026-10-27
 
-2026-11-09 일반 채팅 스트림 예외: 사용자가 생성 도중부터 답변을 받는 방식을 선택했다. `features/conversation-workspace/services/chat-stream.ts`만 같은 origin의 `POST /api/chat`을 직접 호출한다. 해당 Route Handler는 서버 서비스로 위임하며 인증·Origin·입력·소유권·중복·공유 한도를 검증하고 공급자 이벤트를 최소 대화 이벤트로 변환한다. 이 예외는 외부 AI 직접 호출이나 다른 업무 API의 fetch를 허용하지 않는다. 나머지 요청은 아래 Server Action 계약을 유지한다. [일반 채팅 명세](specs/general-chat.md).
+2026-11-09 일반 채팅 스트림 예외: 사용자가 생성 도중부터 답변을 받는 방식을 선택했다. `features/conversation-workspace/messaging/chat-stream.ts`만 같은 origin의 `POST /api/chat`을 직접 호출한다. 해당 Route Handler는 서버 서비스로 위임하며 인증·Origin·입력·소유권·중복·공유 한도를 검증하고 공급자 이벤트를 최소 대화 이벤트로 변환한다. 이 예외는 외부 AI 직접 호출이나 다른 업무 API의 fetch를 허용하지 않는다. 나머지 요청은 아래 Server Action 계약을 유지한다. [일반 채팅 명세](specs/general-chat.md).
 
-2026-11-06 인증 예외: 사용자 진행 지시에 따라 `/api/auth/[...all]`만 Better Auth 이메일 인증 프로토콜의 Route Handler로 연결했다. 경로·메서드는 `src/server/auth-handler.ts`의 허용 목록으로 제한하며 업무 요청을 일반 API로 확대하지 않는다. 후속 로그인 화면의 명시적 요청은 Server Actions에서 같은 auth API를 호출하고 쿠키를 전달한다. 이메일 callback은 외부 링크이므로 GET을 유지한다. [명세와 검증](specs/auth-database-design.md).
+2026-11-06 인증 예외: 사용자 진행 지시에 따라 `/api/auth/[...all]`만 Better Auth 이메일 인증 프로토콜의 Route Handler로 연결했다. 경로·메서드는 `src/server/auth/auth-handler.ts`의 허용 목록으로 제한하며 업무 요청을 일반 API로 확대하지 않는다. 후속 로그인 화면의 명시적 요청은 Server Actions에서 같은 auth API를 호출하고 쿠키를 전달한다. 이메일 callback은 외부 링크이므로 GET을 유지한다. [명세와 검증](specs/auth-database-design.md).
 
 사용자 기준: **“프론트엔드에서는 절대 API 데이터를 가공해서는 안 된다.”** 이를 서버가 반환한 업무 데이터의 의미·권한·정합성을 프론트엔드가 재정의하지 않는 계약으로 적용한다. React의 고유 결함이 아니라 모든 브라우저 코드가 사용자의 통제 아래 있다는 신뢰 경계 문제다.
 
@@ -33,7 +39,7 @@
 - 현재 로컬 폴더의 권한 요청·핸들·목록·로컬 표시 정렬은 브라우저 전용 책임이다. 서버 API 응답을 가공하는 동작이 아니며 Server Action으로 옮기거나 원본을 자동 업로드하지 않는다. 향후 전송은 사용자가 확인한 자료만 허용하고 서버는 그 내용을 다시 검증한다.
 - `/api/health`는 민감값 없는 운영 상태 확인으로 유지한다. OAuth callback/webhook/실시간 스트림은 외부 프로토콜이므로 Action으로 무조건 대체할 수 없다. 현재 예외는 위 인증 경로와 일반 채팅 스트림이며, 추가 경로는 별도 명세·보안 검토·사용자 범위 합의 후 정한다. 기존 POST+fetch SSE 초안은 다른 브라우저 직접 호출의 허용 근거가 아니다.
 
-자동 검사: `pnpm lint`는 서버 경계 표식·직접 통신·SDK/환경변수 접근 패턴을 검사하고 `pnpm test:boundaries`는 위반/허용 예제를 검사한다. 정적 규칙은 우회 불가능한 보안 장치가 아니며 DTO 내용이나 권한 로직의 정확성을 증명하지 않는다. 실제 서버 기능이 생길 때 A/B 사용자 교차 접근·위조 ID·변조 입력·비밀 응답 부재 테스트와 클라이언트 번들/네트워크 검사를 추가한다. 현재 인증/서버 DB/AI 연동은 미구현이다.
+자동 검사: `pnpm lint`는 서버 경계 표식·직접 통신·SDK/환경변수 접근 패턴을 검사하고 `pnpm test:boundaries`는 위반/허용 예제를 검사한다. 정적 규칙은 우회 불가능한 보안 장치가 아니며 DTO 내용이나 권한 로직의 정확성을 증명하지 않는다. 실제 서버 기능이 생길 때 A/B 사용자 교차 접근·위조 ID·변조 입력·비밀 응답 부재 테스트와 클라이언트 번들/네트워크 검사를 추가한다. 2026-10-27 당시 인증/서버 DB/AI 연동은 미구현이었다. 현재 구현과 검증 범위는 위 최신 절과 기능별 결과를 따른다.
 
 근거: 설치된 Next16.4.3의 data-security/server-and-client-components/fetching-data 가이드 및 [공식 보안 문서](https://nextjs.org/docs/app/guides/data-security), [서버 액션의 용도/큐 제한](https://nextjs.org/docs/app/guides/backend-for-frontend#server-actions).
 
@@ -65,7 +71,7 @@ docs/source의 7개 Markdown은 사용자 원본 스냅샷이다. 최신 사용�
 - 실제 작업 경로에는 실제 입력·저장소·처리 결과만 표시한다. 합성 대화·파일·계정·숫자·타이머로 만든 진행률·가짜 성공을 채워 넣어 구현된 것처럼 보이게 하지 않는다.
 - 미구현은 ‘미구현’으로 표시한다. 조회하지 않은 파일을 ‘0개’나 ‘빈 폴더’로 표현하지 않는다. 불가능한 조작으로 예시 결과를 만들지 않는다.
 - 새 기능은 실제 작업 경로에서 바로 조작하고 결과·실패·재시도를 확인할 수 있게 연결한다. 문서나 시안만으로 기능 완료를 보고하지 않는다.
-- 필요한 시안과 합성 테스트 데이터는 `/preview`와 검사 도구에 격리한다. 시안에는 합성임을 알리고 실제 화면으로 돌아오는 진입을 둔다. 시안 조작이 실제 저장소·권한·사용자 데이터를 변경하지 않게 한다.
+- 체험용 합성 데이터는 `/demo`에, 실패 주입과 검증 데이터는 검사 도구에 격리한다. 합성임을 알리고 실제 저장소·권한·사용자 데이터를 변경하지 않게 한다. 사용하지 않는 `/preview` 실행 경로는 2026-11-12 제거했다.
 - 공통 CSS·표시 컴포넌트 재사용과 합성 업무 상태의 혼입은 구분한다. 이번 경계와 현재 구현 범위는 [실제 작업 화면 명세](specs/live-workspace.md)를 따른다.
 
 ## AI 코드 리뷰의 필수 확인 세 가지 — 2026-10-26
@@ -106,7 +112,7 @@ worker는 짧은 선점 트랜잭션, lease/fencing, 제한된 재시도, tombst
 
 ## 파일과 UI
 권한 상실을 파일 삭제로 간주하지 않는다. 전체 스캔 성공 후 누락 판정.
-연결 해제·클라우드 복사본 삭제·원본 삭제를 구분. 원본 쓰기는 초기 제외.
+연결 해제·클라우드 복사본 삭제·원본 삭제를 구분. 원본 쓰기는 초기 범위에서 제외했으며, 현재 검증된 기능은 각각의 권한·충돌·복구 명세를 따른다.
 대화 패널 전환 시 초안/대화ID/선택/스크롤 유지. IME 조합 중 Enter 전송 차단.
 성능은 측정 후 최적화. 입력 값에 무조건 debounce를 걸지 않고 검색 요청에 필요할 때 적용.
 
@@ -162,7 +168,7 @@ worker는 짧은 선점 트랜잭션, lease/fencing, 제한된 재시도, tombst
 - 파일 화면은 한 번에 하나의 주요 작업을 드러낸다. 폴더 카드·탐색 트리·긴 미리보기를 동시에 반복하지 않는다.
 - 선택 체크, 선택 개수, 이동/복사/분류 도구, 대상 경로, 충돌과 적용 전 계획을 보이게 한다. AI 참고 자료 선택과 파일 작업 선택은 분리한다.
 - 원본 이동/복사/이름 변경은 먼저 계획을 보여주고 적용 전에 쓰기 권한·hash·경로/동일 이름 충돌·journal/취소/복구를 검증한다. 전체 일괄 작업의 원자성을 보장하지 않는다.
-- 동일 행동의 라벨·높이·색·아이콘·focus·비활성 상태를 공통 컴포넌트/variant로 유지한다. 버튼·링크·상태 표현은 components/ui의 actionClasses/ActionLink/StatusLabel 및 styles/controls.module.css를 재사용한다. PreviewButton은 prototypes 전용이다.
+- 동일 행동의 라벨·높이·색·아이콘·focus·비활성 상태를 공통 컴포넌트/variant로 유지한다. 버튼·링크·상태 표현은 components/ui의 actionClasses/ActionLink/StatusLabel 및 styles/controls.module.css를 재사용한다.
 - 공통 디자인은 실제 반복을 기준으로 추출한다. 재사용을 이유로 서로 다른 도메인 책임을 거대한 만능 컴포넌트로 합치지 않는다.
 - 읽기 면/탐색 면/선택 면과 text/muted/border 토큰을 분리한다. 긴 본문은 16–17px, 1.8–2.0 행간, 약 620–720px 너비를 출발점으로 한국어와 200% 확대를 확인한다.
 - 과도한 동일 색·동일 크기 텍스트·회색 장문을 피한다. 제목/본문/메타 위계와 충분한 문단 간격을 둔다. 자동 대비 판정은 장시간 읽기의 편안함을 대신하지 않는다.
@@ -229,7 +235,7 @@ AI가 만든 범용 템플릿 같은 인상을 줄이는 것을 모든 화면의
 
 app에는 Next page/layout/route와 metadata 진입점만 둔다. components/layout은 공통 작업 프레임, components/ui는 실제 재사용 표시다. features/local-folders는 components/{connection,listing,preview}·providers·hooks·store·services·lib·types.ts로 역할을 구분한다. 전용 CSS는 컴포넌트 그룹 옆에, 공통/전역 CSS는 src/styles에 둔다. 없는 기능/라이브러리를 표현하기 위한 빈 auth/store/constants 폴더는 만들지 않는다.
 
-구현 소스에는 테스트를 섞지 않는다. apps/web/tests·packages/domain/tests는 단위 검사, 루트 tests는 browser/architecture/fixtures/performance/s0다. prototypes는 테스트가 아닌 합성 시안으로 유지하며 /preview에서만 조합한다. 제품→tests/시안, 공통 components/styles→features/app 의존은 구조 검사로 금지한다. 상대 import 검사이며 alias 도입 시 확장이 필요하다.
+구현 소스에는 테스트를 섞지 않는다. apps/web/tests·packages/domain/tests는 단위 검사, 루트 tests는 browser/architecture/fixtures/performance/s0다. 이전 prototypes와 /preview는 제거했으며 모든 app 진입점에 같은 의존 경계를 적용한다. 제품→tests/시안, 공통 components/styles→features/app 의존은 구조 검사로 금지한다. 상대 import 검사이며 alias 도입 시 확장이 필요하다.
 
 주요 기능 파일 상단에는 ‘담당 기능·사용처·다음 계층’을 짧게 설명한다. 버튼/UI 같은 당연한 문법 설명은 늘리지 않는다. 공개 동작·입출력·수명 경계가 바뀌면 주석과 [코드 지도](code-map.md)를 함께 갱신한다. 동작 보존을 위해 테스트와 경계 검사부터 실행하며 새 any·재수출 wrapper·실사용 근거 없는 추상화를 피한다.
 # 사용자 추가 코드 가독성 기준 — 2026-11-03

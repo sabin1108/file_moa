@@ -1,8 +1,8 @@
 import { AuthShell } from "../../components/layout/AuthShell";
-import { AuthScreen } from "../../features/auth/components/AuthScreen";
-import { requireAccountSession } from "../../server/session-guards";
+import { AuthScreen } from "../../features/auth/form/AuthScreen";
+import { requireAccountSession } from "../../server/auth/session-guards";
 import { signoutAction, profileAction, checkAuthSessionAction } from "../actions/auth";
-import { SessionBoundary } from "../../features/auth/components/SessionBoundary";
+import { SessionBoundary } from "../../features/auth/session/SessionBoundary";
 
 export default async function Page() {
   const session = await requireAccountSession();

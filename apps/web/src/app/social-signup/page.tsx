@@ -1,8 +1,8 @@
 import { AuthShell } from "../../components/layout/AuthShell";
 import { ActionLink } from "../../components/ui/ActionLink";
-import { SocialProviders } from "../../features/auth/components/SocialProviders";
-import { requireGuest } from "../../server/session-guards";
-import { socialProviderConfiguration } from "../../server/social-providers";
+import { SocialProviders } from "../../features/auth/social/SocialProviders";
+import { requireGuest } from "../../server/auth/session-guards";
+import { socialProviderConfiguration } from "../../server/auth/social-providers";
 import { socialProviders } from "../../shared/social-auth";
 import { socialSigninAction, checkAuthSessionAction } from "../actions/auth";
 import styles from "../../components/layout/auth-shell.module.css";
@@ -29,4 +29,4 @@ export default async function Page() {
   </AuthShell>;
 }
 
-import { GuestSessionObserver } from "../../features/auth/components/GuestSessionObserver";
+import { GuestSessionObserver } from "../../features/auth/session/GuestSessionObserver";

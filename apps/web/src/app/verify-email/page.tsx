@@ -1,7 +1,7 @@
 import { AuthShell } from "../../components/layout/AuthShell";
-import { AuthScreen } from "../../features/auth/components/AuthScreen";
+import { AuthScreen } from "../../features/auth/form/AuthScreen";
 import { verifyAction, checkAuthSessionAction } from "../actions/auth";
-import { requireGuest } from "../../server/session-guards";
+import { requireGuest } from "../../server/auth/session-guards";
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   await requireGuest();
@@ -20,4 +20,4 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   );
 }
 
-import { GuestSessionObserver } from "../../features/auth/components/GuestSessionObserver";
+import { GuestSessionObserver } from "../../features/auth/session/GuestSessionObserver";

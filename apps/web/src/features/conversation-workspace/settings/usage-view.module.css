@@ -1,0 +1,7 @@
+.usage { display: grid; gap: 12px; }
+.usage > button { justify-self: start; }
+.usage progress { width: 100%; accent-color: var(--text); }
+.usageCount { display: grid; gap: 4px; }
+.usageCount strong { font-size: 28px; font-weight: 550; }
+.usageCount small, .usageCount > span { color: var(--muted); font-size: 13px; font-weight: 400; }
+.usage li { font-size: 12px; line-height: 1.8; margin-bottom: 12px; overflow-wrap: anywhere; }

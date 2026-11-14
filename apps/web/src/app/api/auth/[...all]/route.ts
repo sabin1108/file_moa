@@ -1,4 +1,4 @@
-import { handleAuthRequest } from "../../../../server/auth-handler";
+import { handleAuthRequest } from "../../../../server/auth/auth-handler";
 
 export const runtime = "nodejs";
 

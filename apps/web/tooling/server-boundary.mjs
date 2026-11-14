@@ -18,7 +18,7 @@ const serverBoundaryRule = {
 
     return {
       Identifier(node) {
-        if (!filename.endsWith('/src/features/conversation-workspace/services/chat-stream.ts') || node.name !== 'fetch') return;
+        if (!filename.endsWith('/src/features/conversation-workspace/messaging/chat-stream.ts') || node.name !== 'fetch') return;
 
         const call = node.parent;
         const options = call.arguments?.[1];
@@ -91,7 +91,7 @@ export const serverBoundaryConfig = [
     },
   },
   {
-    files: ["src/features/conversation-workspace/services/chat-stream.ts"],
+    files: ["src/features/conversation-workspace/messaging/chat-stream.ts"],
     rules: {
       "no-restricted-globals": ["error", ...["XMLHttpRequest", "WebSocket", "EventSource"].map(name => ({ name, message: directAccessMessage }))],
     },

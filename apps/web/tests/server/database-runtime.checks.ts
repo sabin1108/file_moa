@@ -3,17 +3,17 @@ import { hashPassword } from "better-auth/crypto";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../generated/prisma/client";
-import { readChatSession } from "../../src/server/chat-session";
+import { readChatSession } from "../../src/server/chat/chat-session";
 
 vi.mock("server-only", () => ({}));
 vi.mock("../../src/server/database/client", () => ({ getDatabase: vi.fn() }));
 
 import { getDatabase } from "../../src/server/database/client";
-import { getAuth } from "../../src/server/auth";
-import { getAuthenticatedWorkspace } from "../../src/server/workspace";
-import { createAuthRateLimiter } from "../../src/server/auth-rate-limit";
-import { startUsage, finishUsage, readUsage } from "../../src/server/ai-usage";
-import { finishAccountDeletion } from "../../src/server/auth-account-deletion";
+import { getAuth } from "../../src/server/auth/auth";
+import { getAuthenticatedWorkspace } from "../../src/server/auth/workspace";
+import { createAuthRateLimiter } from "../../src/server/auth/auth-rate-limit";
+import { startUsage, finishUsage, readUsage } from "../../src/server/ai/ai-usage";
+import { finishAccountDeletion } from "../../src/server/auth/auth-account-deletion";
 
 const secret = "fixture-auth-secret-" + randomUUID();
 const userA = "runtime-a";

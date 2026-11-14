@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { SampleWorkspaceStore } from "../../src/features/sample-workspace/store/sample-workspace-store";
+import { SampleWorkspaceStore } from "../../src/features/sample-workspace/sample-workspace-store";
 import type { SampleCatalog, SampleSession } from "../../src/shared/sample-contract";
 import type { SampleAiResult } from "../../src/shared/sample-ai";
 import type { SampleOrganizationResult } from "../../src/shared/sample-organization";

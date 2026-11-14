@@ -68,7 +68,7 @@ export async function startBackupProbe() {
     return url;
   }
 
-  const entry = load(resolve('apps/web/src/features/local-folders/services/connection-session.ts'));
+  const entry = load(resolve('apps/web/src/features/local-folders/connection-session.ts'));
   const server = createServer((request, response) => {
     const path = new URL(request.url, 'http://localhost').pathname;
     const body = path === '/' ? '<!doctype html><title>Isolated recovery backup probe</title>' : modules.get(path);

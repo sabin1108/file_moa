@@ -39,7 +39,6 @@ export function WorkspaceShell({ title, active, children, mode = "live", tools, 
             {tools ?? (mode === "sample"
               ? <ActionLink href="/login">정식으로 사용</ActionLink>
               : <>
-                <ActionLink href="/preview">시안 보관함</ActionLink>
                 <ActionLink href="/account">
                   <Icon name="person" />
                   계정

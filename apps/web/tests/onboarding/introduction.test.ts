@@ -1,7 +1,7 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { OnboardingPage } from "../../src/components/onboarding/OnboardingPage";
+import { OnboardingPage } from "../../src/features/onboarding/OnboardingPage";
 import { metadata as demoMetadata } from "../../src/app/demo/layout";
 
 describe("introduction entry points", () => {

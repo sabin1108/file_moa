@@ -1,10 +1,10 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { getSampleCatalog } from "../../../server/sample-catalog";
-import { readSampleAccess, SAMPLE_COOKIE } from "../../../server/sample-session";
-import { SampleWorkspace } from "../../../features/sample-workspace/components/SampleWorkspace";
+import { getSampleCatalog } from "../../../server/demo/sample-catalog";
+import { readSampleAccess, SAMPLE_COOKIE } from "../../../server/demo/sample-session";
+import { SampleWorkspace } from "../../../features/sample-workspace/SampleWorkspace";
 import { sampleClassificationAction, sampleOrganizationAction } from "../../actions/sample-ai";
-import { getSampleAiProvider } from "../../../server/ai-provider";
+import { getSampleAiProvider } from "../../../server/ai/ai-provider";
 
 export const metadata = { title: "내 파일 · 모아 샘플" };
 

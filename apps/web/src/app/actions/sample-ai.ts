@@ -2,9 +2,9 @@
 
 import "server-only";
 import { cookies, headers } from "next/headers";
-import { SAMPLE_COOKIE } from "../../server/sample-session";
-import { classifySample } from "../../server/sample-ai";
-import { organizeSample } from "../../server/sample-organization";
+import { SAMPLE_COOKIE } from "../../server/demo/sample-session";
+import { classifySample } from "../../server/demo/sample-ai";
+import { organizeSample } from "../../server/demo/sample-organization";
 import type { AiProvider } from "../../shared/ai-provider";
 
 export async function sampleClassificationAction(provider: AiProvider | null, input: unknown) {

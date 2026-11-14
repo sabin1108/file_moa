@@ -5,7 +5,7 @@ from openpyxl import load_workbook
 
 root = Path("tests/fixtures/classification/business-v1")
 manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
-catalog = json.loads(Path("apps/web/src/server/sample-data/business-documents.json").read_text(encoding="utf-8"))
+catalog = json.loads(Path("apps/web/src/server/demo/sample-data/business-documents.json").read_text(encoding="utf-8"))
 for item in manifest["documents"]:
     name = item["name"] if item["format"] == "xlsx" else item["id"].split("-")[1] + "-" + item["name"]
     assert hashlib.sha256((root / name).read_bytes()).hexdigest() == item["sha256"]

@@ -4,7 +4,7 @@ import { afterAll, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 
 import { getDatabase } from "../../src/server/database/client";
-import { getAuth } from "../../src/server/auth";
+import { getAuth } from "../../src/server/auth/auth";
 
 // Explicit opt-in configuration only: ordinary tests never load real credentials.
 

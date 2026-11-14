@@ -5,7 +5,7 @@ import { probe, layout, app } from "../../.agents/skills/design-taste-frontend/s
 import { judge, judgeLayout, judgeApp, APP_SKIP } from "../../.agents/skills/design-taste-frontend/scripts/lib/rules.mjs";
 
 const base = process.argv[2] ?? "http://127.0.0.1:3034";
-const output = "docs/verification/conversation-organization/files";
+const output = process.argv[3] ?? "docs/verification/conversation-organization/files";
 
 mkdirSync(output, { recursive: true });
 
@@ -53,6 +53,10 @@ const locationOf = (page, id) => page.eval(id => {
 try {
   const page = await browser.newPage({ width: 1440, height: 1000 });
 
+  for (const route of ['/preview', '/preview/screens/chat', '/preview/folder-connection']) {
+    check(`retired ${route} returns 404`, (await fetch(base + route)).status === 404);
+  }
+
   await page.send("Page.addScriptToEvaluateOnNewDocument", {
     source: `
     window.sampleIO = [];
@@ -66,6 +70,13 @@ try {
   `
   });
   await page.goto(base + "/demo/files", { settleMs: 300 });
+  await waitFor(page, () => location.pathname === "/demo/intro"
+    && !!document.querySelector('a[href="/demo/start?intro=done&view=files"]'));
+  check(
+    "fresh sample entry shows the introduction before the workspace",
+    await page.eval(() => !document.querySelector('[data-workspace="sample"]'))
+  );
+  await click(page, 'a[href="/demo/start?intro=done&view=files"]');
   await waitFor(page, () => document.querySelector('[data-sample-ready="true"]'));
   check(
     "public entry reaches sample workspace without production login",
@@ -319,7 +330,16 @@ try {
 
   check(
     "production files remain protected",
-    await page.eval(async () => (new URL((await fetch('/files')).url)).pathname === '/login')
+    await page.eval(async () => {
+      const response = await fetch('/files');
+      const html = await response.text();
+      const redirected = new URL(response.url).pathname === '/login'
+        || new DOMParser().parseFromString(html, 'text/html')
+          .querySelector('meta[http-equiv="refresh"]')?.getAttribute('content') === '1;url=/login';
+
+      return redirected && !new DOMParser().parseFromString(html, 'text/html')
+        .querySelector('[data-listing-phase]');
+    })
   );
   check(
     "unknown sample document is rejected",

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { OnboardingPage } from "../../../components/onboarding/OnboardingPage";
+import { OnboardingPage } from "../../../features/onboarding/OnboardingPage";
 
 export const metadata: Metadata = {
   title: "모아 체험 · 나의 자료, 다음 생각으로",

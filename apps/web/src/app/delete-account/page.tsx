@@ -1,5 +1,5 @@
 import { AuthShell } from "../../components/layout/AuthShell";
-import { AccountDeletionConfirmation } from "../../features/auth/components/AccountDeletionConfirmation";
+import { AccountDeletionConfirmation } from "../../features/auth/account/AccountDeletionConfirmation";
 import { finishAccountDeletionAction } from "../actions/auth";
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };

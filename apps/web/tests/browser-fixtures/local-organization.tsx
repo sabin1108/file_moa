@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { SourceFolderProvider } from "../../src/features/local-folders/providers/SourceFolderProvider";
-import { LiveConversation } from "../../src/features/conversation-workspace/components/LiveConversation";
-import { ConversationStateProvider } from "../../src/features/conversation-workspace/providers/ConversationStateProvider";
-import { SourceFolderSettings } from "../../src/features/local-folders/components/connection/SourceFolderSettings";
-import { SourceFolderBrowser } from "../../src/features/local-folders/components/listing/SourceFolderBrowser";
+import { SourceFolderProvider } from "../../src/features/local-folders/SourceFolderProvider";
+import { LiveConversation } from "../../src/features/conversation-workspace/LiveConversation";
+import { ConversationStateProvider, useConversationStore } from "../../src/features/conversation-workspace/ConversationStateProvider";
+import type { ConversationStore } from "../../src/features/conversation-workspace/conversation-store";
+import { SourceFolderSettings } from "../../src/features/local-folders/connection/SourceFolderSettings";
+import { SourceFolderBrowser } from "../../src/features/local-folders/SourceFolderBrowser";
 import "../../src/styles/globals.css";
 import ui from "../../src/styles/workspace-ui.module.css";
-import files from "../../src/features/local-folders/components/listing/folder-workspace.module.css";
+import files from "../../src/features/local-folders/browsing/folder-workspace.module.css";
 import { liveOrganizationFixtureAction } from "./live-organization-action";
-import { WorkspaceQuickSwitch } from "../../src/features/quick-switch/components/WorkspaceQuickSwitch";
+import { WorkspaceQuickSwitch } from "../../src/features/quick-switch/WorkspaceQuickSwitch";
+import { NavigationGuardProvider } from "../../src/components/navigation/NavigationGuard";
 
 const organizeAction = new URLSearchParams(location.search).has("transfer") ? liveOrganizationFixtureAction() : undefined;
 
@@ -18,9 +20,44 @@ const owners = [
   { userId: "organization-B", workspaceId: "fixture" }
 ];
 
+function ConversationFixtureProbe() {
+  const store = useConversationStore();
+
+  useEffect(() => {
+    const fixture = window as Window & { conversationFixtureStore?: ConversationStore };
+
+    fixture.conversationFixtureStore = store;
+
+    return () => {
+      if (fixture.conversationFixtureStore === store) delete fixture.conversationFixtureStore;
+    };
+  }, [store]);
+
+  return null;
+}
+
 function Fixture() {
   const [view, setView] = useState(location.pathname === "/files" ? "files" : "chat");
   const [owner, setOwner] = useState(0);
+
+  useEffect(() => {
+    const changeView = () => setView(location.pathname === "/files" ? "files" : location.pathname === "/settings" ? "settings" : "chat");
+    const navigate = (event: Event) => {
+      const { href, replace } = (event as CustomEvent<{ href: string; replace: boolean }>).detail;
+
+      if (replace) history.replaceState(null, "", href);
+      else history.pushState(null, "", href);
+      changeView();
+    };
+
+    window.addEventListener("fixture-navigation", navigate);
+    window.addEventListener("popstate", changeView);
+
+    return () => {
+      window.removeEventListener("fixture-navigation", navigate);
+      window.removeEventListener("popstate", changeView);
+    };
+  }, []);
 
   return (
     <>
@@ -36,6 +73,7 @@ function Fixture() {
       </div>
       <SourceFolderProvider key={owner} owner={owners[owner]}>
         <ConversationStateProvider>
+          <ConversationFixtureProbe />
           {view === "chat"
             ? (
               <LiveConversation aiProvider="openai" organizeAction={organizeAction} />
@@ -56,4 +94,4 @@ function Fixture() {
   );
 }
 
-createRoot(document.getElementById("fixture")!).render(<Fixture />);
+createRoot(document.getElementById("fixture")!).render(<NavigationGuardProvider><Fixture /></NavigationGuardProvider>);

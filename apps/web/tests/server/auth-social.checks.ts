@@ -19,10 +19,10 @@ vi.mock(
 );
 
 import { getDatabase } from "../../src/server/database/client";
-import { handleAuthRequest } from "../../src/server/auth-handler";
-import { getAuth } from "../../src/server/auth";
-import { getAuthenticatedWorkspace } from "../../src/server/workspace";
-import { manageSocialAccount, readAccountLoginSettings } from "../../src/server/auth-account";
+import { handleAuthRequest } from "../../src/server/auth/auth-handler";
+import { getAuth } from "../../src/server/auth/auth";
+import { getAuthenticatedWorkspace } from "../../src/server/auth/workspace";
+import { manageSocialAccount, readAccountLoginSettings } from "../../src/server/auth/auth-account";
 
 const base = "http://127.0.0.1:3034";
 let database: PrismaClient;

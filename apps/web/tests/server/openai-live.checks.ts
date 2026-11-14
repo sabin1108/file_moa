@@ -4,7 +4,7 @@ import { expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
 
-import { generateOrganization } from "../../src/server/organization-generation";
+import { generateOrganization } from "../../src/server/organization/organization-generation";
 import { parseLiveOrganizationResponse } from "../../src/shared/live-organization-review";
 import type { OrganizationRequest } from "../../src/shared/organization";
 

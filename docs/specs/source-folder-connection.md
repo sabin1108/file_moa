@@ -24,10 +24,10 @@
 | 순서 | 파일 | 읽으면서 확인할 것 |
 | --- | --- | --- |
 | 1 | [types.ts](../../apps/web/src/features/local-folders/types.ts) | 연결 소유자는 누구인가? 자료와 AI 기록 폴더를 어떻게 구분하는가? |
-| 2 | [connection-session.ts](../../apps/web/src/features/local-folders/services/connection-session.ts) | 선택·재연결·해제·계정 전환 때 상태가 어떻게 바뀌는가? |
-| 3 | [handle-repository.ts](../../apps/web/src/features/local-folders/services/handle-repository.ts) | 폴더 핸들을 어디에 저장하고 어느 참조만 삭제하는가? |
-| 4 | [connection-session.test.ts](../../apps/web/tests/local-folders/services/connection-session.test.ts) | 취소·저장 실패·늦은 계정 응답에서 무엇을 보존하는가? |
-| 5 | [SourceFolderSettings.tsx](../../apps/web/src/features/local-folders/components/connection/SourceFolderSettings.tsx) | 연결 결과와 성공 후 이동은 어디에서 조합하는가? |
+| 2 | [connection-session.ts](../../apps/web/src/features/local-folders/connection-session.ts) | 선택·재연결·해제·계정 전환 때 상태가 어떻게 바뀌는가? |
+| 3 | [handle-repository.ts](../../apps/web/src/features/local-folders/connection/handle-repository.ts) | 폴더 핸들을 어디에 저장하고 어느 참조만 삭제하는가? |
+| 4 | [connection-session.test.ts](../../apps/web/tests/local-folders/connection-session.test.ts) | 취소·저장 실패·늦은 계정 응답에서 무엇을 보존하는가? |
+| 5 | [SourceFolderSettings.tsx](../../apps/web/src/features/local-folders/connection/SourceFolderSettings.tsx) | 연결 결과와 성공 후 이동은 어디에서 조합하는가? |
 
 폴더 핸들은 브라우저가 제공하는 접근 객체다. 파일 내용 자체가 아니다. IndexedDB는 그 핸들을 이 브라우저에 보관한다. `FolderConnectionSession`은 연결 상태와 요청 순서를 관리한다. 이번에 `view(kind)`로 폴더 이름과 연결 상태를 조회하는 계약을 추가했다. 처리 중 표시·오류 안내·React 화면 갱신은 후속 통합에서 연결한다.
 
@@ -94,7 +94,7 @@ const view = session.view("source");
 아래 줄 번호는 표시 단위 구현 당시 기준이다. 이후 4번 단위에서 `disabled` 입력과 버튼 비활성화가 추가되어 `SourceFolderConnection.tsx`의 16줄 이후는 한 줄씩 내려갔다. 최신 연결 설명은 §6을 따른다.
 
 1. [types.ts](../../apps/web/src/features/local-folders/types.ts) 3–6줄: 기존 `FolderConnectionView` 계약. `status`와 `folderName`만 전달한다. 이번 단위에서 변경하지 않았다.
-2. [SourceFolderConnection.tsx](../../apps/web/src/features/local-folders/components/connection/SourceFolderConnection.tsx) 3–14줄: `import type`은 타입 검사에만 사용하는 가져오기다. `Props`는 컴포넌트의 입력이며 `view`와 조작 함수 3개를 받는다. `() => void`는 인자 없이 호출하고 반환값을 사용하지 않는 함수라는 뜻이다. 이 컴포넌트는 저장소나 연결 세션을 만들지 않는다.
+2. [SourceFolderConnection.tsx](../../apps/web/src/features/local-folders/connection/SourceFolderConnection.tsx) 3–14줄: `import type`은 타입 검사에만 사용하는 가져오기다. `Props`는 컴포넌트의 입력이며 `view`와 조작 함수 3개를 받는다. `() => void`는 인자 없이 호출하고 반환값을 사용하지 않는 함수라는 뜻이다. 이 컴포넌트는 저장소나 연결 세션을 만들지 않는다.
 3. 같은 파일 16–20줄: 내부 상태 이름을 화면 문구로 바꾸는 표다. 22줄의 함수 인자는 전달받은 `Props`를 이름별로 꺼낸다. 23줄의 `return`은 표시할 React 화면을 반환한다.
 
 ```tsx
@@ -110,7 +110,7 @@ title={view.folderName ?? "연결한 폴더 없음"}
 
 32줄의 `&&`는 조건이 맞을 때만 오른쪽 버튼을 표시한다. `onClick={onReconnect}`는 화면을 그릴 때 함수를 실행하는 것이 아니라 클릭할 때 호출하도록 넘긴다. 31줄은 연결, 33줄은 해제를 같은 방식으로 처리한다. 비동기 작업이 없으므로 이번 컴포넌트에는 `await`가 없다.
 
-4. [source-folder-connection.module.css](../../apps/web/src/features/local-folders/components/connection/source-folder-connection.module.css) 1–6줄: 긴 이름 줄바꿈과 상태·버튼 정렬만 담당한다. 간격은 기존 토큰을 사용하고, 좁은 화면에서 왼쪽으로 정렬한다. 기존 `SettingRow`가 화면 폭에 따라 행을 세로로 쌓는다.
+4. [source-folder-connection.module.css](../../apps/web/src/features/local-folders/connection/source-folder-connection.module.css) 1–6줄: 긴 이름 줄바꿈과 상태·버튼 정렬만 담당한다. 간격은 기존 토큰을 사용하고, 좁은 화면에서 왼쪽으로 정렬한다. 기존 `SettingRow`가 화면 폭에 따라 행을 세로로 쌓는다.
 5. [FolderConnectionDemo.tsx](../../apps/web/src/prototypes/demo/scenes/FolderConnectionDemo.tsx) 9–21줄: 검토 전용 예시 4개와 선택 버튼. `satisfies`는 예시 데이터가 기존 표시 계약에 맞는지 TypeScript가 검사하게 한다. 24–26줄의 React 상태는 선택한 예시와 호출 기록만 보관한다.
 
 ```tsx
@@ -186,11 +186,11 @@ web 폴더에서: `node node_modules/eslint/bin/eslint.js .`, `node node_modules
 ### 코드 읽는 순서 — 현재 책임별 위치
 
 1. [settings/page.tsx](<../../apps/web/src/app/(workspace)/settings/page.tsx>)는 실제 연결 화면을 조합한다. 공통 layout의 Provider가 설정과 파일 화면 사이에서 연결 상태를 보존한다.
-2. [SourceFolderSettings.tsx](../../apps/web/src/features/local-folders/components/connection/SourceFolderSettings.tsx)는 표시·이벤트·초점·라우팅을 담당한다. connect/reconnect의 성공 결과를 받은 뒤, 시작 화면이 아직 살아 있고 /files가 아닐 때만 이동한다. 복원·취소·실패·늦은 완료로 이동하지 않는다.
-3. [use-source-folder-connection.ts](../../apps/web/src/features/local-folders/hooks/use-source-folder-connection.ts)는 controller 생성과 React 구독을 연결한다. useSyncExternalStore에는 상태 변경 때만 갱신하는 안정된 snapshot을 제공한다. localhost·브라우저 지원 확인과 소유자별 수명 정리도 이 경계에 있다.
-4. [source-connection-controller.ts](../../apps/web/src/features/local-folders/store/source-connection-controller.ts)는 phase/view/pending/notice와 작업 성공 여부를 제공한다. action을 await보다 먼저 시작해 사용자 활성화를 유지하고, 중복·취소·실패·무효화된 완료는 false를 반환한다. 연결된 과거 view만 보고 이번 작업의 성공을 추측하지 않는다. controller는 URL이나 Next 라우터를 모른다.
-5. [connection-session.ts](../../apps/web/src/features/local-folders/services/connection-session.ts)와 [handle-repository.ts](../../apps/web/src/features/local-folders/services/handle-repository.ts)는 읽기 권한·연결 세대·저장 결과와 IndexedDB/Web Locks를 담당한다. UI에서 이 구현을 복제하지 않는다.
-6. [controller 테스트](../../apps/web/tests/local-folders/store/source-connection-controller.test.ts), [연결 브라우저 검사](../../tests/browser/check-settings-folder-connection.mjs), [이동 브라우저 검사](../../tests/browser/check-connection-navigation.mjs)를 함께 읽는다. 실패·취소·화면 이탈과 성공 이동을 각각 검증한다.
+2. [SourceFolderSettings.tsx](../../apps/web/src/features/local-folders/connection/SourceFolderSettings.tsx)는 표시·이벤트·초점·라우팅을 담당한다. connect/reconnect의 성공 결과를 받은 뒤, 시작 화면이 아직 살아 있고 /files가 아닐 때만 이동한다. 복원·취소·실패·늦은 완료로 이동하지 않는다.
+3. [use-source-folder-connection.ts](../../apps/web/src/features/local-folders/use-source-folder-connection.ts)는 controller 생성과 React 구독을 연결한다. useSyncExternalStore에는 상태 변경 때만 갱신하는 안정된 snapshot을 제공한다. localhost·브라우저 지원 확인과 소유자별 수명 정리도 이 경계에 있다.
+4. [source-connection-controller.ts](../../apps/web/src/features/local-folders/connection/source-connection-controller.ts)는 phase/view/pending/notice와 작업 성공 여부를 제공한다. action을 await보다 먼저 시작해 사용자 활성화를 유지하고, 중복·취소·실패·무효화된 완료는 false를 반환한다. 연결된 과거 view만 보고 이번 작업의 성공을 추측하지 않는다. controller는 URL이나 Next 라우터를 모른다.
+5. [connection-session.ts](../../apps/web/src/features/local-folders/connection-session.ts)와 [handle-repository.ts](../../apps/web/src/features/local-folders/connection/handle-repository.ts)는 읽기 권한·연결 세대·저장 결과와 IndexedDB/Web Locks를 담당한다. UI에서 이 구현을 복제하지 않는다.
+6. [controller 테스트](../../apps/web/tests/local-folders/connection/source-connection-controller.test.ts), [연결 브라우저 검사](../../tests/browser/check-settings-folder-connection.mjs), [이동 브라우저 검사](../../tests/browser/check-connection-navigation.mjs)를 함께 읽는다. 실패·취소·화면 이탈과 성공 이동을 각각 검증한다.
 
 호출 흐름: **설정 클릭 → UI → controller → session → picker/권한 → repository → controller 성공 결과 → UI router.push('/files') → 목록 화면**. 연결 자체는 본문을 읽지 않으며 이동한 파일 화면이 직계 목록을 읽는다.
 

@@ -1,11 +1,11 @@
 import { AuthShell } from "../../components/layout/AuthShell";
-import { AuthScreen } from "../../features/auth/components/AuthScreen";
-import { signupOperation } from "../../features/auth/lib/form-config";
+import { AuthScreen } from "../../features/auth/form/AuthScreen";
+import { signupOperation } from "../../features/auth/form/form-config";
 import { signupAction, resendAction, checkAuthSessionAction, socialSigninAction } from "../actions/auth";
-import { requireGuest } from "../../server/session-guards";
-import { socialProviderConfiguration } from "../../server/social-providers";
+import { requireGuest } from "../../server/auth/session-guards";
+import { socialProviderConfiguration } from "../../server/auth/social-providers";
 import { socialProviders } from "../../shared/social-auth";
-import { SignupMethods } from "../../features/auth/components/SignupMethods";
+import { SignupMethods } from "../../features/auth/signup/SignupMethods";
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   await requireGuest();
@@ -35,4 +35,4 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   );
 }
 
-import { GuestSessionObserver } from "../../features/auth/components/GuestSessionObserver";
+import { GuestSessionObserver } from "../../features/auth/session/GuestSessionObserver";

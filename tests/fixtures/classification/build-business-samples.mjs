@@ -183,7 +183,7 @@ for (const [id, title, sourceFolderId, folderId, headers, inputs, operation] of 
 
 assert.equal(documents.length, 50);
 await writeFile(
-  resolve("apps/web/src/server/sample-data/business-documents.json"),
+  resolve("apps/web/src/server/demo/sample-data/business-documents.json"),
   JSON.stringify(documents, null, 2) + "\n"
 );
 await writeFile(

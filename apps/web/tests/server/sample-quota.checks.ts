@@ -5,7 +5,7 @@ import { afterAll, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 
 import { getDatabase } from "../../src/server/database/client";
-import { createAuthRateLimiter } from "../../src/server/auth-rate-limit";
+import { createAuthRateLimiter } from "../../src/server/auth/auth-rate-limit";
 
 if (process.env.MOA_RUN_SAMPLE_QUOTA_CHECKS !== "1") throw new Error("Explicit quota verification opt-in required.");
 

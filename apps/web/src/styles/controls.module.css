@@ -6,3 +6,7 @@
 .primary:hover { color: var(--ground); }
 .status, .statusEmphasis { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; white-space: nowrap; color: var(--muted); }
 .statusEmphasis { color: var(--text); background: var(--active); padding: 3px 8px; border-radius: 4px; }
+
+.disclosure { border-top: 1px solid var(--border); padding-top: 12px; }
+.disclosure > summary { min-height: 40px; cursor: pointer; font-size: 14px; font-weight: 500; }
+.disclosure[open] > :not(summary) { margin-top: 12px; }

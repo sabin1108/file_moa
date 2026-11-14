@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { readSampleAccess, SAMPLE_COOKIE } from "../../../server/sample-session";
+import { readSampleAccess, SAMPLE_COOKIE } from "../../../server/demo/sample-session";
 import { WorkspaceShell } from "../../../components/layout/WorkspaceShell";
 import styles from "../../../styles/workspace-layout.module.css";
-import { QuickSwitchSettings } from "../../../features/quick-switch/components/QuickSwitchSettings";
+import { QuickSwitchSettings } from "../../../features/quick-switch/QuickSwitchSettings";
 import { SettingsTabs } from "../../../components/layout/SettingsTabs";
 
 export default async function SampleSettingsPage() {

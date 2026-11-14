@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createSampleSession, readSampleSession, SAMPLE_COOKIE, SAMPLE_SESSION_SECONDS } from "../../../server/sample-session";
+import { createSampleSession, readSampleSession, SAMPLE_COOKIE, SAMPLE_SESSION_SECONDS } from "../../../server/demo/sample-session";
 
 export function GET(request: NextRequest) {
   if (request.nextUrl.searchParams.get("intro") !== "done") {

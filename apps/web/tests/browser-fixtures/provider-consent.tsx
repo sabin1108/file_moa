@@ -1,11 +1,11 @@
 import { useState, useSyncExternalStore } from "react";
 import { createRoot } from "react-dom/client";
-import { OrganizationSnapshotView } from "../../src/features/local-folders/components/organization/OrganizationSnapshotView";
-import { OrganizationPreparationController } from "../../src/features/local-folders/store/organization-preparation-controller";
+import { OrganizationSnapshotView } from "../../src/features/local-folders/organization/OrganizationSnapshotView";
+import { OrganizationPreparationController } from "../../src/features/local-folders/organization/organization-preparation-controller";
 import type { AiProvider } from "../../src/shared/ai-provider";
 import "../../src/styles/globals.css";
 import ui from "../../src/styles/workspace-ui.module.css";
-import files from "../../src/features/local-folders/components/listing/folder-workspace.module.css";
+import files from "../../src/features/local-folders/browsing/folder-workspace.module.css";
 
 // External files, identity and transport are synthetic; the actual controller and consent UI run.
 

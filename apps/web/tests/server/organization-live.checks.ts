@@ -17,8 +17,8 @@ const capture = vi.hoisted(() => ({
   }[]
 }));
 
-vi.mock("../../src/server/gemini-generation", async original => {
-  const actual = await original<typeof import("../../src/server/gemini-generation")>();
+vi.mock("../../src/server/ai/gemini-generation", async original => {
+  const actual = await original<typeof import("../../src/server/ai/gemini-generation")>();
 
   return {
     ...actual,
@@ -32,13 +32,13 @@ vi.mock("../../src/server/gemini-generation", async original => {
   };
 });
 
-import { organizeSample } from "../../src/server/sample-organization";
-import { getSampleCatalog } from "../../src/server/sample-catalog";
-import { createSampleSession } from "../../src/server/sample-session";
+import { organizeSample } from "../../src/server/demo/sample-organization";
+import { getSampleCatalog } from "../../src/server/demo/sample-catalog";
+import { createSampleSession } from "../../src/server/demo/sample-session";
 import { getDatabase } from "../../src/server/database/client";
-import { SAMPLE_GEMINI_MODEL } from "../../src/server/gemini-generation";
-import { selectOrganizationCandidates } from "../../src/features/sample-workspace/lib/organization-candidates";
-import { corpusDigest, evaluateOrganizationResponse, scopedEvaluationDocuments } from "../sample-workspace/organization-evaluation";
+import { SAMPLE_GEMINI_MODEL } from "../../src/server/ai/gemini-generation";
+import { selectOrganizationCandidates } from "../../src/features/sample-workspace/organization/organization-candidates";
+import { corpusDigest, evaluateOrganizationResponse, scopedEvaluationDocuments } from "../sample-workspace/organization/organization-evaluation";
 import fixture from "../../../../tests/fixtures/classification/request-evaluation.json";
 
 if (process.env.MOA_RUN_ORGANIZATION_LIVE !== "1") {
@@ -52,7 +52,7 @@ if (!scenario) {
 }
 
 const output = resolve("docs/verification/organization-evaluation");
-const policyHash = createHash("sha256").update(readFileSync(resolve("apps/web/src/server/sample-organization.ts"))).digest("hex");
+const policyHash = createHash("sha256").update(readFileSync(resolve("apps/web/src/server/demo/sample-organization.ts"))).digest("hex");
 
 process.loadEnvFile(resolve("apps/web/.env.local"));
 process.env.AI_PROVIDER = "gemini";

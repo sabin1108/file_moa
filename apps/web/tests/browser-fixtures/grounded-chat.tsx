@@ -1,13 +1,13 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { createRoot } from "react-dom/client";
-import { SourceFolderProvider, useSharedSourceFolderConnection } from "../../src/features/local-folders/providers/SourceFolderProvider";
-import { LiveConversation } from "../../src/features/conversation-workspace/components/LiveConversation";
-import { ConversationStateProvider } from "../../src/features/conversation-workspace/providers/ConversationStateProvider";
-import { SourceFolderBrowser } from "../../src/features/local-folders/components/listing/SourceFolderBrowser";
+import { SourceFolderProvider, useSharedSourceFolderConnection } from "../../src/features/local-folders/SourceFolderProvider";
+import { LiveConversation } from "../../src/features/conversation-workspace/LiveConversation";
+import { ConversationStateProvider } from "../../src/features/conversation-workspace/ConversationStateProvider";
+import { SourceFolderBrowser } from "../../src/features/local-folders/SourceFolderBrowser";
 import { groundedRequestSchema, type GroundedRequest, type GroundedAction } from "../../src/shared/grounded-chat";
 import "../../src/styles/globals.css";
 import ui from "../../src/styles/workspace-ui.module.css";
-import files from "../../src/features/local-folders/components/listing/folder-workspace.module.css";
+import files from "../../src/features/local-folders/browsing/folder-workspace.module.css";
 
 declare global {
   interface Window {

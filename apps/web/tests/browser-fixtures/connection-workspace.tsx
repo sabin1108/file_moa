@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
-import { SourceFolderProvider } from "../../src/features/local-folders/providers/SourceFolderProvider";
-import { SourceFolderSettings } from "../../src/features/local-folders/components/connection/SourceFolderSettings";
-import { LiveConversation } from "../../src/features/conversation-workspace/components/LiveConversation";
-import { ConversationStateProvider } from "../../src/features/conversation-workspace/providers/ConversationStateProvider";
+import { SourceFolderProvider } from "../../src/features/local-folders/SourceFolderProvider";
+import { SourceFolderSettings } from "../../src/features/local-folders/connection/SourceFolderSettings";
+import { LiveConversation } from "../../src/features/conversation-workspace/LiveConversation";
+import { ConversationStateProvider } from "../../src/features/conversation-workspace/ConversationStateProvider";
 import "../../src/styles/globals.css";
 
 function Fixture() {

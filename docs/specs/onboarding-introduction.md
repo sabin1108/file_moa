@@ -30,4 +30,4 @@
 
 지원 브라우저에서 폭 360px·높이 820px 이상이고 움직임 감소가 꺼져 있으면 문서→폴더→작업 공간, 검색→원문→답변, 자료→계획 검토→정리 결과를 실제 스크롤 진행에 연결한다. 역방향도 같은 상태로 돌아가며 휠이나 키보드의 기본 스크롤을 가로채지 않는다. 제품 지면은 같은 크기의 영역에서 보완적인 마스크로 이어받아 겹쳐 비치거나 전체가 꺼지는 구간이 없어야 한다. 모바일 설명은 고정 영역 안에서 수직으로 이어지며 전환 구간은 20–40%, 58–78%다. 나머지 환경에서는 고정 지면과 겹침 없이 모든 설명과 장면을 순서대로 표시한다. 스크린리더용 단계 설명은 스크롤 위치에 관계없이 남긴다. [최신 전환 검증](../verification/onboarding-scroll-motion/continuity-correction.md).
 
-`apps/web/tests/server/sample-routes.test.ts`의 소개 전 무세션·files 목적지 보존과 기존 쿠키/오류 검사, `apps/web/tests/onboarding/introduction.test.ts`의 공개/체험 진입 분리 검사를 사용한다. 실제 결과와 제한은 [검증 기록](../verification/onboarding-introduction/README.md)에 남긴다.
+`apps/web/tests/server/demo/sample-routes.test.ts`의 소개 전 무세션·files 목적지 보존과 기존 쿠키/오류 검사, `apps/web/tests/onboarding/introduction.test.ts`의 공개/체험 진입 분리 검사를 사용한다. 실제 결과와 제한은 [검증 기록](../verification/onboarding-introduction/README.md)에 남긴다.

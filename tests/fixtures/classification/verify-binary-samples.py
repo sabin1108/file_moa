@@ -14,7 +14,7 @@ def normalize(value):
 
 root = Path(__file__).parent / "v1"
 dataset = json.loads((root / "dataset.json").read_text(encoding="utf-8"))
-catalog_path = Path(__file__).resolve().parents[3] / "apps/web/src/server/sample-data/catalog.json"
+catalog_path = Path(__file__).resolve().parents[3] / "apps/web/src/server/demo/sample-data/catalog.json"
 catalog = json.loads(catalog_path.read_text(encoding="utf-8")) if catalog_path.exists() else None
 checked = 0
 for document in dataset["documents"]:

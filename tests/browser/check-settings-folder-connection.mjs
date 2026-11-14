@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+// 현재 작업 경로는 인증이 필요하다. 격리 로그인 fixture 전환 전까지 실행 안내에서 보류한다.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { Browser } from '../../.agents/skills/design-taste-frontend/scripts/lib/cdp.mjs';
 import { probe, layout, app } from '../../.agents/skills/design-taste-frontend/scripts/lib/probe.mjs';
@@ -522,21 +523,22 @@ try {
   });
   await click(page, '다른 폴더 선택');
   await wait(page, () => window.probe.holds.length === 1);
-  await navigate(page, '/preview');
+  await navigate(page, '/account');
   await page.eval(() => {
     if (window.probe?.holds.length) window.probe.holds.shift()();
   });
   await new Promise(resolve => setTimeout(resolve, 150));
   check(
-    'leaving workspace stops late selection and preview does not read handles',
+    'leaving workspace stops late selection and account does not read handles',
     JSON.stringify(await stored(page)) === JSON.stringify(savedBeforeExit)
     && await page.eval(() => window.probe.reads) === readsBeforeExit
     && page.consoleErrors.length === 0
   );
+  await navigate(page, '/');
   await navigate(page, '/settings');
   await idle(page);
   check(
-    'return from preview starts a new lifecycle needing explicit permission',
+    'return from account starts a new lifecycle needing explicit permission',
     (await state(page)).status === '다시 연결 필요' && (await state(page)).name === savedBeforeExit[0]
   );
   await page.close();

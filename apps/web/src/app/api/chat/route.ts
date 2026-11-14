@@ -1,4 +1,4 @@
-import { handleChat } from "../../../server/chat";
+import { handleChat } from "../../../server/chat/chat";
 import { after } from "next/server";
 
 export const runtime = "nodejs";

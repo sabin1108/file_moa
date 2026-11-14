@@ -6,17 +6,16 @@ import { NavigationProgress } from "../ui/feedback/NavigationProgress";
 import { MoaLoader } from "../ui/feedback/MoaLoader";
 import styles from "./auth-shell.module.css";
 
-export function AuthShell({ children, preview = false, guest = false }: {
+export function AuthShell({ children, guest = false }: {
   children: ReactNode;
-  preview?: boolean;
   guest?: boolean
 }) {
-  const home = preview ? "/preview/screens/chat" : guest ? "/login" : "/";
+  const home = guest ? "/login" : "/";
 
   return <main
     data-auth-shell
-    data-workspace-quick-menu={!guest && !preview || undefined}
-    className={[styles.page, !preview && styles.live, "reading-surface"].filter(Boolean).join(" ")}
+    data-workspace-quick-menu={!guest || undefined}
+    className={`${styles.page} ${styles.live} reading-surface`}
   >
     <header className={styles.header}>
       <Link href={home} className={styles.brand}>
@@ -24,8 +23,8 @@ export function AuthShell({ children, preview = false, guest = false }: {
         모아.
         <NavigationProgress />
       </Link>
-      <ActionLink href={preview ? "/preview" : home}>
-        {preview ? "화면 둘러보기" : guest ? "로그인으로" : "모아 홈"}
+      <ActionLink href={home}>
+        {guest ? "로그인으로" : "모아 홈"}
       </ActionLink>
     </header>
     <div className={styles.layout}>
@@ -49,13 +48,12 @@ export function AuthShell({ children, preview = false, guest = false }: {
       </section>
       <section className={styles.formSide}>
         {children}
-        {preview && <p className={styles.notice}>디자인 시안 · 실제 로그인이나 계정 생성은 없습니다.</p>}
       </section>
     </div>
     <footer className={styles.footer}>
       <span>모아 · 개인 작업 공간</span>
-      <ActionLink href={preview ? "/preview/screens/files" : "/start"}>
-        {preview ? "폴더 시안 먼저 보기" : "모아 알아보기"}
+      <ActionLink href="/start">
+        모아 알아보기
       </ActionLink>
     </footer>
   </main>;

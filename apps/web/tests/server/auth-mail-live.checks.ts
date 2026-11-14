@@ -2,7 +2,7 @@ import { expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
 
-import { sendAuthenticationEmail } from "../../src/server/auth-mail";
+import { sendAuthenticationEmail } from "../../src/server/auth/auth-mail";
 
 process.loadEnvFile(".env.local");
 

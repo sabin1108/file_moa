@@ -1,4 +1,4 @@
-import { extractPdfText } from "../../src/features/local-folders/services/pdf-text";
+import { extractPdfText } from "../../src/features/local-folders/content/pdf/pdf-text";
 
 self.onmessage = async (event: MessageEvent<number[]>) => {
   try {

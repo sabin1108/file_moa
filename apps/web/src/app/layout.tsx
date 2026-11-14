@@ -4,15 +4,18 @@
  */
 import type { Metadata } from "next";
 import "../styles/globals.css";
-import { WorkspaceQuickSwitch } from "../features/quick-switch/components/WorkspaceQuickSwitch";
+import { WorkspaceQuickSwitch } from "../features/quick-switch/WorkspaceQuickSwitch";
+import { NavigationGuardProvider } from "../components/navigation/NavigationGuard";
 
 export const metadata: Metadata = { title: "개인 AI 작업 공간", description: "채팅과 로컬 자료를 연결하는 개인 작업 공간" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <html lang="ko" style={{ background: "#e4e8e6", colorScheme: "light" }}>
     <body>
-      {children}
-      <WorkspaceQuickSwitch />
+      <NavigationGuardProvider>
+        {children}
+        <WorkspaceQuickSwitch />
+      </NavigationGuardProvider>
     </body>
   </html>;
 }

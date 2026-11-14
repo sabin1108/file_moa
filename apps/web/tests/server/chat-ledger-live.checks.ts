@@ -9,7 +9,7 @@ vi.mock("server-only", () => ({}));
 vi.mock("../../src/server/database/client", () => ({ getDatabase: vi.fn() }));
 
 import { getDatabase } from "../../src/server/database/client";
-import { handleChat } from "../../src/server/chat";
+import { handleChat } from "../../src/server/chat/chat";
 import { chatEventSchema } from "../../src/shared/general-chat";
 
 if (process.env.MOA_RUN_CHAT_LEDGER_LIVE !== "1") throw Error("Explicit chat ledger live opt-in required.");

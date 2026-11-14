@@ -31,15 +31,8 @@
 .socialButton:disabled { opacity: .65; cursor: wait; }
 .providers a { min-height: 48px; font-size: 15px; }
 .providers a:first-child { border-color: var(--text); }
-.footnote { border-top: 1px solid var(--border); padding-top: 21px; }
-.footnote p { font-size: 12px; color: var(--muted); }
-.footnote a { font-size: 12px; padding-left: 0; margin-top: 7px; }
-.notice { margin-top: 16px; font-size: 11px; color: var(--muted); text-align: center; }
 .footer { font-size: 12px; color: var(--muted); }
 .footer a { font-size: 12px; }
-.dataNote { padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-.dataNote h3 { font-size: 14px; font-weight: 600; margin-bottom: 9px; }
-.dataNote p { font-size: 13px; line-height: 1.9; color: var(--muted); }
 .start { width: 100%; min-height: 44px; }
 .fields { display: grid; gap: 16px; border: 0; padding: 0; margin: 0; min-width: 0; }
 .checkbox { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.8; }

@@ -9,14 +9,14 @@ vi.mock("../../src/server/database/client", () => ({ getDatabase: vi.fn() }));
 vi.mock("next/server", () => ({ after: () => { } }));
 
 import { getDatabase } from "../../src/server/database/client";
-import { getAuth } from "../../src/server/auth";
-import { getAuthenticatedWorkspace } from "../../src/server/workspace";
+import { getAuth } from "../../src/server/auth/auth";
+import { getAuthenticatedWorkspace } from "../../src/server/auth/workspace";
 import {
   connectExistingAccount,
   readWorkspaceConnection,
   selectConnectedWorkspace,
   disconnectAccountConnection
-} from "../../src/server/auth-account-connection";
+} from "../../src/server/auth/auth-account-connection";
 
 const base = "http://127.0.0.1:3034";
 const password = "fixture-connection-password";

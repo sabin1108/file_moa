@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { GuardedLink as Link } from "../navigation/NavigationGuard";
 import type { ReactNode } from "react";
 import { actionClasses, type ActionVariant } from "./action-classes";
 import { NavigationProgress } from "./feedback/NavigationProgress";

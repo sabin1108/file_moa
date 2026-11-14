@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
-import { getSampleAsset, getSamplePageAsset } from "../../../../server/sample-catalog";
-import { readSampleSession, SAMPLE_COOKIE } from "../../../../server/sample-session";
+import { getSampleAsset, getSamplePageAsset } from "../../../../server/demo/sample-catalog";
+import { readSampleSession, SAMPLE_COOKIE } from "../../../../server/demo/sample-session";
 
 export async function GET(_request: Request, context: { params: Promise<{ documentId: string }> }) {
   const session = readSampleSession((await cookies()).get(SAMPLE_COOKIE)?.value);

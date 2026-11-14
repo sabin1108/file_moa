@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createSampleState, restoreSampleState, transitionSampleState, sampleChangePlan } from "../../src/features/sample-workspace/lib/sample-state";
+import { createSampleState, restoreSampleState, transitionSampleState, sampleChangePlan } from "../../src/features/sample-workspace/sample-state";
 import type { SampleCatalog } from "../../src/shared/sample-contract";
 
 const catalog: SampleCatalog = {

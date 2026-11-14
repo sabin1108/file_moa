@@ -50,9 +50,9 @@ use cache로 전환하려면 Cache Components와 동적 영역, 화면 수명까
 ## 읽을 파일 순서
 
 1. [workspace layout](../../apps/web/src/app/(workspace)/layout.tsx) — 초기 준비 진입.
-2. [settings-display](../../apps/web/src/server/settings-display.ts) — 인증 선행, key, cache miss와 hit.
-3. [auth-account](../../apps/web/src/server/auth-account.ts), [auth-account-connection](../../apps/web/src/server/auth-account-connection.ts) — 기존 query/표시 DTO 공유.
-4. [settings-cache-policy](../../apps/web/src/server/settings-cache-policy.ts), [auth 설정](../../apps/web/src/server/auth.ts) — 변경 후 tag 만료.
+2. [settings-display](../../apps/web/src/server/settings/settings-display.ts) — 인증 선행, key, cache miss와 hit.
+3. [auth-account](../../apps/web/src/server/auth/auth-account.ts), [auth-account-connection](../../apps/web/src/server/auth/auth-account-connection.ts) — 기존 query/표시 DTO 공유.
+4. [settings-cache-policy](../../apps/web/src/server/settings/settings-cache-policy.ts), [auth 설정](../../apps/web/src/server/auth/auth.ts) — 변경 후 tag 만료.
 5. [settings page](../../apps/web/src/app/(workspace)/settings/page.tsx) — 준비한 DTO의 실제 소비.
 
 ## 실제로 확인한 결과와 한계

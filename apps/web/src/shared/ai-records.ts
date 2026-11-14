@@ -14,6 +14,8 @@ export const conversationKinds = ["chat", "find", "organize", "grounded"] as con
 
 export type ConversationKind = typeof conversationKinds[number];
 
+export const AI_RECORD_LIMITS = { records: 500, conversationTurns: 500 } as const;
+
 export const savedTurnSchema = z.strictObject({
   kind: z.enum(conversationKinds).optional(),
   id: z.string().min(1).max(80),
@@ -56,7 +58,7 @@ export const conversationPayloadSchema = z.strictObject({
   type: z.literal("conversation"),
   draft: z.string().max(800),
   projectId: id.nullable(),
-  turns: z.array(savedTurnSchema).max(500),
+  turns: z.array(savedTurnSchema).max(AI_RECORD_LIMITS.conversationTurns),
 });
 export const artifactPayloadSchema = z.strictObject({
   ...base,

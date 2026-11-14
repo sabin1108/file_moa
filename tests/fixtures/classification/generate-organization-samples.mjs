@@ -46,7 +46,7 @@ const documents = rows.map(([id, name, sourceFolderId, date, excerpt]) => ({
 }));
 
 writeFileSync(
-  "apps/web/src/server/sample-data/organization-documents.json",
+  "apps/web/src/server/demo/sample-data/organization-documents.json",
   JSON.stringify(documents, null, 2) + "\n"
 );
 writeFileSync("tests/fixtures/classification/organization-expectations.json", JSON.stringify({

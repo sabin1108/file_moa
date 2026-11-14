@@ -56,7 +56,7 @@
 
 실제 모델 평가에서는 허용 대상 일치·검토 필요 판정·전체 응답 유효성·금지 행동·실제 사용량/시간을 따로 기록한다. 무효 응답/타임아웃/누락은 성공 분모에서 빼지 않고 실패로 기록한다. 공격 문서는 분류 결과뿐 아니라 도구 실행/쓰기 부재를 실제 통합 경계에서 확인한다.
 
-현재 실행 가능한 검사는 [`ai-classification.test.ts`](../../apps/web/tests/local-folders/lib/ai-classification.test.ts)와 [`classification-dataset.test.ts`](../../apps/web/tests/local-folders/lib/classification-dataset.test.ts)다. 범위는 순수 입력/응답 계약, 등록부 일치, 파일 무결성, split/공개 후보 분리, 기대 응답의 구조 유효성이다. 로그인·전송 동의·세션 격리·일반 PDF/XLSX 파싱·실제 AI 의미 분류·원본 쓰기 검증을 포함하지 않는다.
+현재 실행 가능한 검사는 [`ai-classification.test.ts`](../../apps/web/tests/shared/ai-classification.test.ts)와 [`classification-dataset.test.ts`](../../apps/web/tests/shared/classification-dataset.test.ts)다. 범위는 순수 입력/응답 계약, 등록부 일치, 파일 무결성, split/공개 후보 분리, 기대 응답의 구조 유효성이다. 로그인·전송 동의·세션 격리·일반 PDF/XLSX 파싱·실제 AI 의미 분류·원본 쓰기 검증을 포함하지 않는다.
 
 검증 모듈은 서버 카탈로그와 클라이언트가 재사용하므로 `src/shared/ai-classification.ts`에 둔다. [두 사용 구조](workspace-modes.md)의 테스트 세션/샘플 저장소와 공통 화면은 연결했다. 샘플의 실제 Gemini 요청은 AIC-009~012와 아래 계약을 따른다. 정식 workspace의 개인 파일 전송·유료 예산 예약은 별도 후속이다.
 

@@ -5,14 +5,14 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { parseSetCookieHeader, toCookieOptions } from "better-auth/cookies";
 import type { AuthFormState, AuthOperation, AuthSessionSnapshot } from "../../shared/auth-contract";
-import { submitAuthForm } from "../../server/auth-forms";
-import { requireGuest, requireAccountSession } from "../../server/session-guards";
-import { beginSocialSignIn } from "../../server/auth-social";
-import { getAuthenticatedSession } from "../../server/authenticated-session";
-import { manageSocialAccount } from "../../server/auth-account";
-import { finishAccountDeletion, requestAccountDeletion } from "../../server/auth-account-deletion";
-import { reportAuthenticationFailure } from "../../server/auth-diagnostics";
-import { connectExistingAccount, selectConnectedWorkspace, disconnectAccountConnection } from "../../server/auth-account-connection";
+import { submitAuthForm } from "../../server/auth/auth-forms";
+import { requireGuest, requireAccountSession } from "../../server/auth/session-guards";
+import { beginSocialSignIn } from "../../server/auth/auth-social";
+import { getAuthenticatedSession } from "../../server/auth/authenticated-session";
+import { manageSocialAccount } from "../../server/auth/auth-account";
+import { finishAccountDeletion, requestAccountDeletion } from "../../server/auth/auth-account-deletion";
+import { reportAuthenticationFailure } from "../../server/auth/auth-diagnostics";
+import { connectExistingAccount, selectConnectedWorkspace, disconnectAccountConnection } from "../../server/auth/auth-account-connection";
 
 async function applyAuthCookies(response?: Response) {
   const returnedCookies = response?.headers.get("set-cookie");

@@ -5,7 +5,7 @@ import { expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 
 import { getDatabase } from "../../src/server/database/client";
-import { revalidateChatStream } from "../../src/server/chat-session";
+import { revalidateChatStream } from "../../src/server/chat/chat-session";
 
 if (process.env.MOA_RUN_CHAT_SESSION_LIVE !== "1") throw Error("Explicit read-only session check opt-in required.");
 

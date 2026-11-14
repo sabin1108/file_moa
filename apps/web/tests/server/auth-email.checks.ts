@@ -18,7 +18,7 @@ vi.mock(
 );
 
 import { getDatabase } from "../../src/server/database/client";
-import { getAuthenticatedWorkspace } from "../../src/server/workspace";
+import { getAuthenticatedWorkspace } from "../../src/server/auth/workspace";
 import { GET, POST } from "../../src/app/api/auth/[...all]/route";
 
 type Mail = {

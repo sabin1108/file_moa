@@ -162,10 +162,10 @@ try {
 
   const savedAfterNavigation = async () => {
     try {
-      const { AiRecordRepository } = await import("/src/features/ai-records/services/ai-record-repository.ts");
+      const { AiRecordRepository } = await import("/src/features/ai-records/storage/ai-record-repository.ts");
       const directory = await (await navigator.storage.getDirectory()).getDirectoryHandle("내 AI 검증");
       const repository = new AiRecordRepository(async () => ({ directory, owner: { userId: "organization-A", workspaceId: "fixture" }, assertCurrent() { } }));
-      const records = (await repository.list()).filter(record => record.payload.type === "conversation");
+      const records = (await repository.list()).records.filter(record => record.payload.type === "conversation");
 
       return records.length === 1 && records[0].payload.draft === "왕복 뒤 같은 대화에 저장할 초안";
     } catch {
@@ -210,6 +210,39 @@ try {
   await click("기억");
   await click("새 기억");
   await fill('[aria-label="기록 편집"] textarea', "짧고 구체적인 답변을 선호함");
+  check("dirty memory prevents document unload", await page.eval(() => {
+    const leaving = new Event("beforeunload", { cancelable: true });
+    window.dispatchEvent(leaving);
+    return leaving.defaultPrevented;
+  }));
+  await page.eval(() => document.querySelector('[data-workspace-sidebar] a[href="/files"]').click());
+  await until(() => document.querySelector('[aria-label="기록 편집"] [role="alert"]'));
+  check("internal navigation asks before discarding memory edits", await page.eval(() => location.pathname === "/__records" && document.querySelector('[aria-label="기록 편집"] textarea').value === "짧고 구체적인 답변을 선호함"));
+  await click("계속 편집");
+  check("keeping edits cancels the pending route", await page.eval(() => location.pathname === "/__records" && !document.querySelector('[aria-label="기록 편집"] [role="alert"]')));
+  await page.eval(async () => {
+    const { AiRecordsController } = await import('/src/features/ai-records/ai-records-controller.ts');
+    const save = AiRecordsController.prototype.save;
+    window.restoreRecordSave = () => { AiRecordsController.prototype.save = save; };
+    AiRecordsController.prototype.save = function (payload) {
+      if (payload.type !== "memory") return save.call(this, payload);
+      return new Promise((_resolve, reject) => { window.rejectMemorySave = reject; });
+    };
+  });
+  await click("저장");
+  await until(() => typeof window.rejectMemorySave === "function");
+  check("pending save still protects document unload", await page.eval(() => {
+    const leaving = new Event("beforeunload", { cancelable: true });
+    window.dispatchEvent(leaving);
+    return leaving.defaultPrevented;
+  }));
+  await page.eval(() => { window.rejectMemorySave(new Error("synthetic save failure")); window.restoreRecordSave(); });
+  await until(() => document.body.innerText.includes("저장하지 못했어요. 편집 내용은 유지합니다."));
+  check("save failure retains memory edits and leave protection", await page.eval(() => {
+    const leaving = new Event("beforeunload", { cancelable: true });
+    window.dispatchEvent(leaving);
+    return leaving.defaultPrevented && document.querySelector('[aria-label="기록 편집"] textarea').value === "짧고 구체적인 답변을 선호함";
+  }));
   await click("설정");
   check(
     "settings disclose advanced policy without displaying the whole essay",
@@ -230,6 +263,11 @@ try {
   await click("계속 편집");
   await click("저장");
   await until(() => document.body.innerText.includes("로컬 폴더에 저장했습니다."));
+  check("a clean saved editor releases document unload protection", await page.eval(() => {
+    const leaving = new Event("beforeunload", { cancelable: true });
+    window.dispatchEvent(leaving);
+    return !leaving.defaultPrevented;
+  }));
   check(
     "new memory remains proposed until explicit approval",
     await page.eval(() => document.querySelector('[aria-label="기록 편집"] select').value === "proposed")
@@ -272,6 +310,46 @@ try {
     "successful delete returns focus to the surviving list heading",
     await page.eval(() => !document.querySelector('[aria-label="새 기억 관리"]'))
   );
+  await click("새 기억");
+  await fill('[aria-label="기록 편집"] textarea', "이탈 확인 전 보존할 기억");
+  let unloadDialogs = 0;
+  const stopDialogs = browser.on(page.sessionId, "Page.javascriptDialogOpening", event => {
+    if (event.type === "beforeunload") unloadDialogs++;
+  });
+  await page.send("Page.reload");
+  await pause(300);
+  check("native reload prompts and cancelling preserves the dirty editor", unloadDialogs === 1 && await page.eval(() => document.querySelector('[aria-label="기록 편집"] textarea')?.value === "이탈 확인 전 보존할 기억"));
+  stopDialogs();
+  await page.eval(() => {
+    history.replaceState(null, "", "/files?general");
+    history.pushState(null, "", "/__records?general");
+    history.back();
+  });
+  await until(() => document.querySelector('[aria-label="기록 편집"] [role="alert"]'));
+  check("same-document Back opens the unsaved-edit confirmation", await page.eval(() => location.pathname === "/__records" && document.querySelector('[aria-label="기록 편집"] textarea').value === "이탈 확인 전 보존할 기억"));
+  await click("계속 편집");
+  await page.eval(() => history.back());
+  await until(() => document.querySelector('[aria-label="기록 편집"] [role="alert"]'));
+  await click("변경 버리고 나가기");
+  await until(() => location.pathname === "/files" && !document.querySelector('[aria-label="기록 편집"]'));
+  check("confirming Back resumes the exact history entry", await page.eval(() => location.pathname === "/files"));
+  await page.eval(() => document.querySelector('[data-fixture-view="chat"]').click());
+  await click("기록함");
+  await click("기억");
+  await click("새 기억");
+  await fill('[aria-label="기록 편집"] textarea', "내부 이동에서 버릴 기억");
+  await page.eval(() => document.querySelector('[data-workspace-sidebar] a[href="/files"]').click());
+  await until(() => document.querySelector('[aria-label="기록 편집"] [role="alert"]'));
+  await click("변경 버리고 나가기");
+  await until(() => location.pathname === "/files" && !document.querySelector('[aria-label="기록 편집"]'));
+  check("explicit discard resumes the intended internal route", await page.eval(() => location.pathname === "/files"));
+  check("unmount removes the editor unload guard", await page.eval(() => {
+    const leaving = new Event("beforeunload", { cancelable: true });
+    window.dispatchEvent(leaving);
+    return !leaving.defaultPrevented;
+  }));
+  await page.eval(() => document.querySelector('[data-fixture-view="chat"]').click());
+  await click("기록함");
   await closeLibrary();
   await page.goto(url, { settleMs: 700 });
   await click("기록함");
@@ -282,7 +360,169 @@ try {
     generations === 1 && await page.eval(() => document.body.innerText.includes("저장할 합성 답변입니다."))
   );
   await page.eval(async () => {
-    const { AiRecordRepository } = await import("/src/features/ai-records/services/ai-record-repository.ts");
+    const root = await (await navigator.storage.getDirectory()).getDirectoryHandle("내 AI 검증");
+    const parent = await (await root.getDirectoryHandle(".moa-ai-v1")).getDirectoryHandle("artifacts");
+
+    await parent.getDirectoryHandle("artifact-empty", { create: true });
+
+    const metadata = await (await parent.getDirectoryHandle("artifact-interrupted", { create: true })).getFileHandle("rev-empty.json", { create: true });
+    const writer = await metadata.createWritable();
+
+    await writer.close();
+  });
+  await click("기록함");
+  await click("저장 위치");
+  await click("권한 확인·다시 읽기");
+  await click("기록으로");
+  await until(() => document.body.innerText.includes("읽지 못한 기록 2개"));
+  check("incomplete record folders show a warning while the healthy conversation remains visible", await page.eval(() => document.body.innerText.includes("기록 검증 질문")));
+  check("list reading preserves the incomplete record files", await page.eval(async () => {
+    const root = await (await navigator.storage.getDirectory()).getDirectoryHandle("내 AI 검증");
+    const parent = await (await root.getDirectoryHandle(".moa-ai-v1")).getDirectoryHandle("artifacts");
+
+    await parent.getDirectoryHandle("artifact-empty");
+
+    return (await (await (await parent.getDirectoryHandle("artifact-interrupted")).getFileHandle("rev-empty.json")).getFile()).size === 0;
+  }));
+  await closeLibrary();
+  await fill("#message-draft", "손상 기록 경고가 남아야 하는 자동 저장 초안");
+  await until(async () => {
+    const { AiRecordRepository } = await import("/src/features/ai-records/storage/ai-record-repository.ts");
+    const directory = await (await navigator.storage.getDirectory()).getDirectoryHandle("내 AI 검증");
+    const repository = new AiRecordRepository(async () => ({ directory, owner: { userId: "organization-A", workspaceId: "fixture" }, assertCurrent() { } }));
+    const result = await repository.list();
+
+    return result.unreadable.length === 2 && result.records.some(record => record.payload.type === "conversation" && record.payload.draft === "손상 기록 경고가 남아야 하는 자동 저장 초안");
+  });
+  await click("기록함");
+  check("successful conversation autosave preserves the unresolved storage warning", await page.eval(() => document.body.innerText.includes("읽지 못한 기록 2개")));
+  await page.eval(async () => {
+    const { AiRecordRepository } = await import("/src/features/ai-records/storage/ai-record-repository.ts");
+    const directory = await (await navigator.storage.getDirectory()).getDirectoryHandle("내 AI 검증");
+    const repository = new AiRecordRepository(async () => ({ directory, owner: { userId: "organization-A", workspaceId: "fixture" }, assertCurrent() { } }));
+
+    await repository.save({ type: "artifact", id: "artifact-delete-retry", title: "중단 삭제 결과물", updatedAt: new Date().toISOString(), markdown: "합성 결과물", status: "draft", sourceConversationId: "chat-delete-retry" }, null);
+    await repository.remove("conversation", "chat-delete-retry", true);
+
+    const remove = FileSystemDirectoryHandle.prototype.removeEntry;
+
+    FileSystemDirectoryHandle.prototype.removeEntry = function (name, options) {
+      if (name === "artifact-delete-retry" && window.recordDeleteFailure) throw new DOMException("synthetic delete failure", "NoModificationAllowedError");
+
+      return remove.call(this, name, options);
+    };
+    window.recordDeleteFailure = true;
+  });
+  await click("저장 위치");
+  await click("권한 확인·다시 읽기");
+  await click("기록으로");
+  await until(() => document.body.innerText.includes("삭제를 마치지 못했어요"));
+  check("interrupted deletion keeps healthy records and displays a resumable warning", await page.eval(() => document.body.innerText.includes("기록 검증 질문") && document.body.innerText.includes("삭제를 마치지 못했어요")));
+  await page.eval(() => {
+    window.recordDeleteFailure = false;
+  });
+  await page.goto(url, { settleMs: 500 });
+  await until(async () => {
+    const root = await (await navigator.storage.getDirectory()).getDirectoryHandle("내 AI 검증");
+    const parent = await (await root.getDirectoryHandle(".moa-ai-v1")).getDirectoryHandle("artifacts");
+
+    try {
+      await parent.getDirectoryHandle("artifact-delete-retry");
+
+      return false;
+    } catch (error) {
+      return error.name === "NotFoundError";
+    }
+  });
+  check("reload resumes persisted deletion without another model call", generations === 1);
+  await until(() => document.getElementById("message-draft"));
+  await page.eval(async () => {
+    const { AiRecordRepository } = await import("/src/features/ai-records/storage/ai-record-repository.ts");
+    const directory = await (await navigator.storage.getDirectory()).getDirectoryHandle("내 AI 검증");
+    const repository = new AiRecordRepository(async () => ({ directory, owner: { userId: "organization-A", workspaceId: "fixture" }, assertCurrent() { } }));
+    const updatedAt = new Date().toISOString();
+
+    await repository.save({ type: "conversation", id: "chat-ui-delete", title: "삭제 재시도 대화", updatedAt, draft: "", projectId: null, turns: [] }, null);
+    await repository.save({ type: "artifact", id: "artifact-ui-delete", title: "삭제 재시도 결과물", updatedAt, markdown: "합성 본문", status: "draft", sourceConversationId: "chat-ui-delete" }, null);
+
+    const remove = FileSystemDirectoryHandle.prototype.removeEntry;
+
+    FileSystemDirectoryHandle.prototype.removeEntry = function (name, options) {
+      if (name === "artifact-ui-delete" && window.uiDeleteFailure) throw new DOMException("synthetic UI delete failure", "NoModificationAllowedError");
+
+      return remove.call(this, name, options);
+    };
+    window.uiDeleteFailure = true;
+  });
+  await click("기록함");
+  await click("저장 위치");
+  await click("권한 확인·다시 읽기");
+  await click("기록으로");
+  await until(() => document.querySelector('summary[aria-label="삭제 재시도 대화 관리"]'));
+  await page.eval(() => document.querySelector('summary[aria-label="삭제 재시도 대화 관리"]').click());
+  await click("삭제");
+  await page.eval(() => document.querySelector('[aria-label="기록 삭제 확인"] input[type="checkbox"]').click());
+  await click("모든 버전 삭제");
+  await until(() => document.body.innerText.includes("같은 삭제 버튼으로 이어서"));
+  check("partial cascade deletion keeps the same confirmation available for retry", await page.eval(() => !!document.querySelector('[aria-label="기록 삭제 확인"]') && !![...document.querySelectorAll('[aria-label="저장 기록"] strong')].find(node => node.textContent === "기록 검증 질문")));
+  await page.eval(() => {
+    window.uiDeleteFailure = false;
+  });
+  await click("모든 버전 삭제");
+  await until(() => !document.querySelector('[aria-label="기록 삭제 확인"]'));
+  check("the same delete button completes the remaining artifact after its parent is absent", await page.eval(async () => {
+    const root = await (await navigator.storage.getDirectory()).getDirectoryHandle("내 AI 검증");
+    const parent = await (await root.getDirectoryHandle(".moa-ai-v1")).getDirectoryHandle("artifacts");
+
+    try {
+      await parent.getDirectoryHandle("artifact-ui-delete");
+
+      return false;
+    } catch (error) {
+      return error.name === "NotFoundError" && document.body.innerText.includes("기록 검증 질문");
+    }
+  }));
+  await page.eval(async () => {
+    const { AiRecordRepository } = await import("/src/features/ai-records/storage/ai-record-repository.ts");
+    const directory = await (await navigator.storage.getDirectory()).getDirectoryHandle("내 AI 검증");
+    window.preservationRepository = new AiRecordRepository(async () => ({ directory, owner: { userId: "organization-A", workspaceId: "fixture" }, assertCurrent() {} }));
+    await window.preservationRepository.save({ type: "conversation", id: "chat-ui-preserve", title: "삭제 보존 검증", updatedAt: new Date().toISOString(), draft: "저장된 내용", projectId: null, turns: [{ id: "preserved-turn", question: "합성 질문", answer: "합성 답변", visibleLength: 5, status: "completed" }] }, null);
+  });
+  await click("저장 위치");
+  await click("권한 확인·다시 읽기");
+  await click("기록으로");
+  await until(() => document.querySelector('summary[aria-label="삭제 보존 검증 관리"]'));
+  await click("삭제 보존 검증");
+  await fill("#message-draft", "삭제 실패에도 보존할 미저장 초안");
+  await click("기록함");
+  await page.eval(() => document.querySelector('summary[aria-label="삭제 보존 검증 관리"]').click());
+  await click("삭제");
+  await page.eval(() => {
+    const getDirectory = FileSystemDirectoryHandle.prototype.getDirectoryHandle;
+    window.restoreRecordAccess = () => { FileSystemDirectoryHandle.prototype.getDirectoryHandle = getDirectory; };
+    FileSystemDirectoryHandle.prototype.getDirectoryHandle = function (name, options) {
+      if (name === ".moa-ai-v1") return Promise.reject(new DOMException("synthetic permission failure", "NotAllowedError"));
+      return getDirectory.call(this, name, options);
+    };
+  });
+  await click("모든 버전 삭제");
+  await until(() => document.body.innerText.includes("작업을 마치지 못했어요"));
+  check("pre-commit permission failure preserves the live draft and transcript", await page.eval(() => window.conversationFixtureStore.getSnapshot().draft === "삭제 실패에도 보존할 미저장 초안" && window.conversationFixtureStore.getSnapshot().turns.length === 1 && window.conversationFixtureStore.getSelection().id === "chat-ui-preserve"));
+  await page.eval(() => window.restoreRecordAccess());
+  check("pre-commit failure also preserves the original saved record", await page.eval(async () => (await window.preservationRepository.read("conversation", "chat-ui-preserve")).payload.type === "conversation"));
+  await click("모든 버전 삭제");
+  await until(() => !document.querySelector('[aria-label="기록 삭제 확인"]'));
+  check("committed deletion preserves current content as a temporary conversation", await page.eval(() => {
+    const store = window.conversationFixtureStore;
+    return store.getSnapshot().draft === "삭제 실패에도 보존할 미저장 초안" && store.getSnapshot().turns.length === 1 && store.getSelection().id === null && store.getSelection().temporary;
+  }));
+  await click("기록 검증 질문");
+  await until(() => document.body.innerText.includes("저장하지 않은 대화 내용이 있어요"));
+  await click("미저장 내용 버리고 전환");
+  await click("기록함");
+  await closeLibrary();
+  await page.eval(async () => {
+    const { AiRecordRepository } = await import("/src/features/ai-records/storage/ai-record-repository.ts");
     const directory = await (await navigator.storage.getDirectory()).getDirectoryHandle("내 AI 검증");
     const repository = new AiRecordRepository(async () => ({ directory, owner: { userId: "organization-A", workspaceId: "fixture" }, assertCurrent() { } }));
 
@@ -414,7 +654,7 @@ try {
   );
   await click("저장 위치");
   await page.eval(async () => {
-    const { FolderConnectionSession } = await import('/src/features/local-folders/services/connection-session.ts');
+    const { FolderConnectionSession } = await import('/src/features/local-folders/connection-session.ts');
     const original = FolderConnectionSession.prototype.disconnect;
 
     FolderConnectionSession.prototype.disconnect = async function (kind) {
@@ -476,6 +716,147 @@ try {
     "another account sees neither saved records nor another owner's AI folder",
     !await page.eval(() => document.body.innerText.includes("기록 검증 질문") || document.body.innerText.includes("내 AI 검증"))
   );
+  await page.eval(async () => {
+    const { AiRecordRepository } = await import("/src/features/ai-records/storage/ai-record-repository.ts");
+    const { encodeRecord } = await import("/src/features/ai-records/storage/record-codec.ts");
+    const { digest } = await import("/src/features/ai-records/storage/record-store.ts");
+    const directory = await (await navigator.storage.getDirectory()).getDirectoryHandle("기록 한도 검증", { create: true });
+    const repository = new AiRecordRepository(async () => ({ directory, owner: { userId: "organization-B", workspaceId: "fixture" }, assertCurrent() { } }));
+    const turns = Array.from({ length: 500 }, (_, index) => ({ id: `limit-turn-${index}`, question: "경계 질문", answer: "경계 답변", visibleLength: 5, status: "completed" }));
+
+    await repository.initialize();
+    await repository.save({ type: "conversation", id: "chat-boundary", title: "경계 대화", updatedAt: new Date().toISOString(), draft: "", projectId: null, turns }, null);
+    window.showDirectoryPicker = async () => directory;
+    window.recordLimitsFixture = {
+      repository,
+      turns,
+      seed: async id => {
+        const payload = { type: "artifact", id, title: id, updatedAt: "2026-11-13T00:00:00.000Z", markdown: "합성 경계 본문", status: "draft", sourceConversationId: null };
+        const body = encodeRecord(payload);
+        const parent = await (await directory.getDirectoryHandle(".moa-ai-v1")).getDirectoryHandle("artifacts", { create: true });
+        const target = await parent.getDirectoryHandle(id, { create: true });
+        const metadata = { schemaVersion: 1, recordId: id, revisionId: "rev-fixture", parentRevisionId: null, kind: "artifact", scope: { type: "global" }, state: "draft", createdAt: payload.updatedAt, contentFile: "rev-fixture.md", contentSha256: await digest(body) };
+
+        for (const [name, text] of [["rev-fixture.md", body], ["rev-fixture.json", JSON.stringify(metadata)]]) {
+          const writer = await (await target.getFileHandle(name, { create: true })).createWritable();
+
+          await writer.write(text);
+          await writer.close();
+        }
+      },
+      restoreLegacy: () => {
+        const store = window.conversationFixtureStore;
+
+        store.dispatch({ type: "restore", state: { draft: "버리기 동의 전 보존할 질문", turns: [...turns, { ...turns[0], id: "legacy-overflow" }], active: null, sequence: -1 } });
+        store.select({ id: "chat-boundary", temporary: false, projectId: "", lastSaved: "previous-checkpoint", status: "미저장" });
+      }
+    };
+  });
+  const collision = await page.eval(async () => {
+    const { repository, seed } = window.recordLimitsFixture;
+    let rejected = false;
+    try {
+      await repository.save({ type: "artifact", id: "chat-boundary", title: "같은 ID의 별도 기록", updatedAt: new Date().toISOString(), markdown: "합성 본문", status: "draft", sourceConversationId: null }, null);
+    } catch (error) { rejected = error.message === "record-id-collision"; }
+    await seed("chat-boundary");
+    const result = await repository.list();
+    let refusedDelete = false;
+    try { await repository.resumeDelete({ type: "conversation", id: "chat-boundary" }); }
+    catch (error) { refusedDelete = error.message === "record-id-collision"; }
+    const directory = await (await (await navigator.storage.getDirectory()).getDirectoryHandle("기록 한도 검증")).getDirectoryHandle(".moa-ai-v1");
+    await (await directory.getDirectoryHandle("conversations")).getDirectoryHandle("chat-boundary");
+    const artifacts = await directory.getDirectoryHandle("artifacts");
+    await artifacts.getDirectoryHandle("chat-boundary");
+    await artifacts.removeEntry("chat-boundary", { recursive: true });
+    return rejected && refusedDelete && result.conflicts.length === 2 && result.pendingDeletes.length === 0;
+  });
+  check("actual OPFS rejects cross-kind ID creation and preserves preexisting duplicate kinds from deletion", collision);
+  await click("저장 위치");
+  await click("저장 폴더 선택");
+  await click("기록으로");
+  await until(() => [...document.querySelectorAll('[aria-label="저장 기록"] strong')].some(node => node.textContent === "경계 대화"));
+  await click("경계 대화");
+  await fill("#message-draft", "500턴 뒤에도 보존할 질문");
+  check("500-turn boundary blocks send while keeping the new draft and the new-conversation route", await page.eval(() => {
+    const store = window.conversationFixtureStore;
+
+    store.dispatch({ type: "local", id: "must-not-append", kind: "find", question: "새 작업", answer: "차단", status: "completed" });
+
+    return store.getSnapshot().turns.length === 500 && store.getSnapshot().draft === "500턴 뒤에도 보존할 질문"
+      && document.querySelector('#message-draft').closest('form').querySelector('button[type="submit"]').disabled
+      && document.body.innerText.includes("500턴 한도");
+  }));
+  await click("기록함");
+  await click("새 대화");
+  await until(() => window.conversationFixtureStore.getSnapshot().turns.length === 0);
+  check("a valid 500-turn conversation can be saved before a new stored conversation opens", await page.eval(() => window.conversationFixtureStore.getSnapshot().turns.length === 0 && !window.conversationFixtureStore.getSelection().temporary));
+
+  for (const temporary of [false, true]) {
+    await page.eval(() => window.recordLimitsFixture.restoreLegacy());
+    await click("기록함");
+
+    if (temporary) {
+      await click("저장 위치");
+      await click("저장 없이 새 대화");
+    } else await click("새 대화");
+
+    await until(() => document.body.innerText.includes("저장하지 않은 대화 내용이 있어요"));
+    if (!temporary) await page.screenshot({ path: resolve(output, "unsaved-conversation-confirmation.png"), format: "png" });
+    await click("계속 편집");
+    check(`legacy overflow stays intact when ${temporary ? "temporary" : "stored"} switch is cancelled`, await page.eval(() => window.conversationFixtureStore.getSnapshot().turns.length === 501 && window.conversationFixtureStore.getSnapshot().draft === "버리기 동의 전 보존할 질문" && window.conversationFixtureStore.getSelection().id === "chat-boundary"));
+    await click("기록함");
+
+    if (temporary) {
+      await click("저장 위치");
+      await click("저장 없이 새 대화");
+    } else await click("새 대화");
+
+    await until(() => document.body.innerText.includes("저장하지 않은 대화 내용이 있어요"));
+    await click("미저장 내용 버리고 전환");
+    await until(() => window.conversationFixtureStore.getSnapshot().turns.length === 0);
+    check(`explicit discard opens a new ${temporary ? "temporary" : "stored"} conversation and preserves the old saved checkpoint`, await page.eval(async expected => window.conversationFixtureStore.getSnapshot().turns.length === 0 && window.conversationFixtureStore.getSelection().temporary === expected && (await window.recordLimitsFixture.repository.read("conversation", "chat-boundary")).payload.turns.length === 500, temporary));
+  }
+
+  const capacity = await page.eval(async () => {
+    const { repository, seed } = window.recordLimitsFixture;
+
+    for (let batch = 0; batch < 498; batch += 20) await Promise.all(Array.from({ length: Math.min(20, 498 - batch) }, (_, offset) => seed(`artifact-cap-${batch + offset}`)));
+
+    const payload = id => ({ type: "artifact", id, title: id, updatedAt: new Date().toISOString(), markdown: "합성 본문", status: "draft", sourceConversationId: null });
+    const results = await Promise.allSettled([repository.save(payload("artifact-concurrent-a"), null), repository.save(payload("artifact-concurrent-b"), null)]);
+
+    return { successful: results.filter(result => result.status === "fulfilled").length, rejected: results.filter(result => result.status === "rejected").map(result => result.reason.message), count: (await repository.list()).records.length };
+  });
+  check("real OPFS and Web Locks reserve only one remaining record slot", capacity.successful === 1 && capacity.rejected[0] === "record-count-limit" && capacity.count === 500);
+  await page.eval(async () => {
+    await window.recordLimitsFixture.seed("artifact-legacy-a");
+    await window.recordLimitsFixture.seed("artifact-legacy-b");
+  });
+  await click("기록함");
+  await click("저장 위치");
+  await click("권한 확인·다시 읽기");
+  await click("기록으로");
+  await until(() => document.body.innerText.includes("최대 501개만 표시"));
+  check("an already over-limit folder shows a bounded recovery listing instead of an empty library", await page.eval(async () => (await window.recordLimitsFixture.repository.list()).records.length === 501 && document.body.innerText.includes("경계 질문")));
+  await click("결과물");
+
+  for (let index = 0; index < 3; index++) {
+    const title = await page.eval(async () => (await window.recordLimitsFixture.repository.list()).records.find(record => record.payload.type === "artifact").payload.title);
+
+    await page.eval(title => document.querySelector(`summary[aria-label="${CSS.escape(title)} 관리"]`).click(), title);
+    await click("삭제");
+    await click("모든 버전 삭제");
+    await until(() => !document.querySelector('[aria-label="기록 삭제 확인"]'));
+  }
+
+  check("explicit UI cleanup frees capacity without erasing unrelated saved content", await page.eval(async () => {
+    const { repository } = window.recordLimitsFixture;
+
+    await repository.save({ type: "artifact", id: "artifact-after-cleanup", title: "정리 뒤 신규 기록", updatedAt: new Date().toISOString(), markdown: "새 기록", status: "draft", sourceConversationId: null }, null);
+
+    return (await repository.list()).records.length === 500 && (await repository.read("conversation", "chat-boundary")).payload.turns.length === 500;
+  }));
+  check("limit recovery starts no additional model requests", generations === 1);
   check("record UI has no browser exceptions", page.consoleErrors.length === 0);
   writeFileSync(
     resolve(output, "records-checks.json"),

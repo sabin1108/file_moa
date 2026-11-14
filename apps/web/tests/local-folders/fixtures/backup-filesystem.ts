@@ -1,8 +1,8 @@
 import { vi } from "vitest";
 import type { FolderHandle } from "../../../src/features/local-folders/types";
-import { inspectRecoveryBackup } from "../../../src/features/local-folders/services/recovery-backup-input";
-import { executeRecoveryBackup } from "../../../src/features/local-folders/services/recovery-backup";
-import type { FileChangePlan } from "../../../src/features/local-folders/lib/file-change-plan";
+import { inspectRecoveryBackup } from "../../../src/features/local-folders/recovery/backup/recovery-backup-input";
+import { executeRecoveryBackup } from "../../../src/features/local-folders/recovery/backup/recovery-backup";
+import type { FileChangePlan } from "../../../src/features/local-folders/operations/planning/file-change-plan";
 
 export const backupOwner = { userId: "backup-test", workspaceId: "work" };
 

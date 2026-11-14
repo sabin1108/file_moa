@@ -27,7 +27,7 @@ const server = await createServer({
           "content-security-policy",
           "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; worker-src 'self' blob:; connect-src 'self' ws:; font-src 'none'; img-src 'none'"
         );
-        response.end('<html><body><script type="module">import { LocalTextIndex } from "/src/features/local-folders/services/local-text-index.ts";import { createCopyHasher } from "/src/features/local-folders/services/copy-hash.ts";window.Index=LocalTextIndex;window.readPdf=async bytes=>{const reader=createCopyHasher();try{return await reader.readText(new File([new Uint8Array(bytes)],"sample.pdf"),"HelloPDF");}finally{reader.dispose();}};</script></body></html>');
+        response.end('<html><body><script type="module">import { LocalTextIndex } from "/src/features/local-folders/search/documents/local-text-index.ts";import { createCopyHasher } from "/src/features/local-folders/content/copy-hash.ts";window.Index=LocalTextIndex;window.readPdf=async bytes=>{const reader=createCopyHasher();try{return await reader.readText(new File([new Uint8Array(bytes)],"sample.pdf"),"HelloPDF");}finally{reader.dispose();}};</script></body></html>');
       });
     }
   }]
@@ -148,7 +148,7 @@ try {
   }
 
   const sizeBoundary = await page.eval(async () => {
-    const { readSourceFilePreview } = await import("/src/features/local-folders/services/source-file-preview.ts");
+    const { readSourceFilePreview } = await import("/src/features/local-folders/documents/preview/source-file-preview.ts");
     const file = new File([new Uint8Array(2 * 1024 * 1024 + 1)], "oversize.pdf");
     let bodyRead = false;
 

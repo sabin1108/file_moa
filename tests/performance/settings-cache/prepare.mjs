@@ -113,7 +113,7 @@ for (const variant of ["before", "after"]) {
       '</WorkspaceShell></>'
     ));
 
-  const displayPath = join(app, "src/server/settings-display.ts");
+  const displayPath = join(app, "src/server/settings/settings-display.ts");
   // Preserve the original blocking comparison; background preparation needs a separate measurement.
 
   edit(join(app, "src/app/(workspace)/layout.tsx"), source => source
@@ -150,7 +150,7 @@ for (const variant of ["before", "after"]) {
 
   manifest.variants[variant] = {
     app,
-    sourceHashes: Object.fromEntries(["src/server/settings-display.ts", "src/app/(workspace)/layout.tsx", "src/app/(workspace)/settings/page.tsx"].map(name => [name, createHash("sha256").update(readFileSync(join(app, name))).digest("hex")])),
+    sourceHashes: Object.fromEntries(["src/server/settings/settings-display.ts", "src/app/(workspace)/layout.tsx", "src/app/(workspace)/settings/page.tsx"].map(name => [name, createHash("sha256").update(readFileSync(join(app, name))).digest("hex")])),
   };
 }
 

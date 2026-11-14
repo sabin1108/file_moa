@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { configuredCanonicalDestination } from "./server/canonical-origin";
+import { configuredCanonicalDestination } from "./server/auth/canonical-origin";
 
 export function proxy(request: NextRequest) {
   const destination = configuredCanonicalDestination(request.url);

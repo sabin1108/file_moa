@@ -10,7 +10,7 @@ if (!['before', 'after'].includes(label)) throw new Error('Use before or after')
 const base = process.argv[3] || 'http://127.0.0.1:3001';
 const out = process.argv[4] || 'docs/verification/settings-folder-connection';
 const width = Number(process.argv[5] || 1440);
-const routes = ['/', '/files', '/settings', '/login', '/welcome', '/preview'];
+const routes = ['/', '/files', '/settings', '/login', '/welcome'];
 const selectedRoute = process.argv[6];
 
 if (selectedRoute

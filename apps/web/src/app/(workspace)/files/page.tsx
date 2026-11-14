@@ -4,9 +4,9 @@
  */
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { SourceFolderBrowser } from "../../../features/local-folders/components/listing/SourceFolderBrowser";
+import { SourceFolderBrowser } from "../../../features/local-folders/SourceFolderBrowser";
 import ui from "../../../styles/workspace-ui.module.css";
-import styles from "../../../features/local-folders/components/listing/folder-workspace.module.css";
+import styles from "../../../features/local-folders/browsing/folder-workspace.module.css";
 
 export const metadata: Metadata = { title: "내 파일 — 모아" };
 

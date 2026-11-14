@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import { afterAll, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
-vi.mock("../../src/server/session-guards", () => ({
+vi.mock("../../src/server/auth/session-guards", () => ({
   requireWorkspace: async () => ({
     userId: "live-review-verification",
     workspaceId: "live-review-verification",
@@ -13,7 +13,7 @@ vi.mock("../../src/server/session-guards", () => ({
   })
 }));
 
-import { organizeLive } from "../../src/server/live-organization";
+import { organizeLive } from "../../src/server/organization/live-organization";
 import { getDatabase } from "../../src/server/database/client";
 import type { LiveOrganizationResult } from "../../src/shared/live-organization";
 import type { ReviewAnswer } from "../../src/shared/live-organization-review";

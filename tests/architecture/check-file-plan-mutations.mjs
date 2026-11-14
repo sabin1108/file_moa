@@ -10,17 +10,17 @@ mkdirSync(out, { recursive: true });
 const mutations = [
   {
     name: 'exact-name-conflict',
-    file: 'apps/web/src/features/local-folders/lib/file-change-plan.ts',
+    file: 'apps/web/src/features/local-folders/operations/planning/file-change-plan.ts',
     from: 'if (names?.exact.has(name)) issues.push("name-conflict");',
     to: 'if (false) issues.push("name-conflict");',
-    test: 'apps/web/tests/local-folders/lib/file-change-plan.test.ts',
+    test: 'apps/web/tests/local-folders/operations/planning/file-change-plan.test.ts',
   },
   {
     name: 'abort-pending-read',
-    file: 'apps/web/src/features/local-folders/store/source-plan-controller.ts',
+    file: 'apps/web/src/features/local-folders/operations/planning/source-plan-controller.ts',
     from: 'this.abort?.abort();',
     to: '// Deliberate verification mutation: omit abort.',
-    test: 'apps/web/tests/local-folders/store/source-plan-controller.test.ts',
+    test: 'apps/web/tests/local-folders/operations/planning/source-plan-controller.test.ts',
   },
 ];
 const results = [];

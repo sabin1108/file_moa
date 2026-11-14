@@ -4,6 +4,10 @@ packages:
 
 saveExact: true
 
+# shortcut: upstream stable still pins minimatch 10, remove after its patched stable release.
+overrides:
+  minimatch@10.2.6: 11.0.8
+
 allowBuilds:
   '@prisma/engines': true
   prisma: true

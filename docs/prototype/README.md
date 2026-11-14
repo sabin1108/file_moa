@@ -1,6 +1,6 @@
 # 최종 프로토타입
 
-2026-10-28 구조 분류: 현재 시안 소스는 [apps/web/src/prototypes](../../apps/web/src/prototypes/README.md), 실제 공통 표시는 [shared](../../apps/web/src/shared/README.md)에 있다. 아래 날짜별 경로는 당시 기록이며 현재 위치는 이 안내를 우선한다.
+2026-11-12: 사용하지 않는 시안 실행 경로 `/preview`와 `apps/web/src/prototypes`를 제거했다. 아래 경로·소스 설명·화면 캡처는 당시 디자인 결정 기록이며 현재 실행 안내가 아니다. 체험용 `/demo/intro`와 실제 파일 미리보기는 유지한다. 공통 표시는 [shared](../../apps/web/src/shared/README.md)에 있다.
 
 
 2026-10-27 실제 기능 후속: 실제 폴더 연결은 이제 `/settings`와 `/files`에서 공유한다. 아래 26일 ‘설정에만 있다’는 기록은 당시 상태다. 시안의 폴더 연결은 계속 합성 입력이며 실제 저장소에 접근하지 않는다.

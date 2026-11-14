@@ -1,11 +1,6 @@
 .main { display: flex; flex-direction: column; min-height: 100dvh; }
 .sidebarNote { margin-top: auto; padding: 24px 12px; color: var(--muted); font-size: 12px; line-height: 1.8; }
 .mobileNav { display: none; }
-.unavailable { width: 100%; max-width: 800px; margin: 0 auto; padding: 48px 38px; }
-.unavailable h2 { font-size: 20px; font-weight: 500; line-height: 1.6; }
-.unavailable > p { margin-top: 12px; font-size: 16px; line-height: 1.9; color: var(--muted); word-break: keep-all; }
-.nextAction { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
-.nextAction p { margin-bottom: 16px; color: var(--muted); line-height: 1.8; }
 .chatBody { display: flex; flex: 1; flex-direction: column; }
 .chatBody > section { flex: 1; }
 .settingsBody { padding: var(--ui-space-6); }
@@ -31,9 +26,7 @@
   .mobileNav { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 16px; border-bottom: 1px solid var(--border); }
   .mobileNav a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 12px; text-decoration: none; color: var(--muted); }
   .mobileNav [aria-current="page"] { color: var(--text); font-weight: 600; }
-  .unavailable { padding: 32px 24px; }
 }
 @media (max-width: 550px) {
-  .unavailable { padding: 24px 16px; }
   .settingsBody { padding: var(--ui-space-4); }
 }

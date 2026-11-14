@@ -30,7 +30,7 @@ Gemini 키 검사와 모델 이름이 정식·샘플 서비스, 응답 처리, �
 
 현재 검증은 합성 REST·세션·DB와 실제 로컬 Next 화면이다. 실제 키 권한·크레딧 소모·모델 품질·Vercel 적용은 검증하지 않았다. 로컬 키 저장 여부만 확인했고 값을 출력하지 않았다.
 
-읽을 순서: `shared/ai-provider` → `server/ai-provider` → `ai-generation`과 `organization-generation` → `openai-generation`과 `gemini-generation` → `live-organization`과 `sample-ai` → page/Action → 전송 확인 UI.
+읽을 순서: `shared/ai-provider` → `server/ai/ai-provider` → `ai-generation`과 `organization-generation` → `openai-generation`과 `gemini-generation` → `live-organization`과 `sample-ai` → page/Action → 전송 확인 UI.
 
 [명세](../specs/openai-provider.md), [검증 기록](../verification/openai-provider/README.md).
 

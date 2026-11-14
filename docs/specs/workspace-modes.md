@@ -60,7 +60,7 @@
 
 ## 4. 기존 코드에 연결할 책임
 
-- 현재 정식 진입은 [`WorkspaceLayout`](../../apps/web/src/app/(workspace)/layout.tsx) → [`requireWorkspace`](../../apps/web/src/server/session-guards.ts) → [`SourceFolderProvider`](../../apps/web/src/features/local-folders/providers/SourceFolderProvider.tsx) 순서로 실제 세션/owner와 브라우저 연결 수명을 구성한다. 이 보호를 유지한다.
+- 현재 정식 진입은 [`WorkspaceLayout`](../../apps/web/src/app/(workspace)/layout.tsx) → [`requireWorkspace`](../../apps/web/src/server/auth/session-guards.ts) → [`SourceFolderProvider`](../../apps/web/src/features/local-folders/SourceFolderProvider.tsx) 순서로 실제 세션/owner와 브라우저 연결 수명을 구성한다. 이 보호를 유지한다.
 - 테스트 진입은 별도 세션/샘플 저장소를 조합한다. 구현 시 기존 서비스가 실제 폴더 핸들과 권한을 가정하는 지점을 확인하고 필요한 경계만 분리한다. 테스트 주체를 실제 사용자인 것처럼 정식 Provider에 주입하지 않는다.
 - 공통 화면·Stepper·목적지 선택·계획 검토·실행/복구 규칙은 기존 책임을 확인해 재사용한다. 모드 조건을 각 버튼과 파일 처리 함수에 흩뿌리거나 범용 저장소 프레임워크를 먼저 만들지 않는다.
 - 최초 문서화 단계에는 새로운 SDK·DB 테이블·라우트·운영 설정을 추가하지 않는다. 실제 세션 방식과 저장소 연결은 구현 명세에서 타입·권한·실패 조건과 함께 확정한다.

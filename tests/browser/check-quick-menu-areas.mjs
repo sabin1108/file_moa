@@ -188,7 +188,7 @@ try {
   );
   await click(page, '[aria-label="자료 창 닫기"]');
 
-  for (const route of ["/login", "/welcome", "/forgot-password", "/reset-password", "/preview"]) {
+  for (const route of ["/login", "/welcome", "/forgot-password", "/reset-password"]) {
     await page.goto(base + route, { settleMs: 180 });
     await page.eval(() => document.activeElement?.blur());
     check(

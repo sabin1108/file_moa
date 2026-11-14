@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { AuthShell } from "../../src/components/layout/AuthShell";
-import { AuthScreen } from "../../src/features/auth/components/AuthScreen";
+import { AuthScreen } from "../../src/features/auth/form/AuthScreen";
 import { PageLoading } from "../../src/components/ui/feedback/PageLoading";
 import { LoadingOverlay } from "../../src/components/ui/feedback/LoadingOverlay";
 import { StatusNotice } from "../../src/components/ui/feedback/StatusNotice";
 import { PaperStepper } from "../../src/components/ui/PaperStepper";
 import type { AuthFormAction, CheckAuthSessionAction } from "../../src/shared/auth-contract";
-import { SessionBoundary } from "../../src/features/auth/components/SessionBoundary";
-import { GuestSessionObserver } from "../../src/features/auth/components/GuestSessionObserver";
+import { SessionBoundary } from "../../src/features/auth/session/SessionBoundary";
+import { GuestSessionObserver } from "../../src/features/auth/session/GuestSessionObserver";
 import { announceAuthSessionChange } from "../../src/shared/auth-session-events";
-import { signupSteps } from "../../src/features/auth/lib/form-config";
+import { signupSteps } from "../../src/features/auth/form/form-config";
 import "../../src/styles/globals.css";
 
 declare global {

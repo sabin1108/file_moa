@@ -34,12 +34,19 @@ const cases = [
   ['normalized relative segments cannot bypass', 'src/features/local-folders/check.ts', 'export * from "../../shared/../prototypes/example";', false],
   ['server cannot import prototype', 'src/server/check.ts', 'import "server-only"; export * from "../prototypes/example";', false],
   ['server cannot import browser feature', 'src/server/check.ts', 'import "server-only"; export * from "../features/local-folders/contracts";', false],
-  ['preview routes may compose prototypes', 'src/app/preview/check.ts', 'export * from "../../prototypes/demo/example";', true],
-  ['prototype may demonstrate a feature', 'src/prototypes/demo/check.ts', 'export * from "../../features/local-folders/components/connection/SourceFolderConnection";', true],
+  ['retired preview routes cannot compose prototypes', 'src/app/preview/check.ts', 'export * from "../../prototypes/demo/example";', false],
   ['feature may use common UI', 'src/features/local-folders/components/connection/check.ts', 'export * from "../../../../components/ui/ActionLink";', true],
   ['common UI may use common CSS', 'src/components/ui/check.ts', 'import "../../styles/controls.module.css";', true],
   ['route may compose feature', 'src/app/(workspace)/files/check.ts', 'export * from "../../../features/local-folders/components/listing/SourceFolderBrowser";', true],
   ['feature may use domain rules', 'src/features/local-folders/services/check.ts', 'export { checkDocumentCandidate } from "@personal-ai/domain";', true],
+  ['record UI cannot derive controls from the chat hook', 'src/features/ai-records/library/check.ts', 'import type { useConversationRecords } from "../../conversation-workspace/records/useConversationRecords"; export type Controls = ReturnType<typeof useConversationRecords>;', false],
+  ['record UI cannot import chat implementation', 'src/features/ai-records/library/check.ts', 'import { useConversationRecords } from "../../conversation-workspace/records/useConversationRecords"; export { useConversationRecords };', false],
+  ['record UI cannot reexport chat implementation', 'src/features/ai-records/library/check.ts', 'export { useConversationRecords } from "../../conversation-workspace/records/useConversationRecords";', false],
+  ['record UI cannot export all chat implementation', 'src/features/ai-records/library/check.ts', 'export * from "../../conversation-workspace/records/useConversationRecords";', false],
+  ['record UI cannot dynamically import chat implementation', 'src/features/ai-records/library/check.ts', 'export const load = () => import("../../conversation-workspace/records/useConversationRecords");', false],
+  ['record UI cannot query chat types', 'src/features/ai-records/library/check.ts', 'export type Controls = typeof import("../../conversation-workspace/records/useConversationRecords").useConversationRecords;', false],
+  ['record UI may consume its own input contract', 'src/features/ai-records/library/check.ts', 'export type { ConversationRecordControls } from "./conversation-record-controls";', true],
+  ['chat may compose record UI', 'src/features/conversation-workspace/check.ts', 'export { AiLibraryPanel } from "../ai-records/library/AiLibraryPanel";', true],
 ];
 
 for (const [name, filePath, code, allowed] of cases) {

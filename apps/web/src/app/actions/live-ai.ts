@@ -2,9 +2,9 @@
 
 import "server-only";
 import { headers } from "next/headers";
-import { organizeLive } from "../../server/live-organization";
+import { organizeLive } from "../../server/organization/live-organization";
 import type { AiProvider } from "../../shared/ai-provider";
-import { answerGrounded } from "../../server/grounded-chat";
+import { answerGrounded } from "../../server/organization/grounded-chat";
 
 export async function liveOrganizationAction(provider: AiProvider | null, input: unknown) {
   return organizeLive(input, (await headers()).get("origin"), provider ?? null);

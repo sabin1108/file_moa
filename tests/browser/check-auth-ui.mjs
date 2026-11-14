@@ -310,7 +310,7 @@ try {
     }
   }
 
-  for (const route of ["/", "/files", "/settings", "/account", "/preview"]) {
+  for (const route of ["/", "/files", "/settings", "/account"]) {
     await page.goto(base + route, { settleMs: 180 });
     check(
       `anonymous ${route} redirects to login`,
@@ -1017,12 +1017,6 @@ try {
   check(
     "a native login can reopen the social workspace without changing its original local storage key",
     await page.eval(() => !document.body.textContent.includes("fixture-notes") && !document.body.textContent.includes("로그인 상태를 확인하고 있어요"))
-  );
-  await page.goto(base + "/preview", { settleMs: 300 });
-  await sleep(300);
-  check(
-    "preview validates the signed-in identity independently of the selected peer workspace",
-    await page.eval(() => location.pathname === "/preview" && !document.body.textContent.includes("로그인 화면으로 이동하고 있어요"))
   );
   await page.goto(base + "/settings?tab=account", { settleMs: 220 });
   await wait(() => !!document.querySelector('form[aria-label="기존 계정 연결 해제"]'));
