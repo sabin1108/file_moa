@@ -24,6 +24,7 @@ export function WorkspaceTour({ claim }: { claim: () => Promise<boolean> }) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
+  const requested = params.get("guide") === "1";
   const guard = useNavigationGuard();
   const current = steps[step];
   const ready = tourRouteMatches(current.route, pathname, params.get("tab"));
@@ -34,7 +35,6 @@ export function WorkspaceTour({ claim }: { claim: () => Promise<boolean> }) {
     let waiting: MutationObserver | null = null;
     let beginFrame = 0;
     const url = new URL(location.href);
-    const requested = url.searchParams.get("guide") === "1";
     replayRequested.current ||= requested;
 
     if (requested) {
@@ -80,7 +80,7 @@ export function WorkspaceTour({ claim }: { claim: () => Promise<boolean> }) {
       waiting?.disconnect();
       window.removeEventListener(WORKSPACE_TOUR_EVENT, replay);
     };
-  }, [claim]);
+  }, [claim, requested]);
 
   useEffect(() => {
     if (!open || paused) return;

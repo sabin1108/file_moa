@@ -11,7 +11,7 @@ import ui from "../../src/styles/workspace-ui.module.css";
 import files from "../../src/features/local-folders/browsing/folder-workspace.module.css";
 import { liveOrganizationFixtureAction } from "./live-organization-action";
 import { WorkspaceQuickSwitch } from "../../src/features/quick-switch/WorkspaceQuickSwitch";
-import { NavigationGuardProvider, useNavigationBlocker } from "../../src/components/navigation/NavigationGuard";
+import { GuardedLink, NavigationGuardProvider, useNavigationBlocker } from "../../src/components/navigation/NavigationGuard";
 import { createBrowserStringStore } from "../../src/shared/browser-string-store";
 import { WorkspaceTour } from "../../src/features/onboarding/WorkspaceTour";
 import { SettingsTabs } from "../../src/components/layout/SettingsTabs";
@@ -127,7 +127,7 @@ function Fixture() {
               )
               : (
                 <div data-workspace-quick-menu className={ui.system}>
-                  <SettingsTabs panels={{ account: <p>테스트 계정</p>, folders: <SourceFolderSettings />, editor: <p>문서 편집</p>, controls: <QuickSwitchSettings /> }} />
+                  <SettingsTabs panels={{ account: <p>테스트 계정</p>, folders: <SourceFolderSettings />, editor: <p>문서 편집</p>, controls: <><GuardedLink href="/?guide=1">사용 방법 다시 보기</GuardedLink><QuickSwitchSettings /></> }} />
                 </div>
               )}
           <WorkspaceTour key={owner} claim={claim} />

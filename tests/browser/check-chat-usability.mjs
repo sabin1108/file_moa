@@ -85,6 +85,13 @@ try {
   await click("완료");
   await until(() => !document.querySelector('dialog:modal'));
   check("guide route changes keep history length and do not invoke the folder picker", await page.eval(expected => history.length === expected.history && window.pickerCalls === expected.pickers, { history: historyBeforeGuide, pickers: pickerBeforeGuide }));
+  await page.eval(() => window.dispatchEvent(new CustomEvent("fixture-navigation", { detail: { href: "/settings?tab=controls", replace: false } })));
+  await until(() => document.querySelector('a[href="/?guide=1"]'));
+  await page.eval(() => document.querySelector('a[href="/?guide=1"]').click());
+  await until(() => document.querySelector('dialog:modal #workspace-tour-title'));
+  check("settings replay link opens the guide without remounting the workspace layout", await page.eval(() => document.querySelector('dialog:modal').textContent.includes("1 / 9") && location.pathname === "/" && !location.search.includes("guide=1")));
+  await click("건너뛰기");
+  await until(() => !document.querySelector('dialog:modal'));
   await click("기록함");
   const pickers = await page.eval(() => window.pickerCalls);
   await click("저장 위치 선택");
