@@ -1,5 +1,4 @@
 import { Icon, MoaMark } from "../../components/ui/Icon";
-import type { ReactNode } from "react";
 import styles from "./onboarding.module.css";
 
 const documents = [
@@ -8,38 +7,27 @@ const documents = [
   { name: "아이디어 메모.txt", kind: "나의 생각", content: "좋은 생각은 기록에서 시작되고, 다음 작업으로 이어진다." },
 ] as const;
 
-export function FolderScene({ children }: { children?: ReactNode }) {
+export function FolderScene() {
   return (
     <div
       className={styles.folderScene}
       role="img"
-      aria-label="회의록, 리서치 노트, 아이디어 메모가 모아 폴더로 모이는 소개 그림"
+      aria-label="폴더에서 프로젝트 회의록 한 장을 꺼내는 소개 그림"
       data-intro-folder
     >
       <div className={styles.folderBack} data-folder-back />
-      <div className={styles.papers}>
-        {documents.map(document => (
-          <div className={styles.paper} key={document.name} data-intro-paper>
-            <Icon name="file" size={30} />
-            <span>
-              {document.kind}
-            </span>
-            <strong>
-              {document.name}
-            </strong>
-            <p>
-              {document.content}
-            </p>
-          </div>
-        ))}
-      </div>
-      {children}
+      <article className={styles.meetingNote} aria-hidden="true" data-extracted-document>
+        <span><Icon name="file" size={22} />{documents[0].name}</span>
+        <h2>자료 정리 회의</h2>
+        <p>{documents[0].content}</p>
+        <h3>다음 할 일</h3>
+        <ul><li>자료 검색 흐름 검토</li><li>파일 정리 과정 확인</li></ul>
+        <small>기능 소개를 위한 예시 회의록</small>
+      </article>
       <div className={styles.folderFront} data-folder-front>
         <MoaMark size={52} />
-        <span>나의 자료, 다음 생각으로.</span>
-        <strong>모아.</strong>
+        <strong>회의 기록</strong>
       </div>
-      <div className={styles.folderCaption} data-folder-caption><Icon name="folder" /> 내 컴퓨터의 자료에서 시작해요</div>
     </div>
   );
 }

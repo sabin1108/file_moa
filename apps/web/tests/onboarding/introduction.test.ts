@@ -5,7 +5,7 @@ import { OnboardingPage } from "../../src/features/onboarding/OnboardingPage";
 import { metadata as demoMetadata } from "../../src/app/demo/layout";
 
 describe("introduction entry points", () => {
-  it("keeps the expanding workspace document inside the hero folder", () => {
+  it("shows one meeting note emerging from the hero folder without the gathering cards", () => {
     const html = renderToStaticMarkup(createElement(OnboardingPage));
     const folder = html.indexOf('data-intro-folder');
     const document = html.indexOf('data-extracted-document');
@@ -13,6 +13,13 @@ describe("introduction entry points", () => {
 
     expect(folder).toBeLessThan(document);
     expect(document).toBeLessThan(front);
+    const hero = html.slice(html.indexOf('data-scroll-hero'), html.indexOf('id="find"'));
+    expect(hero.match(/data-extracted-document/g)).toHaveLength(1);
+    expect(hero).toContain("프로젝트 회의록.md");
+    expect(hero).toContain("자료 정리 회의");
+    expect(hero).not.toContain("data-intro-paper");
+    expect(hero).not.toContain("data-hero-workspace");
+    expect(hero).not.toContain("나의 자료, 다음 생각으로.");
   });
 
   it("keeps one stable paper and preview for all three functions", () => {

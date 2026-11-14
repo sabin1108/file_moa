@@ -1,25 +1,7 @@
-import { Icon, MoaMark } from "../../components/ui/Icon";
 import { OrganizationScene, SearchScene } from "./ProductScenes";
 import styles from "./onboarding-motion.module.css";
 import { KnowledgeExamples } from "./KnowledgeExamples";
 import { OrganizationDemo } from "./OrganizationDemo";
-
-export function HeroWorkspace() {
-  return (
-    <div className={styles.heroWorkspace} aria-hidden="true" data-hero-workspace data-extracted-document>
-      <p>흩어져 있던 자료가, 하나의 작업 공간으로.</p>
-      <div className={styles.workspace} data-ui>
-        <aside>
-          <span><MoaMark size={26} /> 모아.</span>
-          <span><Icon name="folder" /> 내 자료</span>
-          <span><Icon name="chat" /> 대화</span>
-          <span><Icon name="file" /> 기록함</span>
-        </aside>
-        <SearchScene />
-      </div>
-    </div>
-  );
-}
 
 export function KnowledgeStory() {
   return (

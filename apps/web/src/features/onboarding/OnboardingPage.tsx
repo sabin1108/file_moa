@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getImageProps } from "next/image";
 import { Icon, MoaMark } from "../../components/ui/Icon";
 import { FolderScene, MaterialExample, RecordScene } from "./ProductScenes";
-import { HeroWorkspace, KnowledgeStory, OrganizationStory } from "./ScrollStories";
+import { KnowledgeStory, OrganizationStory } from "./ScrollStories";
 import styles from "./onboarding.module.css";
 import motion from "./onboarding-motion.module.css";
 
@@ -65,7 +65,7 @@ export function OnboardingPage({ mode = "live", initialView }: OnboardingPagePro
               <a className={`${styles.scrollLink} ${motion.scrollCue}`} href="#find">스크롤하며 모아 알아보기<Icon name="down" size={18} /></a>
             </div>
             <div className={motion.heroArt}>
-              <FolderScene><HeroWorkspace /></FolderScene>
+              <FolderScene />
             </div>
           </div>
         </section>
