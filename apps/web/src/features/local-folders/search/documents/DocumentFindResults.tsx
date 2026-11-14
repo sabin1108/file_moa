@@ -59,7 +59,7 @@ export function DocumentFindResults({
   const visible = [...confirmed, ...uncertain].slice(0, limit);
 
   return (
-    <section data-find-results className={findStyles.results} aria-label="본문 근거 검색 결과">
+    <section data-find-results className={findStyles.results} aria-label="자료 검색 결과">
       {result.documents.length > 0 ? <header className={findStyles.resultHeading}>
         <h3 ref={heading}>찾은 자료 {result.documents.length}개</h3>
         {uncertain.length > 0 && <p>날짜 확인 필요 {uncertain.length}개</p>}
@@ -70,32 +70,38 @@ export function DocumentFindResults({
       </div>}
       <ul className={styles.findDocuments}>
         {visible.map((document) => (
-          <li key={JSON.stringify(document.path)} data-find-candidate>
+          <li key={JSON.stringify(document.path)} data-find-candidate data-find-metadata={document.contentAvailable === false ? "true" : undefined}>
             <SourceFileRow
               name={document.name}
               selected={selectedPaths.some(path => JSON.stringify(path) === JSON.stringify(document.path))}
               previewing={false}
               selecting={true}
-              selectionDisabled={false}
-              previewDisabled={false}
+              selectionDisabled={document.contentAvailable === false}
+              previewDisabled={document.contentAvailable === false}
               onToggle={() => onToggle(document.path)}
               onLongSelect={() => onToggle(document.path)}
               onPreview={() => onOpenFile(document.path)}
             />
             <div className={styles.findMeta}>
-            <p className={styles.findStatus} data-verified={document.finding.kind === "matched"}>
+            {document.finding.matches && <p className={styles.note} data-find-fields>{[
+              document.finding.matches.name.length > 0 && "이름",
+              document.finding.matches.path.length > 0 && "폴더 경로",
+              document.finding.matches.body.length > 0 && "본문",
+            ].filter(Boolean).join(" · ")} 일치</p>}
+            {document.contentAvailable === false && <p className={styles.findStatus}>본문 미확인 · 선택 불가</p>}
+            {(document.contentAvailable !== false || document.finding.kind !== "matched" || document.finding.dates.length > 0) && <p className={styles.findStatus} data-verified={document.finding.kind === "matched"}>
               {document.finding.kind === "matched"
-                ? "✓ 조건 일치"
+                ? document.contentAvailable === false ? "날짜 조건 일치" : "✓ 조건 일치"
                 : document.finding.kind === "date-unknown"
                   ? "날짜 확인 필요"
                   : "여러 날짜가 있어 확인 필요"}
               {document.finding.dates.length > 0 &&
                 ` · ${document.finding.dates.join(", ")}`}
-            </p>
+            </p>}
                 <details className={styles.findEvidence}>
-                  <summary>왜 후보인가요? · 근거와 위치</summary>
+                  <summary>{document.contentAvailable === false ? "파일 위치와 일치 근거" : "왜 후보인가요? · 근거와 위치"}</summary>
                   <p className={styles.note}>{[folderName, ...document.path].join(" / ")}</p>
-                  <p className={styles.note}>검색 시점의 내용입니다. 최종 판단 전에 원문을 확인해 주세요.{document.ocr && " OCR 인식 글은 원본과 대조해 주세요."}</p>
+                  <p className={styles.note}>{document.contentAvailable === false ? "파일 목록에서 확인한 이름과 경로입니다. 본문은 확인하지 못했습니다." : "검색 시점의 내용입니다. 최종 판단 전에 원문을 확인해 주세요."}{document.ocr && " OCR 인식 글은 원본과 대조해 주세요."}</p>
                   {document.finding.evidence.map((line, index) => (
                     <blockquote key={index}>
                       {line}
@@ -119,9 +125,9 @@ export function DocumentFindResults({
       {(!result.complete || result.excluded.length > 0)
         && (
           <details className={findStyles.coverage}>
-            <summary><Icon name="warning" size={16} />{result.complete ? "검색에서 제외한 항목" : "일부 자료는 확인하지 못했어요"}<span>{result.excluded.length}개 · 상세 보기</span></summary>
+            <summary><Icon name="warning" size={16} />{result.complete ? "본문을 읽지 못한 항목" : "일부 자료는 확인하지 못했어요"}<span>{result.excluded.length ? `${result.excluded.length}개 · 상세 보기` : "검색 한도 · 상세 보기"}</span></summary>
             <dl>{[...new Set(result.excluded.map(entry => entry.reason))].map(reason => <div key={reason} style={{ display: "contents" }}><dt>{reasons[reason] ?? "읽기 또는 탐색 한도"}</dt><dd>{result.excluded.filter(entry => entry.reason === reason).length}개</dd></div>)}</dl>
-            {result.limits.length > 0 && <p>탐색 시간·용량·문서 수 제한으로 일부 범위를 확인하지 못했습니다.</p>}
+            {result.limits.length > 0 && <p>탐색·본문 읽기·결과 수 한도로 일부 범위를 표시하지 못했습니다.</p>}
             <ul>
               {result.excluded.slice(0, excludedLimit).map((entry, index) => (
                 <li key={index}>

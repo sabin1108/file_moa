@@ -54,6 +54,88 @@ function directory(name: string, entries: Record<string, File | FolderHandle>): 
 afterEach(() => vi.clearAllMocks());
 
 describe("read-only TXT/MD organization snapshot", () => {
+  it("keeps only name evidence and discards stale modification dates when a file changes during reading", async () => {
+    const name = "해솔연구.md";
+    const root = directory("자료", { [name]: new File(["x"], name) });
+    vi.mocked(root.getFileHandle).mockResolvedValue({ getFile: vi.fn()
+      .mockResolvedValueOnce(new File(["x"], name, { lastModified: new Date(2026, 9, 15).getTime() }))
+      .mockResolvedValueOnce(new File(["changed"], name, { lastModified: new Date(2026, 10, 15).getTime() })) } as unknown as FileSystemFileHandle);
+    readText.mockResolvedValue({ sha256: "a".repeat(64), excerptHash: "b".repeat(64), excerpt: "x", size: 1 });
+    const result = await readSourceSnapshot(root, { kind: "selected", entries: [{ kind: "file", path: [name] }] }, "해솔연구", () => {}, undefined, { terms: ["해솔연구"], from: "2026-10-01", to: "2026-10-31", basis: "modified" });
+
+    expect(result.findings?.[0]).toMatchObject({ contentAvailable: false, finding: { kind: "date-unknown", matches: { body: [] } } });
+    expect(result.documents).toEqual([]);
+    expect(result.excluded).toContainEqual({ path: [name], reason: "source-changed" });
+  });
+  it("continues metadata search after the body document budget and retains stronger late names", async () => {
+    const terms = ["가온센터", "연구"];
+    readText.mockImplementation(async (file: File) => ({ sha256: "a".repeat(64), excerptHash: "b".repeat(64), size: file.size, excerpt: "합성", finding: { kind: "matched", dates: [], evidence: ["가온센터 연구"], matches: { name: [], path: [], body: terms } } }));
+    const entries = Object.fromEntries(Array.from({ length: 500 }, (_, index) => [`${String(index).padStart(3, "0")}.md`, new File([], "body.md")]));
+    entries["zz 가온센터 연구.docx"] = new File([], "zz 가온센터 연구.docx");
+    const result = await readSourceSnapshot(directory("자료", entries), { kind: "all" }, "가온센터 연구", () => {}, undefined, { terms, from: null, to: null, basis: "body" });
+
+    expect(readText).toHaveBeenCalledTimes(500);
+    expect(result.findings).toHaveLength(500);
+    expect(result.findings?.[0]).toMatchObject({ name: "zz 가온센터 연구.docx", contentAvailable: false });
+    expect(result.limits).toEqual(expect.arrayContaining(["document-limit", "result-limit"]));
+    expect(result.complete).toBe(false);
+  });
+
+  it("continues filename discovery after the body byte budget without sending more files to the Worker", async () => {
+    readText.mockImplementation(async (file: File) => ({ sha256: "a".repeat(64), excerptHash: "b".repeat(64), size: file.size, excerpt: "합성" }));
+    const file = new File([new Uint8Array(DOCUMENT_LIMITS.fileBytes)], "body.md");
+    const entries = Object.fromEntries(Array.from({ length: 26 }, (_, index) => [`${String(index).padStart(3, "0")}.md`, file]));
+    entries["zz 해솔연구.md"] = file;
+    const result = await readSourceSnapshot(directory("자료", entries), { kind: "all" }, "해솔연구", () => {}, undefined, { terms: ["해솔연구"], from: null, to: null, basis: "body" });
+
+    expect(readText).toHaveBeenCalledTimes(25);
+    expect(result.findings).toEqual([expect.objectContaining({ name: "zz 해솔연구.md", contentAvailable: false })]);
+    expect(result.limits).toContain("bytes-limit");
+  });
+
+  it("keeps listed name evidence when getFile fails, with an unknown modification date", async () => {
+    const name = "해솔연구.docx";
+    const root = directory("자료", { [name]: new File([], name) });
+    vi.mocked(root.getFileHandle).mockRejectedValue(new DOMException("synthetic unreadable", "NotReadableError"));
+    const result = await readSourceSnapshot(root, { kind: "selected", entries: [{ kind: "file", path: [name] }] }, "해솔연구", () => {}, undefined, { terms: ["해솔연구"], from: "2026-10-01", to: "2026-10-31", basis: "modified" });
+
+    expect(result.findings?.[0]).toMatchObject({ contentAvailable: false, finding: { kind: "date-unknown" } });
+    expect(result.complete).toBe(false);
+    expect(readText).not.toHaveBeenCalled();
+  });
+
+  it("does not publish metadata-only candidates after permission is revoked", async () => {
+    const name = "해솔연구.docx";
+    const root = directory("자료", { [name]: new File([], name) });
+    vi.mocked(root.getFileHandle).mockImplementation(async () => {
+      vi.mocked(root.queryPermission).mockResolvedValue("denied");
+
+      return { getFile: async () => new File([], name) } as unknown as FileSystemFileHandle;
+    });
+
+    await expect(readSourceSnapshot(root, { kind: "selected", entries: [{ kind: "file", path: [name] }] }, "해솔연구", () => {}, undefined, { terms: ["해솔연구"], from: null, to: null, basis: "body" })).rejects.toMatchObject({ name: "NotAllowedError" });
+    expect(readText).not.toHaveBeenCalled();
+  });
+  it("finds unsupported names without reading their body or adding them to AI source documents", async () => {
+    const root = directory("자료", { "해솔테크 지원서.docx": new File(["not decoded"], "해솔테크 지원서.docx") });
+    const result = await readSourceSnapshot(root, { kind: "all" }, "해솔테크 지원서", () => {}, undefined, { terms: ["해솔테크", "지원서"], from: null, to: null, basis: "body" });
+
+    expect(result.findings).toEqual([expect.objectContaining({ name: "해솔테크 지원서.docx", contentAvailable: false })]);
+    expect(result.documents).toEqual([]);
+    expect(result.excluded).toContainEqual({ path: ["해솔테크 지원서.docx"], reason: "unsupported-extension" });
+    expect(readText).not.toHaveBeenCalled();
+    expect(root.removeEntry).not.toHaveBeenCalled();
+  });
+
+  it("keeps filename evidence when UTF-8 decoding fails, without claiming body evidence", async () => {
+    readText.mockRejectedValueOnce(new Error("invalid-utf8"));
+    const root = directory("자료", { "해솔테크 지원서.md": new File([new Uint8Array([255])], "해솔테크 지원서.md") });
+    const result = await readSourceSnapshot(root, { kind: "all" }, "해솔테크 지원서", () => {}, undefined, { terms: ["해솔테크", "지원서"], from: null, to: null, basis: "body" });
+
+    expect(result.findings?.[0]).toMatchObject({ contentAvailable: false, finding: { matches: { body: [] } } });
+    expect(result.documents).toEqual([]);
+    expect(result.complete).toBe(false);
+  });
   it("recurses and returns content/version evidence, excluding unsupported files and internal history", async () => {
     readText.mockImplementation(async (file: File) => ({
       sha256: "a".repeat(64),

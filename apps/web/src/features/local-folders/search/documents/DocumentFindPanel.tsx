@@ -56,7 +56,7 @@ export function DocumentFindPanel({
           <fieldset disabled={busy} className={styles.conditions}>
             <legend className="sr-only">검색 조건 입력</legend>
             <label className={styles.basis}>
-              <span className={findStyles.label}>검색어 <small>본문에 모든 단어 포함</small></span>
+              <span className={findStyles.label}>검색어 <small>이름·경로·본문에서 모든 단어 확인</small></span>
               <input
                 aria-label="본문 검색어"
                 required

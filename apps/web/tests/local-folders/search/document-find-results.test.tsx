@@ -3,6 +3,15 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { DocumentFindResults } from "../../../src/features/local-folders/search/documents/DocumentFindResults";
 
 describe("search result reading budget", () => {
+  it("describes a scan limit without showing a misleading zero exclusion count", () => {
+    const html = renderToStaticMarkup(<DocumentFindResults
+      result={{ documents: [], complete: false, excluded: [], limits: ["scan-limit"], discoveredFiles: 0 }}
+      folderName="synthetic" selectedPaths={[]} onOpenFile={() => {}} onToggle={() => {}}
+    />);
+
+    expect(html).toContain("검색 한도 · 상세 보기");
+    expect(html).not.toContain("0개 · 상세 보기");
+  });
   it("folds and bounds a large exclusion list while leaving the next action clear", () => {
     const html = renderToStaticMarkup(<DocumentFindResults
       result={{ documents: [], complete: false, excluded: Array.from({ length: 361 }, (_, index) => ({ path: [`excluded-${index}.docx`], reason: "unsupported-extension" })), limits: [], discoveredFiles: 361 }}

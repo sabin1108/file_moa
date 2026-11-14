@@ -14,6 +14,8 @@ import type {
   FindQuery,
   FindableSnapshot,
 } from "../search/documents/document-find";
+import { findTextEvidence } from "../search/documents/document-find";
+import { retainFindCandidate } from "../search/documents/document-find-ranking";
 
 /** Bounded source snapshot. Optional extracted-text cache stays in this browser. */
 
@@ -61,6 +63,17 @@ export async function readSourceSnapshot(
       throw new DOMException("Snapshot cancelled", "AbortError");
   };
   const reader = createCopyHasher(signal);
+  let contentBudgetExhausted = false;
+  const addFinding = (document: FindDocument) => {
+    if (retainFindCandidate(findings, document, DOCUMENT_LIMITS.workspaceDocuments)) limits.add("result-limit");
+  };
+  const addMetadataFinding = (name: string, path: readonly string[], lastModified?: number) => {
+    if (!find) return;
+
+    const finding = findTextEvidence("", find, lastModified, { name, path });
+
+    if (finding) addFinding({ name, path, finding, contentAvailable: false });
+  };
 
   try {
     for (let index = 0; index < queue.length; index++) {
@@ -145,7 +158,7 @@ export async function readSourceSnapshot(
 
       const extensionIssue = checkDocumentCandidate(name, 0);
 
-      if (extensionIssue) {
+      if (extensionIssue && (!find || !findTextEvidence("", find, undefined, { name, path: entry.path }))) {
         excluded.push({ path: entry.path, reason: extensionIssue });
 
         continue;
@@ -154,8 +167,14 @@ export async function readSourceSnapshot(
       if (documents.length >= DOCUMENT_LIMITS.workspaceDocuments) {
         limits.add("document-limit");
 
-        break;
+        if (!find) break;
+
+        contentBudgetExhausted = true;
       }
+
+      if (find && contentBudgetExhausted && !findTextEvidence("", find, undefined, { name, path: entry.path })) continue;
+
+      let metadata: File | undefined;
 
       try {
         const permission = await root.queryPermission({ mode: "read" });
@@ -176,12 +195,21 @@ export async function readSourceSnapshot(
 
         const file = await handle.getFile();
 
+        metadata = file;
+
         check();
 
         const issue = checkDocumentCandidate(name, file.size);
 
         if (issue) {
+          addMetadataFinding(name, entry.path, file.lastModified);
           excluded.push({ path: entry.path, reason: issue });
+
+          continue;
+        }
+
+        if (find && contentBudgetExhausted) {
+          addMetadataFinding(name, entry.path, file.lastModified);
 
           continue;
         }
@@ -189,7 +217,12 @@ export async function readSourceSnapshot(
         if (bytes + file.size > DOCUMENT_LIMITS.workspaceTextBytes) {
           limits.add("bytes-limit");
 
-          break;
+          if (!find) break;
+
+          contentBudgetExhausted = true;
+          addMetadataFinding(name, entry.path, file.lastModified);
+
+          continue;
         }
 
         const cached = indexContext ? await new LocalTextIndex().readPath(indexContext, entry.path).catch(() => undefined) : undefined;
@@ -201,7 +234,8 @@ export async function readSourceSnapshot(
           instruction,
           find,
           indexContext ? { ...indexContext, path: entry.path } : undefined,
-          cached
+          cached,
+          find ? { name, path: entry.path } : undefined,
         );
 
         check();
@@ -238,7 +272,7 @@ export async function readSourceSnapshot(
           check();
         }
 
-        if (finding) findings.push({ name, path: entry.path, finding, ...(content.ocr ? { ocr: true } : {}) });
+        if (finding) addFinding({ name, path: entry.path, finding, contentAvailable: true, ...(content.ocr ? { ocr: true } : {}) });
 
         documents.push({
           sha256: content.sha256,
@@ -270,6 +304,8 @@ export async function readSourceSnapshot(
         if (["unsupported-hash", "hash-read-failed"].includes(reason))
           throw error;
 
+        addMetadataFinding(name, entry.path, reason === "source-changed" ? undefined : metadata?.lastModified);
+
         failed = true;
         excluded.push({
           path: entry.path,
@@ -279,6 +315,12 @@ export async function readSourceSnapshot(
               : "unreadable-file",
         });
       }
+    }
+
+    check();
+
+    if (find && (await root.queryPermission({ mode: "read" })) !== "granted") {
+      throw new DOMException("Read permission required", "NotAllowedError");
     }
 
     check();

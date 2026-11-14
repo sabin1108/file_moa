@@ -1,6 +1,7 @@
 import { contentDates } from "../../../../shared/content-dates";
 import type { SourceSnapshot } from "../../organization/source-snapshot-rules";
 import { findDateBasisPatterns, findRelativeYear } from "./document-find-reply";
+import { isFieldMatches, matchDocumentFields, type FindFieldMatches, type FindSource } from "./document-field-match";
 
 export type FindFilters = Readonly<{
   terms: string;
@@ -22,6 +23,7 @@ export type FindEvidence = Readonly<{
   kind: "matched" | "date-unknown" | "date-conflict";
   dates: readonly string[];
   evidence: readonly string[];
+  matches?: FindFieldMatches;
 }>;
 
 export type FindDocument = Readonly<{
@@ -29,6 +31,7 @@ export type FindDocument = Readonly<{
   path: readonly string[];
   finding: FindEvidence;
   ocr?: boolean;
+  contentAvailable?: boolean;
 }>;
 
 export type FindResult = Readonly<{
@@ -79,7 +82,7 @@ export function inferFindRequest(request: string, referenceYear?: number): FindF
         /\d{1,2}\s*월(?:쯤|경|초|말|무렵)?/gu,
         " "
       )
-      .match(/[가-힣a-zA-Z0-9]+/gu) ?? [];
+      .match(/\.[a-zA-Z][a-zA-Z0-9]*(?:\.[a-zA-Z0-9]+)*|[가-힣a-zA-Z0-9]+(?:[.+][가-힣a-zA-Z0-9]+)*(?:\+\+|#)?/gu) ?? [];
   const generic = new Set([
     "내가",
     "제가",
@@ -194,33 +197,32 @@ export function findTextEvidence(
   text: string,
   query: FindQuery,
   lastModified?: number,
+  source?: FindSource,
 ): FindEvidence | null {
-  const lower = text.toLocaleLowerCase("ko");
-  const positions = query.terms.map((term) =>
-    lower.indexOf(term.toLocaleLowerCase("ko")),
-  );
+  const match = matchDocumentFields(text, query.terms, source);
 
-  if (positions.some((position) => position < 0)) return null;
+  if (!match) return null;
 
   const snippet = (position: number, length = 40) =>
     text
       .slice(Math.max(0, position - 50), position + Math.min(length, 100) + 50)
       .trim();
-  const evidence = positions.map((position) => snippet(position));
+  const evidence = [...match.evidence, ...match.positions.map(position => snippet(position))];
+  const fields = source ? { matches: match.matches } : {};
 
-  if (!query.from || !query.to) return { kind: "matched", dates: [], evidence };
+  if (!query.from || !query.to) return { kind: "matched", dates: [], evidence, ...fields };
 
   if (query.basis === "modified") {
-    if (lastModified === undefined || !Number.isFinite(lastModified)) return { kind: "date-unknown", dates: [], evidence };
+    if (lastModified === undefined || !Number.isFinite(lastModified)) return { kind: "date-unknown", dates: [], evidence, ...fields };
 
     const modified = new Date(lastModified);
 
-    if (!Number.isFinite(modified.getTime())) return { kind: "date-unknown", dates: [], evidence };
+    if (!Number.isFinite(modified.getTime())) return { kind: "date-unknown", dates: [], evidence, ...fields };
     const date = `${modified.getFullYear()}-${String(modified.getMonth() + 1).padStart(2, "0")}-${String(modified.getDate()).padStart(2, "0")}`;
 
     if (date < query.from || date > query.to) return null;
 
-    return { kind: "matched", dates: [date], evidence };
+    return { kind: "matched", dates: [date], evidence, ...fields };
   }
 
   const datePattern =
@@ -255,11 +257,12 @@ export function findTextEvidence(
       evidence.push(snippet(match.index, match[0].length));
   }
 
-  if (!dates.size) return { kind: "date-unknown", dates: [], evidence };
+  if (!dates.size) return { kind: "date-unknown", dates: [], evidence, ...fields };
 
   if (!inside.size) return null;
 
   return {
+    ...fields,
     kind: inside.size === dates.size ? "matched" : "date-conflict",
     dates: [...new Set([...inside, ...dates])].slice(0, 4),
     evidence: [
@@ -293,6 +296,6 @@ export function isFindEvidence(value: unknown): value is FindEvidence | null {
     &&
     item.evidence.every(
       (line) => typeof line === "string" && line.length <= 200,
-    )
+    ) && (item.matches === undefined || isFieldMatches(item.matches))
   );
 }

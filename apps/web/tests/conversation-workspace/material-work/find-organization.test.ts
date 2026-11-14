@@ -39,6 +39,20 @@ async function setup() {
 }
 
 describe("FIND-007: selected results use existing fresh preparation", () => {
+  it("rejects metadata-only selection both at the controller and the final preparation boundary", async () => {
+    const actions = await setup();
+    const result = { ...actions.finding.getSnapshot().result!, documents: [{ ...found, contentAvailable: false }] };
+    const finding = new DocumentFindController(vi.fn(async () => result));
+
+    finding.start("회의 자료 찾아줘");
+    await finding.search();
+    finding.toggle(path);
+    expect(finding.getSnapshot().selectedPaths).toEqual([]);
+
+    vi.spyOn(finding, "getSnapshot").mockReturnValue({ ...finding.getSnapshot(), selectedPaths: [path] });
+    expect(prepareFoundDocuments({ ...actions, finding }, true, "선택 자료 질문")).toBe(false);
+    expect(actions.read).not.toHaveBeenCalled();
+  });
   it("ignores paths absent from the latest results and requires an explicit selection", async () => {
     const actions = await setup();
 

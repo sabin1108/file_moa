@@ -5,6 +5,7 @@ import {
 } from "../search/documents/document-find";
 import { readOcrEnabled } from "./ocr/ocr-preferences";
 import { isOcrDetails, OCR_LIMITS } from "./ocr/ocr-image";
+import type { FindSource } from "../search/documents/document-field-match";
 
 export type TextFileSnapshot = Readonly<{
   sha256: string;
@@ -62,6 +63,7 @@ export function createCopyHasher(signal?: AbortSignal) {
       hash: string;
       text: string
     },
+    source?: FindSource,
   ): Promise<TextFileSnapshot | {
     sha256: string;
     size: number
@@ -181,6 +183,7 @@ export function createCopyHasher(signal?: AbortSignal) {
               ...(ocr ? { ocr: true } : {}),
               ...(find ? { find } : {}),
               ...(index ? { index } : {}),
+              ...(source ? { source } : {}),
               ...(cached ? { cached } : {})
             },
         );
@@ -200,8 +203,9 @@ export function createCopyHasher(signal?: AbortSignal) {
       cached?: {
         hash: string;
         text: string
-      }) =>
-      (await request(file, instruction, find, index, cached)) as TextFileSnapshot,
+      },
+      source?: FindSource) =>
+      (await request(file, instruction, find, index, cached, source)) as TextFileSnapshot,
     dispose,
   };
 }

@@ -186,7 +186,7 @@ export class DocumentFindController {
   };
   toggle = (path: readonly string[]) => {
     if (this.state.phase !== "ready"
-      || !this.state.result?.documents.some(document => JSON.stringify(document.path) === JSON.stringify(path))) return;
+      || !this.state.result?.documents.some(document => document.contentAvailable !== false && JSON.stringify(document.path) === JSON.stringify(path))) return;
 
     const selected = this.state.selectedPaths.some(value => JSON.stringify(value) === JSON.stringify(path));
 

@@ -2,6 +2,7 @@ import { organizationExcerpt } from "../../../shared/organization-candidates";
 import { findTextEvidence, type FindQuery } from "../search/documents/document-find";
 import { extractPdfText } from "./pdf/pdf-text";
 import { createOcrReader } from "./ocr/ocr-text";
+import type { FindSource } from "../search/documents/document-field-match";
 
 type IndexContext = Readonly<{
   owner: string;
@@ -18,6 +19,7 @@ self.onmessage = async (
       file: File;
       instruction: string;
       find?: FindQuery;
+      source?: FindSource;
       index?: IndexContext;
       cached?: {
         hash: string;
@@ -140,7 +142,7 @@ self.onmessage = async (
       ...(pdf ? { pdf } : {}),
       ...(ocr ? { ocr } : {}),
       ...(request.find
-        ? { finding: findTextEvidence(text, request.find, file.lastModified) }
+        ? { finding: findTextEvidence(text, request.find, file.lastModified, request.source) }
         : {}),
     });
   } catch {

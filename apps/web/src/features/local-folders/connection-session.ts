@@ -64,6 +64,7 @@ import {
   type RecoveryArchiveSnapshot,
 } from "./recovery/archive/recovery-archive";
 import { createCopyHasher } from "./content/copy-hash";
+import { rankFindDocuments } from "./search/documents/document-find-ranking";
 import {
   prepareRecoveryRestore,
   executeRecoveryRestore,
@@ -960,7 +961,7 @@ export class FolderConnectionSession {
     );
 
     return {
-      documents: result.findings ?? [],
+      documents: rankFindDocuments(result.findings ?? []),
       complete: result.complete,
       excluded: result.excluded,
       limits: result.limits,

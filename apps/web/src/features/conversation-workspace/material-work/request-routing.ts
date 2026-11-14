@@ -58,7 +58,7 @@ export function prepareFoundDocuments(
 
   if (!canStart || state.phase !== "ready" || !state.result || !state.selectedPaths.length) return false;
 
-  const paths = state.selectedPaths.filter(path => state.result!.documents.some(document => JSON.stringify(document.path) === JSON.stringify(path)));
+  const paths = state.selectedPaths.filter(path => state.result!.documents.some(document => document.contentAvailable !== false && JSON.stringify(document.path) === JSON.stringify(path)));
 
   if (paths.length !== state.selectedPaths.length) return false;
 
