@@ -51,6 +51,8 @@ export function OrganizationPreparationPanel({
         ? "참고"
         : "목적지";
 
+  if (state.purpose === "grounded") return null;
+
   if (picker.open && state.picking)
     return (
       <DestinationFolderPicker

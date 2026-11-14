@@ -10,8 +10,9 @@ import type { LiveOrganizationAction } from "../../../shared/live-organization";
 import type { AiProvider } from "../../../shared/ai-provider";
 import { actionClasses } from "../../../components/ui/action-classes";
 
-function FindWorkPanel({ onPrepare, canStart }: {
+function FindWorkPanel({ onPrepare, onQuestion, canStart }: {
   onPrepare: () => void;
+  onQuestion?: () => void;
   canStart: boolean
 }) {
   const local = useSharedSourceFolderConnection();
@@ -49,6 +50,7 @@ function FindWorkPanel({ onPrepare, canStart }: {
         folderName={folderName}
         currentPath={listing.result?.path ?? []}
         onPrepare={onPrepare}
+        onQuestion={onQuestion}
         canPrepare={canStart}
         onOpenFile={path => {
           trigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -74,9 +76,10 @@ function FindWorkPanel({ onPrepare, canStart }: {
   </>;
 }
 
-export function MaterialWorkPanel({ kind, onPrepare, canStart, organizeAction, aiProvider, waitingForSource, onContinue }: {
+export function MaterialWorkPanel({ kind, onPrepare, onQuestion, canStart, organizeAction, aiProvider, waitingForSource, onContinue }: {
   kind: "find" | "organize";
   onPrepare: () => void;
+  onQuestion?: () => void;
   canStart: boolean;
   organizeAction?: LiveOrganizationAction;
   aiProvider: AiProvider | null;
@@ -95,6 +98,6 @@ export function MaterialWorkPanel({ kind, onPrepare, canStart, organizeAction, a
   >연결한 폴더로 요청 계속</button>;
 
   return kind === "find"
-    ? <FindWorkPanel onPrepare={onPrepare} canStart={canStart} />
+    ? <FindWorkPanel onPrepare={onPrepare} onQuestion={onQuestion} canStart={canStart} />
     : <OrganizationPreparationPanel organizeAction={organizeAction} aiProvider={aiProvider} />;
 }

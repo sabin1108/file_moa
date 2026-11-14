@@ -47,6 +47,15 @@ async function prepared() {
 }
 
 describe("LT-T07/08/10: explicit live transfer lifecycle", () => {
+  it("never sends question preparations through the organization action", async () => {
+    const { controller, action } = await prepared();
+    controller.update({ purpose: "grounded" });
+    await controller.prepare();
+    controller.consent(true);
+    expect(controller.getSnapshot().consentKey).toBeNull();
+    await controller.send(action);
+    expect(action).not.toHaveBeenCalled();
+  });
   it("stores answers without an automatic request and invalidates the old proposal/consent", async () => {
     const { controller, action } = await prepared();
 

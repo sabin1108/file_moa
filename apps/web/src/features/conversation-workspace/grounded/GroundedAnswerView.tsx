@@ -10,13 +10,14 @@ type Grounded = ReturnType<typeof useGroundedConversation>;
 
 export function GroundedConsent({ conversation }: { conversation: Grounded }) {
   return <section aria-label="선택 자료 전송 확인">
-    <p>선택한 {conversation.documents.length}개 자료의 확인한 발췌만 전송합니다. 전체 원문을 읽은 답변으로 취급하지 마세요.</p>
+    <p>선택한 {conversation.documents.length}개 자료의 파일 이름과 확인한 발췌를 전송합니다. 전체 원문을 읽은 답변으로 취급하지 마세요.</p>
     <label><input
       type="checkbox"
       checked={conversation.consented}
       disabled={conversation.pending}
       onChange={event => conversation.setConsent(event.target.checked)}
-    /> 질문과 선택한 발췌를 현재 AI 공급자에게 보내는 데 동의합니다.</label>
+    /> 질문·파일 이름·발췌를 현재 AI 공급자에게 보내는 데 동의합니다.</label>
+    <details><summary>앱 서버에 전달되는 정보</summary><p>질문과 선택 자료의 이름·발췌·경로·해시·크기·수정 시각을 앱 서버로 보냅니다. AI 공급자에는 질문·파일 이름·발췌를 보냅니다.</p></details>
     {conversation.notice && <p role="status">
       {conversation.notice}
     </p>}

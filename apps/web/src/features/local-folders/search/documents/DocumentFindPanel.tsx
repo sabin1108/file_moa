@@ -9,6 +9,8 @@ import type {
 } from "./document-find-controller";
 import { confirmFindQuery } from "./document-find";
 import styles from "../../organization/organization-preparation.module.css";
+import findStyles from "./document-find.module.css";
+import { Icon } from "../../../../components/ui/Icon";
 
 export function DocumentFindPanel({
   controller,
@@ -17,6 +19,7 @@ export function DocumentFindPanel({
   currentPath,
   onOpenFile,
   onPrepare,
+  onQuestion,
   canPrepare,
 }: {
   controller: DocumentFindController;
@@ -25,6 +28,7 @@ export function DocumentFindPanel({
   currentPath: readonly string[];
   onOpenFile: (path: readonly string[]) => void;
   onPrepare: () => void;
+  onQuestion?: () => void;
   canPrepare: boolean;
 }) {
   const busy = state.phase === "searching";
@@ -40,9 +44,9 @@ export function DocumentFindPanel({
   }
 
   return (
-    <div data-document-find className={styles.preparation}>
-      <details open={state.phase !== "ready"}>
-        <summary>검색 조건 · {range}</summary>
+    <div data-document-find className={`${styles.preparation} ${findStyles.panel}`}>
+      <details className={findStyles.settings} open={state.phase !== "ready"}>
+        <summary><Icon name="search" /><strong>검색 조건</strong>{state.phase === "ready" && <span>{state.filters.terms}</span>}<Icon name="chevron" size={16} /></summary>
         <form
           onSubmit={(event) => {
             event.preventDefault();
@@ -50,9 +54,9 @@ export function DocumentFindPanel({
           }}
         >
           <fieldset disabled={busy} className={styles.conditions}>
-            <legend>어떤 자료를 찾을까요?</legend>
+            <legend className="sr-only">검색 조건 입력</legend>
             <label className={styles.basis}>
-              본문에서 찾을 단어 · 모두 포함
+              <span className={findStyles.label}>검색어 <small>본문에 모든 단어 포함</small></span>
               <input
                 aria-label="본문 검색어"
                 required
@@ -63,7 +67,9 @@ export function DocumentFindPanel({
                 }
               />
             </label>
-            <div className={styles.findFields}>
+            <details className={findStyles.period} open={period}>
+              <summary>기간 <span data-find-range>{range}</span></summary>
+              <div className={styles.findFields}>
               <label className={styles.basis}>
                 찾을 달
                 <select
@@ -152,26 +158,18 @@ export function DocumentFindPanel({
                     </label>}
                   </>
                 )}
-            </div>
-            <p data-find-range>
-              {range}
-            </p>
-            <p>
-              검색 범위:{" "}
-              {state.scope.kind === "folder"
-                ? [folderName, ...state.scope.path].join(" / ")
-                : `${folderName} 전체`}
-            </p>
+              </div>
+            </details>
             <fieldset className={styles.scopeChoices}>
-              <legend>어디에서 찾을까요?</legend>
+              <legend>검색 범위 <small className={findStyles.scopeName}>{state.scope.kind === "folder" ? [folderName, ...state.scope.path].join(" / ") : folderName}</small></legend>
               <label><input type="radio" name="find-scope" checked={state.scope.kind === "all"} onChange={() => controller.setScope(null)} />연결한 폴더 전체</label>
               <label><input type="radio" name="find-scope" checked={state.scope.kind === "folder"} onChange={() => controller.setScope(currentPath)} />현재 폴더와 하위 폴더</label>
             </fieldset>
             <p className={styles.note}>
-              이 기기에서 검색합니다. 파일을 옮기거나 외부 AI로 보내지 않습니다.
+              이 기기에서만 검색합니다.
             </p>
             <div className={styles.actions}>
-              <button type="submit" data-find-search className={actionClasses("primary")}>검색 시작</button>
+              <button type="submit" data-find-search className={actionClasses("primary")}><Icon name="search" size={18} />검색 시작</button>
             </div>
           </fieldset>
         </form>
@@ -203,13 +201,13 @@ export function DocumentFindPanel({
                     document.querySelector<HTMLInputElement>('[aria-label="본문 검색어"]')?.focus();
                   }}
                 >검색어 바꾸기</button>
-                <p className={styles.note}>조건을 바꾼 뒤 검색 시작을 눌러 주세요. 검색 범위와 읽기 문제도 확인할 수 있어요.</p>
               </div>
               : <div className={styles.actions}>
+                {onQuestion && <button type="button" data-find-question className={actionClasses("primary")} disabled={!canPrepare || !state.selectedPaths.length} onClick={onQuestion}>선택한 자료로 질문</button>}
                 <button
                   type="button"
                   data-find-prepare
-                  className={actionClasses("primary")}
+                  className={actionClasses("secondary")}
                   disabled={!canPrepare || !state.selectedPaths.length}
                   onClick={onPrepare}
                 >선택한 {state.selectedPaths.length}개 정리 준비</button>

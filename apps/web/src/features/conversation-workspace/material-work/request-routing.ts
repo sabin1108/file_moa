@@ -1,12 +1,13 @@
 import { isFindRequest } from "../../local-folders/search/documents/document-find";
 import type { DocumentFindController } from "../../local-folders/search/documents/document-find-controller";
 import type { OrganizationPreparationController } from "../../local-folders/organization/organization-preparation-controller";
+import type { SourceListingState } from "../../local-folders/browsing/file-list/source-listing-controller";
 
 export type ConversationRequestIntent = "find" | "organize";
 
 type RequestActions = {
   finding: Pick<DocumentFindController, "start" | "reset">;
-  organization: Pick<OrganizationPreparationController, "cancel" | "update" | "prepare">;
+  organization: Pick<OrganizationPreparationController, "cancel" | "reset" | "update" | "prepare">;
   preview: { close: () => void };
 };
 
@@ -40,6 +41,7 @@ export function routeConversationRequest(
   if (intent === "find") actions.finding.start(text);
   else {
     actions.finding.reset();
+    actions.organization.reset();
     actions.organization.update({ request: text });
     void actions.organization.prepare();
   }
@@ -50,6 +52,7 @@ export function routeConversationRequest(
 export function prepareFoundDocuments(
   actions: Omit<RequestActions, "finding"> & { finding: Pick<DocumentFindController, "getSnapshot" | "reset"> },
   canStart: boolean,
+  question?: string,
 ): boolean {
   const state = actions.finding.getSnapshot();
 
@@ -59,17 +62,48 @@ export function prepareFoundDocuments(
 
   if (paths.length !== state.selectedPaths.length) return false;
 
-  actions.preview.close();
-  actions.organization.cancel();
-  actions.organization.update({
-    request: `${state.filters.terms} 자료 정리`,
-    scope: { kind: "selected", entries: paths.map(path => ({ kind: "file", path })) },
-    basis: "",
-    reference: null,
-    destination: null,
-  });
+  if (question !== undefined && !question.trim()) return false;
+
+  preparePaths(actions, paths, question?.trim() ?? `${state.filters.terms} 자료 정리`, question === undefined ? "organize" : "grounded");
   actions.finding.reset();
+
+  return true;
+}
+
+function preparePaths(actions: Pick<RequestActions, "organization" | "preview">, paths: readonly (readonly string[])[], request: string, purpose: "organize" | "grounded") {
+  actions.preview.close();
+  actions.organization.reset();
+  actions.organization.update({ purpose, request, scope: { kind: "selected", entries: paths.map(path => ({ kind: "file", path })) }, basis: "", reference: null, destination: null });
   void actions.organization.prepare();
+}
+
+export function prepareQuestionSelection(actions: Pick<RequestActions, "organization" | "preview">, files: SourceListingState, question: string, canStart: boolean) {
+  if (!canStart || !question.trim() || !files.available || files.phase !== "ready" || files.stale || !files.result) return false;
+
+  const paths = files.result.entries.filter(entry => entry.kind === "file" && files.selectedNames.includes(entry.name)).map(entry => [...files.result!.path, entry.name]);
+
+  if (!paths.length) return false;
+
+  preparePaths(actions, paths, question.trim(), "grounded");
+
+  return true;
+}
+
+export function reprepareQuestionSources(actions: { organization: RequestActions["organization"] & Pick<OrganizationPreparationController, "getSnapshot">; preview: RequestActions["preview"] }, question: string, canStart: boolean) {
+  const state = actions.organization.getSnapshot();
+
+  if (!state.snapshot || (!state.snapshot.complete && state.scope?.kind !== "selected")) return false;
+
+  const documents = state.snapshot?.documents ?? [];
+  const selected = documents.filter(document => state.selectedIds.includes(document.id)).map(document => document.path);
+  const unresolved = state.scope?.kind === "selected"
+    ? state.scope.entries.filter(entry => entry.kind === "file" && !documents.some(document => JSON.stringify(document.path) === JSON.stringify(entry.path))).map(entry => entry.path)
+    : [];
+  const paths = [...selected, ...unresolved];
+
+  if (!canStart || !question.trim() || !paths.length) return false;
+
+  preparePaths(actions, paths, question.trim(), "grounded");
 
   return true;
 }

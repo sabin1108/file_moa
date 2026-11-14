@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { actionClasses } from "../../../../components/ui/action-classes";
-import { StatusNotice } from "../../../../components/ui/feedback/StatusNotice";
+import { Icon } from "../../../../components/ui/Icon";
 import { SourceFileRow } from "../../browsing/file-list/SourceFileRow";
 import type { FindResult } from "./document-find";
 import styles from "../../organization/organization-preparation.module.css";
+import findStyles from "./document-find.module.css";
 
 const reasons: Record<string, string> = {
   "unsupported-extension": "TXT·MD·PDF·PNG·JPEG가 아닌 형식",
@@ -41,6 +42,7 @@ export function DocumentFindResults({
   onToggle: (path: readonly string[]) => void;
 }) {
   const [limit, setLimit] = useState(20);
+  const [excludedLimit, setExcludedLimit] = useState(20);
   const heading = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
@@ -57,23 +59,15 @@ export function DocumentFindResults({
   const visible = [...confirmed, ...uncertain].slice(0, limit);
 
   return (
-    <section data-find-results aria-label="본문 근거 검색 결과">
-      <h3 ref={heading}>찾은 후보 {result.documents.length}개</h3>
-      <p>
-        조건에 맞는 후보 {confirmed.length}개 · 날짜 확인 필요{" "}
-        {uncertain.length}개
-      </p>
-      {!result.complete
-        && (
-          <StatusNotice
-            state="attention"
-            title="일부 자료는 검색하지 못했어요"
-            detail="아래 ‘제외·읽기 문제’에서 확인할 수 있어요."
-          />
-        )}
-      {!result.documents.length && (
-        <p>확인한 범위에서 조건에 맞는 후보를 찾지 못했어요.</p>
-      )}
+    <section data-find-results className={findStyles.results} aria-label="본문 근거 검색 결과">
+      {result.documents.length > 0 ? <header className={findStyles.resultHeading}>
+        <h3 ref={heading}>찾은 자료 {result.documents.length}개</h3>
+        {uncertain.length > 0 && <p>날짜 확인 필요 {uncertain.length}개</p>}
+      </header> : <div className={findStyles.empty} role="status">
+        <Icon name="search" size={30} />
+        <h3 ref={heading}>확인한 자료에서는 찾지 못했어요</h3>
+        <p>검색어를 줄이거나 검색 범위를 바꿔 보세요.</p>
+      </div>}
       <ul className={styles.findDocuments}>
         {visible.map((document) => (
           <li key={JSON.stringify(document.path)} data-find-candidate>
@@ -122,18 +116,21 @@ export function DocumentFindResults({
             다음 후보 20개 보기
           </button>
         )}
-      {result.excluded.length > 0
+      {(!result.complete || result.excluded.length > 0)
         && (
-          <details>
-            <summary>제외·읽기 문제 {result.excluded.length}개</summary>
+          <details className={findStyles.coverage}>
+            <summary><Icon name="warning" size={16} />{result.complete ? "검색에서 제외한 항목" : "일부 자료는 확인하지 못했어요"}<span>{result.excluded.length}개 · 상세 보기</span></summary>
+            <dl>{[...new Set(result.excluded.map(entry => entry.reason))].map(reason => <div key={reason} style={{ display: "contents" }}><dt>{reasons[reason] ?? "읽기 또는 탐색 한도"}</dt><dd>{result.excluded.filter(entry => entry.reason === reason).length}개</dd></div>)}</dl>
+            {result.limits.length > 0 && <p>탐색 시간·용량·문서 수 제한으로 일부 범위를 확인하지 못했습니다.</p>}
             <ul>
-              {result.excluded.map((entry, index) => (
+              {result.excluded.slice(0, excludedLimit).map((entry, index) => (
                 <li key={index}>
                   {entry.path.join(" / ")} ·{" "}
                   {reasons[entry.reason] ?? "읽기 또는 탐색 한도 문제"}
                 </li>
               ))}
             </ul>
+            {excludedLimit < result.excluded.length && <button type="button" className={actionClasses("secondary")} onClick={() => setExcludedLimit(value => value + 20)}>제외 항목 20개 더 보기</button>}
           </details>
         )}
     </section>

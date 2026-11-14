@@ -8,6 +8,11 @@
 .contextActions button span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .settingsButton { margin-left: auto; flex: none; }
 .transmission { color: var(--muted); font-size: 12px; }
+.sourcePreparation { display: grid; gap: 12px; margin-top: 12px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 14px; }
+.sourcePreparation p { color: var(--muted); }
+.sourcePreparation .messageActions { margin-top: 0; }
+.sourcePreparation summary { padding-block: 8px; cursor: pointer; }
+.sourcePreparation input[type="checkbox"] { width: 18px; height: 18px; margin-right: 8px; accent-color: var(--focus); }
 .settings { display: grid; gap: 24px; padding: 20px 4px; }
 .settings > section { display: grid; gap: 12px; }
 .settings h3 { font-size: 15px; font-weight: 600; }

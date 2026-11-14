@@ -36,7 +36,7 @@ export function useGroundedConversation(question: string, action?: GroundedActio
   const isSending = useCallback(() => active.current !== null, []);
   const connection = local.sources.find(source => source.active)?.connectionId ?? "legacy";
   const documents = preparation.snapshot?.documents.filter(document => preparation.selectedIds.includes(document.id)) ?? [];
-  const sourceKey = JSON.stringify([local.owner, connection, documents.map(document => [document.id, document.path, document.sha256, document.excerptHash])]);
+  const sourceKey = JSON.stringify([local.owner, connection, preparation.purpose, preparation.submittedRequest, documents.map(document => [document.id, document.path, document.sha256, document.excerptHash])]);
   const key = JSON.stringify([sourceKey, question]);
   const cancel = useCallback(() => {
     active.current?.abort();
@@ -54,9 +54,11 @@ export function useGroundedConversation(question: string, action?: GroundedActio
   useEffect(() => () => cancel(), [key, cancel]);
 
   const pending = pendingKey === key;
+  const matchesQuestion = preparation.purpose === "grounded" && preparation.submittedRequest === question.trim();
+  const prepared = matchesQuestion && preparation.phase === "ready" && !!preparation.snapshot && (preparation.snapshot.complete || preparation.partialAccepted);
 
   const send = async (taskId: string): Promise<(GroundedAnswer & { evidence: GroundedEvidence }) | null> => {
-    if (!action || active.current || consent !== key || !question.trim() || !documents.length) return null;
+    if (!action || active.current || !prepared || consent !== key || !question.trim() || !documents.length) return null;
 
     const operation = new AbortController();
 
@@ -235,9 +237,10 @@ export function useGroundedConversation(question: string, action?: GroundedActio
 
   return {
     documents,
+    matchesQuestion,
     pending,
     consented: consent === key,
-    canSend: !!action && !!documents.length && !!question.trim() && consent === key && !pending,
+    canSend: !!action && prepared && !!documents.length && !!question.trim() && consent === key && !pending,
     setConsent: (value: boolean) => setConsent(value ? key : null),
     result: result?.key === sourceKey ? result : null,
     notice,

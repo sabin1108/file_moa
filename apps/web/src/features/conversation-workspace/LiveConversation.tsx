@@ -12,7 +12,8 @@ import { useSharedSourceFolderConnection } from "../local-folders/SourceFolderPr
 import { useGeneralChat } from "./messaging/useGeneralChat";
 import { MaterialWorkPanel } from "./material-work/MaterialWorkPanel";
 import { RequestIntentChoice } from "./material-work/RequestIntentChoice";
-import { GroundedAnswerView, GroundedConsent, SavedGroundedAnswer } from "./grounded/GroundedAnswerView";
+import { GroundedAnswerView, SavedGroundedAnswer } from "./grounded/GroundedAnswerView";
+import { GroundedPreparationPanel } from "./grounded/GroundedPreparationPanel";
 import { SourceConnectionControl } from "../local-folders/connection/SourceConnectionControl";
 import { useWorkspaceConversation } from "./material-work/useWorkspaceConversation";
 import { useConversationStore } from "./ConversationStateProvider";
@@ -93,7 +94,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
     if (answer) {
       let status: string | undefined;
 
-      if (turn.status === "completed") status = turn.kind && turn.kind !== "chat" ? "작업 기록" : "답변 완료";
+      if (turn.status === "completed") status = turn.kind && turn.kind !== "chat" ? undefined : "답변 완료";
       else if (turn.status !== "pending") status = "미완료 답변";
 
       messages.push({ id: `${turn.id}:answer`, author: "assistant", text: answer, status });
@@ -195,6 +196,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
             : <MaterialWorkPanel
               kind={workflow.task.kind}
               onPrepare={workflow.prepareFound}
+              onQuestion={workflow.prepareFoundForQuestion}
               canStart={workflow.canStart}
               organizeAction={organizeAction}
               aiProvider={aiProvider}
@@ -291,11 +293,10 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
           provider={aiProvider ? AI_PROVIDER_LABELS[aiProvider] : null}
           onOpen={openPanel}
         />
-        {workflow.intent === "grounded" && (workflow.grounded.documents.length
-          ? <GroundedConsent conversation={workflow.grounded} />
-          : <p className={options.transmission}>먼저 파일 화면에서 자료를 선택하고 발췌를 확인해 주세요.</p>)}
       </div>}
-      interaction={workflow.choice
+      interaction={workflow.intent === "grounded"
+        ? workflow.pending || (workflow.grounded.result && !chat.state.draft.trim()) ? null : <GroundedPreparationPanel conversation={workflow.grounded} question={chat.state.draft} available={!!groundedAction} disabled={workflow.blocked} onPrepare={workflow.prepareQuestionSelection} onReprepare={workflow.reprepareQuestionSources} onFind={() => workflow.selectMode("find")} />
+        : workflow.choice
         ? <RequestIntentChoice
           disabled={workflow.blocked}
           onChoose={kind => {

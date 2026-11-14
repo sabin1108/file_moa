@@ -80,12 +80,19 @@ async function fill(text) {
     input.select();
   });
   await page.send("Input.insertText", { text: "이 자료를 요약해 주세요. " + text });
+  if (await page.eval(() => !!document.querySelector('[data-grounded-reread]'))) {
+    await click('[data-grounded-reread]');
+    await until(() => document.querySelector('[aria-label="선택 자료 전송 확인"]'));
+  }
 }
 
 async function prepare() {
+  if (await page.eval(() => !!document.querySelector('[data-tour="task-grounded"]'))) {
+    await click('[data-tour="task-grounded"]');
+  }
   await click("[data-grounded-prepare]");
   await until(() => document.querySelector('[data-grounded-prepare][data-ready="ready"]')
-    && !document.querySelector('#message-draft').readOnly);
+    && document.querySelector('#message-draft') && !document.querySelector('#message-draft').readOnly);
 }
 
 async function consentAndSend() {
@@ -111,6 +118,49 @@ try {
   });
   await click("[data-grounded-connect]");
   await until(() => document.body.innerText.includes("검증 자료 A"));
+  await click('[data-tour="task-grounded"]');
+  await until(() => document.querySelector('#message-draft'));
+  await page.eval(() => { const input = document.querySelector('#message-draft'); input.focus(); });
+  await page.send("Input.insertText", { text: "내가 여태까지 쓴 이력서 어떤거 있는지 말해볼래?" });
+  check("unprepared questions explain how to select sources instead of silently blocking", await page.eval(() => !!document.querySelector('[data-grounded-select]') && !!document.querySelector('[data-grounded-find]') && document.querySelector('[data-action="organization-send"]').disabled));
+  await click('[data-grounded-find]');
+  check("switching to file finding keeps the original question", await page.eval(() => document.querySelector('[aria-label="대화 작업"]').value === "find" && document.getElementById('message-draft').value === "내가 여태까지 쓴 이력서 어떤거 있는지 말해볼래?" && groundedProbe.calls.length === 0));
+  await page.eval(() => { const mode = document.querySelector('[aria-label="대화 작업"]'); mode.value = "grounded"; mode.dispatchEvent(new Event("change", { bubbles: true })); });
+  await click('[data-grounded-select]');
+  await until(() => document.querySelector('[aria-label="evidence.md 미리보기"]'));
+  await page.eval(() => document.querySelector('[aria-label="evidence.md 미리보기"]').dispatchEvent(new KeyboardEvent("keydown", { key: " ", bubbles: true, cancelable: true })));
+  await click('[data-grounded-return]');
+  await until(() => document.querySelector('[data-grounded-read]'));
+  await click('[data-grounded-read]');
+  await until(() => document.querySelector('[aria-label="선택 자료 전송 확인"]') && document.querySelector('[data-grounded-prepare]').dataset.ready === "ready");
+  check("actual file selection prepares question sources without organization or model calls", await page.eval(() => document.querySelector('[aria-label="대화 작업"]').value === "grounded" && document.getElementById('message-draft').value === "내가 여태까지 쓴 이력서 어떤거 있는지 말해볼래?" && groundedProbe.calls.length === 0));
+  await page.screenshot({ path: resolve(output, "question-source-ready-1440.png"), format: "png" });
+  for (const width of [1440, 768, 390]) {
+    await page.setViewport({ width, height: 844 });
+    await page.eval(() => { document.querySelector('[data-grounded-preparation] details').open = true; });
+    check(`${width}: source excerpts scroll without hiding the input or send button`, await page.eval(() => {
+      const input = document.querySelector('#message-draft').getBoundingClientRect();
+      const button = document.querySelector('[data-action="organization-send"]').getBoundingClientRect();
+      return input.top >= 0 && input.bottom <= innerHeight && button.top >= 0 && button.bottom <= innerHeight && document.documentElement.scrollWidth <= innerWidth;
+    }));
+  }
+  await page.setViewport({ width: 1440, height: 1000 });
+  await page.eval(() => document.querySelector('#message-draft').focus());
+  await page.send("Input.insertText", { text: " 다른 질문" });
+  check("a changed question requires fresh excerpts instead of reusing an old consent", await page.eval(() => !!document.querySelector('[data-grounded-reread]') && !document.querySelector('[aria-label="선택 자료 전송 확인"]') && document.querySelector('[data-action="organization-send"]').disabled && groundedProbe.calls.length === 0));
+  await click('[data-grounded-reread]');
+  await until(() => document.querySelector('[aria-label="선택 자료 전송 확인"]'));
+  await click('[data-grounded-prepare-partial]');
+  await until(() => document.querySelector('[aria-label="일부 자료만 사용"]'));
+  await page.eval(() => document.querySelector('#message-draft').focus());
+  await page.send("Input.insertText", { text: " 부분 자료의 새 질문" });
+  await click('[data-grounded-reread]');
+  await until(() => document.querySelector('[aria-label="일부 자료만 사용"]'));
+  check("changing the question retains unresolved paths and still requires partial acceptance", await page.eval(() => !document.querySelector('[aria-label="일부 자료만 사용"]').checked && document.querySelector('[data-action="organization-send"]').disabled));
+  await click('[aria-label="선택 자료 전송 확인"] input');
+  check("incomplete source preparation cannot send without accepting the partial scope", await page.eval(() => document.querySelector('[data-action="organization-send"]').disabled && groundedProbe.calls.length === 0));
+  await click('[aria-label="일부 자료만 사용"]');
+  check("accepting the visible partial scope unlocks the consented question", await page.eval(() => !document.querySelector('[data-action="organization-send"]').disabled));
   await prepare();
   await fill("자료를 요약해 주세요");
   check(
@@ -125,6 +175,12 @@ try {
   );
   await consentAndSend();
   await until(() => document.querySelector('[aria-label="자료 근거 답변"]'));
+  await until(() => {
+    const answer = document.querySelector('[aria-label="자료 근거 답변"]')?.getBoundingClientRect();
+    const thread = document.querySelector('[aria-label="대화 내용"]').getBoundingClientRect();
+    return answer && answer.top < thread.bottom && answer.bottom > thread.top;
+  });
+  check("the finished answer remains visible above the composer", true);
   check(
     "verified answer includes an exact source quotation",
     await page.eval(() => document.querySelector('[aria-label="자료 근거 답변"] q').textContent === groundedProbe.calls[0].documents[0].excerpt.slice(0, 20))
@@ -164,6 +220,8 @@ try {
   await until(() => groundedProbe.releaseCitation);
   await page.eval(() => [...document.querySelectorAll('[data-conversation-context] button')].find(button => button.textContent === "저장 안 함").click());
   await page.eval(() => [...document.querySelectorAll('button')].find(button => button.textContent === "저장 없이 새 대화").click());
+  await until(() => [...document.querySelectorAll('button')].some(button => button.textContent === "미저장 내용 버리고 전환"));
+  await page.eval(() => [...document.querySelectorAll('button')].find(button => button.textContent === "미저장 내용 버리고 전환").click());
   await until(() => !document.querySelector('[aria-label="자료 근거 답변"]'));
   await page.eval(() => groundedProbe.releaseCitation());
   await pause(200);
@@ -295,7 +353,8 @@ try {
     !await page.eval(() => !!document.querySelector('[aria-label="자료 근거 답변"]'))
   );
   await click("[data-grounded-owner]");
-  await until(() => document.getElementById("message-draft"));
+  await until(() => document.querySelector('[data-tour="task-grounded"]'));
+  await click('[data-tour="task-grounded"]');
   await until(() => !document.querySelector('[data-grounded-connect]').disabled);
   await click("[data-grounded-connect]");
   await until(() => !document.querySelector('[data-grounded-connect]').disabled);
@@ -328,7 +387,7 @@ try {
   const savedSource = await page.eval(async () => (await (await listingProbe.a.getFileHandle("evidence.md")).getFile()).text());
 
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/__grounded`, { settleMs: 500 });
-  await until(() => document.getElementById("message-draft"));
+  await until(() => document.querySelector('[data-tour="task-grounded"]'));
   await page.eval(async () => {
     await listingProbe.prepare();
   });
@@ -336,7 +395,7 @@ try {
   await page.eval(() => [...document.querySelectorAll('button')].find(button => button.textContent === "저장 위치").click());
   await until(() => [...document.querySelectorAll('button')].some(button => button.textContent === "권한 확인·다시 읽기"));
   await page.eval(() => [...document.querySelectorAll('button')].find(button => button.textContent === "권한 확인·다시 읽기").click());
-  await page.eval(() => [...document.querySelectorAll('button')].find(button => button.textContent === "기록으로").click());
+  await page.eval(() => [...document.querySelectorAll('button')].find(button => button.textContent.trim() === "기록 목록으로 돌아가기").click());
   await until(() => document.querySelector('[aria-label="저장 기록"] li button'));
   await click('[aria-label="저장 기록"] li button');
   await until(() => document.querySelector('[aria-label="저장된 자료 근거"]'));
@@ -463,7 +522,8 @@ try {
         checks,
         error: String(error),
         consoleErrors: page?.consoleErrors,
-        text: page ? await page.eval(() => document.body.innerText) : ""
+        text: page ? await page.eval(() => document.body.innerText) : "",
+        bootstrap: page ? await page.eval(() => ({ url: location.href, probe: typeof window.groundedProbe, scripts: [...document.scripts].map(script => script.src), resources: performance.getEntriesByType("resource").map(entry => ({ name: entry.name, status: entry.responseStatus })) })) : null,
       },
       null,
       2

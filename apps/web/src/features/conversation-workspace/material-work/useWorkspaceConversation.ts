@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useSharedSourceFolderConnection } from "../../local-folders/SourceFolderProvider";
-import { prepareFoundDocuments } from "./request-routing";
+import { prepareFoundDocuments, prepareQuestionSelection, reprepareQuestionSources } from "./request-routing";
 import { canContinueWorkspaceTask, classifyWorkspaceRequest, type WorkspaceRequestKind } from "./workspace-request";
 import type { GroundedAction } from "../../../shared/grounded-chat";
 import { AI_RECORD_LIMITS } from "../../../shared/ai-records";
@@ -114,7 +114,7 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
 
     if (task.kind === "find") {
       const answer = finding.issue ?? (finding.phase === "ready"
-        ? `자료 후보 ${finding.result?.documents.length ?? 0}개를 찾았어요. 본문 근거를 확인해 주세요.`
+        ? "검색을 마쳤어요."
         : finding.phase === "searching"
           ? "이 기기에서 자료를 찾고 있어요."
           : finding.phase === "cancelled" ? "자료 찾기를 중지했어요." : "검색할 범위와 날짜 기준을 확인해 주세요.");
@@ -271,14 +271,24 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
     }
   };
 
-  const prepareFound = () => {
+  const prepareFound = (kind: "organize" | "grounded") => {
     if (blocked || !connected || local.organizationExecution.managed.getSnapshot().phase === "running") return;
 
     const current = local.finding.getSnapshot();
 
     if (current.phase !== "ready" || !current.result || !current.selectedPaths.length) return;
 
-    const request = `${current.filters.terms} 자료 정리`;
+    const request = kind === "grounded" ? chat.getSnapshot().draft.trim() || current.request : `${current.filters.terms} 자료 정리`;
+    if (kind === "grounded") {
+      if (prepareFoundDocuments({ finding: local.finding, organization: local.organization, preview: local.preview }, true, request)) {
+        store.select({ mode: "grounded" });
+        chat.updateDraft(request);
+        setTask(null);
+        setChoice(null);
+      }
+
+      return;
+    }
     const id = chat.recordTask("organize", request, "선택한 자료를 다시 읽어 정리 조건을 준비하고 있어요.");
 
     if (!id) return;
@@ -326,7 +336,10 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
     submit,
     cancel,
     reset,
-    prepareFound,
+    prepareFound: () => prepareFound("organize"),
+    prepareFoundForQuestion: () => prepareFound("grounded"),
+    prepareQuestionSelection: () => prepareQuestionSelection({ organization: local.organization, preview: local.preview }, local.listing.getSnapshot(), chat.getSnapshot().draft, connected && !blocked),
+    reprepareQuestionSources: () => reprepareQuestionSources({ organization: local.organization, preview: local.preview }, chat.getSnapshot().draft, connected && !blocked),
     resume,
     assertCanChange,
     canStart: connected && !blocked,

@@ -10,10 +10,10 @@ const fixture = vi.hoisted(() => {
     sha256: "a".repeat(64),
     excerptHash: "b".repeat(64)
   };
-  const preparation = { snapshot: { documents: [document] }, selectedIds: [document.id], request: "자료 준비" };
+  const preparation = { snapshot: { documents: [document] }, selectedIds: [document.id], purpose: "grounded", submittedRequest: "자료 질문", request: "자료 질문" };
   const result = {
     taskId: "task-one",
-    key: JSON.stringify([owner, "source-one", [[document.id, document.path, document.sha256, document.excerptHash]]]),
+    key: JSON.stringify([owner, "source-one", preparation.purpose, preparation.submittedRequest, [[document.id, document.path, document.sha256, document.excerptHash]]]),
     question: "자료 질문",
     value: { answer: "확인한 답변", citations: [] }
   };

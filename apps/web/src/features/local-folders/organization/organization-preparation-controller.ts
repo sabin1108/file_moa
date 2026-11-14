@@ -23,6 +23,7 @@ import type { SnapshotDocument } from "./source-snapshot-rules";
 import { parseOrganizationReply } from "./organization-reply";
 
 type Conditions = Readonly<{
+  purpose: "organize" | "grounded";
   request: string;
   scope: OrganizationScope | null;
   basis: string;
@@ -59,6 +60,7 @@ export type OrganizationPreparationState = Conditions &
   }>;
 
 const initial: OrganizationPreparationState = {
+  purpose: "organize",
   request: "",
   scope: null,
   basis: "",
@@ -399,6 +401,7 @@ export class OrganizationPreparationController {
     const state = this.state;
 
     if (
+      state.purpose !== "organize" ||
       state.phase !== "ready" ||
       !state.snapshot ||
       (!state.snapshot.complete && !state.partialAccepted)
@@ -420,6 +423,7 @@ export class OrganizationPreparationController {
     const state = this.state;
 
     if (
+      state.purpose !== "organize" ||
       state.phase !== "ready" ||
       !state.snapshot ||
       !state.scope ||
