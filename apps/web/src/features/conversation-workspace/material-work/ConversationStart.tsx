@@ -20,6 +20,7 @@ export function ConversationStart({ onChoose, disabled, modes }: {
     {conversationActions.filter(action => !modes || modes.includes(action.kind)).map(action => <button
       type="button"
       key={action.kind}
+      data-tour={`task-${action.kind}`}
       disabled={disabled}
       onClick={() => onChoose(action.kind)}
     >

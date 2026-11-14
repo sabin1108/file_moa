@@ -11,10 +11,11 @@ import controls from "../../../styles/controls.module.css";
 import { acceptWikiUpdate, isWiki, wikiMarkdown } from "../wiki/wiki";
 import { WikiSources } from "../wiki/WikiSources";
 
-export function RecordEditor({ initial, controller, onClose }: {
+export function RecordEditor({ initial, controller, onClose, onReveal }: {
   initial: Exclude<AiRecordPayload, { type: "conversation" }>;
   controller: AiRecordsController;
-  onClose: () => void
+  onClose: () => void;
+  onReveal?: () => void;
 }) {
   const [value, setValue] = useState(initial);
   const [notice, setNotice] = useState("");
@@ -24,7 +25,7 @@ export function RecordEditor({ initial, controller, onClose }: {
   const [format, setFormat] = useState<"md" | "txt">("md");
   const dirty = JSON.stringify(value) !== savedContent
     || !controller.getSnapshot().records.some(record => record.payload.id === value.id);
-  const requestLeave = useCallback(() => setClosing(true), []);
+  const requestLeave = useCallback(() => { setClosing(true); onReveal?.(); }, [onReveal]);
   const { cancelNavigation, confirmNavigation } = useNavigationBlocker(dirty || pending, requestLeave);
   const [versions, setVersions] = useState<Awaited<ReturnType<AiRecordsController["repository"]["revisions"]>>>([]);
 

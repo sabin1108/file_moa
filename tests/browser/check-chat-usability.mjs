@@ -5,6 +5,7 @@ import { resolve } from "node:path";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { Browser } from "../../.agents/skills/design-taste-frontend/scripts/lib/cdp.mjs";
 import { installFolderBrowserFixture } from "../fixtures/folder-browser-fixture.mjs";
+import { workspaceTourSteps } from "../../apps/web/src/features/onboarding/workspace-tour-steps.ts";
 
 const require = createRequire(import.meta.resolve("vitest"));
 const { createServer } = await import(pathToFileURL(require.resolve("vite")).href);
@@ -49,6 +50,17 @@ async function fill(selector, value) {
   await page.send("Input.insertText", { text: value });
 }
 
+async function waitGuideStep(index) {
+  await until(step => {
+    const dialog = document.querySelector('dialog:modal[aria-labelledby="workspace-tour-title"]');
+    const target = [...document.querySelectorAll(step.selector)].find(node => node.checkVisibility());
+    const spot = dialog?.querySelector('[aria-hidden="true"]');
+    if (!target || !spot || dialog.querySelector("h2").textContent !== step.title || dialog.getAttribute("aria-busy") !== "false") return false;
+    const a = target.getBoundingClientRect(), b = spot.getBoundingClientRect();
+    return Math.abs(b.top - Math.max(4, a.top - 4)) < 1 && Math.abs(b.left - Math.max(4, a.left - 4)) < 1 && Math.abs(b.right - Math.min(innerWidth - 4, a.right + 4)) < 1 && Math.abs(b.bottom - Math.min(innerHeight - 4, a.bottom + 4)) < 1 && !dialog.getAnimations({ subtree: true }).some(animation => animation.playState === "running");
+  }, workspaceTourSteps[index]);
+}
+
 try {
   page = await browser.newPage({ width: 1440, height: 1000 });
   await page.send("Page.addScriptToEvaluateOnNewDocument", { source: `(${installFolderBrowserFixture.toString()})();const originalPicker=window.showDirectoryPicker;window.pickerCalls=0;window.showDirectoryPicker=async options=>{window.pickerCalls++;if(options?.mode==='readwrite'){const root=await navigator.storage.getDirectory();return root.getDirectoryHandle('AI 기록 검증',{create:true});}return originalPicker(options);};` });
@@ -58,7 +70,7 @@ try {
   check("first visit opens a native modal tutorial", await page.eval(() => document.activeElement.id === "workspace-tour-title"));
   await page.screenshot({ path: resolve(output, "tour-1440.png"), format: "png" });
   await click("다음"); await click("이전");
-  check("tour supports previous and next", await page.eval(() => document.querySelector('dialog:modal').textContent.includes("1 / 9")));
+  check("tour supports previous and next", await page.eval(() => document.querySelector('dialog:modal').textContent.includes("1 / 17")));
   await page.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   await until(() => !document.querySelector('dialog:modal'));
   await page.goto(url, { settleMs: 350 });
@@ -76,12 +88,29 @@ try {
   check("replaying guidance preserves the draft", await page.eval(() => document.getElementById("message-draft").value === "보존할 한글 초안"));
   const historyBeforeGuide = await page.eval(() => history.length);
   const pickerBeforeGuide = await page.eval(() => window.pickerCalls);
-  for (let step = 0; step < 8; step++) {
+  const explainedTasks = [], explainedRecords = [];
+  await page.eval(() => {
+    window.guideCloseCalls = 0;
+    document.querySelector('dialog[aria-labelledby="workspace-tour-title"]').addEventListener("close", () => window.guideCloseCalls++);
+  });
+  for (let step = 0; step < 16; step++) {
     await click("다음");
     await until(() => ![...document.querySelectorAll('dialog:modal button')].find(button => button.textContent === "다음" || button.textContent === "완료")?.disabled);
     await until(() => document.querySelector('dialog:modal [aria-hidden="true"]')?.getBoundingClientRect().width > 0);
+    await waitGuideStep(step + 1);
     check(`guide step ${step + 2} highlights its actual control`, true);
+    check(`guide step ${step + 2} leaves its target uncovered`, await page.eval(() => {
+      const dialog = document.querySelector('dialog:modal[aria-labelledby="workspace-tour-title"]');
+      const a = dialog.querySelector("section").getBoundingClientRect(), b = dialog.querySelector('[aria-hidden="true"]').getBoundingClientRect();
+      return Math.min(a.right, b.right) <= Math.max(a.left, b.left) || Math.min(a.bottom, b.bottom) <= Math.max(a.top, b.top);
+    }));
+    const detail = await page.eval(() => ({ title: document.querySelector('#workspace-tour-title').textContent, record: document.querySelector('#conversation-materials[open] [aria-label="보관 기록 종류"] button[aria-pressed="true"]')?.getAttribute('data-tour') }));
+    if (step >= 2 && step <= 5) explainedTasks.push(detail.title.split(" · ")[0]);
+    if (step >= 8 && step <= 12) explainedRecords.push(detail.record);
   }
+  check("all four tasks have their own usage guidance", JSON.stringify(explainedTasks) === JSON.stringify(["일반 대화", "자료 찾기", "자료로 질문", "자료 정리"]));
+  check("all five record tabs are actually revealed without creating a record", JSON.stringify(explainedRecords) === JSON.stringify(["record-conversation", "record-artifact", "record-wiki", "record-memory", "record-profile"]));
+  check("ordinary guide transitions keep the same native dialog open", await page.eval(() => window.guideCloseCalls === 0));
   await click("완료");
   await until(() => !document.querySelector('dialog:modal'));
   check("guide route changes keep history length and do not invoke the folder picker", await page.eval(expected => history.length === expected.history && window.pickerCalls === expected.pickers, { history: historyBeforeGuide, pickers: pickerBeforeGuide }));
@@ -89,7 +118,7 @@ try {
   await until(() => document.querySelector('a[href="/?guide=1"]'));
   await page.eval(() => document.querySelector('a[href="/?guide=1"]').click());
   await until(() => document.querySelector('dialog:modal #workspace-tour-title'));
-  check("settings replay link opens the guide without remounting the workspace layout", await page.eval(() => document.querySelector('dialog:modal').textContent.includes("1 / 9") && location.pathname === "/" && !location.search.includes("guide=1")));
+  check("settings replay link opens the guide without remounting the workspace layout", await page.eval(() => document.querySelector('dialog:modal').textContent.includes("1 / 17") && location.pathname === "/" && !location.search.includes("guide=1")));
   await click("건너뛰기");
   await until(() => !document.querySelector('dialog:modal'));
   await click("기록함");
@@ -165,12 +194,12 @@ try {
   check("a second route request keeps the current leave confirmation", await page.eval(() => !!document.querySelector('[aria-label="검증용 이탈 확인"]') && !document.querySelector('dialog:modal')));
   await click("검증용 계속 편집");
   await until(() => document.querySelector('dialog:modal #workspace-tour-title'));
-  check("cancelling the navigation resumes the same guide step", await page.eval(() => document.querySelector('dialog:modal').textContent.includes("1 / 9")));
+  check("cancelling the navigation resumes the same guide step", await page.eval(() => document.querySelector('dialog:modal').textContent.includes("1 / 17")));
   await click("다음");
   await until(() => document.querySelector('[aria-label="검증용 이탈 확인"]') && !document.querySelector('dialog:modal'));
   await page.eval(() => [...document.querySelectorAll('a[href="/settings"]')].find(link => link.checkVisibility()).click());
   await click("검증용 이동");
-  await until(() => document.querySelector('dialog:modal').textContent.includes("2 / 9"));
+  await until(() => document.querySelector('dialog:modal').textContent.includes("2 / 17"));
   check("confirming navigation resumes the requested guide step", await page.eval(() => location.pathname === "/files"));
   await click("건너뛰기");
   await until(() => !document.querySelector('dialog:modal'));
@@ -180,14 +209,49 @@ try {
   await page.eval(() => document.querySelector('[data-fixture-guide-replay]').click());
   await until(() => document.querySelector('dialog:modal #workspace-tour-title'));
   await click("다음");
-  await until(() => document.querySelector('dialog:modal').textContent.includes("2 / 9"));
+  await until(() => document.querySelector('dialog:modal').textContent.includes("2 / 17"));
   await page.eval(() => window.resolveFixtureGuide());
   await page.eval(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-  check("a late first-use claim does not restart a manually opened guide", await page.eval(() => document.querySelector('dialog:modal').textContent.includes("2 / 9")));
+  check("a late first-use claim does not restart a manually opened guide", await page.eval(() => document.querySelector('dialog:modal').textContent.includes("2 / 17")));
   await click("건너뛰기");
   await until(() => !document.querySelector('dialog:modal'));
+  const matrix = [];
+  for (const { width, reduced } of [{ width: 1440, reduced: false }, { width: 768, reduced: false }, { width: 390, reduced: false }, { width: 390, reduced: true }]) {
+    await page.setViewport({ width, height: width === 768 ? 1024 : 700 });
+    await page.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: reduced ? "reduce" : "no-preference" }] });
+    await page.goto(url, { settleMs: 350 });
+    await page.eval(() => document.querySelector('[data-fixture-guide-replay]').click());
+    for (let index = 0; index < workspaceTourSteps.length; index++) {
+      const started = performance.now();
+      await waitGuideStep(index);
+      const geometry = await page.eval(() => {
+        const dialog = document.querySelector('dialog:modal[aria-labelledby="workspace-tour-title"]');
+        const a = dialog.querySelector("section").getBoundingClientRect(), b = dialog.querySelector('[aria-hidden="true"]').getBoundingClientRect();
+        const actionsVisible = [...dialog.querySelectorAll("button")].every(button => { const r = button.getBoundingClientRect(); return r.top >= a.top && r.bottom <= a.bottom && r.left >= a.left && r.right <= a.right; });
+        return { title: dialog.querySelector("h2").textContent, clear: Math.min(a.right, b.right) <= Math.max(a.left, b.left) || Math.min(a.bottom, b.bottom) <= Math.max(a.top, b.top), inViewport: a.left >= 0 && a.top >= 0 && a.right <= innerWidth && a.bottom <= innerHeight, actionsVisible, recordPreviewModal: document.querySelector('#conversation-materials')?.matches(':modal') ?? false, transition: getComputedStyle(dialog.querySelector('[aria-hidden="true"]')).transitionDuration, taskTarget: [...document.querySelectorAll('[data-tour^="task-"]')].some(node => node.checkVisibility()), cardHeight: a.height };
+      });
+      check(`${width}${reduced ? " reduced" : ""}: step ${index + 1} is readable without covering its target`, geometry.clear && geometry.inViewport && geometry.actionsVisible && !geometry.recordPreviewModal);
+      assert.equal(await page.eval(() => document.querySelector('[data-tour-copy]').scrollTop), 0, "Each explanation starts at its title");
+      if (index >= 3 && index <= 6) assert.ok(geometry.taskTarget, "Initial task buttons remain available without selecting a mode");
+      if (reduced) assert.equal(geometry.transition, "0s");
+      matrix.push({ width, reduced, step: index + 1, settledMs: performance.now() - started, ...geometry });
+      if (!reduced && [4, 12, 16].includes(index)) await page.screenshot({ path: resolve(output, `guide-${width}-${index + 1}.png`), format: "png" });
+      await page.eval(() => { const copy = document.querySelector('[data-tour-copy]'); copy.scrollTop = copy.scrollHeight; });
+      await click(index === workspaceTourSteps.length - 1 ? "완료" : "다음");
+    }
+    await until(() => !document.querySelector('dialog:modal'));
+    check(`${width}${reduced ? " reduced" : ""}: guide does not choose a conversation task`, await page.eval(() => !document.getElementById('message-draft') && !!document.querySelector('[data-tour="task-chat"]')));
+  }
+  writeFileSync(resolve(output, "tour-matrix.json"), JSON.stringify(matrix, null, 2));
   console.log(JSON.stringify({ passed: checks.length, output }));
 } catch (error) {
+  console.error(await page?.eval(steps => {
+    const title = document.querySelector('#workspace-tour-title')?.textContent;
+    const step = steps.find(step => step.title === title);
+    const rect = node => { const r = node?.getBoundingClientRect(); return r ? { top: r.top, left: r.left, right: r.right, bottom: r.bottom } : null; };
+    const spot = document.querySelector('dialog:modal [aria-hidden="true"]');
+    return { title, target: rect(step && [...document.querySelectorAll(step.selector)].find(node => node.checkVisibility())), spotlight: rect(spot), style: spot?.getAttribute('style'), transition: spot && getComputedStyle(spot).transition, animations: spot?.getAnimations().map(a => ({ state: a.playState, time: a.currentTime })), scroll: { x: scrollX, y: scrollY }, card: rect(document.querySelector('dialog:modal section')) };
+  }, workspaceTourSteps).catch(() => null));
   console.error(await page?.eval(() => ({ path: location.pathname, openDialogs: [...document.querySelectorAll('dialog[open]')].map(node => node.getAttribute('aria-label') || node.getAttribute('aria-labelledby')), quickMenu: !!document.querySelector('[data-quick-switch-menu]'), scopes: [...document.querySelectorAll('[data-workspace-quick-menu]')].map(node => node.checkVisibility()), blockers: [...document.querySelectorAll('[data-navigation-loading],[data-quick-switch-block]')].filter(node => node.checkVisibility()).map(node => node.tagName) })).catch(() => null));
   await page?.screenshot({ path: resolve(output, "failure.png"), format: "png" }).catch(() => {});
   console.error(error); process.exitCode = 1;

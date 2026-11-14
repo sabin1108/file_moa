@@ -49,8 +49,7 @@ async function AuthenticatedWorkspace({ children }: { children: ReactNode }) {
     >
       <SourceFolderProvider key={`${owner.userId}:${owner.workspaceId}`} owner={owner}>
         <ConversationStateProvider>
-          {children}
-          <WorkspaceTour claim={claimWorkspaceGuideAction} />
+          <WorkspaceTour claim={claimWorkspaceGuideAction}>{children}</WorkspaceTour>
         </ConversationStateProvider>
       </SourceFolderProvider>
     </SessionBoundary>

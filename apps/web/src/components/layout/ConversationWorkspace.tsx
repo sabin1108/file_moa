@@ -41,6 +41,7 @@ export function ConversationWorkspace({
   panelTitle,
   messageActions,
   panelTrigger: panelTriggerRef,
+  panelModal = true,
 }: {
   messages: readonly ConversationMessage[];
   draft: string;
@@ -73,6 +74,7 @@ export function ConversationWorkspace({
   panelTitle?: string;
   messageActions?: (message: ConversationMessage) => ReactNode;
   panelTrigger?: RefObject<HTMLElement | null>;
+  panelModal?: boolean;
 }) {
   const trigger = useRef<HTMLElement | null>(null);
   const closePanel = () => onPanelChange(false);
@@ -84,7 +86,7 @@ export function ConversationWorkspace({
       )
         (panelTriggerRef?.current ?? trigger.current)?.focus({ preventScroll: true });
     });
-  });
+  }, panelModal);
   const composing = useRef(false);
   const thread = useRef<HTMLDivElement>(null);
   const follow = useRef(true);

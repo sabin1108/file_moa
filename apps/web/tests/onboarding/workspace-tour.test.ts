@@ -14,3 +14,13 @@ it("waits for the requested settings panel and never matches an unrelated page",
   expect(tourRouteMatches("/files", "/", null)).toBe(false);
   expect(tourRouteMatches(null, "/files", null)).toBe(true);
 });
+
+it("explains each conversation task and each record kind separately", () => {
+  for (const task of ["chat", "find", "grounded", "organize"]) {
+    expect(workspaceTourSteps.some(step => step.selector.includes(`task-${task}`))).toBe(true);
+  }
+
+  for (const kind of ["conversation", "artifact", "wiki", "memory", "profile"]) {
+    expect(workspaceTourSteps.some(step => step.selector.includes(`record-${kind}`))).toBe(true);
+  }
+});

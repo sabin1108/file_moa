@@ -223,6 +223,23 @@ try {
   await click("기억");
   await click("새 기억");
   await fill('[aria-label="기록 편집"] textarea', "짧고 구체적인 답변을 선호함");
+  await page.eval(() => document.querySelector('[data-fixture-record-preview]').click());
+  await until(() => document.querySelector('[data-tour="record-wiki"][aria-pressed="true"]')?.checkVisibility());
+  check("guide record preview leaves the unsaved editor mounted and untouched", await page.eval(() => document.querySelector('[aria-label="기록 편집"] textarea').value === "짧고 구체적인 답변을 선호함" && !document.querySelector('[aria-label="기록 편집"]').checkVisibility()));
+  await page.eval(() => document.querySelector('[data-fixture-record-preview-close]').click());
+  await until(() => document.querySelector('[aria-label="기록 편집"]')?.checkVisibility());
+  check("leaving the guide preview restores the same editor draft", await page.eval(() => document.querySelector('[aria-label="기록 편집"] textarea').value === "짧고 구체적인 답변을 선호함"));
+  await click("설정");
+  await click("사용 방법 다시 보기");
+  await until(() => document.querySelector('dialog:modal #workspace-tour-title'));
+  await click("다음");
+  await until(() => !document.querySelector('dialog:modal #workspace-tour-title') && document.querySelector('[aria-label="기록 편집"] [role="alert"]')?.checkVisibility());
+  check("a guide blocked by hidden edits reveals the actual editor confirmation", await page.eval(() => document.querySelector('#conversation-materials').open && document.querySelector('[aria-label="기록 편집"] textarea').value === "짧고 구체적인 답변을 선호함"));
+  await click("계속 편집");
+  await until(() => document.querySelector('dialog:modal #workspace-tour-title'));
+  await click("건너뛰기");
+  await until(() => !document.querySelector('dialog:modal #workspace-tour-title') && document.querySelector('[aria-label="기록 편집"]')?.checkVisibility());
+  check("cancelling the guide route and closing guidance retains the unsaved editor", await page.eval(() => document.querySelector('[aria-label="기록 편집"] textarea').value === "짧고 구체적인 답변을 선호함"));
   check("dirty memory prevents document unload", await page.eval(() => {
     const leaving = new Event("beforeunload", { cancelable: true });
     window.dispatchEvent(leaving);
@@ -287,6 +304,12 @@ try {
   );
   await click("목록으로");
   await fill('input[aria-label="저장 기록 검색"]', "찾을 수 없는 제목");
+  const tabBeforePreview = await page.eval(() => document.querySelector('[aria-label="보관 기록 종류"] [aria-pressed="true"]').getAttribute("data-tour"));
+  await page.eval(() => document.querySelector('[data-fixture-record-preview]').click());
+  await until(() => document.querySelector('[data-tour="record-wiki"][aria-pressed="true"]')?.checkVisibility());
+  await page.eval(() => document.querySelector('[data-fixture-record-preview-close]').click());
+  await until(() => document.querySelector('input[aria-label="저장 기록 검색"]')?.value === "찾을 수 없는 제목");
+  check("guide previews preserve the previous record tab and search filter", await page.eval(expected => document.querySelector('[aria-label="보관 기록 종류"] [aria-pressed="true"]').getAttribute("data-tour") === expected, tabBeforePreview));
   check(
     "record title search filters the list locally",
     await page.eval(() => document.body.innerText.includes("검색 결과가 없어요") && !document.querySelector('[aria-label="저장 기록"] li'))

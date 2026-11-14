@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { SourceFolderProvider } from "../../src/features/local-folders/SourceFolderProvider";
 import { LiveConversation } from "../../src/features/conversation-workspace/LiveConversation";
@@ -17,6 +17,7 @@ import { WorkspaceTour } from "../../src/features/onboarding/WorkspaceTour";
 import { SettingsTabs } from "../../src/components/layout/SettingsTabs";
 import { QuickSwitchSettings } from "../../src/features/quick-switch/QuickSwitchSettings";
 import { replayWorkspaceTour } from "../../src/features/onboarding/workspace-tour";
+import { WorkspaceTourRecordView, useWorkspaceTourRecordView, type TourRecordKind } from "../../src/features/onboarding/workspace-tour-view";
 
 const organizeAction = new URLSearchParams(location.search).has("transfer") ? liveOrganizationFixtureAction() : undefined;
 
@@ -63,6 +64,17 @@ function GuideGuardProbe() {
       <button onClick={() => { setConfirming(false); setDirty(false); guard.confirmNavigation(); }}>검증용 이동</button>
     </section>}
   </>;
+}
+
+function RecordPreviewProbe({ children }: { children: ReactNode }) {
+  const automatic = useWorkspaceTourRecordView();
+  const [preview, setPreview] = useState<TourRecordKind | null>(null);
+
+  return <WorkspaceTourRecordView.Provider value={preview ?? automatic}>
+    <button data-fixture-record-preview onClick={() => setPreview("wiki")}>검증용 위키 임시 보기</button>
+    <button data-fixture-record-preview-close onClick={() => setPreview(null)}>검증용 임시 보기 종료</button>
+    {children}
+  </WorkspaceTourRecordView.Provider>;
 }
 
 function Fixture() {
@@ -114,6 +126,8 @@ function Fixture() {
       </div>
       <SourceFolderProvider key={owner} owner={owners[owner]}>
         <ConversationStateProvider>
+          <WorkspaceTour key={owner} claim={claim}>
+          <RecordPreviewProbe>
           <ConversationFixtureProbe />
           {view === "chat"
             ? (
@@ -130,7 +144,8 @@ function Fixture() {
                   <SettingsTabs panels={{ account: <p>테스트 계정</p>, folders: <SourceFolderSettings />, editor: <p>문서 편집</p>, controls: <><GuardedLink href="/?guide=1">사용 방법 다시 보기</GuardedLink><QuickSwitchSettings /></> }} />
                 </div>
               )}
-          <WorkspaceTour key={owner} claim={claim} />
+          </RecordPreviewProbe>
+          </WorkspaceTour>
         </ConversationStateProvider>
       </SourceFolderProvider>
       <WorkspaceQuickSwitch />

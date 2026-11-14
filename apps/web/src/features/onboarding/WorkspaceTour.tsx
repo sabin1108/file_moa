@@ -1,22 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useNavigationGuard } from "../../components/navigation/NavigationGuard";
-import { actionClasses } from "../../components/ui/action-classes";
 import { WORKSPACE_TOUR_EVENT } from "./workspace-tour";
 import { tourRouteMatches, workspaceTourSteps as steps } from "./workspace-tour-steps";
-import { useTourSpotlight } from "./useTourSpotlight";
-import ui from "../../styles/workspace-ui.module.css";
-import styles from "./workspace-tour.module.css";
+import { WorkspaceTourRecordView } from "./workspace-tour-view";
+import { WorkspaceTourOverlay } from "./WorkspaceTourOverlay";
 
-export function WorkspaceTour({ claim }: { claim: () => Promise<boolean> }) {
+export function WorkspaceTour({ claim, children }: { claim: () => Promise<boolean>; children?: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [paused, setPaused] = useState(false);
   const [step, setStep] = useState(0);
   const dialog = useRef<HTMLDialogElement>(null);
-  const heading = useRef<HTMLHeadingElement>(null);
-  const returnFocus = useRef<HTMLElement | null>(null);
   const origin = useRef("");
   const firstClaim = useRef<Promise<boolean> | null>(null);
   const automaticStarted = useRef(false);
@@ -28,7 +24,6 @@ export function WorkspaceTour({ claim }: { claim: () => Promise<boolean> }) {
   const guard = useNavigationGuard();
   const current = steps[step];
   const ready = tourRouteMatches(current.route, pathname, params.get("tab"));
-  const rect = useTourSpotlight(current.selector, open && !paused && ready);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,25 +77,6 @@ export function WorkspaceTour({ claim }: { claim: () => Promise<boolean> }) {
     };
   }, [claim, requested]);
 
-  useEffect(() => {
-    if (!open || paused) return;
-
-    const node = dialog.current;
-
-    if (!node) return;
-
-    returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    node.showModal();
-    heading.current?.focus();
-
-    return () => {
-      node.close();
-      if (returnFocus.current?.isConnected) returnFocus.current.focus({ preventScroll: true });
-    };
-  }, [open, paused]);
-
-  useEffect(() => { if (open) heading.current?.focus({ preventScroll: true }); }, [open, step]);
-
   const navigate = (destination: string | null, update: () => void) => {
     const changeRoute = destination && destination !== location.pathname + location.search;
     const apply = () => {
@@ -110,27 +86,16 @@ export function WorkspaceTour({ claim }: { claim: () => Promise<boolean> }) {
 
     if (!changeRoute) { apply(); return; }
 
-    setPaused(true);
     const resume = () => { apply(); setPaused(false); };
 
-    if (!guard.intercept(resume, () => setPaused(false))) resume();
+    if (guard.intercept(resume, () => setPaused(false))) setPaused(true);
+    else apply();
   };
   const close = () => navigate(origin.current || null, () => setOpen(false));
   const move = (next: number) => navigate(steps[next].route, () => setStep(next));
-  const last = step === steps.length - 1;
 
-  return <dialog ref={dialog} className={`${ui.system} ${styles.tour}`} aria-labelledby="workspace-tour-title" onCancel={event => { event.preventDefault(); close(); }}>
-    {rect && <div className={styles.spotlight} aria-hidden="true" style={rect} />}
-    <section className={styles.explanation} data-position={rect && rect.top > 240 ? "top" : "bottom"}>
-      <p className={styles.progress}>모아 사용 방법 · {step + 1} / {steps.length}</p>
-      <h2 id="workspace-tour-title" ref={heading} tabIndex={-1}>{current.title}</h2>
-      <p>{current.text}</p>
-      {!ready && <p role="status">화면을 불러오고 있어요.</p>}
-      <div className={styles.actions}>
-        <button type="button" className={actionClasses("ghost")} onClick={close}>건너뛰기</button>
-        {step > 0 && <button type="button" className={actionClasses("secondary")} disabled={!ready} onClick={() => move(step - 1)}>이전</button>}
-        <button type="button" className={actionClasses("primary")} disabled={!ready} onClick={() => last ? close() : move(step + 1)}>{last ? "완료" : "다음"}</button>
-      </div>
-    </section>
-  </dialog>;
+  return <WorkspaceTourRecordView.Provider value={open && !paused && ready ? current.recordKind ?? null : null}>
+    {children}
+    {open && !paused && <WorkspaceTourOverlay dialog={dialog} current={current} step={step} total={steps.length} ready={ready} onClose={close} onMove={move} />}
+  </WorkspaceTourRecordView.Provider>;
 }

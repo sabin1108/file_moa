@@ -57,7 +57,7 @@ describe("workspace response before optional settings preparation", () => {
     expect(calls.prepare).not.toHaveBeenCalled();
     expect(view.props.userId).toBe("user-a");
     expect(view.props.children.props.owner).toEqual({ userId: "owner-a", workspaceId: "workspace-a" });
-    expect(view.props.children.props.children.props.children[0]).toBe("main-screen");
+    expect(view.props.children.props.children.props.children.props.children).toBe("main-screen");
 
     await calls.after.mock.calls[0][0]();
     expect(calls.prepare).toHaveBeenCalledWith(requestHeaders);
@@ -74,7 +74,7 @@ describe("workspace response before optional settings preparation", () => {
     try {
       const view = await renderAuthenticated("usable-main-screen");
 
-      expect(view.props.children.props.children.props.children[0]).toBe("usable-main-screen");
+      expect(view.props.children.props.children.props.children.props.children).toBe("usable-main-screen");
 
       const preparation = calls.after.mock.calls[0][0]();
 

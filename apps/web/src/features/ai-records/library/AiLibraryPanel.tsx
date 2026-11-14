@@ -18,7 +18,7 @@ const kinds = [["conversation", "대화", "chat"], ["artifact", "결과물", "fi
 const category = (payload: AiRecordPayload) => isWiki(payload) ? "wiki" : payload.type;
 const statusLabels = { draft: "초안", final: "확정본", proposed: "검토 중", approved: "사용 중", inactive: "사용 안 함" } as const;
 
-export function AiLibraryPanel({ controller, conversation, editor, onEditorChange, onOpen, canSwitchConversation = true, storageOpen, onStorageChange, onCreateWiki }: {
+export function AiLibraryPanel({ controller, conversation, editor, onEditorChange, onOpen, canSwitchConversation = true, storageOpen, onStorageChange, onCreateWiki, previewKind, onRevealEditor }: {
   controller: AiRecordsController;
   conversation: ConversationRecordControls;
   editor: Editable | null;
@@ -28,8 +28,11 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
   storageOpen: boolean;
   onStorageChange: (open: boolean) => void;
   onCreateWiki?: () => void;
+  previewKind?: typeof kinds[number][0];
+  onRevealEditor?: () => void;
 }) {
-  const [tab, setTab] = useState<typeof kinds[number][0]>("conversation");
+  const [selectedTab, setTab] = useState<typeof kinds[number][0]>("conversation");
+  const tab = previewKind ?? selectedTab;
   const [query, setQuery] = useState("");
   const [deletion, setDeletion] = useState<(AiRecordPayload & { connectionRevision: number }) | null>(null);
   const [cascade, setCascade] = useState(false);
@@ -46,7 +49,7 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
   const ready = library.phase === "ready";
   const selectedKind = kinds.find(([type]) => type === tab)!;
   const records = ready
-    ? library.records.filter(item => category(item.payload) === tab && item.payload.title.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
+    ? library.records.filter(item => category(item.payload) === tab && item.payload.title.toLocaleLowerCase().includes((previewKind ? "" : query).trim().toLocaleLowerCase()))
     : [];
 
   useEffect(() => {
@@ -196,11 +199,12 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
       {(library.notice || notice) && <p role="status" className={styles.notice}>
         {notice || library.notice}
       </p>}
-      <div hidden={!!editor || !!deletion}>
+      <div hidden={!previewKind && (!!editor || !!deletion)}>
         <nav className={styles.tabs} aria-label="보관 기록 종류">
           {kinds.map(([type, label, icon]) => <button
             type="button"
             key={type}
+            data-tour={`record-${type}`}
             aria-pressed={tab === type}
             onClick={() => {
               setTab(type);
@@ -241,7 +245,7 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
             <input
               type="search"
               aria-label="저장 기록 검색"
-              value={query}
+              value={previewKind ? "" : query}
               onChange={event => setQuery(event.target.value)}
               placeholder={`${selectedKind[1]} 검색`}
             />
@@ -330,15 +334,16 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
           >이 대화 저장</button>}
         </section>
       </div>
-      <div hidden={!!deletion}>
+      <div hidden={!!previewKind || !!deletion}>
         {editor && <RecordEditor
           key={editor.id}
           initial={editor}
           controller={controller}
           onClose={() => onEditorChange(null)}
+          onReveal={onRevealEditor}
         />}
       </div>
-      {deletion && <section className={styles.deletion} aria-label="기록 삭제 확인">
+      {deletion && <section hidden={!!previewKind} className={styles.deletion} aria-label="기록 삭제 확인">
         <h3 ref={confirmation} tabIndex={-1}>‘{deletion.title}’ 삭제할까요?</h3>
         <p>저장한 모든 버전이 삭제됩니다. 내보낸 사본은 남아요.</p>
         {deletion.type === "conversation" && deletion.id === conversation.id && <p>현재 화면의 대화와 미저장 내용은 임시 대화로 남깁니다.</p>}

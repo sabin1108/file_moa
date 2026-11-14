@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { ConversationWorkspace, type ConversationMessage } from "../../components/layout/ConversationWorkspace";
 import { WorkspaceShell } from "../../components/layout/WorkspaceShell";
 import { actionClasses } from "../../components/ui/action-classes";
@@ -31,6 +31,7 @@ import { makeWikiDraft } from "../ai-records/wiki/wiki";
 import { ConversationStart, conversationActions } from "./material-work/ConversationStart";
 import type { WorkspaceRequestKind } from "./material-work/workspace-request";
 import { replayWorkspaceTour } from "../onboarding/workspace-tour";
+import { useWorkspaceTourRecordView } from "../onboarding/workspace-tour-view";
 
 export function LiveConversation({ organizeAction, groundedAction, readUsage, aiProvider = "gemini" }: {
   organizeAction?: LiveOrganizationAction;
@@ -59,6 +60,8 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
   );
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [panelView, setPanelView] = useState<ConversationPanelView>("records");
+  const revealEditor = useCallback(() => { setPanelView("records"); setLibraryOpen(true); }, []);
+  const tourRecordKind = useWorkspaceTourRecordView();
   const panelTrigger = useRef<HTMLElement | null>(null);
   const openPanel = (view: ConversationPanelView, trigger?: HTMLElement) => {
     if (trigger) panelTrigger.current = trigger;
@@ -130,15 +133,17 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
             {text}
           </button>)}
         </nav>
-        <div hidden={panelView !== "records" && panelView !== "storage"}>
+        <div hidden={!tourRecordKind && panelView !== "records" && panelView !== "storage"}>
           <AiLibraryPanel
             controller={local.records}
             conversation={conversation}
             editor={editor}
+            previewKind={tourRecordKind ?? undefined}
             onEditorChange={setEditor}
+            onRevealEditor={revealEditor}
             onOpen={() => setLibraryOpen(false)}
             canSwitchConversation={!workflow.blocked}
-            storageOpen={panelView === "storage"}
+            storageOpen={!tourRecordKind && panelView === "storage"}
             onStorageChange={open => setPanelView(open ? "storage" : "records")}
             onCreateWiki={() => {
               chat.updateDraft("선택한 자료를 요약해 주세요.");
@@ -146,14 +151,14 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
             }}
           />
         </div>
-        <div hidden={panelView !== "sources"}>
+        <div hidden={!!tourRecordKind || panelView !== "sources"}>
           <section className={options.sourcePanel} aria-label="대화에 참고할 자료">
             <h3>참고할 자료 폴더</h3>
             <p>이 기기의 자료를 읽어 찾고 정리합니다. AI에 보낼 발췌는 전송 전에 확인해요.</p>
             <SourceConnectionControl />
           </section>
         </div>
-        <div hidden={panelView !== "settings"}>
+        <div hidden={!!tourRecordKind || panelView !== "settings"}>
           <ConversationSettingsPanel
             includeMemory={includeMemory}
             onIncludeMemory={setIncludeMemory}
@@ -172,7 +177,8 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
           />
         </div>
       </>}
-      panelOpen={libraryOpen}
+      panelOpen={libraryOpen || !!tourRecordKind}
+      panelModal={!tourRecordKind}
       onPanelChange={open => {
         if (open) setPanelView("records");
 
@@ -180,7 +186,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
       }}
       panelTrigger={panelTrigger}
       panelLabel="기록함"
-      panelTitle={{ records: "기록함", storage: "저장 위치", sources: "참고 자료", settings: "대화 설정" }[panelView]}
+      panelTitle={tourRecordKind ? "기록함" : { records: "기록함", storage: "저장 위치", sources: "참고 자료", settings: "대화 설정" }[panelView]}
       messageActions={message => message.author === "assistant" && workflow.task && (workflow.task.kind !== "grounded" || workflow.grounded.result)
         && message.id === `${workflow.task.id}:answer`
         ? (

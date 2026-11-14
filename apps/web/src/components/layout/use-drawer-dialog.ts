@@ -7,7 +7,7 @@ type Visual = Readonly<{
   transform: string
 }>;
 
-export function useDrawerDialog(open: boolean, onClosed: (dialog: HTMLDialogElement, returnFocus: boolean) => void) {
+export function useDrawerDialog(open: boolean, onClosed: (dialog: HTMLDialogElement, returnFocus: boolean) => void, modal = true) {
   const dialog = useRef<HTMLDialogElement>(null);
   const afterClose = useRef(onClosed);
   const visual = useRef<Visual | null>(null);
@@ -48,10 +48,12 @@ export function useDrawerDialog(open: boolean, onClosed: (dialog: HTMLDialogElem
         return;
       }
 
-      if (open && (!wasOpen || element.matches(":modal") !== narrow.matches)) {
+      const useModal = narrow.matches && modal;
+
+      if (open && (!wasOpen || element.matches(":modal") !== useModal)) {
         if (wasOpen) element.close();
 
-        if (narrow.matches) element.showModal(); else element.show();
+        if (useModal) element.showModal(); else element.show();
       }
 
       const hidden = { opacity: "0", transform: narrow.matches ? "translateY(32px)" : "translateX(40px)" };
@@ -103,7 +105,7 @@ export function useDrawerDialog(open: boolean, onClosed: (dialog: HTMLDialogElem
       narrow.removeEventListener("change", sync);
       reduced.removeEventListener("change", sync);
     };
-  }, [dialog, open]);
+  }, [dialog, open, modal]);
 
   useLayoutEffect(() => () => {
     if (dialog.current?.open) dialog.current.close();
