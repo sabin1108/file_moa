@@ -1,6 +1,6 @@
 # 계정 첫 안내와 전체 기능 둘러보기
 
-상태: 구현·격리 검증 완료, 운영 DB 적용 및 기능 배포 승인 대기. 공개 회의록 디자인은 별도 main 커밋 `2737319`로 분리했다. [명세](../../specs/workspace-guide.md)를 따른다.
+상태: 구현·격리 검증·승인받은 운영 DB 적용·기능 배포 완료. 안내 기능 `1c50f36`과 다시보기 수정 `4777021`을 main에 푸시했다. 공개 회의록 디자인은 별도 main 커밋 `2737319`로 분리했다. [명세](../../specs/workspace-guide.md)를 따른다.
 
 ## 화면과 계정 계약
 
@@ -8,7 +8,7 @@
 
 `User.workspaceGuideSeenAt`가 NULL인 로그인 계정만 첫 표시를 원자적으로 확보한다. client가 userId를 전달하지 않으며 현재 인증 세션의 id를 사용한다. 연결된 자료 소유자와 로그인 계정은 다를 수 있다. 조건부 UPDATE의 count1인 탭만 안내를 연다. 최초 표시 때 기록하므로 건너뛰기나 중단 뒤 두 번째 로그인·다른 브라우저에서 자동 재노출하지 않는다. 기존 회원은 migration에서 표시 시각을 채워 새 안내가 갑자기 뜨지 않게 한다. 다시보기는 이 상태를 지우지 않는다.
 
-브라우저 localStorage는 제품의 첫 안내 판정에서 제거했다. 테스트 fixture의 가상 계정 상태만 별도 localStorage로 모사한다. 네트워크/DB 오류는 action에서 안전하게 false를 반환해 작업 공간 진입을 막지 않는다. 실제 운영의 신규 계정 자동 표시는 DB 승인 전이라 검증하지 않았다.
+브라우저 localStorage는 제품의 첫 안내 판정에서 제거했다. 테스트 fixture의 가상 계정 상태만 별도 localStorage로 모사한다. 네트워크/DB 오류는 action에서 안전하게 false를 반환해 작업 공간 진입을 막지 않는다. 실제 운영의 신규 계정을 생성하는 검증은 실행하지 않았다.
 
 ## 읽는 순서
 
@@ -22,7 +22,7 @@
 
 - `pnpm check`:156파일1422개 단위 테스트, Prisma validate/generate·타입·린트·서버 경계26·web 구조32/domain6/layout3·production build22경로 통과.
 - 격리 Docker PostgreSQL:28개 DB 계약, 실제 Better Auth route/계정 연결/서버 통합60개 통과. migration 적용·재적용·drift 없음, 기존 회원 제외·신규 NULL·최초 한 번·동시 두 요청 중 한 번·다른 계정 불변·runtime 권한을 확인했다. 운영 환경 파일이나 사용자 폴더를 읽지 않는 기본 테스트 모드다.
-- 브라우저 사용성34개:9단계 실제 대상 강조, 최초/재방문, 수동 다시보기, 초안·history 길이·선택기 호출 보존, 좁은 화면, 설정 dialog 닫힌 뒤 재생, 이탈 확인 취소/확인·중복 이동, 늦은 claim 응답의 단계 초기화 방지. 실제 OS IME가 아닌 composition 이벤트 검사 포함.
+- 브라우저 사용성35개:9단계 실제 대상 강조, 최초/재방문, 수동 다시보기, 초안·history 길이·선택기 호출 보존, 좁은 화면, 설정 dialog 닫힌 뒤 재생, 이탈 확인 취소/확인·중복 이동, 늦은 claim 응답의 단계 초기화 방지, 공통 layout을 유지한 설정 링크의 다시보기. 실제 OS IME가 아닌 composition 이벤트 검사 포함.
 - 기존 AI 기록 브라우저61개:미저장 이탈 보호·실패 보존·계정 분리·삭제·복구·긴 대화·실제 격리 OPFS/Web Locks 회귀 통과. 유료 모델 요청이나 개인 원본은 사용하지 않았다.
 - architect 재검토 CLEAR. 최초 두 결함(모달 때문에 이탈 확인을 조작할 수 없음, 늦은 claim이 수동 안내를 초기화함)과 후속 중복 이동 callback 덮어쓰기를 수정하고 회귀를 확인했다.
 - 초기 전체 검사에서 부하 중 기존 테스트 하나가5초 제한에 걸렸다. 해당 테스트는 단독490ms로 통과했고, 이후 전체1422개를 다시 실행해 통과했다. 제한 시간을 늘리거나 구현을 바꾸지 않았다.
@@ -30,16 +30,24 @@
 
 증거: `.omx/verification/workspace-guide-20261114/browser/checks.json`와 `records-browser`, Docker 테스트의 실행 출력, `.taste-skill/guide-paper-*`. 해당 경로는 Git 제외다.
 
+운영 확인에서 설정의 다시보기 링크가 이동만 하고 안내를 열지 않는 결함을 찾았다. 안내를 공통 layout으로 옮긴 뒤 effect가 최초 mount만 확인하고 `guide=1` 변경을 감지하지 못한 원인이다. 실제 GuardedLink를 사용하는 회귀를 추가해 수정 전 실패를 재현하고, 요청 여부를 effect 의존성으로 넣어 수정 후35개를 통과했다. 요청 제거는 기존 `history.state`와 replaceState를 유지하며 최초 claim은 ref로 한 번만 호출한다. 이 수정 `4777021` 이후 관련 단위2개·타입·린트·22경로 빌드 및 architect 재검토 CLEAR를 확인했다. 최종 브라우저 근거는 `.omx/verification/workspace-guide-20261114/replay-after/checks.json`이다.
+
 ## 성능과 범위
 
 안내가 닫혀 있으면 강조용 observer와 스크롤 listener를 설치하지 않는다. 첫 layout mount 때 계정 판정을 위한 비동기 server action1회가 추가되며 안내용 단계 이동은 현재 페이지를 replace해 history를 늘리지 않는다. 파일·AI 요청 추가는 없다.
 
-안내를 포함한 마지막 빌드의 전체 JS/CSS는47파일3,541,587bytes였다. 같은 조건의 이전 빌드/실제 로그인 경로 성능·필드 INP/LCP를 새로 측정하지 않아 속도 개선을 주장하지 않는다. 운영 계정 기능은 DB 적용 전이므로 운영 성능 완료로 보고하지 않는다.
+안내를 포함한 마지막 빌드의 전체 JS/CSS는47파일3,541,587bytes였다. 같은 조건의 이전 빌드/실제 로그인 경로 성능·필드 INP/LCP를 새로 측정하지 않아 속도 개선을 주장하지 않는다.
 
-## 운영 반영 순서와 승인 제한
+## 운영 반영 순서와 승인
 
-자동 승인 검토가 운영 migration 실행 경로가 든 DB 검증 명령을 거절했다. 사유는 기능 요청만으로 운영 스키마 변경까지 명시 승인됐다고 볼 수 없다는 것이다. 해당 명령은 실행되지 않았으며 운영 DB는 변경하지 않았다. 우회 실행하지 않고 Docker의 격리 DB에서만 검증했다.
+자동 승인 검토가 처음에는 운영 migration 실행 경로가 든 DB 검증 명령을 거절했다. 사유는 기능 요청만으로 운영 스키마 변경까지 명시 승인됐다고 볼 수 없다는 것이다. 거절된 명령을 우회하지 않고 Docker의 격리 DB 검증을 먼저 마쳤다.
 
-필요한 승인 대상은 [migration.sql](../../../apps/web/prisma/migrations/20261114000000_workspace_guide/migration.sql)의 필드1개 추가와 기존 회원 backfill이다. 승인 후 별도 migration 자격증명으로 적용·열/체크섬/권한을 확인하고, 그 다음 기능 코드를 운영에 배포한다. 순서를 바꾸면 새 컬럼이 없는 동안 인증 조회나 안내 판정이 실패할 수 있다. 현재 기능 브랜치는 승인 전 운영에 병합하거나 배포하지 않는다.
+사용자가 ‘운영 DB 적용 후 안내 기능 배포’를 명시 승인한 뒤 [migration.sql](../../../apps/web/prisma/migrations/20261114000000_workspace_guide/migration.sql)의 필드1개 추가와 기존 회원 backfill을 적용했다. 별도 migration 자격증명으로 기존4개 migration 체크섬, 신규 체크섬 일치, 재적용 안전성, runtime 역할의 열 접근 권한을 확인했다. 임시 테이블의 기존 회원 제외·신규 최초 한 번·계정 분리 계약은 transaction을 rollback해 검증했다. 계정·파일 삭제는 없다. 결과는 `.omx/verification/workspace-guide-20261114/database.json`에 비밀값 없이 저장했다.
+
+DB 적용 성공 뒤 `feat/account-first-guide-20261114`를 main에 빠른 병합하고 `1c50f36`을 푸시했다. 새 컬럼이 없는 동안 인증 조회나 안내 판정이 실패하지 않도록 이 순서를 지켰다.
+
+최종 기능 배포 `4777021`은 [Vercel Production Ready](https://vercel.com/sabins-projects-011c6dea/web/CoSBhBqT17SYFNkVsWoLmyc5y9vv)와 운영 도메인 연결을 확인했다. 기존 운영 계정의 안내 판정 server action은 HTTP200이며 자동 안내가 열리지 않았다. 실제 설정의 다시보기 링크 → 9단계 경로/보이는 강조 대상 → 완료 후 원래 채팅 경로 복귀를 확인했다. 390×700 재방문도 자동 안내가 없었고, 수동 다시보기의 설명 영역은 x16~364/y417.4~684로 화면 안에 들어갔다. Esc 닫기도 통과했다. 실제 폴더 선택기·원본 변경·유료 AI 호출은 실행하지 않았다. 증거는 `.taste-skill/account-guide-production-tour.json`과 `account-guide-production-final-step.png`다.
+
+운영 자동화의 첫 대기는 Vercel의 표시가 Current 대신 Latest인 점 때문에 실패했고, 뒤의 대기는 실행 간 유지되지 않는 CDP 관찰 코드 때문에 실패했다. 상태를 확인해 대기 조건과 관찰 코드 수명을 바로잡은 뒤 통과했다. 이 두 대기는 제품 결함으로 보고하지 않는다. 설정 링크의 안내 미표시는 별도의 실제 결함으로 재현·수정·운영 재검증했다.
 
 메일 도메인과 미리보기 이동 구조는 기존 사용자 보류를 유지한다. 실제 모바일 기기 검증·실제 새 운영 계정 최초 로그인은 미실행이다.
