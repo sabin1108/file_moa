@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getImageProps } from "next/image";
 import { Icon, MoaMark } from "../../components/ui/Icon";
 import { FolderScene, MaterialExample, RecordScene } from "./ProductScenes";
 import { HeroWorkspace, KnowledgeStory, OrganizationStory } from "./ScrollStories";
@@ -16,6 +17,9 @@ export function OnboardingPage({ mode = "live", initialView }: OnboardingPagePro
   const sample = mode === "sample";
   const destination = sample ? `/demo/start?intro=done${initialView === "files" ? "&view=files" : ""}` : "/welcome";
   const action = sample ? "체험 시작하기" : "모아 시작하기";
+  const image = { alt: "", sizes: "100vw" };
+  const { props: desktopImage } = getImageProps({ ...image, src: "/onboarding/reading-room-desktop-v1.png", width: 1774, height: 887 });
+  const { props: mobileImage } = getImageProps({ ...image, src: "/onboarding/reading-room-mobile-v1.png", width: 863, height: 1823 });
 
   return (
     <div className={styles.page} data-onboarding={mode}>
@@ -46,6 +50,10 @@ export function OnboardingPage({ mode = "live", initialView }: OnboardingPagePro
           data-scroll-hero
         >
           <div className={motion.heroPin}>
+            <picture className={`${styles.readingRoom} ${motion.readingRoom}`}>
+              <source media="(max-width: 900px)" srcSet={mobileImage.srcSet} sizes={mobileImage.sizes} />
+              <img {...desktopImage} alt="" loading="eager" fetchPriority="high" />
+            </picture>
             <div className={`${styles.heroCopy} ${motion.heroCopy}`}>
               <h1 id="intro-heading">흩어진 자료가<br />생각으로 모이는 곳</h1>
               <p>내 폴더의 자료를 찾고, AI와 정리하고,<br className={styles.desktopBreak} /> 필요한 순간 다시 꺼내 쓰세요.</p>
@@ -54,11 +62,11 @@ export function OnboardingPage({ mode = "live", initialView }: OnboardingPagePro
                 <Icon name="chevron" size={18} />
               </Link>
               {sample && <p className={styles.invitationNote}>로그인 없이, 준비된 샘플 자료로 둘러보세요.</p>}
+              <a className={`${styles.scrollLink} ${motion.scrollCue}`} href="#find">스크롤하며 모아 알아보기<Icon name="down" size={18} /></a>
             </div>
             <div className={motion.heroArt}>
               <FolderScene><HeroWorkspace /></FolderScene>
             </div>
-            <a className={`${styles.scrollLink} ${motion.scrollCue}`} href="#find">스크롤하며 모아 알아보기<Icon name="down" size={18} /></a>
           </div>
         </section>
 

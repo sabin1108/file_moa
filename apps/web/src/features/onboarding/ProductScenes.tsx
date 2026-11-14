@@ -201,7 +201,7 @@ export function RecordScene() {
 
 export function MaterialExample() {
   return (
-    <div className={styles.materialExample}>
+    <div className={styles.materialExample} data-ui>
       <fieldset className={styles.materialChoice}>
         <legend>자료를 골라 내용을 살펴보세요</legend>
         {documents.map((document, index) => (

@@ -1,14 +1,14 @@
 :global(html):has(.page) { scrollbar-gutter: stable both-edges; }
 
 .page {
-  --intro-paper: #f7f8f6;
-  --intro-white: #fff;
-  --intro-ground: #e4e8e6;
-  --intro-soft: #eef1ee;
-  --intro-selected: #d3dcda;
-  --intro-ink: #253745;
-  --intro-muted: #4a5c6a;
-  --intro-dark: #11212d;
+  --intro-paper: #f7f3e9;
+  --intro-white: #fffdf7;
+  --intro-ground: #e6ebe0;
+  --intro-soft: #eff1e7;
+  --intro-selected: #cbd8c2;
+  --intro-ink: #34493d;
+  --intro-muted: #5c685b;
+  --intro-dark: #263c30;
   --intro-light-ink: #f2f4f1;
   --intro-space: clamp(24px, 5vw, 88px);
   --intro-body: 1.125rem;
@@ -46,13 +46,15 @@
 .header nav { display: flex; gap: 36px; }
 .header nav a { display: inline-flex; align-items: center; min-height: 44px; }
 .headerAction { display: inline-flex; align-items: center; min-height: 44px; padding: 7px 20px; border-radius: 999px; background: var(--intro-ground); font-weight: 700; }
-.hero { position: relative; min-height: 1000px; padding-top: clamp(64px, 8vw, 120px); overflow: clip; }
-.heroCopy { position: relative; z-index: 2; text-align: center; padding-inline: var(--intro-space); }
-.hero h1 { font-size: var(--intro-display); line-height: 1.18; font-weight: 700; }
+.hero { position: relative; padding: 0; overflow: clip; }
+.readingRoom { position: absolute; inset: 0; pointer-events: none; }
+.readingRoom img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center bottom; }
+.heroCopy { position: relative; z-index: 2; text-align: center; padding: clamp(64px, 12svh, 136px) var(--intro-space) 64px; }
+.hero h1 { max-width: 900px; margin-inline: auto; font-size: clamp(48px, 5vw, 76px); line-height: 1.18; font-weight: 700; }
 .heroCopy > p { max-width: 640px; margin: 28px auto 0; font-size: 1.25rem; line-height: 1.7; }
 .primaryAction { display: inline-flex; justify-content: center; align-items: center; gap: 18px; min-height: 54px; margin-top: 32px; padding: 12px 25px 12px 28px; background: var(--intro-ink); color: var(--intro-white); border-radius: 999px; font-size: 1rem; font-weight: 700; transition: background-color 150ms ease-out; }
 .heroCopy > .invitationNote { margin-top: 16px; font-size: var(--intro-small); color: var(--intro-muted); }
-.scrollLink { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 20px auto 36px; font-size: var(--intro-small); min-height: 44px; }
+.scrollLink { display: flex; align-items: center; justify-content: center; gap: 12px; width: fit-content; margin: 16px auto 0; font-size: var(--intro-small); min-height: 44px; }
 
 .folderScene { position: relative; width: min(920px, 94%); height: 450px; margin: 52px auto 0; perspective: 1000px; }
 .folderBack { position: absolute; left: 23%; right: 23%; height: 245px; bottom: 53px; border-radius: 12px 22px 18px 18px; background: var(--intro-selected); transform: rotate(-6deg); }
@@ -66,7 +68,7 @@
 .paper:nth-child(1) { left: 12%; top: 45px; transform: rotate(-17deg); background: #e7edeb; }
 .paper:nth-child(2) { left: calc(50% - 110px); top: 0; transform: rotate(3deg); }
 .paper:nth-child(3) { right: 12%; top: 48px; transform: rotate(17deg); background: #dae1e3; }
-.folderFront { position: absolute; z-index: 1; left: 22%; right: 22%; bottom: 38px; height: 195px; display: flex; flex-direction: column; align-items: flex-start; padding: 30px; background: var(--intro-ink); color: var(--intro-light-ink); border-radius: 10px 12px 24px 24px; transform: rotate(-5deg); }
+.folderFront { position: absolute; z-index: 1; left: 22%; right: 22%; bottom: 38px; height: 195px; display: flex; flex-direction: column; align-items: flex-start; padding: 30px; background: var(--intro-selected); color: var(--intro-ink); border-radius: 10px 12px 24px 24px; transform: rotate(-5deg); }
 .folderFront > span { margin-top: 12px; font-size: var(--intro-small); }
 .folderFront > strong { position: absolute; right: 32px; bottom: 24px; font-size: 1.25rem; letter-spacing: -.04em; }
 .folderCaption { position: absolute; right: 3%; bottom: 6px; display: flex; align-items: center; gap: 8px; font-size: var(--intro-small); color: var(--intro-muted); }
@@ -168,13 +170,11 @@
 @keyframes reveal { from { opacity: .65; translate: 0 45px; } to { opacity: 1; translate: 0 0; } }
 
 @media (min-width: 1600px) {
-  .hero { min-height: 1080px; }
   .folderScene { height: 490px; margin-top: 65px; }
 }
 
 @media (max-width: 900px) {
   .header nav { gap: 20px; }
-  .hero { min-height: 950px; }
   .chapter { padding-block: 90px; min-height: auto; }
   .chapterIntro { align-items: flex-start; flex-direction: column; gap: 24px; margin-bottom: 42px; }
   .split { gap: 36px; }
@@ -188,13 +188,22 @@
   .folderCaption { right: 6%; }
 }
 
+@media (min-width: 641px) and (max-width: 900px) {
+  .heroCopy { padding-top: 40px; }
+  .hero h1 { font-size: 38px; }
+  .heroCopy > p { max-width: 300px; margin-top: 20px; font-size: 16px; }
+  .heroCopy > .invitationNote { max-width: 260px; }
+  .heroCopy .primaryAction { min-height: 50px; margin-top: 22px; }
+  .heroCopy .scrollLink { margin-top: 12px; }
+}
+
 @media (max-width: 640px) {
   .page { --intro-space: 22px; --intro-body: 1rem; --intro-display: clamp(1.9rem, 9.4vw, 2.5rem); --intro-heading: clamp(1.875rem, 8vw, 2.25rem); }
   .header { height: 68px; }
   .header nav { display: none; }
   .headerAction { padding-inline: 16px; font-size: var(--intro-small); }
-  .hero { min-height: auto; padding-top: 66px; }
-  .hero h1 { line-height: 1.25; }
+  .heroCopy { padding-top: 44px; }
+  .hero h1 { font-size: var(--intro-display); line-height: 1.25; }
   .heroCopy > p { font-size: 1rem; margin-top: 24px; max-width: 310px; }
   .desktopBreak { display: none; }
   .primaryAction { min-height: 50px; margin-top: 26px; }
@@ -212,7 +221,7 @@
   .folderFront > span { font-size: var(--intro-small); }
   .folderFront > strong { font-size: 1.5rem; bottom: 16px; right: 22px; }
   .folderCaption { left: 0; right: 0; justify-content: center; bottom: 12px; }
-  .scrollLink { margin-top: 8px; margin-bottom: 30px; }
+  .scrollLink { margin-top: 12px; margin-bottom: 0; }
   .chapter { padding-block: 76px; }
   .chapterIntro { gap: 24px; margin-bottom: 34px; }
   .chapterIntro > p br { display: none; }
