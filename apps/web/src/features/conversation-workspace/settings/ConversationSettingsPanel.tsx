@@ -6,7 +6,7 @@ import { UsageView } from "./UsageView";
 import type { UsageSummary } from "../../../shared/ai-usage";
 import styles from "../conversation-options.module.css";
 
-export function ConversationSettingsPanel({ includeMemory, onIncludeMemory, projectId, onProjectId, canUseMemory, disabled, provider, temporary, onStorage, readUsage }: {
+export function ConversationSettingsPanel({ includeMemory, onIncludeMemory, projectId, onProjectId, canUseMemory, disabled, provider, temporary, onStorage, onReplayTour, readUsage }: {
   includeMemory: boolean;
   onIncludeMemory: (enabled: boolean) => void;
   projectId: string;
@@ -16,24 +16,23 @@ export function ConversationSettingsPanel({ includeMemory, onIncludeMemory, proj
   provider: string | null;
   temporary: boolean;
   onStorage: () => void;
+  onReplayTour?: () => void;
   readUsage?: () => Promise<UsageSummary | null>;
 }) {
   return <div className={styles.settings} aria-label="대화 설정 내용">
     <section>
-      <h3>대화 저장</h3>
       <SettingRow
-        title={temporary ? "저장하지 않는 대화" : "이 기기에 저장 중"}
+        title={temporary ? "대화 저장 꺼짐" : "대화 저장 켜짐"}
         description={temporary ? "새로고침하면 이 대화는 사라집니다." : "연결한 저장 폴더에서 다시 열 수 있어요."}
       >
         <button type="button" className={actionClasses("secondary")} onClick={onStorage}>저장 설정</button>
       </SettingRow>
     </section>
     <section>
-      <h3>답변에 참고할 정보</h3>
       <label className={styles.toggle}>
         <span>
-          <strong>내 프로필과 기억 사용</strong>
-          <small>내가 승인한 기억만 질문과 함께 전송합니다.</small>
+          <strong>내 정보 참고</strong>
+          <small>{canUseMemory ? "프로필과 직접 승인한 기억을 AI에 함께 보냅니다." : "기록 저장을 연결하면 사용할 수 있어요."}</small>
         </span>
         <input
           type="checkbox"
@@ -43,9 +42,12 @@ export function ConversationSettingsPanel({ includeMemory, onIncludeMemory, proj
           onChange={event => onIncludeMemory(event.target.checked)}
         />
       </label>
-      {!canUseMemory && <p>기록함의 저장 위치를 연결하면 사용할 수 있어요.</p>}
-      <details className={styles.advanced}>
-        <summary>프로젝트별 기억 · 고급 설정</summary>
+    </section>
+    {onReplayTour && <button type="button" className={actionClasses("secondary")} disabled={disabled} onClick={onReplayTour}>사용 방법 다시 보기</button>}
+    <details className={styles.advanced}>
+      <summary>고급 설정 및 이용 정보</summary>
+      <section>
+        <h3>프로젝트별 기억</h3>
         <label>
           프로젝트 식별자
           <input
@@ -56,11 +58,9 @@ export function ConversationSettingsPanel({ includeMemory, onIncludeMemory, proj
             onChange={event => onProjectId(event.target.value)}
           />
         </label>
-        <p>기억에 지정한 프로젝트 식별자와 같아야 적용됩니다. 프로젝트 이름 목록은 아직 제공하지 않습니다.</p>
-      </details>
-    </section>
-    <details className={styles.advanced}>
-      <summary>AI 전송·보관 안내</summary>
+        <p>같은 식별자를 지정한 기억만 추가로 참고합니다. 비워 두면 공통 기억만 사용합니다.</p>
+      </section>
+      <h3>AI 전송·보관 안내</h3>
       <dl className={styles.facts}>
         <div>
           <dt>일반 질문</dt>
@@ -80,10 +80,7 @@ export function ConversationSettingsPanel({ includeMemory, onIncludeMemory, proj
         </div>
       </dl>
       <p>서버 공유 한도로 더 일찍 제한될 수 있습니다. 중지·실패도 횟수에 포함되고 이미 발생한 비용은 남을 수 있어요. 기억을 자동 추출하지 않습니다.</p>
+      {readUsage && <><h3>사용량·요청 내역</h3><UsageView read={readUsage} /></>}
     </details>
-    {readUsage && <details className={styles.advanced}>
-      <summary>사용량·요청 내역</summary>
-      <UsageView read={readUsage} />
-    </details>}
   </div>;
 }

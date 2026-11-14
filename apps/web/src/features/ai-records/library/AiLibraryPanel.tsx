@@ -40,6 +40,8 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
   const listHeading = useRef<HTMLHeadingElement>(null);
   const deleteReturn = useRef<HTMLElement | null>(null);
   const previousStorage = useRef(storageOpen);
+  const editorReturn = useRef<HTMLElement | null>(null);
+  const previousEditor = useRef(editor);
   const { library } = conversation;
   const ready = library.phase === "ready";
   const selectedKind = kinds.find(([type]) => type === tab)!;
@@ -60,6 +62,16 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
 
     previousStorage.current = storageOpen;
   }, [storageOpen]);
+
+  useEffect(() => {
+    if (previousEditor.current && !editor) {
+      const target = editorReturn.current?.isConnected ? editorReturn.current : listHeading.current;
+
+      target?.focus();
+    }
+
+    previousEditor.current = editor;
+  }, [editor]);
 
   const perform = async (operation: () => Promise<unknown>) => {
     try {
@@ -129,6 +141,15 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
     deleteReturn.current = deleteTrigger.current;
     setDeletion(null);
   };
+  const storageLocked = !canSwitchConversation || !!editor || !!deletion || conversation.needsDiscard || library.pending;
+  const chooseStorage = () => void perform(async () => {
+    if (storageLocked) return;
+
+    conversation.assertAvailable();
+
+    if (library.phase === "needs-permission" && library.folderName) await controller.reconnect();
+    else await controller.connect();
+  });
 
   return <div className={styles.library}>
     {conversation.needsDiscard && <StatusNotice
@@ -168,7 +189,8 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
           ref={storageTrigger}
           type="button"
           className={actionClasses("secondary")}
-          onClick={() => onStorageChange(true)}
+          disabled={storageLocked}
+          onClick={() => ready ? onStorageChange(true) : chooseStorage()}
         >저장 위치</button>
       </div>
       {(library.notice || notice) && <p role="status" className={styles.notice}>
@@ -203,7 +225,10 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
               type="button"
               className={actionClasses("primary")}
               disabled={(tab === "conversation" || tab === "wiki") && (!canSwitchConversation || library.pending)}
-              onClick={create}
+              onClick={event => {
+                editorReturn.current = event.currentTarget;
+                create();
+              }}
             >
               <Icon name="plus" />
               {tab === "conversation"
@@ -225,12 +250,12 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
             ? <div className={styles.empty}>
               <Icon name="folder" size={32} />
               <strong>
-                {library.pending ? "기록을 불러오고 있어요" : "대화를 다시 꺼내 보고 싶다면"}
+                {library.pending ? "기록을 불러오고 있어요" : "기록을 보관할 폴더를 연결하세요"}
               </strong>
               <p>
-                {library.pending ? "연결한 저장 위치를 확인합니다." : "이 기기의 저장 폴더를 연결해 주세요."}
+                {library.pending ? "연결한 저장 위치를 확인합니다." : "선택한 폴더에 모아 기록 파일을 만듭니다. 저장 파일은 암호화되지 않습니다."}
               </p>
-              <button type="button" className={actionClasses("secondary")} onClick={() => onStorageChange(true)}>저장 위치 선택</button>
+              <button type="button" className={actionClasses("primary")} disabled={storageLocked} onClick={chooseStorage}>{library.phase === "needs-permission" ? "저장 폴더 다시 연결" : "저장 위치 선택"}</button>
             </div>
             : records.length
               ? <ul className={styles.list}>
@@ -239,7 +264,8 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
                     type="button"
                     className={styles.recordOpen}
                     disabled={item.payload.type === "conversation" && !canSwitchConversation}
-                    onClick={() => {
+                    onClick={event => {
+                      editorReturn.current = event.currentTarget;
                       const payload = item.payload;
 
                       if (payload.type === "conversation") void perform(async () => {

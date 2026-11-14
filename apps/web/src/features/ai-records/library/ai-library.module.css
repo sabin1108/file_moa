@@ -21,7 +21,6 @@
 .recordMenu summary { display: grid; place-items: center; list-style: none; width: 34px; min-height: 42px; border: 1px solid var(--control-border); border-radius: 6px; cursor: pointer; }
 .recordMenu summary::-webkit-details-marker { display: none; }
 .recordMenu > button { position: absolute; z-index: 3; right: 0; top: 46px; min-width: 100px; min-height: 44px; padding: 8px 16px; border: 1px solid var(--control-border); border-radius: 6px; background: var(--surface); color: var(--ui-danger, #a33232); box-shadow: 0 4px 12px #25374518; }
-.recordMenu summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 .search { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border: 1px solid var(--control-border); border-radius: 6px; background: var(--surface); color: var(--muted); }
 .search input { width: 100%; min-width: 0; min-height: 42px; border: 0; padding: 8px 0; background: transparent; color: var(--text); font: inherit; }
 .empty { display: grid; justify-items: center; gap: 12px; padding: 36px 16px; text-align: center; }
@@ -30,10 +29,12 @@
 .empty p { font-size: 13px; }
 .editor, .fields, .storage { display: grid; gap: 16px; min-width: 0; }
 .editor { padding-top: 8px; }
-.editorHeading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.editorHeading { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; background: var(--surface); border-bottom: 1px solid var(--border); }
 .editorHeading > div { display: grid; gap: 4px; }
+.editorHeading > button svg, .storage > button:first-child svg { transform: rotate(180deg); }
+.editorHeading { flex-wrap: wrap; }
 .editorHeading small { font-size: 12px; }
-.editorActions { position: sticky; bottom: -20px; display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 0; background: var(--surface); border-top: 1px solid var(--border); }
+.editorActions { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 0 0; margin-top: 8px; border-top: 1px solid var(--border); }
 .editorActions button:first-child { flex: 1; }
 .storageHeading { display: flex; gap: 12px; align-items: center; padding-top: 8px; }
 .storageHeading > div { min-width: 0; }

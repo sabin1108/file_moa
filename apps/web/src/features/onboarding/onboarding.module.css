@@ -27,7 +27,6 @@
 .page :where(p) { text-wrap: pretty; word-break: keep-all; overflow-wrap: break-word; }
 .page :where(a) { text-decoration: none; }
 .page :where(a, label) { -webkit-tap-highlight-color: transparent; }
-.page :where(a:focus-visible) { outline: 3px solid var(--focus); outline-offset: 5px; }
 .page :where(section[id]) { scroll-margin-top: 90px; }
 
 .header {
@@ -91,7 +90,6 @@
 .materialChoice label { position: relative; min-height: 44px; display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 999px; background: var(--intro-paper); cursor: pointer; font-size: var(--intro-small); }
 .materialChoice input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; }
 .materialChoice label:has(input:checked) { background: var(--intro-ink); color: var(--intro-white); }
-.materialChoice label:has(input:focus-visible) { outline: 3px solid var(--intro-ink); outline-offset: 4px; }
 .materialPage { display: none; min-height: 265px; padding: 32px; background: var(--intro-paper); border-radius: 12px; }
 .materialPage > span { font-size: var(--intro-small); color: var(--intro-muted); }
 .materialPage h3 { margin-top: 26px; font-size: 1.5rem; line-height: 1.3; }

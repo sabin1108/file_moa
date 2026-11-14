@@ -6,7 +6,6 @@
 .connection h3 { font-size: 17px; font-weight: 600; }
 .connection .controls { gap: 10px; }
 .connection .actions { justify-content: flex-end; }
-.settings:focus-visible { outline: 2px solid var(--focus); outline-offset: var(--ui-space-1); }
 .scope { color: var(--muted); font-size: var(--ui-font-body); line-height: 1.7; }
 @media (max-width: 620px) {
   .controls { align-items: flex-start; }

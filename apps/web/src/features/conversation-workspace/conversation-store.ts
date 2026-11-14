@@ -1,5 +1,6 @@
 import { chatReducer, initialChatState, type RestorableChatAction } from "./messaging/general-chat-state";
 import type { GroundedAnswer } from "../../shared/grounded-chat";
+import type { ConversationKind } from "../../shared/ai-records";
 
 export type GroundedConversationResult = {
   taskId: string;
@@ -9,7 +10,7 @@ export type GroundedConversationResult = {
   model?: string
 };
 
-const initialSelection = { id: null as string | null, temporary: true, projectId: "", status: "임시 대화", lastSaved: "" };
+const initialSelection = { id: null as string | null, temporary: true, projectId: "", status: "임시 대화", lastSaved: "", mode: null as ConversationKind | null };
 
 export class ConversationStore {
   private state = initialChatState;

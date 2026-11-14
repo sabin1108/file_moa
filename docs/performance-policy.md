@@ -1,5 +1,7 @@
 # 사이트 전체 성능 측정 정책
 
+최신 첫 사용·채팅 조작 보완: [2026-11-14 전후11경로132표본](verification/chat-usability-20261114/performance.md). 전체 JS/CSS 원본은3,527,234→3,540,157bytes이며 최초 전송과 구분한다. 소개로 바뀐 비로그인 진입과 신규 안내 비용을 포함하며 순수 최적화 개선율은 주장하지 않는다. [사용성 검증81개와 한계](verification/chat-usability-20261114/README.md)를 함께 본다.
+
 최신 대화·기록함 UX 재구성: [검증과 비용](verification/workspace-ux-rebuild/README.md). 최종 빌드 전체49JS/CSS는3,617,630bytes로 직전 대비18,936bytes 증가했다. 새 도구/목록·설정/편집의 구성을 바꿨으며 실제 모델 속도 개선을 주장하지 않는다. production 게스트/샘플 경로와 임시DB 인증36표본, 긴 대화6표본을 field INP·실사용 UX와 구별한다.
 
 최신 실제 녹화 진단: [원자료와 검증](verification/recording-latency/README.md). 수정 전 실제 요청은 준비4544ms·첫provider9973ms·첫공개10987ms/HTTP약12.1초였다. 실제 runtime/TLS의 SELECT1은warm약220ms,4왕복transaction약882ms. DB region은ap-southeast-2다. 예약 SQL5→1·중복session조회제거 뒤 실제유료전체시간은 재측정하지 않았다. 마지막 측정 빌드 대비 JS/CSS1,714,956→1,715,365bytes(+409)/44파일동일이며 중간 한도 문구 변경도 포함한다. 합성UI32·자료51/35·임시PG25계약+55통합과 운영계정/field INP/heap/부하를 구별한다. [이전 화면/응답 변경](verification/progressive-chat/README.md), [첫 표시 개선](verification/chat-smoothness/README.md)도 보존한다.

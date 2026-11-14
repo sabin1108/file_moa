@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { actionClasses } from "../../../../components/ui/action-classes";
 import { StatusNotice } from "../../../../components/ui/feedback/StatusNotice";
 import { SourceFileRow } from "../../browsing/file-list/SourceFileRow";
@@ -41,6 +41,13 @@ export function DocumentFindResults({
   onToggle: (path: readonly string[]) => void;
 }) {
   const [limit, setLimit] = useState(20);
+  const heading = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => heading.current?.scrollIntoView({ block: "start" }));
+
+    return () => cancelAnimationFrame(frame);
+  }, [result]);
   const confirmed = result.documents.filter(
     (document) => document.finding.kind === "matched",
   );
@@ -51,21 +58,17 @@ export function DocumentFindResults({
 
   return (
     <section data-find-results aria-label="본문 근거 검색 결과">
-      <h3>찾은 후보 {result.documents.length}개</h3>
+      <h3 ref={heading}>찾은 후보 {result.documents.length}개</h3>
       <p>
         조건에 맞는 후보 {confirmed.length}개 · 날짜 확인 필요{" "}
         {uncertain.length}개
-      </p>
-      <p className={styles.note}>
-        단어·날짜 근거로 찾은 후보입니다. 검색 시점의 내용이므로 원문에서 다시
-        확인해 주세요.
       </p>
       {!result.complete
         && (
           <StatusNotice
             state="attention"
-            title="검색 범위 일부만 확인했어요"
-            detail="읽기 실패 또는 탐색 한도로 빠진 자료가 있습니다. 범위를 좁혀 다시 검색할 수 있어요."
+            title="일부 자료는 검색하지 못했어요"
+            detail="아래 ‘제외·읽기 문제’에서 확인할 수 있어요."
           />
         )}
       {!result.documents.length && (
@@ -73,7 +76,7 @@ export function DocumentFindResults({
       )}
       <ul className={styles.findDocuments}>
         {visible.map((document) => (
-          <li key={JSON.stringify(document.path)}>
+          <li key={JSON.stringify(document.path)} data-find-candidate>
             <SourceFileRow
               name={document.name}
               selected={selectedPaths.some(path => JSON.stringify(path) === JSON.stringify(document.path))}
@@ -85,35 +88,27 @@ export function DocumentFindResults({
               onLongSelect={() => onToggle(document.path)}
               onPreview={() => onOpenFile(document.path)}
             />
-            <p className={styles.note}>
-              {[folderName, ...document.path].join(" / ")}
-              {document.ocr && " · OCR 인식 글 · 원본 대조 필요"}
-            </p>
-            <p>
+            <div className={styles.findMeta}>
+            <p className={styles.findStatus} data-verified={document.finding.kind === "matched"}>
               {document.finding.kind === "matched"
-                ? "조건에 맞는 본문 근거"
+                ? "✓ 조건 일치"
                 : document.finding.kind === "date-unknown"
-                  ? "날짜 기준 확인 필요"
-                  : "기간 안팎의 날짜가 함께 있어 확인 필요"}
+                  ? "날짜 확인 필요"
+                  : "여러 날짜가 있어 확인 필요"}
               {document.finding.dates.length > 0 &&
                 ` · ${document.finding.dates.join(", ")}`}
             </p>
-            {document.finding.evidence.slice(0, 2).map((line, index) => (
-              <blockquote key={index}>
-                {line}
-              </blockquote>
-            ))}
-            {document.finding.evidence.length > 2
-              && (
-                <details>
-                  <summary>근거 더 보기</summary>
-                  {document.finding.evidence.slice(2).map((line, index) => (
+                <details className={styles.findEvidence}>
+                  <summary>왜 후보인가요? · 근거와 위치</summary>
+                  <p className={styles.note}>{[folderName, ...document.path].join(" / ")}</p>
+                  <p className={styles.note}>검색 시점의 내용입니다. 최종 판단 전에 원문을 확인해 주세요.{document.ocr && " OCR 인식 글은 원본과 대조해 주세요."}</p>
+                  {document.finding.evidence.map((line, index) => (
                     <blockquote key={index}>
                       {line}
                     </blockquote>
                   ))}
                 </details>
-              )}
+            </div>
           </li>
         ))}
       </ul>

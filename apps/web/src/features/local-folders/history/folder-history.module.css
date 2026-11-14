@@ -8,7 +8,6 @@
 .list dt { color: var(--muted); }
 .list dd { margin: 0; overflow-wrap: anywhere; }
 .list summary { display: list-item; width: fit-content; min-height: 44px; padding-block: 12px; font-size: 13px; cursor: pointer; }
-.list summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .inspection { display: grid; justify-items: start; gap: 12px; margin-top: 12px; }
 .inspection > div { width: 100%; }
 .categories { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }

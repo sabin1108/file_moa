@@ -79,6 +79,16 @@ describe("FIND-001: explicit search conditions", () => {
 });
 
 describe("FIND-003/004: full body evidence, not an excerpt/date guess", () => {
+  it("uses the file modification date independently of dates in the body", () => {
+    const modified = confirmFindQuery({ ...filters, basis: "modified" });
+    const timestamp = new Date(2026, 9, 15, 0, 30).getTime();
+
+    expect(findTextEvidence("회의 자료\n작성일: 2025-01-01", modified, timestamp))
+      .toMatchObject({ kind: "matched", dates: ["2026-10-15"] });
+    expect(findTextEvidence("회의 자료\n작성일: 2026-10-15", modified, new Date(2026, 10, 1).getTime())).toBeNull();
+    expect(findTextEvidence("회의 자료", modified)?.kind).toBe("date-unknown");
+  });
+
   it("finds a meeting date far beyond the old 1200-character excerpt", () => {
     const text =
       "회의 자료\n" +

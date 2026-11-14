@@ -5,7 +5,6 @@
 .sharedFolderNavigation { position: absolute; inset: 0 0 auto; display: flex; justify-content: center; gap: 8px; z-index: 3; }
 .sharedFolderNavigation button { padding: 10px 18px; border: 0; border-radius: 999px; background: transparent; color: var(--intro-muted); font: inherit; cursor: pointer; }
 .sharedFolderNavigation button[aria-pressed="true"] { background: var(--intro-selected); color: var(--intro-ink); }
-.sharedFolderNavigation button:focus-visible { outline: 2px solid var(--intro-ink); outline-offset: 2px; }
 .sharedFolder .featureFolderFront { height: 128px; padding-block: 22px; }
 .sharedPapers { position: relative; }
 .sharedPaper { transform-origin: 50% 100%; }

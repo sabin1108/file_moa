@@ -28,6 +28,10 @@ import type { GroundedAction } from "../../shared/grounded-chat";
 import type { GroundedEvidence } from "../../shared/grounded-evidence";
 import type { UsageSummary } from "../../shared/ai-usage";
 import { makeWikiDraft } from "../ai-records/wiki/wiki";
+import { ConversationStart, conversationActions } from "./material-work/ConversationStart";
+import type { WorkspaceRequestKind } from "./material-work/workspace-request";
+import { WorkspaceTour } from "../onboarding/WorkspaceTour";
+import { replayWorkspaceTour } from "../onboarding/workspace-tour";
 
 export function LiveConversation({ organizeAction, groundedAction, readUsage, aiProvider = "gemini" }: {
   organizeAction?: LiveOrganizationAction;
@@ -59,6 +63,15 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
   const panelTrigger = useRef<HTMLElement | null>(null);
   const openPanel = (view: ConversationPanelView, trigger?: HTMLElement) => {
     if (trigger) panelTrigger.current = trigger;
+
+    const tree = document.querySelector<HTMLElement>("[data-folder-tree-root]");
+
+    if (view === "sources" && local.state.view?.status === "connected" && tree?.checkVisibility()) {
+      setLibraryOpen(false);
+      tree.focus();
+
+      return;
+    }
 
     setPanelView(view);
     setLibraryOpen(true);
@@ -92,6 +105,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
       messages={messages}
       scrollMemoryRef={scrollMemoryRef}
       draft={chat.state.draft}
+      showComposer={workflow.mode !== null || chat.state.turns.length > 0}
       onDraftChange={chat.updateDraft}
       onSend={() => {
         void workflow.submit();
@@ -111,7 +125,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
             type="button"
             key={view}
             aria-pressed={view === panelView || view === "records" && panelView === "storage"}
-            onClick={() => setPanelView(view)}
+            onClick={event => openPanel(view, event.currentTarget)}
           >
             <Icon name={icon} />
             {text}
@@ -152,6 +166,10 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
             temporary={conversation.temporary}
             onStorage={() => setPanelView("storage")}
             readUsage={readUsage}
+            onReplayTour={() => {
+              setLibraryOpen(false);
+              requestAnimationFrame(replayWorkspaceTour);
+            }}
           />
         </div>
       </>}
@@ -249,10 +267,18 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
           </div>
           : null}
       intro={<>
-        <h2 tabIndex={-1} data-conversation-title>무엇을 도와드릴까요?</h2>
-        <p>바로 질문하거나, 자료를 연결해 함께 살펴보세요.</p>
+        <h2 tabIndex={-1} data-conversation-title>{workflow.mode ? `${conversationActions.find(action => action.kind === workflow.mode)?.label} 시작하기` : "어떤 작업을 시작할까요?"}</h2>
+        {workflow.mode
+          ? <p>{conversationActions.find(action => action.kind === workflow.mode)?.description}. 아래에 요청을 입력해 주세요.</p>
+          : <ConversationStart onChoose={workflow.selectMode} disabled={workflow.blocked} />}
       </>}
       scope={<div>
+        {(workflow.mode || chat.state.turns.length > 0) && <label className={options.modeChoice}>작업
+          <select aria-label="대화 작업" value={workflow.mode ?? ""} disabled={workflow.blocked} onChange={event => workflow.selectMode(event.target.value as WorkspaceRequestKind)}>
+            {!workflow.mode && <option value="">자동 선택</option>}
+            {conversationActions.map(action => <option key={action.kind} value={action.kind}>{action.label}</option>)}
+          </select>
+        </label>}
         <ConversationContextBar
           temporary={conversation.temporary}
           status={conversation.status}
@@ -260,7 +286,9 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
           provider={aiProvider ? AI_PROVIDER_LABELS[aiProvider] : null}
           onOpen={openPanel}
         />
-        {workflow.intent === "grounded" && <GroundedConsent conversation={workflow.grounded} />}
+        {workflow.intent === "grounded" && (workflow.grounded.documents.length
+          ? <GroundedConsent conversation={workflow.grounded} />
+          : <p className={options.transmission}>먼저 파일 화면에서 자료를 선택하고 발췌를 확인해 주세요.</p>)}
       </div>}
       interaction={workflow.choice
         ? <RequestIntentChoice
@@ -286,5 +314,6 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
         : chatNotice?.status === "stopped" ? <p role="status">답변을 중지했어요. 여기까지 받은 내용은 미완료이며 자동으로 다시 보내지 않습니다.</p> : undefined}
       </>}
     />
+    <WorkspaceTour owner={local.owner} disabled={workflow.blocked || conversation.library.pending || !!editor} />
   </WorkspaceShell>;
 }

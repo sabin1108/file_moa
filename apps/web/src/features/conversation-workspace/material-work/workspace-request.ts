@@ -2,6 +2,10 @@ import { classifyConversationRequest } from "./request-routing";
 
 export type WorkspaceRequestKind = "chat" | "find" | "organize" | "grounded";
 
+export function canContinueWorkspaceTask(mode: WorkspaceRequestKind | null, task: "find" | "organize") {
+  return mode === null || mode === task;
+}
+
 export function classifyWorkspaceRequest(request: string, prepared: boolean): WorkspaceRequestKind | "choose" {
   const text = request.trim();
 

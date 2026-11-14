@@ -4,6 +4,14 @@ import { confirmFindQuery, inferFindRequest } from "../../../../src/features/loc
 import { DocumentFindController } from "../../../../src/features/local-folders/search/documents/document-find-controller";
 
 describe("FIND-006: explicit conversation conditions", () => {
+  it.each(["수정일", "마지막 수정 날짜", "파일 수정 날짜", "파일을 마지막으로 수정한 날짜", "마지막 수정된 파일 날짜"])("recognizes %s in the initial request and a follow-up without adding search words", basis => {
+    expect(inferFindRequest(`2026년 10월 ${basis} 기준으로 회의 자료 찾아줘`)).toMatchObject({ terms: "회의", basis: "modified" });
+    expect(parseFindReply(`2026년 10월 ${basis} 기준 해당 월만`, 2026)).toMatchObject({ kind: "apply", filters: { year: "2026", month: "10", basis: "modified", window: "month" } });
+  });
+  it("does not choose between two date bases", () => {
+    expect(inferFindRequest("수정일 또는 작성일 기준으로 회의 자료 찾아줘").basis).toBe("");
+    expect(parseFindReply("수정일 작성일 기준", 2026).kind).toBe("invalid");
+  });
   it("accepts a complete condition reply without changing the search words", () => {
     expect(parseFindReply("2026년이고 회의 날짜 기준으로", 2026)).toEqual({ kind: "apply", filters: { year: "2026", basis: "meeting" } });
     expect(parseFindReply("작년 10월 말 작성일 기준", 2026)).toEqual({

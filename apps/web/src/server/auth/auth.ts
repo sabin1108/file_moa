@@ -10,6 +10,7 @@ import { reportAuthenticationFailure } from "./auth-diagnostics";
 import { createAuthRateLimiter } from "./auth-rate-limit";
 import { socialProviders } from "../../shared/social-auth";
 import { expireConnectedSettingsDisplay, expireSettingsDisplay } from "../settings/settings-cache-policy";
+import { AUTH_PASSWORD_LIMITS } from "../../shared/auth-contract";
 
 function createAuth() {
   const secret = process.env.BETTER_AUTH_SECRET;
@@ -49,8 +50,8 @@ function createAuth() {
       enabled: true,
       requireEmailVerification: true,
       autoSignIn: false,
-      minPasswordLength: 12,
-      maxPasswordLength: 128,
+      minPasswordLength: AUTH_PASSWORD_LIMITS.min,
+      maxPasswordLength: AUTH_PASSWORD_LIMITS.max,
       resetPasswordTokenExpiresIn: 1_800,
       revokeSessionsOnPasswordReset: true,
       sendResetPassword: async ({ user, url }) => {

@@ -1,7 +1,6 @@
 .search { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--ui-space-2); margin-top: var(--ui-space-3); }
 .field { display: grid; gap: var(--ui-space-2); flex: 1 1 240px; min-width: 0; }
 .field input { min-width: 0; width: 100%; min-height: 44px; padding: 8px 12px; border: 1px solid var(--control-border); border-radius: var(--ui-radius-control); background: var(--surface); color: var(--text); font: inherit; }
-.field input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .hint { flex-basis: 100%; color: var(--muted); font-size: 13px; line-height: 1.6; }
 .search button { min-height: 44px; }
 @media (max-width: 550px) { .field { flex-basis: 160px; } }

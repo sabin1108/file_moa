@@ -140,7 +140,7 @@ self.onmessage = async (
       ...(pdf ? { pdf } : {}),
       ...(ocr ? { ocr } : {}),
       ...(request.find
-        ? { finding: findTextEvidence(text, request.find) }
+        ? { finding: findTextEvidence(text, request.find, file.lastModified) }
         : {}),
     });
   } catch {

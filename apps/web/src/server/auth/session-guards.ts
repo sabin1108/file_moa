@@ -37,7 +37,7 @@ export async function requireAccountSession() {
 export async function requireWorkspace() {
   const { requestHeaders, session } = await readGuardSession();
 
-  if (!session) redirect("/login");
+  if (!session) redirect("/start");
 
   if (!session.user.name.trim()) redirect("/account");
 

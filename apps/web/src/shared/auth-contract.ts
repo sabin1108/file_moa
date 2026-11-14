@@ -1,3 +1,5 @@
+export const AUTH_PASSWORD_LIMITS = { min: 8, max: 30 } as const;
+
 export type AuthOperation = "login" | "signup" | "resend" | "request-reset" | "verify" | "reset" | "signout" | "profile";
 
 export type AuthFieldName = "name" | "email" | "password" | "passwordConfirm" | "token";

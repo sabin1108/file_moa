@@ -10,7 +10,7 @@ mkdirSync(output, { recursive: true });
 
 const routes = phase === "cold" ? ["/demo"] : ["/login", "/welcome", "/forgot-password", "/reset-password", "/verify-email", "/files"];
 
-if (phase === "after") routes.push("/demo", "/demo/files", "/demo/settings");
+if (phase === "after") routes.push("/demo", "/demo/files", "/demo/settings", "/start", "/");
 
 const samples = [];
 const browser = await Browser.launch({
@@ -83,7 +83,7 @@ writeFileSync(`${output}/performance-${phase}.json`, JSON.stringify({
   base,
   condition: phase === "cold"
     ? "local production /demo, valid sample cookie, HTTP cache disabled, no throttling, new target per sample"
-    : "local production, unauthenticated guest routes (files redirects to login), no throttling, new target per sample, shared browser HTTP cache",
+    : "local production, unauthenticated guest routes (protected paths follow their authentication redirect; see finalPath), no throttling, new target per sample, shared browser HTTP cache",
   buildId: readFileSync("apps/web/.next/BUILD_ID", "utf8").trim(),
   staticJsCssBytes: assetBytes("apps/web/.next/static"),
   samples,

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useSharedSourceFolderConnection } from "../../local-folders/SourceFolderProvider";
 import { prepareFoundDocuments } from "./request-routing";
-import { classifyWorkspaceRequest, type WorkspaceRequestKind } from "./workspace-request";
+import { canContinueWorkspaceTask, classifyWorkspaceRequest, type WorkspaceRequestKind } from "./workspace-request";
 import type { GroundedAction } from "../../../shared/grounded-chat";
 import { AI_RECORD_LIMITS } from "../../../shared/ai-records";
 import type { useGeneralChat } from "../messaging/useGeneralChat";
@@ -12,6 +12,7 @@ import { useGroundedConversation } from "../grounded/useGroundedConversation";
 import { parseFindReply } from "../../local-folders/search/documents/document-find-reply";
 import { subscribeAuthScopeRevoked } from "../../../shared/auth-session-events";
 import { parseOrganizationReply } from "../../local-folders/organization/organization-reply";
+import { useConversationStore } from "../ConversationStateProvider";
 
 type Task = {
   id: string;
@@ -22,6 +23,8 @@ type Task = {
 
 export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>, groundedAction?: GroundedAction) {
   const local = useSharedSourceFolderConnection();
+  const store = useConversationStore();
+  const { mode } = useSyncExternalStore(store.subscribe, store.getSelection, store.getServerSelection);
   const finding = useSyncExternalStore(
     local.finding.subscribe,
     local.finding.getSnapshot,
@@ -60,9 +63,9 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
   const reading = finding.phase === "searching" || ["reading", "checking", "sending"].includes(organization.phase);
   const pending = !!chat.state.active || reading || grounded.pending;
   const blocked = pending || managed.phase === "running";
-  const intent = groundedRequest === chat.state.draft
+  const intent = mode ?? (groundedRequest === chat.state.draft
     ? "grounded"
-    : classifyWorkspaceRequest(chat.state.draft, grounded.documents.length > 0);
+    : classifyWorkspaceRequest(chat.state.draft, grounded.documents.length > 0));
 
   useEffect(() => {
     const revoke = () => {
@@ -70,11 +73,12 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
       cancelGrounded();
       setTask(null);
       setChoice(null);
+      store.select({ mode: null });
       setGroundedRequest(null);
     };
 
     return subscribeAuthScopeRevoked(revoke);
-  }, [cancelGrounded]);
+  }, [cancelGrounded, store]);
 
   const assertCanChange = useCallback(() => {
     if (local.organizationExecution.managed.getSnapshot().phase === "running") throw new Error("managed-operation-running");
@@ -92,8 +96,9 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
     submitting.current = null;
     setTask(null);
     setChoice(null);
+    store.select({ mode: null });
     setGroundedRequest(null);
-  }, [local.finding, local.organization, local.preview, assertCanChange, resetGrounded]);
+  }, [local.finding, local.organization, local.preview, assertCanChange, resetGrounded, store]);
 
   const resume = () => {
     if (!task?.waitingForSource || !connected || blocked || task.kind === "grounded") return;
@@ -163,7 +168,7 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
 
     const kind = selected ?? intent;
 
-    if (!selected && task?.kind === "organize" && organization.snapshot && organization.questions.length) {
+    if (!selected && task?.kind === "organize" && canContinueWorkspaceTask(mode, "organize") && organization.snapshot && organization.questions.length) {
       const documents = organization.snapshot.documents.filter(document => organization.selectedIds.includes(document.id)).map(document => ({ ...document, sourcePath: document.path.slice(0, -1) }));
       let validReply = false;
 
@@ -198,7 +203,7 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
       }
     }
 
-    if (!selected && kind === "chat" && task?.kind === "find"
+    if (!selected && (kind === "chat" || kind === "find") && task?.kind === "find" && canContinueWorkspaceTask(mode, "find")
       && parseFindReply(request, new Date().getFullYear()).kind !== "none") {
       local.finding.submitReply(request);
 
@@ -306,6 +311,14 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
 
   return {
     task,
+    mode,
+    selectMode: (value: WorkspaceRequestKind) => {
+      if (blocked) return;
+
+      store.select({ mode: value });
+      setChoice(null);
+      requestAnimationFrame(() => document.getElementById("message-draft")?.focus());
+    },
     intent,
     pending,
     blocked,

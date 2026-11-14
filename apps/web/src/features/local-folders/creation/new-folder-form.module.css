@@ -5,5 +5,4 @@
 .creation label { display: grid; gap: 8px; }
 .creation input, .creation select { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--control-border); border-radius: 4px; padding: 10px; background: var(--surface); color: var(--text); font: inherit; }
 .creation button { justify-self: start; }
-.creation summary:focus-visible, .creation input:focus-visible, .creation select:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .note { font-size: 13px; line-height: 1.6; color: var(--muted); }

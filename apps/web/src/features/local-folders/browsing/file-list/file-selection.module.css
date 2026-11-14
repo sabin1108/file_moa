@@ -9,7 +9,6 @@
 .check { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: var(--ui-control-height); min-height: var(--ui-control-height); cursor: pointer; }
 .check[hidden] { display: none; }
 .check input, .selectAll input { width: 18px; height: 18px; margin: 0; accent-color: var(--text); cursor: pointer; }
-.check input:focus-visible, .selectAll input:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
 .check input:disabled, .selectAll input:disabled { cursor: default; }
 .fileRow > .fileAction { border: 0; background: transparent; min-width: 0; padding-left: 0; }
 .fileRow[data-selecting="false"] > .fileAction { padding-left: var(--ui-space-2); }

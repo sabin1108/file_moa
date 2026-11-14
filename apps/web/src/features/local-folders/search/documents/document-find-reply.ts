@@ -1,5 +1,12 @@
 import type { FindFilters } from "./document-find";
 
+export const findDateBasisPatterns = {
+  meeting: /회의\s*(?:일시|날짜|일)(?=\s|[은는을를로:：]|$)/u,
+  written: /작성\s*(?:일시|날짜|일)(?=\s|[은는을를로:：]|$)/u,
+  modified: /(?:파일(?:을)?\s*)?(?:마지막(?:으로)?\s*)?수정(?:한|된)?\s*(?:파일\s*)?(?:일시|날짜|일)(?=\s|[은는을를로:：]|$)/u,
+  body: /본문(?:에)?\s*(?:기록된|적힌)?\s*(?:파일\s*)?날짜(?:\s*전체)?/u,
+} as const;
+
 type FindReply = Readonly<{
   kind: "apply";
   filters: Partial<FindFilters>
@@ -16,7 +23,8 @@ export function findRelativeYear(text: string, referenceYear?: number): string {
 /** 지원하는 조건만 전부 해석한다. 남은 문구가 있으면 일부 조건도 반영하지 않는다. */
 
 export function parseFindReply(reply: string, referenceYear: number): FindReply {
-  if (!/20\d{2}|작년|올해|\d+\s*월|회의\s*(?:일|날짜)|작성\s*(?:일|날짜)|본문.*날짜|전체\s*기간|해당\s*월|앞뒤\s*7일/u.test(reply)) return { kind: "none" };
+  if (!/20\d{2}|작년|올해|\d+\s*월|전체\s*기간|해당\s*월|앞뒤\s*7일/u.test(reply)
+    && !Object.values(findDateBasisPatterns).some(pattern => pattern.test(reply))) return { kind: "none" };
 
   if (reply.length > 200 || /말고|제외|빼고|아닌|아니고|않|또는|혹은/u.test(reply)) return { kind: "invalid" };
 
@@ -58,9 +66,11 @@ export function parseFindReply(reply: string, referenceYear: number): FindReply 
 
   if (filters.month && (+filters.month < 1 || +filters.month > 12)) return { kind: "invalid" };
 
-  if (!take(/회의\s*(?:일시|날짜|일)|작성\s*(?:일시|날짜|일)|본문(?:에\s*적힌)?\s*날짜(?:\s*전체)?/gu, match => {
-    filters.basis = match[0].startsWith("회의") ? "meeting" : match[0].startsWith("작성") ? "written" : "body";
-  })) return { kind: "invalid" };
+  for (const [basis, pattern] of Object.entries(findDateBasisPatterns)) {
+    if (!pattern.test(rest)) continue;
+
+    if (filters.basis || !take(new RegExp(pattern.source, "gu"), () => { filters.basis = basis; })) return { kind: "invalid" };
+  }
 
   if (/전체\s*기간/u.test(rest)) {
     if (filters.month || filters.year) return { kind: "invalid" };

@@ -32,7 +32,7 @@ export function AiStorageSettings({ controller, conversation, locked, onBack, on
   return <section className={styles.storage} aria-label="기록 저장 위치">
     <button type="button" className={actionClasses("secondary")} onClick={onBack}>
       <Icon name="chevron" />
-      기록으로
+      기록 목록으로 돌아가기
     </button>
     <div className={styles.storageHeading}>
       <Icon name="folder" size={30} />
@@ -45,46 +45,23 @@ export function AiStorageSettings({ controller, conversation, locked, onBack, on
         </p>
       </div>
     </div>
-    <p>선택한 폴더에 대화·결과물·기억을 저장합니다. 원본 자료는 복제하지 않으며 저장 파일은 암호화되지 않습니다.</p>
-    <button
+    {library.phase !== "ready" && <><p>선택한 폴더에 모아 기록 파일을 만듭니다. 저장 파일은 암호화되지 않습니다.</p><button
       type="button"
       className={actionClasses("primary")}
       disabled={disabled}
-      onClick={() => void perform(() => controller.connect())}
+      onClick={() => void perform(() => library.folderName ? controller.reconnect() : controller.connect())}
     >
       <Icon name="folder" />
-      {library.folderName ? "다른 저장 위치 선택" : "저장 폴더 선택"}
-    </button>
-    {library.folderName && <div className={styles.actions}>
-      <button
-        type="button"
-        className={actionClasses("secondary")}
-        disabled={disabled}
-        onClick={() => void perform(() => controller.reconnect())}
-      >
-        <Icon name="retry" />
-        권한 확인·다시 읽기
-      </button>
-      <button
-        type="button"
-        className={actionClasses("secondary")}
-        disabled={disabled}
-        onClick={() => void perform(async () => {
-          await conversation.persist();
-          conversation.assertAvailable();
-          conversation.detachStorage();
-          await controller.disconnect();
-        })}
-      >연결 해제</button>
-    </div>}
+      {library.folderName ? "저장 폴더 다시 연결" : "저장 폴더 선택"}
+    </button></>}
     {locked && <p>응답·편집·삭제 확인을 마친 뒤 저장 위치를 변경할 수 있어요.</p>}
     {(notice || library.notice || conversation.status.includes("미저장")) && <p role="status" className={styles.notice}>
       {notice || library.notice || conversation.status}
     </p>}
     <section className={styles.storageChoice} aria-label="현재 대화 보관">
-      <h3>현재 대화</h3>
+      <h3>이 대화 저장</h3>
       <p>
-        {conversation.temporary ? "지금은 저장하지 않습니다. 새로고침하면 사라져요." : conversation.status}
+        {conversation.temporary ? "저장 꺼짐 · 새로고침하면 사라집니다." : conversation.status}
       </p>
       {conversation.temporary && library.phase === "ready" && <button
         type="button"
@@ -95,6 +72,20 @@ export function AiStorageSettings({ controller, conversation, locked, onBack, on
           onBack();
         })}
       >이 대화 저장</button>}
+    </section>
+    <details className={controls.disclosure}>
+      <summary>저장 위치 관리</summary>
+      <p>저장 파일은 암호화되지 않습니다. 연결을 해제해도 파일은 남고 원본 자료는 변경하지 않습니다.</p>
+      <button type="button" className={actionClasses("secondary")} disabled={disabled} onClick={() => void perform(() => controller.connect())}>다른 저장 위치 선택</button>
+      {library.folderName && <div className={styles.actions}>
+        <button type="button" className={actionClasses("secondary")} disabled={disabled} onClick={() => void perform(() => controller.reconnect())}>권한 확인·다시 읽기</button>
+        <button type="button" className={actionClasses("secondary")} disabled={disabled} onClick={() => void perform(async () => {
+          await conversation.persist();
+          conversation.assertAvailable();
+          conversation.detachStorage();
+          await controller.disconnect();
+        })}>연결 해제</button>
+      </div>}
       <button
         type="button"
         className={actionClasses("secondary")}
@@ -104,10 +95,6 @@ export function AiStorageSettings({ controller, conversation, locked, onBack, on
           onOpen();
         })}
       >저장 없이 새 대화</button>
-    </section>
-    <details className={controls.disclosure}>
-      <summary>연결 해제와 저장 파일</summary>
-      <p>연결을 해제해도 파일과 현재 대화는 남습니다. 이후 대화는 이 화면에만 남아요. 이 폴더의 앱 기록만 읽고 쓰며 원본 자료는 변경하지 않습니다.</p>
     </details>
   </section>;
 }

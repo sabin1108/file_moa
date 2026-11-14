@@ -137,6 +137,7 @@ export function ConversationWorkspace({
                   className={actionClasses("secondary")}
                   aria-expanded={panelOpen}
                   aria-controls="conversation-materials"
+                  data-tour="records"
                   onClick={(event) => {
                     trigger.current = event.currentTarget;
 
@@ -228,18 +229,17 @@ export function ConversationWorkspace({
               )}
           </div>
         </div>
+        {scope != null && <div className={`${composer.scope} ${composer.contextRegion}`} data-tour="context">{scope}</div>}
         {showComposer
           && (
             <form
+              data-tour="composer"
               className={composer.composerRegion}
               onSubmit={(event) => {
                 event.preventDefault();
                 send();
               }}
             >
-              {scope != null && <div className={composer.scope}>
-                {scope}
-              </div>}
               <div className={composer.composer}>
                 <label htmlFor="message-draft" className="sr-only">
                   {inputLabel}

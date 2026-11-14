@@ -27,7 +27,7 @@
 .facts dd { margin: 0; overflow-wrap: anywhere; }
 .panelNavigation { display: flex; gap: 4px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
 .panelNavigation button { flex: 1; min-height: 42px; border: 1px solid transparent; border-radius: 6px; font-size: 14px; cursor: pointer; }
-.panelNavigation button[aria-pressed="true"] { border-color: var(--text); background: var(--active); font-weight: 600; }
+.panelNavigation button[aria-pressed="true"] { border-bottom-color: var(--focus); background: var(--active); font-weight: 600; }
 .sourcePanel { display: grid; gap: 16px; padding: 24px 4px; }
 .sourcePanel h3 { font-size: 16px; }
 .sourcePanel > p { color: var(--muted); line-height: 1.8; font-size: 14px; }
@@ -35,3 +35,12 @@
 .sourcePanel [aria-label="자료 폴더 연결"] { align-items: center; gap: 12px; }
 .sourcePanel [aria-label="자료 폴더 연결"] > span { font-weight: 600; overflow-wrap: anywhere; }
 @media (max-width: 500px) { .contextActions { gap: 6px; } .contextActions button { padding-inline: 8px; } }
+.startActions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 24px; }
+.startActions button { display: flex; align-items: center; gap: 12px; min-height: 86px; padding: 16px; border: 1px solid var(--control-border); border-radius: var(--ui-radius-control, 6px); text-align: left; background: var(--surface); cursor: pointer; }
+.startActions button:hover { background: var(--active); }
+.startActions button > span { display: grid; gap: 4px; flex: 1; min-width: 0; }
+.startActions strong { font-size: 15px; font-weight: 600; }
+.startActions small { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.modeChoice { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; }
+.modeChoice select { padding: 6px 10px; min-height: 36px; border: 1px solid var(--control-border); border-radius: 6px; background: var(--surface); color: var(--text); }
+@media (max-width: 500px) { .startActions { grid-template-columns: 1fr; } .startActions button { min-height: 70px; padding: 12px; } }

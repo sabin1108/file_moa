@@ -70,6 +70,7 @@ try {
     }
   );
   await page.goto(base + "/demo", { settleMs: 250 });
+  await page.eval(() => document.querySelector('[aria-label="시작할 작업 선택"] button')?.click());
   await until(page, () => !!document.getElementById("message-draft"));
   check(
     "same shared conversation workspace and production menu labels",

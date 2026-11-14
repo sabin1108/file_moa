@@ -5,6 +5,7 @@ import type { ConversationKind } from "../../../src/shared/ai-records";
 import type { ChatTurn } from "../../../src/features/conversation-workspace/messaging/general-chat-state";
 
 const fixture = vi.hoisted(() => ({
+  conversationStore: null as ConversationStore | null,
   managed: { phase: "idle" },
   finding: { phase: "idle" },
   organization: { phase: "draft", snapshot: null, questions: [] },
@@ -19,6 +20,8 @@ const fixture = vi.hoisted(() => ({
   route: vi.fn(),
   subscribe: () => () => { },
 }));
+
+vi.mock("../../../src/features/conversation-workspace/ConversationStateProvider", () => ({ useConversationStore: () => fixture.conversationStore }));
 
 vi.mock("../../../src/features/local-folders/SourceFolderProvider", () => ({
   useSharedSourceFolderConnection: () => ({
@@ -68,6 +71,7 @@ vi.mock(
 import { useWorkspaceConversation } from "../../../src/features/conversation-workspace/material-work/useWorkspaceConversation";
 
 function renderWorkflow(store: ConversationStore) {
+  fixture.conversationStore = store;
   const chat = {
     state: store.getSnapshot(),
     getSnapshot: store.getSnapshot,

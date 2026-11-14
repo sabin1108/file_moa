@@ -124,7 +124,7 @@ export function RecordEditor({ initial, controller, onClose }: {
         className={actionClasses("secondary")}
         onClick={() => dirty ? setClosing(true) : onClose()}
         disabled={pending}
-      >목록으로</button>
+      ><Icon name="chevron" />기록 목록으로 돌아가기</button>
     </div>
     {closing && <div role="alert" className={styles.deletion}>
       <p>저장하지 않은 내용이 있어요.</p>

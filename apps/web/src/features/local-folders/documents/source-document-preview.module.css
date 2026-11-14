@@ -2,7 +2,6 @@
 .toolbar, .actions { display: flex; flex-wrap: wrap; gap: var(--ui-space-2); }
 .toolbar { justify-content: space-between; gap: var(--ui-space-4); }
 .title { margin-top: var(--ui-space-6); font-size: var(--ui-font-title); overflow-wrap: anywhere; }
-.title:focus-visible, .body:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
 .infoToggle { display: flex; align-items: center; justify-content: space-between; gap: var(--ui-space-2); margin-top: var(--ui-space-2); }
 .documentStatus { margin: 0; font-size: 13px; line-height: 1.7; color: var(--muted); }
 .info { padding: var(--ui-space-4) 0; border-bottom: 1px solid var(--border); }
@@ -19,7 +18,6 @@
 .body { display: block; box-sizing: border-box; width: 100%; max-width: 210mm; min-height: calc(min(100cqi, 210mm) * 297 / 210); margin: var(--ui-space-6) auto 0; padding: 20px; border: 1px solid var(--border); border-radius: var(--ui-radius-control); background: var(--surface); color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; font-family: inherit; font-size: 17px; font-weight: 400; line-height: 1.85; tab-size: 4; }
 .preview .body { font-family: inherit; font-size: 17px; line-height: 1.85; }
 .editorInput { resize: vertical; field-sizing: content; }
-.editorInput:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
 .empty { color: var(--muted); }
 .note { border-top: 1px solid var(--border); padding-top: var(--ui-space-4); margin-top: var(--ui-space-6); font-size: 13px; line-height: 1.8; color: var(--muted); }
 @media (max-width: 550px) {

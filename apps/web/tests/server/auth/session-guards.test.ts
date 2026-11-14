@@ -71,7 +71,7 @@ describe("server route session guards", () => {
 
   it("redirects a missing workspace session without mounting an owner", async () => {
     calls.session.mockResolvedValue(null);
-    await expect(requireWorkspace()).rejects.toThrow("fixture-redirect:/login");
+    await expect(requireWorkspace()).rejects.toThrow("fixture-redirect:/start");
     expect(calls.workspace).not.toHaveBeenCalled();
   });
 

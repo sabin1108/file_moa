@@ -6,9 +6,12 @@ import { getAuth } from "./auth";
 import { handleAuthRequest } from "./auth-handler";
 import { reportAuthenticationFailure } from "./auth-diagnostics";
 import { displayNameSchema } from "../../shared/auth-profile";
+import { AUTH_PASSWORD_LIMITS } from "../../shared/auth-contract";
 
 const email = z.string().trim().max(254).pipe(z.email("올바른 이메일 주소를 입력해 주세요.")).transform(value => value.toLowerCase());
-const password = z.string().min(12, "비밀번호는 12자 이상 입력해 주세요.").max(128, "비밀번호는 128자 이하로 입력해 주세요.");
+const password = z.string()
+  .min(AUTH_PASSWORD_LIMITS.min, "비밀번호는 8자 이상 입력해 주세요.")
+  .max(AUTH_PASSWORD_LIMITS.max, "비밀번호는 30자 이하로 입력해 주세요.");
 const token = z.string().min(1, "메일의 링크를 다시 열어 주세요.").max(4096);
 const confirmPassword = { message: "비밀번호가 일치하지 않습니다.", path: ["passwordConfirm"] };
 const newPassword = z.object({ password, passwordConfirm: z.string() }).refine(
@@ -64,6 +67,9 @@ export async function submitAuthForm(operation: AuthOperation, formData: FormDat
   state: AuthFormState;
   response?: Response
 }> {
+  const failureMessage = operation === "resend" || operation === "request-reset"
+    ? "메일을 보내지 못했습니다. 계속 실패하면 서비스의 메일 발신 설정을 확인해야 합니다."
+    : "요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.";
   const parsed = schemas[operation].safeParse(Object.fromEntries(formData));
 
   if (!parsed.success) {
@@ -133,13 +139,13 @@ export async function submitAuthForm(operation: AuthOperation, formData: FormDat
         ? "요청이 많습니다. 잠시 기다린 뒤 다시 시도해 주세요."
         : error.success ? errorMessages[error.data.code ?? ""] : undefined;
 
-      return { response, state: { status: "error", message: message ?? "요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요." } };
+      return { response, state: { status: "error", message: message ?? failureMessage } };
     }
 
     return { response, state: { status: "success", message: successMessages[operation] } };
   } catch (error) {
     reportAuthenticationFailure("form", error);
 
-    return { state: { status: "error", message: "요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요." } };
+    return { state: { status: "error", message: failureMessage } };
   }
 }

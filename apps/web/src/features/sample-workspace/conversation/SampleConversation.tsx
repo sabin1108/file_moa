@@ -19,6 +19,7 @@ import { SampleDocumentPreview } from "../files/SampleDocumentPreview";
 import { SampleFolderPanel } from "../files/SampleFolderPanel";
 import styles from "../sample-workspace.module.css";
 import { SampleFolderTree } from "../files/SampleFolderTree";
+import { ConversationStart } from "../../conversation-workspace/material-work/ConversationStart";
 
 const steps = [{ id: "select", label: "대화로 요청" }, { id: "review", label: "근거·계획 검토" }, { id: "result", label: "정리 결과" }];
 
@@ -42,6 +43,7 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
   const [path, setPath] = useState<string[]>(["받은 자료"]);
   const [previewId, setPreviewId] = useState<string | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
+  const [started, setStarted] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const scopedDocuments = catalog.documents.filter(document => scope === "all"
     || (scope === "selected"
@@ -95,6 +97,7 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
               setPreviewId(null);
               setPath(["받은 자료"]);
               setScope("all");
+              setStarted(false);
             }}
           >
             처음부터 다시
@@ -107,6 +110,7 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
     >
       <ConversationWorkspace
         messages={state.messages}
+        showComposer={started || state.messages.length > 0}
         draft={state.draft}
         onDraftChange={fill}
         pending={aiPending}
@@ -122,12 +126,10 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
         }}
         intro={
           <>
-            <h2>어떤 자료를 정리할까요?</h2>
-            <p>
-              원하는 내용과 정리 방식을 말해 주세요. 자료의 본문을 확인해 관련 파일과 정리 계획을
-              함께 보여 드려요.
-            </p>
-            {[
+            <h2>어떤 작업을 시작할까요?</h2>
+            <p>샘플에서는 가상 자료로 정리 과정을 체험합니다.</p>
+            <ConversationStart disabled={disabled} modes={["organize"]} onChoose={() => setStarted(true)} />
+            {started && [
               "10월달 보고서를 본문 작성일 기준으로 날짜별로 정리해 줘",
               "웹사이트 성능 테스트 자료만 내용으로 찾아 성능 테스트 폴더에 모아 줘",
             ].map(example => (
@@ -156,7 +158,8 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
           </>
         }
         scope={
-          <div className={styles.conversationScope}>
+          <details className={styles.conversationScope} open={started || state.messages.length > 0}>
+            <summary>샘플 자료 · 범위와 AI 전송 설정</summary>
             {!aiProvider && <p>이 샘플에서는 AI 전송을 사용할 수 없습니다.</p>}
             <label>
               {"자료 범위 "}
@@ -203,7 +206,7 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
               선택한 공급자의 데이터 처리 정책이 적용돼요. 개인 파일은 전송하지
               않아요.
             </p>
-          </div>
+          </details>
         }
         panel={
           <>

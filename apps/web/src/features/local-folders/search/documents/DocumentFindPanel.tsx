@@ -51,15 +51,6 @@ export function DocumentFindPanel({
         >
           <fieldset disabled={busy} className={styles.conditions}>
             <legend>어떤 자료를 찾을까요?</legend>
-            <div className={styles.actions}>
-              <button
-                type="submit"
-                data-find-search
-                className={actionClasses("primary")}
-              >
-                검색 시작
-              </button>
-            </div>
             <label className={styles.basis}>
               본문에서 찾을 단어 · 모두 포함
               <input
@@ -120,9 +111,11 @@ export function DocumentFindPanel({
                         }
                       >
                         <option value="">기준 선택</option>
-                        <option value="meeting">본문의 회의일</option>
-                        <option value="written">본문의 작성일</option>
-                        <option value="body">본문에 적힌 날짜 전체</option>
+                        <option value="modified">파일을 마지막으로 수정한 날짜</option>
+                        <option value="body">본문에 기록된 날짜</option>
+                        <option value="created" disabled>파일 생성 날짜 · 브라우저에서 제공하지 않음</option>
+                        {state.filters.basis === "meeting" && <option value="meeting">본문의 회의일 · 요청에서 선택됨</option>}
+                        {state.filters.basis === "written" && <option value="written">본문의 작성일 · 요청에서 선택됨</option>}
                       </select>
                     </label>
                     <label className={styles.basis}>
@@ -169,27 +162,17 @@ export function DocumentFindPanel({
                 ? [folderName, ...state.scope.path].join(" / ")
                 : `${folderName} 전체`}
             </p>
-            <div className={styles.actions}>
-              <button
-                type="button"
-                className={actionClasses("ghost")}
-                aria-pressed={state.scope.kind === "all"}
-                onClick={() => controller.setScope(null)}
-              >
-                연결한 폴더 전체
-              </button>
-              <button
-                type="button"
-                className={actionClasses("ghost")}
-                onClick={() => controller.setScope(currentPath)}
-              >
-                현재 폴더와 하위 폴더
-              </button>
-            </div>
+            <fieldset className={styles.scopeChoices}>
+              <legend>어디에서 찾을까요?</legend>
+              <label><input type="radio" name="find-scope" checked={state.scope.kind === "all"} onChange={() => controller.setScope(null)} />연결한 폴더 전체</label>
+              <label><input type="radio" name="find-scope" checked={state.scope.kind === "folder"} onChange={() => controller.setScope(currentPath)} />현재 폴더와 하위 폴더</label>
+            </fieldset>
             <p className={styles.note}>
-              문서 본문과 사용을 켠 OCR 인식 글에서 단어·날짜 근거를 확인합니다. 이 기기에서만
-              읽으며 파일을 옮기거나 외부 AI로 보내지 않습니다.
+              이 기기에서 검색합니다. 파일을 옮기거나 외부 AI로 보내지 않습니다.
             </p>
+            <div className={styles.actions}>
+              <button type="submit" data-find-search className={actionClasses("primary")}>검색 시작</button>
+            </div>
           </fieldset>
         </form>
       </details>

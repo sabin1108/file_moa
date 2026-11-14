@@ -45,6 +45,7 @@ export function ConversationContextBar({ temporary, status, sourceName, provider
         className={actionClasses("secondary", styles.settingsButton)}
         onClick={open("settings")}
         aria-label="대화 설정"
+        data-tour="settings"
       >
         <Icon name="settings" />
         <span>설정</span>

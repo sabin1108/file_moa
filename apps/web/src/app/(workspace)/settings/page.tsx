@@ -24,6 +24,8 @@ import { requireAccountSession } from "../../../server/auth/session-guards";
 import { QuickSwitchSettings } from "../../../features/quick-switch/QuickSwitchSettings";
 import { SourceFolderTree } from "../../../features/local-folders/browsing/navigation/SourceFolderTree";
 import { Suspense } from "react";
+import Link from "next/link";
+import { actionClasses } from "../../../components/ui/action-classes";
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
@@ -40,7 +42,7 @@ export default function Page({ searchParams }: Props) {
             ),
             folders: <SourceFolderSettings />,
             editor: <EditorSettings />,
-            controls: <QuickSwitchSettings />,
+            controls: <><Link href="/?guide=1" className={actionClasses("secondary")}>사용 방법 다시 보기</Link><QuickSwitchSettings /></>,
           }}
         />
       </div>

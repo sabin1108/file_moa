@@ -2,17 +2,14 @@
 .pathForm { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px; margin-top: 12px; }
 .pathForm label { display: grid; gap: 6px; flex: 1 1 160px; min-width: 0; font-size: 13px; }
 .pathForm input { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--border); border-radius: var(--ui-radius-control); padding: 8px 12px; background: var(--surface); color: var(--text); font: inherit; }
-.pathForm input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .pathForm button { min-height: 44px; }
 .pathForm p { flex-basis: 100%; }
 .header, .navigation { display: flex; align-items: center; flex-wrap: wrap; gap: var(--ui-space-2); }
 .header { justify-content: space-between; }
 .header h3 { font-size: 16px; font-weight: 600; }
-.header h3:focus-visible, .folders button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .navigation { margin-block: var(--ui-space-2); }
 .navigation p { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .navigation p button { min-height: 44px; text-decoration: underline; color: var(--text); overflow-wrap: anywhere; }
-.navigation button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .chooseRow { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin: 16px 0; padding: 12px 0; border-block: 1px solid var(--border); }
 .chooseRow > p { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 150px; }
 .chooseRow > p > svg { flex: none; color: var(--muted); }

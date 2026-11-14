@@ -6,7 +6,6 @@
 .stage { opacity: 1; }
 .header { display: flex; align-items: center; justify-content: space-between; gap: var(--ui-space-3); }
 .header h2 { font-size: var(--ui-font-title); font-weight: 600; }
-.header h2:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
 .scope { margin-top: var(--ui-space-3); font-weight: 600; }
 .source { margin-top: var(--ui-space-2); overflow-wrap: anywhere; }
 .destinationStep { margin-top: 20px; }
@@ -20,7 +19,6 @@
 .destinationField small { color: var(--muted); font-size: 12px; }
 .destinationField[data-confirmed="true"] { border-color: var(--border); background: var(--surface); }
 .destinationField:hover { border-color: var(--text); background: var(--active); }
-.destinationField:focus-visible, .operationRow select:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 .planStepTitle { margin-top: 24px; }
 .planReadStatus { min-height: 3.4em; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
 .stepSummary { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; justify-content: space-between; margin: 16px 0; }
@@ -93,7 +91,6 @@
 .inspection .actions .note { margin: 0; }
 .inspectionDetails { margin-top: var(--ui-space-3); }
 .inspectionDetails summary { width: fit-content; min-height: 44px; padding: 10px 0; cursor: pointer; font-weight: 600; }
-.inspectionDetails summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .inspectionDetails code { overflow-wrap: anywhere; font-size: inherit; }
 .rows dl { display: grid; gap: var(--ui-space-2); margin: var(--ui-space-3) 0 0; }
 .rows dl div { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: var(--ui-space-3); }

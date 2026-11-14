@@ -12,7 +12,6 @@
 .action { display: flex; gap: 8px; flex-shrink: 0; }
 .dismiss { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 32px; height: 32px; padding: 0; margin: -4px -4px 0 0; border: 0; border-radius: var(--ui-radius-control); background: transparent; color: inherit; cursor: pointer; }
 .dismiss:hover { background: rgb(0 0 0 / 6%); }
-.dismiss:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .toast { position: fixed; right: 24px; bottom: 24px; z-index: 1000; width: min(420px, calc(100vw - 32px)); }
 .toast .notice { padding: 12px; gap: 8px; box-shadow: 0 4px 16px rgb(6 20 27 / 10%); }
 .toast .notice, .toast .notice p { font-size: 13px; line-height: 1.6; }

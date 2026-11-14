@@ -1,8 +1,26 @@
 import { expect, it } from "vitest";
-import { classifyWorkspaceRequest } from "../../../src/features/conversation-workspace/material-work/workspace-request";
+import { canContinueWorkspaceTask, classifyWorkspaceRequest } from "../../../src/features/conversation-workspace/material-work/workspace-request";
 import { chatContext, chatReducer, initialChatState } from "../../../src/features/conversation-workspace/messaging/general-chat-state";
 import { restoreConversation } from "../../../src/shared/ai-records";
 import { ConversationStore } from "../../../src/features/conversation-workspace/conversation-store";
+
+it.each(["find", "organize"] as const)("does not apply a new chat question to the previous %s conditions after a mode change", task => {
+  expect(canContinueWorkspaceTask("chat", task)).toBe(false);
+  expect(canContinueWorkspaceTask("grounded", task)).toBe(false);
+  expect(canContinueWorkspaceTask(task, task)).toBe(true);
+  expect(canContinueWorkspaceTask(null, task)).toBe(true);
+});
+
+it("keeps the chosen mode with the workspace conversation and clears it on reset", () => {
+  const store = new ConversationStore();
+
+  store.select({ mode: "chat" });
+  store.dispatch({ type: "draft", value: "2026년 계획을 알려줘" });
+  expect(store.getSelection().mode).toBe("chat");
+  store.dispatch({ type: "reset" });
+  expect(store.getSelection().mode).toBeNull();
+  expect(new ConversationStore().getSelection().mode).toBeNull();
+});
 
 it.each([
   ["안녕, 오늘 할 일을 같이 생각해줘", false, "chat"],

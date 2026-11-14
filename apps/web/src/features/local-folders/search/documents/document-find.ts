@@ -1,6 +1,6 @@
 import { contentDates } from "../../../../shared/content-dates";
 import type { SourceSnapshot } from "../../organization/source-snapshot-rules";
-import { findRelativeYear } from "./document-find-reply";
+import { findDateBasisPatterns, findRelativeYear } from "./document-find-reply";
 
 export type FindFilters = Readonly<{
   terms: string;
@@ -15,7 +15,7 @@ export type FindQuery = Readonly<{
   terms: readonly string[];
   from: string | null;
   to: string | null;
-  basis: "meeting" | "written" | "body";
+  basis: "meeting" | "written" | "body" | "modified";
 }>;
 
 export type FindEvidence = Readonly<{
@@ -51,12 +51,7 @@ export function isFindRequest(request: string) {
 }
 
 export function inferFindRequest(request: string, referenceYear?: number): FindFilters {
-  const written = /작성\s*(?:일시|날짜|일)(?=\s|[은는을를로:：]|$)/u.test(
-    request,
-  );
-  const meeting = /회의\s*(?:일시|날짜|일)(?=\s|[은는을를로:：]|$)/u.test(
-    request,
-  );
+  const bases = Object.entries(findDateBasisPatterns).filter(([, pattern]) => pattern.test(request));
   const negated = /말고|제외|빼고|아닌|아니고|않|하지\s*마/u.test(request);
   const years = [
     ...new Set(
@@ -73,7 +68,7 @@ export function inferFindRequest(request: string, referenceYear?: number): FindF
     ),
   ];
   const words =
-    request
+    Object.values(findDateBasisPatterns).reduce((text, pattern) => text.replace(new RegExp(pattern.source, "gu"), " "), request)
       .replace(/재작년|작년|올해/gu, " ")
       .replace(/20\d{2}\s*년?/gu, " ")
       .replace(
@@ -139,7 +134,7 @@ export function inferFindRequest(request: string, referenceYear?: number): FindF
             ? ""
             : "all",
     basis:
-      negated || written === meeting ? "" : written ? "written" : "meeting",
+      negated || bases.length !== 1 ? "" : bases[0][0],
     window: monthRange ? "months" : /월\s*말/u.test(request) ? "late" : /쯤|전후|무렵|월\s*(?:초|중순)/u.test(request) ? "" : "month",
     endMonth: monthRange ? String(+monthRange[2]) : "",
   };
@@ -164,7 +159,7 @@ export function confirmFindQuery(filters: FindFilters): FindQuery {
     !/^20\d{2}$/u.test(filters.year) ||
     !/^(?:[1-9]|1[0-2])$/u.test(filters.month)
     ||
-    !["meeting", "written", "body"].includes(filters.basis)
+    !["meeting", "written", "body", "modified"].includes(filters.basis)
     ||
     !["month", "around", "late", "months"].includes(filters.window)
     ||
@@ -198,6 +193,7 @@ export function confirmFindQuery(filters: FindFilters): FindQuery {
 export function findTextEvidence(
   text: string,
   query: FindQuery,
+  lastModified?: number,
 ): FindEvidence | null {
   const lower = text.toLocaleLowerCase("ko");
   const positions = query.terms.map((term) =>
@@ -213,6 +209,19 @@ export function findTextEvidence(
   const evidence = positions.map((position) => snippet(position));
 
   if (!query.from || !query.to) return { kind: "matched", dates: [], evidence };
+
+  if (query.basis === "modified") {
+    if (lastModified === undefined || !Number.isFinite(lastModified)) return { kind: "date-unknown", dates: [], evidence };
+
+    const modified = new Date(lastModified);
+
+    if (!Number.isFinite(modified.getTime())) return { kind: "date-unknown", dates: [], evidence };
+    const date = `${modified.getFullYear()}-${String(modified.getMonth() + 1).padStart(2, "0")}-${String(modified.getDate()).padStart(2, "0")}`;
+
+    if (date < query.from || date > query.to) return null;
+
+    return { kind: "matched", dates: [date], evidence };
+  }
 
   const datePattern =
     "(?<!\\d)20\\d{2}\\s*(?:[-/.]|년)\\s*\\d{1,2}\\s*(?:[-/.]|월)\\s*\\d{1,2}(?:일)?(?!\\d)";

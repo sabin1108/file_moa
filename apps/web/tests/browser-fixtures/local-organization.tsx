@@ -12,6 +12,7 @@ import files from "../../src/features/local-folders/browsing/folder-workspace.mo
 import { liveOrganizationFixtureAction } from "./live-organization-action";
 import { WorkspaceQuickSwitch } from "../../src/features/quick-switch/WorkspaceQuickSwitch";
 import { NavigationGuardProvider } from "../../src/components/navigation/NavigationGuard";
+import { workspaceTourStore } from "../../src/features/onboarding/workspace-tour";
 
 const organizeAction = new URLSearchParams(location.search).has("transfer") ? liveOrganizationFixtureAction() : undefined;
 
@@ -19,6 +20,10 @@ const owners = [
   { userId: "organization-A", workspaceId: "fixture" },
   { userId: "organization-B", workspaceId: "fixture" }
 ];
+
+if (!new URLSearchParams(location.search).has("tour")) {
+  for (const owner of owners) workspaceTourStore(owner).write("done");
+}
 
 function ConversationFixtureProbe() {
   const store = useConversationStore();

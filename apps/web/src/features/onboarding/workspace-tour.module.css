@@ -1,0 +1,13 @@
+.tour { position: fixed; inset: 0; width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: var(--text); overflow: hidden; }
+.tour::backdrop { background: #12251fd9; }
+.spotlight { position: fixed; border-radius: 8px; box-shadow: 0 0 0 9999px #12251f9c; outline: 2px solid #d9ece3; pointer-events: none; }
+.tour:has(.spotlight)::backdrop { background: transparent; }
+.explanation { position: absolute; left: 50%; transform: translateX(-50%); width: min(460px, calc(100% - 32px)); padding: 24px; border-radius: 10px; background: var(--surface, #f7faf8); box-shadow: 0 12px 60px #0003; display: grid; gap: 14px; }
+.explanation[data-position="top"] { top: max(24px, 8vh); }
+.explanation[data-position="bottom"] { bottom: max(24px, 8vh); }
+.explanation h2 { font-size: 20px; line-height: 1.5; }
+.explanation p { font-size: 15px; line-height: 1.8; }
+.explanation .progress { color: var(--muted); font-size: 12px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.actions button:first-child { margin-right: auto; }
+@media (max-width: 500px) { .explanation { padding: 20px; } .explanation[data-position="top"] { top: 16px; } .explanation[data-position="bottom"] { bottom: 16px; } }

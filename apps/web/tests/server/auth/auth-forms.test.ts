@@ -27,6 +27,23 @@ beforeEach(() => {
 });
 
 describe("authentication form trust boundary", () => {
+  it.each([7, 31])("rejects a new password with %i characters before the protocol", async length => {
+    const password = "a".repeat(length);
+    const result = await submitAuthForm("signup", fields({ email: "fixture@example.invalid", password, passwordConfirm: password }), new Headers());
+
+    expect(result.state.fieldErrors?.password).toBeDefined();
+    expect(protocol).not.toHaveBeenCalled();
+  });
+
+  it.each([8, 30])("accepts a new password with %i characters", async length => {
+    protocol.mockResolvedValue(Response.json({ status: true }));
+    const password = "a".repeat(length);
+    const result = await submitAuthForm("signup", fields({ email: "fixture@example.invalid", password, passwordConfirm: password }), new Headers());
+
+    expect(result.state.status).toBe("success");
+    expect(protocol).toHaveBeenCalledOnce();
+  });
+
   it("rejects a mismatched password before contacting the auth protocol", async () => {
     const result = await submitAuthForm(
       "signup",
@@ -121,5 +138,14 @@ describe("authentication form trust boundary", () => {
 
     expect(result.state.status).toBe("error");
     expect(JSON.stringify(result.state)).not.toMatch(/fixture-(db-secret|token|password)/);
+  });
+
+  it.each(["resend", "request-reset"] as const)("explains a failed mail request without echoing provider details (%s)", async operation => {
+    protocol.mockResolvedValue(Response.json({ code: "AUTHENTICATION_UNAVAILABLE", detail: "private-provider-detail" }, { status: 503 }));
+    const result = await submitAuthForm(operation, fields({ email: "fixture@example.invalid" }), new Headers());
+
+    expect(result.state.message).toContain("메일을 보내지 못했습니다");
+    expect(result.state.message).toContain("발신 설정");
+    expect(JSON.stringify(result.state)).not.toContain("private-provider-detail");
   });
 });

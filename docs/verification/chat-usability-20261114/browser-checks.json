@@ -1,0 +1,334 @@
+{
+  "usability": [
+    {
+      "name": "first visit opens a native modal tutorial",
+      "pass": true
+    },
+    {
+      "name": "tour supports previous and next",
+      "pass": true
+    },
+    {
+      "name": "dismissed tour stays closed on the next visit",
+      "pass": true
+    },
+    {
+      "name": "new chat asks for an action before showing input",
+      "pass": true
+    },
+    {
+      "name": "selecting an action opens and focuses the input",
+      "pass": true
+    },
+    {
+      "name": "advanced policy is folded into one section",
+      "pass": true
+    },
+    {
+      "name": "replaying guidance preserves the draft",
+      "pass": true
+    },
+    {
+      "name": "storage selection opens the picker directly once",
+      "pass": true
+    },
+    {
+      "name": "connecting a folder does not enable conversation saving",
+      "pass": true
+    },
+    {
+      "name": "save button does not overlap the focused textarea",
+      "pass": true
+    },
+    {
+      "name": "editor back returns focus to its opener",
+      "pass": true
+    },
+    {
+      "name": "desktop sources focus the existing tree without a second drawer",
+      "pass": true
+    },
+    {
+      "name": "scope has two visible radio controls and search is last",
+      "pass": true
+    },
+    {
+      "name": "evidence is folded while match status remains visible",
+      "pass": true
+    },
+    {
+      "name": "file navigation preserves the explicitly chosen task",
+      "pass": true
+    },
+    {
+      "name": "switching from find to chat does not reinterpret a new question as search conditions",
+      "pass": true
+    },
+    {
+      "name": "1920: no document overflow",
+      "pass": true
+    },
+    {
+      "name": "390: no document overflow",
+      "pass": true
+    },
+    {
+      "name": "Korean IME Enter does not submit",
+      "pass": true
+    },
+    {
+      "name": "narrow tour fits the screen",
+      "pass": true
+    }
+  ],
+  "records": {
+    "checks": [
+      {
+        "name": "composer shows three controls and no inline settings essay",
+        "pass": true
+      },
+      {
+        "name": "completed chat is saved after verified file close",
+        "pass": true
+      },
+      {
+        "name": "file navigation retains the active saved conversation and storage mode",
+        "pass": true
+      },
+      {
+        "name": "post-navigation autosave updates one conversation instead of creating a duplicate",
+        "pass": true
+      },
+      {
+        "name": "new chat clears the current thread without generating",
+        "pass": true
+      },
+      {
+        "name": "saved chat restores text without replay",
+        "pass": true
+      },
+      {
+        "name": "closing an answer editor returns focus to the answer action",
+        "pass": true
+      },
+      {
+        "name": "artifact can be edited and versioned",
+        "pass": true
+      },
+      {
+        "name": "dirty memory prevents document unload",
+        "pass": true
+      },
+      {
+        "name": "internal navigation asks before discarding memory edits",
+        "pass": true
+      },
+      {
+        "name": "keeping edits cancels the pending route",
+        "pass": true
+      },
+      {
+        "name": "pending save still protects document unload",
+        "pass": true
+      },
+      {
+        "name": "save failure retains memory edits and leave protection",
+        "pass": true
+      },
+      {
+        "name": "settings disclose advanced policy without displaying the whole essay",
+        "pass": true
+      },
+      {
+        "name": "switching tools preserves the unfinished editor",
+        "pass": true
+      },
+      {
+        "name": "leaving an unsaved memory still requires an explicit discard",
+        "pass": true
+      },
+      {
+        "name": "a clean saved editor releases document unload protection",
+        "pass": true
+      },
+      {
+        "name": "new memory remains proposed until explicit approval",
+        "pass": true
+      },
+      {
+        "name": "record title search filters the list locally",
+        "pass": true
+      },
+      {
+        "name": "contextual delete presents a focused explicit confirmation",
+        "pass": true
+      },
+      {
+        "name": "cancelling deletion restores focus and leaves the record",
+        "pass": true
+      },
+      {
+        "name": "narrow record drawer fits viewport",
+        "pass": true
+      },
+      {
+        "name": "successful delete returns focus to the surviving list heading",
+        "pass": true
+      },
+      {
+        "name": "native reload prompts and cancelling preserves the dirty editor",
+        "pass": true
+      },
+      {
+        "name": "same-document Back opens the unsaved-edit confirmation",
+        "pass": true
+      },
+      {
+        "name": "confirming Back resumes the exact history entry",
+        "pass": true
+      },
+      {
+        "name": "explicit discard resumes the intended internal route",
+        "pass": true
+      },
+      {
+        "name": "unmount removes the editor unload guard",
+        "pass": true
+      },
+      {
+        "name": "reload restores directory records without another model request",
+        "pass": true
+      },
+      {
+        "name": "incomplete record folders show a warning while the healthy conversation remains visible",
+        "pass": true
+      },
+      {
+        "name": "list reading preserves the incomplete record files",
+        "pass": true
+      },
+      {
+        "name": "successful conversation autosave preserves the unresolved storage warning",
+        "pass": true
+      },
+      {
+        "name": "interrupted deletion keeps healthy records and displays a resumable warning",
+        "pass": true
+      },
+      {
+        "name": "reload resumes persisted deletion without another model call",
+        "pass": true
+      },
+      {
+        "name": "partial cascade deletion keeps the same confirmation available for retry",
+        "pass": true
+      },
+      {
+        "name": "the same delete button completes the remaining artifact after its parent is absent",
+        "pass": true
+      },
+      {
+        "name": "pre-commit permission failure preserves the live draft and transcript",
+        "pass": true
+      },
+      {
+        "name": "pre-commit failure also preserves the original saved record",
+        "pass": true
+      },
+      {
+        "name": "committed deletion preserves current content as a temporary conversation",
+        "pass": true
+      },
+      {
+        "name": "100 and 500 saved turns restore without truncation or another model call",
+        "pass": true
+      },
+      {
+        "name": "repeated transcript opens retain exactly the current DOM and expose six heap samples",
+        "pass": true
+      },
+      {
+        "name": "500-turn narrow chat keeps keyboard newline and fits the viewport",
+        "pass": true
+      },
+      {
+        "name": "temporary draft is absent from saved conversation list",
+        "pass": true
+      },
+      {
+        "name": "returning from storage focuses its visible entry control",
+        "pass": true
+      },
+      {
+        "name": "failed disconnect retains the temporary draft and stops storage",
+        "pass": true
+      },
+      {
+        "name": "successful disconnect keeps the current conversation temporary",
+        "pass": true
+      },
+      {
+        "name": "multiple source references remain independently listed",
+        "pass": true
+      },
+      {
+        "name": "source root switches without modifying originals",
+        "pass": true
+      },
+      {
+        "name": "another account sees neither saved records nor another owner's AI folder",
+        "pass": true
+      },
+      {
+        "name": "actual OPFS rejects cross-kind ID creation and preserves preexisting duplicate kinds from deletion",
+        "pass": true
+      },
+      {
+        "name": "500-turn boundary blocks send while keeping the new draft and the new-conversation route",
+        "pass": true
+      },
+      {
+        "name": "a valid 500-turn conversation can be saved before a new stored conversation opens",
+        "pass": true
+      },
+      {
+        "name": "legacy overflow stays intact when stored switch is cancelled",
+        "pass": true
+      },
+      {
+        "name": "explicit discard opens a new stored conversation and preserves the old saved checkpoint",
+        "pass": true
+      },
+      {
+        "name": "legacy overflow stays intact when temporary switch is cancelled",
+        "pass": true
+      },
+      {
+        "name": "explicit discard opens a new temporary conversation and preserves the old saved checkpoint",
+        "pass": true
+      },
+      {
+        "name": "real OPFS and Web Locks reserve only one remaining record slot",
+        "pass": true
+      },
+      {
+        "name": "an already over-limit folder shows a bounded recovery listing instead of an empty library",
+        "pass": true
+      },
+      {
+        "name": "explicit UI cleanup frees capacity without erasing unrelated saved content",
+        "pass": true
+      },
+      {
+        "name": "limit recovery starts no additional model requests",
+        "pass": true
+      },
+      {
+        "name": "record UI has no browser exceptions",
+        "pass": true
+      }
+    ],
+    "generations": 1,
+    "condition": "Actual product components/services with isolated OPFS and fixture SSE; no personal folders or paid model calls."
+  }
+}

@@ -106,6 +106,8 @@
 .findDocuments > li > [data-long-press-selection] {
   height: auto;
 }
+.findDocuments { max-height: min(48dvh, 440px); overflow-y: auto; overscroll-behavior: contain; }
+.findDocuments [data-long-press-selection] button > span:first-of-type { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .findFields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -161,3 +163,15 @@
   cursor: pointer;
   padding-block: var(--ui-space-2);
 }
+.scopeChoices { display: grid; gap: 8px; border: 0; padding: 0; margin: 8px 0; min-width: 0; }
+.scopeChoices legend { margin-bottom: 8px; font-weight: 600; }
+.scopeChoices label { display: flex; gap: 10px; align-items: center; min-height: 44px; padding: 10px 12px; border: 1px solid var(--control-border); border-radius: var(--ui-radius-control, 6px); cursor: pointer; }
+.scopeChoices label:has(input:checked) { background: var(--active); border-color: var(--focus); }
+.scopeChoices input { width: 18px; height: 18px; flex: none; accent-color: var(--focus); }
+.findMeta { display: flex; gap: 4px 16px; flex-wrap: wrap; align-items: baseline; margin: 4px 0 4px 42px; }
+.findStatus { color: var(--ui-warning, #713f12); font-size: 13px; font-weight: 600; }
+.findStatus[data-verified="true"] { color: var(--focus, #50786c); }
+.findEvidence { font-size: 13px; min-width: 0; }
+.findEvidence[open] { flex-basis: 100%; }
+.findEvidence summary { min-height: 36px; display: list-item; cursor: pointer; color: var(--muted); }
+.findEvidence blockquote { margin: 8px 0; padding-left: 12px; border-left: 2px solid var(--border); overflow-wrap: anywhere; }

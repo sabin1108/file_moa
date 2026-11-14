@@ -67,6 +67,7 @@ let page;
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 const check = (name, pass) => {
   checks.push({ name, pass: !!pass });
+  console.log(`${pass ? "PASS" : "FAIL"}: ${name}`);
   assert.ok(pass, name);
 };
 
@@ -81,6 +82,11 @@ async function until(predicate, argument) {
 }
 
 async function click(text) {
+  if (text === "목록으로" || text === "기록으로") text = "기록 목록으로 돌아가기";
+
+  if (["다른 저장 위치 선택", "권한 확인·다시 읽기", "연결 해제", "저장 없이 새 대화"].includes(text)) {
+    await page.eval(() => { const settings = document.querySelector('[aria-label="기록 저장 위치"]'); const details = settings?.querySelector("details"); if (details) details.open = true; });
+  }
   await page.eval(text => {
     const button = [...document.querySelectorAll("button")].find(node => (node.textContent.trim() === text || node.querySelector("strong")?.textContent === text
       || node.querySelector(":scope > span")?.textContent === text)
@@ -94,8 +100,13 @@ async function click(text) {
 }
 
 async function fill(selector, text) {
+  if (selector === "#message-draft" && !await page.eval(() => !!document.getElementById("message-draft"))) await click("일반 대화");
   await until(selector => {
     const node = document.querySelector(selector);
+
+    if (!node && selector === "#message-draft") {
+      [...document.querySelectorAll('[aria-label="시작할 작업 선택"] button')].find(button => button.querySelector("strong")?.textContent === "일반 대화")?.click();
+    }
 
     return node && (!document.querySelector('dialog:modal') || node.closest('dialog:modal'));
   }, selector);
@@ -129,6 +140,7 @@ try {
   const url = `http://127.0.0.1:${server.httpServer.address().port}/__records?general`;
 
   await page.goto(url, { settleMs: 500 });
+  await click("일반 대화");
   await until(() => document.getElementById("message-draft"));
   check(
     "composer shows three controls and no inline settings essay",
@@ -151,6 +163,7 @@ try {
   );
   await page.eval(() => document.querySelector('[data-fixture-view="files"]').click());
   await page.eval(() => document.querySelector('[data-fixture-view="chat"]').click());
+  if (!await page.eval(() => !!document.getElementById("message-draft"))) await click("일반 대화");
   await until(() => document.getElementById("message-draft"));
   check(
     "file navigation retains the active saved conversation and storage mode",
@@ -435,6 +448,7 @@ try {
     }
   });
   check("reload resumes persisted deletion without another model call", generations === 1);
+  if (!await page.eval(() => !!document.getElementById("message-draft"))) await click("일반 대화");
   await until(() => document.getElementById("message-draft"));
   await page.eval(async () => {
     const { AiRecordRepository } = await import("/src/features/ai-records/storage/ai-record-repository.ts");
@@ -710,6 +724,7 @@ try {
   );
   await page.eval(() => document.querySelector('[data-fixture-owner]').click());
   await page.eval(() => document.querySelector('[data-fixture-view="chat"]').click());
+  await click("일반 대화");
   await until(() => document.getElementById("message-draft"));
   await click("기록함");
   check(
@@ -772,8 +787,6 @@ try {
   });
   check("actual OPFS rejects cross-kind ID creation and preserves preexisting duplicate kinds from deletion", collision);
   await click("저장 위치");
-  await click("저장 폴더 선택");
-  await click("기록으로");
   await until(() => [...document.querySelectorAll('[aria-label="저장 기록"] strong')].some(node => node.textContent === "경계 대화"));
   await click("경계 대화");
   await fill("#message-draft", "500턴 뒤에도 보존할 질문");

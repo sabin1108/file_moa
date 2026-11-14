@@ -28,7 +28,15 @@ button[aria-disabled="true"] { cursor: default; }
 button { transition: background-color 140ms ease, color 140ms ease; }
 button:hover { color: var(--text); }
 svg { flex-shrink: 0; }
-button:focus-visible, textarea:focus-visible, a:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+:is(button, input, textarea, select, a, summary, [tabindex]):focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 22%, transparent);
+}
+@media (forced-colors: active) {
+  :is(button, input, textarea, select, a, summary, [tabindex]):focus-visible { outline-color: Highlight; box-shadow: none; }
+}
 a { color: inherit; }
 h1, h2, h3, h4, h5, p { margin: 0; }
 ::selection { background: var(--navy-600); color: var(--silver-200); }
@@ -47,7 +55,7 @@ h1, h2, h3, h4, h5, p { margin: 0; }
   --border: #bcc7c4;
   --text: #253745;
   --muted: #4a5c6a;
-  --focus: #253745;
+  --focus: #50786c;
   background: var(--ground);
   color: var(--text);
   font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Segoe UI", sans-serif;

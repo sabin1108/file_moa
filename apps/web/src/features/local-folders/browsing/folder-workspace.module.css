@@ -45,7 +45,6 @@
 .previewDialog::backdrop { background: rgb(32 33 36 / 40%); }
 .footer { border-top: 1px solid var(--border); background: #fafafa; padding: 8px 20px; min-height: 36px; color: var(--muted); font-size: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .footer nav { display: none; }
-.workspace button:focus-visible, .workspace a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 1199px) { .columns[data-has-parent="true"] { grid-template-columns: minmax(350px, 1fr) minmax(280px, 1fr); } .parent { display: none; } }
 @media (max-width: 900px) and (min-width: 768px) { .sidebar { display: none; } }

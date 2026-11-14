@@ -1,6 +1,7 @@
 import type { WorkflowStep } from "../../../components/ui/WorkflowStepper";
 import type { AuthFieldName, AuthOperation } from "../../../shared/auth-contract";
 import type { SignupStage } from "../signup/signup-flow";
+import { AUTH_PASSWORD_LIMITS } from "../../../shared/auth-contract";
 
 export const signupSteps = [
   { id: "email", label: "이메일" }, { id: "password", label: "비밀번호" }, { id: "verification", label: "이메일 확인" }, { id: "complete", label: "완료" },
@@ -42,8 +43,8 @@ const newPassword: Field = {
   label: "비밀번호",
   type: "password",
   autoComplete: "new-password",
-  minLength: 12,
-  maxLength: 128
+  minLength: AUTH_PASSWORD_LIMITS.min,
+  maxLength: AUTH_PASSWORD_LIMITS.max
 };
 const confirm: Field = { ...newPassword, name: "passwordConfirm", label: "비밀번호 확인" };
 
@@ -62,7 +63,7 @@ export const authForms: Record<
     submit: "로그인",
     fields: [
       { ...email, autoComplete: "username" },
-      { ...newPassword, minLength: 1, autoComplete: "current-password" },
+      { ...newPassword, minLength: 1, maxLength: 128, autoComplete: "current-password" },
     ],
   },
   signup: {
@@ -99,7 +100,7 @@ export const authForms: Record<
   },
   reset: {
     title: "새 비밀번호 설정",
-    description: "12자 이상 128자 이하의 새 비밀번호를 입력하세요.",
+    description: "8자 이상 30자 이하의 새 비밀번호를 입력하세요.",
     submit: "비밀번호 변경",
     fields: [newPassword, confirm],
   },
