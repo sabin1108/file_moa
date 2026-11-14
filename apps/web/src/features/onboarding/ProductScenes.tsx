@@ -17,12 +17,14 @@ export function FolderScene() {
     >
       <div className={styles.folderBack} data-folder-back />
       <article className={styles.meetingNote} aria-hidden="true" data-extracted-document>
-        <span><Icon name="file" size={22} />{documents[0].name}</span>
+        <header><span><Icon name="file" size={24} />{documents[0].name}</span><span>회의 기록</span></header>
         <h2>자료 정리 회의</h2>
         <p>{documents[0].content}</p>
-        <h3>다음 할 일</h3>
-        <ul><li>자료 검색 흐름 검토</li><li>파일 정리 과정 확인</li></ul>
-        <small>기능 소개를 위한 예시 회의록</small>
+        <div className={styles.meetingSections}>
+          <section><h3>논의한 내용</h3><p>자료를 찾은 뒤 원문을 확인하고, 정리 계획을 함께 검토합니다.</p></section>
+          <section><h3>다음 할 일</h3><ul><li>자료 검색 흐름 검토</li><li>파일 정리 과정 확인</li></ul></section>
+        </div>
+        <footer><MoaMark size={22} /><span>기능 소개를 위한 예시 회의록</span></footer>
       </article>
       <div className={styles.folderFront} data-folder-front>
         <MoaMark size={52} />

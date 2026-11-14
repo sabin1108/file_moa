@@ -320,9 +320,9 @@
     .hero .heroCopy { position: absolute; inset: 0 0 auto; animation: hero-copy linear both; animation-duration: auto; animation-timeline: --intro-hero; animation-range: contain 0% contain 100%; }
     .readingRoom { animation: reading-room linear both; animation-duration: auto; animation-timeline: --intro-hero; animation-range: contain 0% contain 100%; }
     .heroArt { display: grid; place-items: center; position: absolute; inset: 0; animation: hero-art linear both; animation-duration: auto; animation-timeline: --intro-hero; animation-range: contain 0% contain 100%; }
-    .heroArt [data-intro-folder] { margin-top: 0; height: 430px; animation: none; }
+    .heroArt [data-intro-folder] { width: min(1180px, 100%); margin-top: 0; height: 430px; animation: none; }
     .hero [data-folder-front], .hero [data-folder-back] { animation: folder-shell linear both; animation-duration: auto; animation-timeline: --intro-hero; animation-range: contain 0% contain 100%; }
-    .hero [data-extracted-document] { transform-origin: 50% 100%; animation: extract-meeting-note linear both; animation-duration: auto; animation-timeline: --intro-hero; animation-range: contain 0% contain 100%; }
+    .hero [data-extracted-document] { transform-origin: 50% 50%; animation: extract-meeting-note linear both; animation-duration: auto; animation-timeline: --intro-hero; animation-range: contain 0% contain 100%; }
     .hero .scrollCue { position: relative; z-index: 3; white-space: nowrap; }
 
     @media (max-width: 640px) {
@@ -400,10 +400,10 @@
 }
 
 @keyframes extract-meeting-note {
-  0%, 38% { z-index: 0; transform: translate(-50%, 8px) scale(.68); }
-  58% { z-index: 0; transform: translate(-50%, var(--note-lift, -150px)) scale(.68); }
-  59% { z-index: 2; transform: translate(-50%, var(--note-lift, -150px)) scale(.68); }
-  80%, 100% { z-index: 2; transform: translate(-50%, 0) scale(1); }
+  0%, 38% { z-index: 0; clip-path: inset(0 0 25%); transform: translate(-50%, -50%) scale(.65); }
+  58% { z-index: 0; clip-path: inset(0); transform: translate(-50%, calc(-50% + var(--note-lift, -150px))) scale(.65); }
+  59% { z-index: 2; clip-path: inset(0); transform: translate(-50%, calc(-50% + var(--note-lift, -150px))) scale(.65); }
+  80%, 100% { z-index: 2; clip-path: inset(0); transform: translate(-50%, -50%) scale(1); }
 }
 
 @keyframes first-panel {
