@@ -24,7 +24,7 @@ import { requireAccountSession } from "../../../server/auth/session-guards";
 import { QuickSwitchSettings } from "../../../features/quick-switch/QuickSwitchSettings";
 import { SourceFolderTree } from "../../../features/local-folders/browsing/navigation/SourceFolderTree";
 import { Suspense } from "react";
-import Link from "next/link";
+import { GuardedLink as Link } from "../../../components/navigation/NavigationGuard";
 import { actionClasses } from "../../../components/ui/action-classes";
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };

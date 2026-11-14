@@ -237,7 +237,7 @@ try {
     prismaCommand(["migrate", "deploy"], localUrl);
     assert.equal(
       sql('SELECT count(*) FROM moa_app._prisma_migrations WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL'),
-      "4"
+      "5"
     );
   });
 
@@ -261,6 +261,37 @@ try {
     INSERT INTO moa_auth.session (id, "userId", token, "expiresAt", "updatedAt") VALUES
       ('session-a', 'fixture-a', 'fixture-token-a', now() + interval '1 hour', now());
   `);
+
+  await test("guide migration skips existing members and leaves new members eligible", () => {
+    const migration = readFileSync(join(migrations, "20261114000000_workspace_guide/migration.sql"), "utf8")
+      .replace(/^BEGIN;\s*/, "").replace(/COMMIT;\s*$/, "")
+      .replaceAll('"moa_auth"."user"', 'pg_temp.guide_members');
+
+    assert.ok(!migration.includes('"moa_auth"."user"'));
+    assert.equal(sql(`BEGIN; CREATE TEMP TABLE guide_members(id text PRIMARY KEY);
+      INSERT INTO guide_members VALUES ('old-a'), ('old-b');
+      ${migration}
+      SELECT count(*) FROM guide_members WHERE "workspaceGuideSeenAt" IS NOT NULL;
+      INSERT INTO guide_members(id) VALUES ('new-a');
+      SELECT "workspaceGuideSeenAt" IS NULL FROM guide_members WHERE id='new-a'; ROLLBACK;`), "2\nt");
+    assert.equal(sql('SELECT count(*) FROM moa_auth."user" WHERE "workspaceGuideSeenAt" IS NULL'), "4");
+  });
+
+  await test("runtime guide claim records the first visit once", () => {
+    const claim = `UPDATE moa_auth."user" SET "workspaceGuideSeenAt"=now()
+      WHERE id='fixture-c' AND "workspaceGuideSeenAt" IS NULL RETURNING id`;
+    assert.equal(sql(asUser("fixture-c", claim)), "fixture-c");
+    assert.equal(sql(asUser("fixture-c", claim)), "");
+  });
+
+  await test("competing guide claims succeed once without changing other accounts", async () => {
+    const claim = asUser("fixture-race", `UPDATE moa_auth."user" SET "workspaceGuideSeenAt"=now()
+      WHERE id='fixture-race' AND "workspaceGuideSeenAt" IS NULL RETURNING id`);
+    const results = await Promise.all([sqlAsync(claim), sqlAsync(claim)]);
+    for (const result of results) assert.equal(result.status, 0, result.stderr);
+    assert.equal(results.filter(value => value.stdout.trim() === "fixture-race").length, 1);
+    assert.equal(sql(`SELECT count(*) FROM moa_auth."user" WHERE id IN ('fixture-a','fixture-b') AND "workspaceGuideSeenAt" IS NULL`), "2");
+  });
 
   await test("runtime role is a non-owner without elevated privileges", () => {
     assert.equal(

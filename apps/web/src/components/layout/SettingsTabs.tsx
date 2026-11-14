@@ -26,7 +26,7 @@ export function SettingsTabs({ panels }: { panels: Record<SettingsTab, ReactNode
 
   return <>
     <div className={styles.settingsNavigation}>
-      <nav className={styles.settingsTabs} aria-label="설정 분류">
+      <nav className={styles.settingsTabs} aria-label="설정 분류" data-tour="settings-tabs">
         {tabs.map(tab => <Link
           key={tab.id}
           href={`${pathname}?tab=${tab.id}`}

@@ -7,6 +7,7 @@ vi.mock("next/server", () => ({ after: calls.after }));
 vi.mock("../../../src/server/auth/session-guards", () => ({ requireWorkspace: calls.guard }));
 vi.mock("../../../src/server/settings/settings-display", () => ({ prepareSettingsDisplay: calls.prepare }));
 vi.mock("../../../src/app/actions/auth", () => ({ checkAuthSessionAction: vi.fn() }));
+vi.mock("../../../src/app/actions/workspace-guide", () => ({ claimWorkspaceGuideAction: vi.fn() }));
 vi.mock(
   "../../../src/features/auth/session/SessionBoundary",
   () => ({ SessionBoundary: "session-boundary" })
@@ -56,7 +57,7 @@ describe("workspace response before optional settings preparation", () => {
     expect(calls.prepare).not.toHaveBeenCalled();
     expect(view.props.userId).toBe("user-a");
     expect(view.props.children.props.owner).toEqual({ userId: "owner-a", workspaceId: "workspace-a" });
-    expect(view.props.children.props.children.props.children).toBe("main-screen");
+    expect(view.props.children.props.children.props.children[0]).toBe("main-screen");
 
     await calls.after.mock.calls[0][0]();
     expect(calls.prepare).toHaveBeenCalledWith(requestHeaders);
@@ -73,7 +74,7 @@ describe("workspace response before optional settings preparation", () => {
     try {
       const view = await renderAuthenticated("usable-main-screen");
 
-      expect(view.props.children.props.children.props.children).toBe("usable-main-screen");
+      expect(view.props.children.props.children.props.children[0]).toBe("usable-main-screen");
 
       const preparation = calls.after.mock.calls[0][0]();
 

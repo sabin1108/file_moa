@@ -700,7 +700,9 @@ try {
     window.showDirectoryPicker = async () => listingProbe.name === "검증 자료 A" ? listingProbe.a : listingProbe.b;
     document.querySelector('[data-fixture-view="settings"]').click();
   });
-  await until(() => document.querySelector('[aria-label="자료 폴더 연결 설정"]'));
+  await until(() => document.querySelector('[aria-label="설정 분류"]'));
+  await page.eval(() => [...document.querySelectorAll('[aria-label="설정 분류"] a')].find(link => link.textContent.trim() === "폴더 연결").click());
+  await until(() => document.querySelector('[aria-label="자료 폴더 연결 설정"]')?.checkVisibility());
   await click("폴더 연결");
   await until(() => document.body.innerText.includes("검증 자료 A"));
   await page.eval(() => {

@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 type Resume = () => void;
-type Blocker = (resume: Resume) => void;
-const NavigationGuard = createContext<{ register: (blocker: Blocker) => Resume; intercept: (resume: Resume) => boolean }>({
+type Blocker = (resume: Resume, cancel?: Resume) => void;
+const NavigationGuard = createContext<{ register: (blocker: Blocker) => Resume; intercept: (resume: Resume, cancel?: Resume) => boolean }>({
   register: () => () => {},
   intercept: () => false
 });
@@ -28,12 +28,12 @@ export function NavigationGuardProvider({ children }: { children: ReactNode }) {
 
     return () => { blockers.current.delete(blocker); };
   }, []);
-  const intercept = useCallback((resume: Resume) => {
+  const intercept = useCallback((resume: Resume, cancel?: Resume) => {
     const blocker = blockers.current.values().next().value;
 
     if (!blocker) return false;
 
-    blocker(resume);
+    blocker(resume, cancel);
 
     return true;
   }, []);
@@ -89,13 +89,15 @@ export function GuardedLink({ href, ...props }: Omit<ComponentProps<typeof Link>
 
 export function useNavigationBlocker(active: boolean, onRequest: () => void) {
   const guard = useNavigationGuard();
-  const pendingNavigation = useRef<Resume | null>(null);
+  const pendingNavigation = useRef<{ resume: Resume; cancel?: Resume } | null>(null);
 
   useEffect(() => {
     if (!active) return;
 
-    const unregister = guard.register(resume => {
-      pendingNavigation.current = resume;
+    const unregister = guard.register((resume, cancel) => {
+      if (pendingNavigation.current) return;
+
+      pendingNavigation.current = { resume, cancel };
       onRequest();
     });
     const leaving = (event: BeforeUnloadEvent) => {
@@ -112,14 +114,18 @@ export function useNavigationBlocker(active: boolean, onRequest: () => void) {
   }, [active, guard, onRequest]);
 
   return {
-    cancelNavigation: () => { pendingNavigation.current = null; },
+    cancelNavigation: () => {
+      const pending = pendingNavigation.current;
+      pendingNavigation.current = null;
+      pending?.cancel?.();
+    },
     confirmNavigation: () => {
-      const resume = pendingNavigation.current;
+      const pending = pendingNavigation.current;
 
       pendingNavigation.current = null;
-      resume?.();
+      pending?.resume();
 
-      return !!resume;
+      return !!pending;
     }
   };
 }

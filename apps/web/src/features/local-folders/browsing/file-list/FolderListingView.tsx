@@ -91,6 +91,7 @@ export function FolderListingView({
       className={styles.browser}
       aria-label="자료 폴더 탐색"
       data-listing-phase={state.phase}
+      data-tour="folder-list"
     >
       <div className={styles.toolbar}>
         <div className={styles.heading}>

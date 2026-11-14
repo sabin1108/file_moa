@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { SourceFolderProvider } from "../../src/features/local-folders/SourceFolderProvider";
 import { LiveConversation } from "../../src/features/conversation-workspace/LiveConversation";
@@ -11,8 +11,12 @@ import ui from "../../src/styles/workspace-ui.module.css";
 import files from "../../src/features/local-folders/browsing/folder-workspace.module.css";
 import { liveOrganizationFixtureAction } from "./live-organization-action";
 import { WorkspaceQuickSwitch } from "../../src/features/quick-switch/WorkspaceQuickSwitch";
-import { NavigationGuardProvider } from "../../src/components/navigation/NavigationGuard";
-import { workspaceTourStore } from "../../src/features/onboarding/workspace-tour";
+import { NavigationGuardProvider, useNavigationBlocker } from "../../src/components/navigation/NavigationGuard";
+import { createBrowserStringStore } from "../../src/shared/browser-string-store";
+import { WorkspaceTour } from "../../src/features/onboarding/WorkspaceTour";
+import { SettingsTabs } from "../../src/components/layout/SettingsTabs";
+import { QuickSwitchSettings } from "../../src/features/quick-switch/QuickSwitchSettings";
+import { replayWorkspaceTour } from "../../src/features/onboarding/workspace-tour";
 
 const organizeAction = new URLSearchParams(location.search).has("transfer") ? liveOrganizationFixtureAction() : undefined;
 
@@ -20,6 +24,10 @@ const owners = [
   { userId: "organization-A", workspaceId: "fixture" },
   { userId: "organization-B", workspaceId: "fixture" }
 ];
+
+function workspaceTourStore(owner: typeof owners[number]) {
+  return createBrowserStringStore(`fixture:guide:${owner.userId}`, () => localStorage);
+}
 
 if (!new URLSearchParams(location.search).has("tour")) {
   for (const owner of owners) workspaceTourStore(owner).write("done");
@@ -41,9 +49,36 @@ function ConversationFixtureProbe() {
   return null;
 }
 
+function GuideGuardProbe() {
+  const [dirty, setDirty] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const request = useCallback(() => setConfirming(true), []);
+  const guard = useNavigationBlocker(dirty, request);
+
+  return <>
+    <button data-fixture-guide-dirty onClick={() => setDirty(true)}>검증용 미저장 상태</button>
+    <button data-fixture-guide-replay onClick={replayWorkspaceTour}>검증용 안내 다시 보기</button>
+    {confirming && <section role="alertdialog" aria-label="검증용 이탈 확인">
+      <button onClick={() => { setConfirming(false); guard.cancelNavigation(); }}>검증용 계속 편집</button>
+      <button onClick={() => { setConfirming(false); setDirty(false); guard.confirmNavigation(); }}>검증용 이동</button>
+    </section>}
+  </>;
+}
+
 function Fixture() {
   const [view, setView] = useState(location.pathname === "/files" ? "files" : "chat");
   const [owner, setOwner] = useState(0);
+  const claim = useCallback(async () => {
+    const store = workspaceTourStore(owners[owner]);
+    if (store.read() === "done") return false;
+    if (new URLSearchParams(location.search).has("guideDelay")) {
+      await new Promise<void>(resolve => {
+        (window as Window & { resolveFixtureGuide?: () => void }).resolveFixtureGuide = resolve;
+      });
+    }
+    store.write("done");
+    return true;
+  }, [owner]);
 
   useEffect(() => {
     const changeView = () => setView(location.pathname === "/files" ? "files" : location.pathname === "/settings" ? "settings" : "chat");
@@ -67,6 +102,7 @@ function Fixture() {
   return (
     <>
       <div>
+        <GuideGuardProbe />
         {["chat", "files", "settings"].map(view => (
           <button key={view} data-fixture-view={view} onClick={() => setView(view)}>
             {view}
@@ -90,8 +126,11 @@ function Fixture() {
                 </div>
               )
               : (
-                <SourceFolderSettings />
+                <div data-workspace-quick-menu className={ui.system}>
+                  <SettingsTabs panels={{ account: <p>테스트 계정</p>, folders: <SourceFolderSettings />, editor: <p>문서 편집</p>, controls: <QuickSwitchSettings /> }} />
+                </div>
               )}
+          <WorkspaceTour key={owner} claim={claim} />
         </ConversationStateProvider>
       </SourceFolderProvider>
       <WorkspaceQuickSwitch />

@@ -15,7 +15,7 @@ export function QuickSwitchSettings() {
   const [hint, setHint] = useState("");
   const update = (change: Partial<QuickPreferences>) => setUnsaved(!saveQuickPreferences({ ...preferences, ...change }));
 
-  return <section aria-label="빠른 전환 설정">
+  return <section aria-label="빠른 전환 설정" data-tour="quick-settings">
     <h3>퀵메뉴</h3>
     <SettingRow title="메뉴 호출 방식" description="빈 작업 영역에서 왼쪽 버튼을 0.5초 누르거나 단축키로 엽니다.">
       <select

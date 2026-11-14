@@ -1,28 +1,16 @@
-import { afterEach, expect, it, vi } from "vitest";
-import { workspaceTourStore } from "../../src/features/onboarding/workspace-tour";
+import { expect, it } from "vitest";
+import { tourRouteMatches, workspaceTourSteps } from "../../src/features/onboarding/workspace-tour-steps";
 
-afterEach(() => vi.unstubAllGlobals());
-
-it("keeps first-visit completion separate for each account and workspace", () => {
-  const values = new Map<string, string>();
-
-  vi.stubGlobal("localStorage", { getItem: (key: string) => values.get(key) ?? null, setItem: (key: string, value: string) => values.set(key, value) });
-
-  const first = workspaceTourStore({ userId: "one", workspaceId: "a" });
-
-  expect(first.read()).toBe("");
-  expect(first.write("done")).toBe(true);
-  expect(workspaceTourStore({ userId: "one", workspaceId: "a" }).read()).toBe("done");
-  expect(workspaceTourStore({ userId: "two", workspaceId: "a" }).read()).toBe("");
-  expect(workspaceTourStore({ userId: "one", workspaceId: "b" }).read()).toBe("");
+it("covers folders, conversation, settings and quick controls using real workspace routes", () => {
+  const routes = new Set(workspaceTourSteps.map(step => step.route));
+  expect(routes).toEqual(new Set([null, "/files", "/", "/settings?tab=account", "/settings?tab=controls"]));
+  expect(workspaceTourSteps.some(step => step.selector.includes("folder-connection"))).toBe(true);
+  expect(workspaceTourSteps.some(step => step.selector.includes("quick-settings"))).toBe(true);
 });
 
-it("can finish the guide in this tab when persistent storage is unavailable", () => {
-  vi.stubGlobal("localStorage", { getItem() { throw Error("blocked"); }, setItem() { throw Error("blocked"); } });
-
-  const store = workspaceTourStore({ userId: "one", workspaceId: "a" });
-
-  expect(store.read()).toBe("");
-  expect(store.write("done")).toBe(false);
-  expect(store.read()).toBe("done");
+it("waits for the requested settings panel and never matches an unrelated page", () => {
+  expect(tourRouteMatches("/settings?tab=controls", "/settings", "account")).toBe(false);
+  expect(tourRouteMatches("/settings?tab=controls", "/settings", "controls")).toBe(true);
+  expect(tourRouteMatches("/files", "/", null)).toBe(false);
+  expect(tourRouteMatches(null, "/files", null)).toBe(true);
 });

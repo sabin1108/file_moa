@@ -54,6 +54,7 @@ export function SourceFolderSettingsDialog({ compact = false }: { compact?: bool
       className={actionClasses(compact ? "ghost" : "secondary")}
       aria-haspopup="dialog"
       aria-label="폴더 연결 관리"
+      data-tour="folder-connection"
       title="폴더 연결 관리"
       aria-controls={dialogId}
       aria-expanded={open}

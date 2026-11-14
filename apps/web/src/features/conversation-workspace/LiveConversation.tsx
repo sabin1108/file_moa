@@ -30,7 +30,6 @@ import type { UsageSummary } from "../../shared/ai-usage";
 import { makeWikiDraft } from "../ai-records/wiki/wiki";
 import { ConversationStart, conversationActions } from "./material-work/ConversationStart";
 import type { WorkspaceRequestKind } from "./material-work/workspace-request";
-import { WorkspaceTour } from "../onboarding/WorkspaceTour";
 import { replayWorkspaceTour } from "../onboarding/workspace-tour";
 
 export function LiveConversation({ organizeAction, groundedAction, readUsage, aiProvider = "gemini" }: {
@@ -314,6 +313,5 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
         : chatNotice?.status === "stopped" ? <p role="status">답변을 중지했어요. 여기까지 받은 내용은 미완료이며 자동으로 다시 보내지 않습니다.</p> : undefined}
       </>}
     />
-    <WorkspaceTour owner={local.owner} disabled={workflow.blocked || conversation.library.pending || !!editor} />
   </WorkspaceShell>;
 }

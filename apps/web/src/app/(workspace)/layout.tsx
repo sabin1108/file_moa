@@ -13,6 +13,8 @@ import { prepareSettingsDisplay } from "../../server/settings/settings-display";
 import { WorkspaceShell } from "../../components/layout/WorkspaceShell";
 import ui from "../../styles/workspace-ui.module.css";
 import { ConversationStateProvider } from "../../features/conversation-workspace/ConversationStateProvider";
+import { WorkspaceTour } from "../../features/onboarding/WorkspaceTour";
+import { claimWorkspaceGuideAction } from "../actions/workspace-guide";
 
 // 시안·로그인·가입은 이 layout 밖에 둔다. URL에는 (workspace)가 포함되지 않는다.
 
@@ -48,6 +50,7 @@ async function AuthenticatedWorkspace({ children }: { children: ReactNode }) {
       <SourceFolderProvider key={`${owner.userId}:${owner.workspaceId}`} owner={owner}>
         <ConversationStateProvider>
           {children}
+          <WorkspaceTour claim={claimWorkspaceGuideAction} />
         </ConversationStateProvider>
       </SourceFolderProvider>
     </SessionBoundary>
