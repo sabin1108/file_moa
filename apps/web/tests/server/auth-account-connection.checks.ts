@@ -284,12 +284,12 @@ describe("explicit two-account connection with real SDK, SQL and RLS", () => {
     try {
       expect((await auth("/request-password-reset", { email: f.target + "@example.invalid" })).ok).toBe(true);
       expect(token).not.toBe("");
-      expect((await auth("/reset-password", { token, newPassword: "fixture-new-connection-password" })).ok).toBe(true);
+      expect((await auth("/reset-password", { token, newPassword: "fixture-connection-new-pass" })).ok).toBe(true);
       expect(await database.session.count({ where: { userId: { in: [f.source, f.target] } } })).toBe(0);
       expect(await database.account.count({ where: { userId: f.source, providerId: "credential" } })).toBe(0);
       expect((await auth(
         "/sign-in/email",
-        { email: f.target + "@example.invalid", password: "fixture-new-connection-password" }
+        { email: f.target + "@example.invalid", password: "fixture-connection-new-pass" }
       )).ok).toBe(true);
       expect((await visible(f.target))).toHaveLength(2);
     } finally {
@@ -333,7 +333,7 @@ describe("explicit two-account connection with real SDK, SQL and RLS", () => {
 
       await entered;
 
-      const resetting = auth("/reset-password", { token, newPassword: "fixture-concurrent-reset-password" });
+      const resetting = auth("/reset-password", { token, newPassword: "fixture-reset-race-pass" });
 
       await new Promise(resolve => setTimeout(resolve, 50));
       release();

@@ -31,7 +31,7 @@ const mails: Mail[] = [];
 const baseURL = "http://127.0.0.1:3034";
 const secret = "fixture-email-secret-" + randomUUID();
 const email = "email-flow@example.invalid";
-const password = "fixture-password-" + randomUUID();
+const password = "fixture-pass-" + randomUUID().slice(0, 12);
 let database: PrismaClient;
 let address = 1;
 let sessionCookie = "";
