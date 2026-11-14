@@ -22,12 +22,16 @@ export function OrganizationStory() {
       className={`${styles.story} ${styles.organization}`}
       aria-labelledby="organize-heading"
     >
-      <div className={styles.storyHeading}>
-        <h2 id="organize-heading">정리는 가볍게.<br />결정은 내 손으로.</h2>
-        <p>바뀔 모습을 먼저 보고,<br />내가 확인한 계획대로 정리해요.</p>
-      </div>
       <p className="sr-only">정리할 자료와 목적지를 검토하고 직접 확인한 뒤 적용합니다. 이동 전 복구용 보존본을 준비해요. 아래는 실제 파일을 바꾸지 않는 예시입니다.</p>
-      <OrganizationDemo scene={<OrganizationScene />} />
+      <OrganizationDemo
+        heading={
+          <div className={styles.storyHeading}>
+            <h2 id="organize-heading">정리는 가볍게.<br />결정은 내 손으로.</h2>
+            <p>바뀔 모습을 먼저 보고,<br />내가 확인한 계획대로 정리해요.</p>
+          </div>
+        }
+        scene={<OrganizationScene />}
+      />
     </section>
   );
 }

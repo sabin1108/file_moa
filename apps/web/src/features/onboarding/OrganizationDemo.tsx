@@ -6,7 +6,7 @@ import styles from "./onboarding-motion.module.css";
 
 const stages = ["before", "review", "after"];
 
-export function OrganizationDemo({ scene }: { scene: ReactNode }) {
+export function OrganizationDemo({ heading, scene }: { heading: ReactNode; scene: ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
   const target = useRef(0);
   const current = useRef(0);
@@ -58,6 +58,7 @@ export function OrganizationDemo({ scene }: { scene: ReactNode }) {
         {stages.map(name => <div key={name} data-organization-marker={name} />)}
       </div>
       <div className={styles.organizationDemo} data-organization-stage={stage}>
+      {heading}
       <div className={styles.organizationBackdrop} aria-hidden="true">
         <div className={styles.backdropPapers}>
           <span><Icon name="file" size={30} /><strong>프로젝트 회의록</strong><small>회의에서 결정한 내용</small></span>

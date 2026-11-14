@@ -95,7 +95,8 @@
 
 .organizationScroll { position: relative; height: 280svh; }
 .organizationScrollSteps { position: absolute; inset: 0; display: grid; grid-template-rows: repeat(3, 1fr); pointer-events: none; }
-.organizationDemo { position: sticky; top: max(96px, calc((100svh - clamp(480px, 54svh, 640px) - 120px) / 2)); isolation: isolate; width: min(1520px, 100%); margin-inline: auto; }
+.organizationDemo { position: sticky; top: 96px; isolation: isolate; width: min(1520px, 100%); margin-inline: auto; }
+.organizationDemo .storyHeading { margin-bottom: 24px; }
 .organizationBackdrop { position: absolute; z-index: -1; inset: 80px -12px 80px; pointer-events: none; }
 .backdropPapers { position: absolute; left: 0; top: 35px; width: 180px; height: 300px; }
 .backdropPapers > span { position: absolute; display: flex; flex-direction: column; gap: 18px; width: 160px; height: 200px; padding: 24px 18px; border-radius: 4px; background: #dce5df; color: var(--intro-ink); opacity: .28; transform: rotate(-12deg); }
@@ -183,6 +184,26 @@
 
 @media (prefers-reduced-motion: reduce) {
   .organizationDemo[data-organization-stage] *, .organizationDemo[data-organization-stage] ::after { transition: none; transition-delay: 0s; }
+}
+
+@media (max-height: 800px) {
+  .organizationDemo .storyHeading { gap: 24px; margin-bottom: 12px; }
+  .organizationDemo .storyHeading h2 { font-size: 2rem; }
+  .organizationPreview [data-organization-scene] { min-height: 400px; padding: 18px; }
+  .organizationDemo[data-organization-stage="after"] [data-organization-row] { height: 84px; }
+}
+
+@media (max-height: 800px) and (min-width: 701px) {
+  .organizationDemo .storyHeading { display: flex; }
+  .organizationDemo .storyHeading > p { margin-top: 0; }
+}
+
+@media (max-height: 800px) and (max-width: 700px) {
+  .organizationDemo { top: 72px; }
+  .organizationPreview [data-organization-row] { height: 84px; }
+  .organizationDemo .storyHeading { margin-bottom: 8px; }
+  .organizationDemo .storyHeading h2 { font-size: 1.5rem; }
+  .organizationDemo .storyHeading > p { margin-top: 8px; font-size: .875rem; line-height: 1.45; }
 }
 .knowledgeExamples { width: min(1180px, 100%); margin-inline: auto; }
 .knowledgeFlow .storyHeading { margin-bottom: 20px; }
