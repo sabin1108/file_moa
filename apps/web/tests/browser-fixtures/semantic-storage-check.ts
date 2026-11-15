@@ -26,16 +26,16 @@ export async function checkSemanticStorage() {
     const bEpoch = await index.semanticEpoch(other);
     check(await save(record("b.md", bEpoch, 1, other)), "other owner write");
     await index.clear(scope);
-    check(!(await index.putSemantic(record("late.md", epoch))), "clear rejects late completion");
+    check(!(await save(record("late.md", epoch))), "clear rejects late completion even after a new read refreshes the body cache");
     check((await index.semanticRecords(other)).length === 1, "clear preserves other owner");
     const after = await index.semanticEpoch(scope);
     check(await save(record("a.md", after)), "new preparation after clear");
     await index.invalidateSemanticModel();
-    check(!(await index.putSemantic(record("late.md", after))), "model deletion rejects late completion");
+    check(!(await save(record("late.md", after))), "model deletion rejects late completion with a current body cache");
     check((await index.semanticRecords(other)).length === 0, "model deletion clears all derived vectors");
     const full = await index.semanticEpoch(scope);
     for (let i = 0; i < 64; i++) check(await save(record(`${i}.md`, full, 64)), `chunk capacity write ${i}`);
-    check(!(await index.putSemantic(record("overflow.md", full))), "4096 chunk cap rejects overflow");
+    check(!(await save(record("overflow.md", full))), "4096 chunk cap rejects overflow with a current body cache");
     check((await index.semanticStatus(scope)).chunks === 4096, "cap preserves committed records");
     const readMs: number[] = [];
     const longTasks: number[] = [];
@@ -51,7 +51,7 @@ export async function checkSemanticStorage() {
     await index.clear(scope);
     const countEpoch = await index.semanticEpoch(scope);
     for (let i = 0; i < 500; i++) if (!await save(record(`${i}.md`, countEpoch))) throw new Error("document capacity early rejection");
-    check(!(await index.putSemantic(record("501.md", countEpoch))), "500 document cap");
+    check(!(await save(record("501.md", countEpoch))), "500 document cap with a current body cache");
     check((await index.semanticStatus(scope)).documents === 500, "document count stable");
     const old = record("0.md", countEpoch);
     const changed = { ...old, hash: "b".repeat(64) };
