@@ -1,6 +1,6 @@
 # 사이트 전체 성능 측정 정책
 
-최신 선택 의미 검색: [2026-11-15 공개 모델 설치·실제 Worker/IDB와66게스트 표본](verification/optional-semantic-20261115/performance.md). 전체 JS/CSS3,610,476→4,523,292bytes이며 선택 모델/실행 파일 약149.5MiB는 별도다. 자동 모델 요청0, 짧은 질문 WASM 선형 메모리 약329.3MiB와 전체 peak RAM 미측정, 긴 문서 준비23.76초·취소82ms를 구분한다. 작은 합성 품질 이득을 개인 자료 전반·저사양 기기·field INP 보장으로 취급하지 않는다.
+최신 선택 의미 검색: [2026-11-15 공개 모델 설치·실제 Worker/IDB와66게스트 표본](verification/optional-semantic-20261115/performance.md). 전체 JS/CSS3,610,476→4,523,143bytes이며 선택 모델/실행 파일 약149.5MiB는 별도다. 자동 모델 요청0, 짧은 질문 WASM 선형 메모리 약329.3MiB와 전체 peak RAM 미측정, 긴 문서 준비23.76초·취소82ms를 구분한다. 작은 합성 품질 이득을 개인 자료 전반·저사양 기기·field INP 보장으로 취급하지 않는다.
 
 최신 로컬 검색 캐시: [2026-11-15 실제 Worker/IDB 처리 비용과11경로66표본](verification/search-cache-20261115/performance.md). 전체47JS/CSS3,562,977→3,567,910바이트(+4,933). 합성 PDF warm 추출 생략과 원본 바이트 읽기 유지, 실제 디스크·OCR·운영·field INP 미측정을 구분한다.
 

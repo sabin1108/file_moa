@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-15T07:40:33.562Z",
+  "at": "2026-11-15T07:54:11.812Z",
   "fixtureSha256": "dd7adaa4088ea0e3c1a71905a75e7eef1cd32fc1fd89aa1c4fd5fec499936646",
   "modelAssetsBytes": 135138424,
   "runtimeBytes": 21640503,
@@ -672,9 +672,9 @@
     "condition": "Observed WebAssembly linear-memory buffers only; excludes SDK JS heap, ONNX model copies, tokenizer, cache write buffers and browser overhead; not peak total RAM."
   },
   "build": {
-    "id": "Yf5bWDcbm2xbrJZMjocSq",
+    "id": "2Zr-iK3yFObXEhBgpRyMP",
     "files": 51,
-    "jsCssBytes": 4523292,
+    "jsCssBytes": 4523143,
     "modelWeightsOnServer": false
   },
   "routes": {

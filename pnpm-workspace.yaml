@@ -15,6 +15,9 @@ allowBuilds:
   tesseract.js: false
   # Browser inference uses onnxruntime-web; do not download unused native runtimes in CI.
   onnxruntime-node: false
+  # The SDK uses prebuilt packages; protobuf metadata and optional Sharp source builds are unnecessary.
+  protobufjs: false
+  sharp: false
 
 minimumReleaseAgeExclude:
   - '@better-auth/core@1.7.17'

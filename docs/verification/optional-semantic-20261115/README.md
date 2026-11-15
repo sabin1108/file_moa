@@ -71,3 +71,7 @@ Transformers.js3.8.1과 ORT Web1.22.0-dev.20250409-89f8206ba4, Xenova/multilingu
 `pnpm test`, `pnpm typecheck`, `pnpm lint`, `pnpm test:boundaries`, `pnpm test:structure`, `pnpm test:s0-graph`, `pnpm build`를 사용한다. `node tests/browser/serve-semantic-fixture.mjs`는127.0.0.1:3037에서 합성 UI를 제공한다. 브라우저 fixture의 semantic-storage-check/evaluation 함수와 공개 모델 설치를 Ego에서 실행했다. `node tests/browser/check-semantic-layout.mjs`는 이 fixture의 기본 화면만 검사한다. 기존 `check-local-rag.mjs`, `check-search-fields.mjs`는 합성 회귀다.
 
 상세 원자료와 Ego 라운드는 `.omx/verification/optional-semantic-20261115/`에 있다. 배포 결과는 최종 커밋/운영 확인 절에 이어 기록한다.
+
+## 운영 설치 정책 수정
+
+기능 커밋9885bf9의 첫 Vercel 빌드는 `ERR_PNPM_IGNORED_BUILDS`로 중단됐다. 새 SDK가 가져온 protobufjs7.6.6·sharp0.34.5의 설치 후 스크립트가 기존 pnpm 정책에 없었던 것이 확인된 원인이다. 브라우저 추론에 필요 없는 protobuf 메타데이터 스크립트와 Sharp 선택 소스 빌드를 명시적으로 제외했다. 기존 사전 빌드 패키지와 허용된 Prisma 단계는 유지하며 네이티브 ONNX 설치도 실행하지 않는다. 실제 앱 추론 실패나 원본 손실로 기록하지 않는다. 고정 lockfile 일반 설치와 빌드를 재확인했다. 이미 제공하는100ms 간격 다운로드 진행 알림과 중복되는 SDK의 buffer 읽기 알림은 제거했고, 설치/384차원 질문을 다시 확인했다.

@@ -76,13 +76,9 @@ async function load(install: boolean, id: number) {
   wasm.wasmPaths = { mjs: moduleUrl, wasm: runtimeAssetUrl("ort-wasm-simd-threaded.jsep.wasm", origin) };
   const create = pipeline as unknown as (task: "feature-extraction", model: string, options: {
     revision: string; dtype: "int8"; device: "wasm";
-    progress_callback: (event: { status: string; file?: string; loaded?: number; total?: number }) => void;
   }) => Promise<FeatureExtractionPipeline>;
   try { extractor = await create("feature-extraction", SEMANTIC_MODEL.id, {
     revision: SEMANTIC_MODEL.revision, dtype: SEMANTIC_MODEL.dtype, device: "wasm",
-    progress_callback: event => {
-      if (event.status === "progress") self.postMessage({ id, kind: "progress", stage: "downloading", file: event.file, loaded: event.loaded, total: event.total });
-    },
   }); } finally { URL.revokeObjectURL(moduleUrl); }
   return extractor;
 }
