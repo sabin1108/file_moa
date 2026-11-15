@@ -1,0 +1,2013 @@
+{
+  "at": "2026-11-15T04:52:19.158Z",
+  "featureCommit": "5c08b787f7ac4368226425b09b4fa0cc8124a562",
+  "deployment": "https://vercel.com/sabins-projects-011c6dea/web/3NdcCEANJaE4fftwKGysyAnLPu6w",
+  "validation": {
+    "unitFiles": 167,
+    "unitTests": 1501,
+    "typecheck": true,
+    "lint": true,
+    "build": true,
+    "serverBoundary": 26,
+    "webBoundary": 32,
+    "domainBoundary": 6,
+    "layout": 3,
+    "s0Modules": 174,
+    "architect": "CLEAR"
+  },
+  "browser": {
+    "rag": {
+      "checks": [
+        {
+          "name": "metadata refresh stores unsupported files without invoking the extraction Worker",
+          "passed": true
+        },
+        {
+          "name": "settings shows real catalog/body counts",
+          "passed": true
+        },
+        {
+          "name": "catalog keeps DOCX as metadata-only",
+          "passed": true
+        },
+        {
+          "name": "partial scan preserves the previous complete catalog",
+          "passed": true
+        },
+        {
+          "name": "refresh followed by clear cannot repopulate a cleared catalog",
+          "passed": true
+        },
+        {
+          "name": "clear followed by a new refresh keeps the latest catalog",
+          "passed": true
+        },
+        {
+          "name": "1440: index settings fit the viewport",
+          "passed": true
+        },
+        {
+          "name": "390: index settings fit the viewport",
+          "passed": true
+        },
+        {
+          "name": "named target stays mandatory while document type remains a preference",
+          "passed": true
+        },
+        {
+          "name": "related results are explained without a full-condition badge",
+          "passed": true
+        },
+        {
+          "name": "metadata-only files cannot be selected for grounded preparation",
+          "passed": true
+        },
+        {
+          "name": "1440: query conditions and results stay within the viewport",
+          "passed": true
+        },
+        {
+          "name": "768: query conditions and results stay within the viewport",
+          "passed": true
+        },
+        {
+          "name": "390: query conditions and results stay within the viewport",
+          "passed": true
+        },
+        {
+          "name": "remote interpretation is disabled before explicit question consent",
+          "passed": true
+        },
+        {
+          "name": "interpretation payload contains no document/index/history data",
+          "passed": true
+        },
+        {
+          "name": "edited filters cannot apply a stale remote proposal",
+          "passed": true
+        },
+        {
+          "name": "1440: expanded conditions and question consent fit the viewport",
+          "passed": true
+        },
+        {
+          "name": "390: expanded conditions and question consent fit the viewport",
+          "passed": true
+        },
+        {
+          "name": "applying a proposal does not start local reads or AI answering",
+          "passed": true
+        },
+        {
+          "name": "late model response after cancel never becomes an applied proposal",
+          "passed": true
+        },
+        {
+          "name": "phrase punctuation, exclusions and path filter survive real Worker execution",
+          "passed": true
+        },
+        {
+          "name": "metadata prefilter avoids reading files outside explicit path",
+          "passed": true
+        },
+        {
+          "name": "second tab restores the same owner connection",
+          "passed": true
+        },
+        {
+          "name": "large metadata refresh leaves a persistent resumable checkpoint",
+          "passed": true
+        },
+        {
+          "name": "checkpoint stores the processed cursor and observed paths",
+          "passed": true
+        },
+        {
+          "name": "another restored tab resumes the same persisted scan and completes",
+          "passed": true
+        },
+        {
+          "name": "resuming does not reread already committed metadata entries",
+          "passed": true
+        },
+        {
+          "name": "metadata resume never invokes the content Worker",
+          "passed": true
+        },
+        {
+          "name": "automatic metadata checks do not run while hidden",
+          "passed": true
+        },
+        {
+          "name": "automatic complete scan observes additions, edits and removals",
+          "passed": true
+        },
+        {
+          "name": "visible opted-in checks restart without any model request",
+          "passed": true
+        },
+        {
+          "name": "clearing the index disables automatic recreation and removes the checkpoint",
+          "passed": true
+        },
+        {
+          "name": "checkpoint quota failure stops automatic retries and preserves catalog",
+          "passed": true
+        },
+        {
+          "name": "a disconnected second-tab handle cannot recreate a cleared index",
+          "passed": true
+        },
+        {
+          "name": "source files receive no product writes",
+          "passed": true
+        },
+        {
+          "name": "browser reports no product exceptions",
+          "passed": true
+        }
+      ],
+      "condition": "Actual UI/controllers/Worker/hash/IDB/OPFS/Web Locks; synthetic folder permissions and model response. Real OS permission dialog, physical IME/device and paid service authorization are separate."
+    },
+    "fields": {
+      "checks": [
+        {
+          "name": "filename, folder, body and metadata-only candidates are all reachable",
+          "pass": true
+        },
+        {
+          "name": "another company is not included just because the document type matches",
+          "pass": true
+        },
+        {
+          "name": "metadata-only files are never posted to the extraction Worker",
+          "pass": true
+        },
+        {
+          "name": "actual Worker records distributed name and body evidence",
+          "pass": true
+        },
+        {
+          "name": "name matches rank ahead of body-only matches",
+          "pass": true
+        },
+        {
+          "name": "metadata-only rows explain and disable both selection and preview",
+          "pass": true
+        },
+        {
+          "name": "1440: fields and long names do not overflow",
+          "pass": true
+        },
+        {
+          "name": "768: fields and long names do not overflow",
+          "pass": true
+        },
+        {
+          "name": "390: fields and long names do not overflow",
+          "pass": true
+        },
+        {
+          "name": "cache reuse keeps the same ranked result",
+          "pass": true
+        },
+        {
+          "name": "technical identifiers remain distinct: Next.js 로그인",
+          "pass": true
+        },
+        {
+          "name": "technical identifiers remain distinct: C++ 스레드",
+          "pass": true
+        },
+        {
+          "name": "technical identifiers remain distinct: .NET 인증",
+          "pass": true
+        },
+        {
+          "name": "filename dates do not become body dates",
+          "pass": true
+        },
+        {
+          "name": "confirmed out-of-period body dates are excluded",
+          "pass": true
+        },
+        {
+          "name": "folder scope cannot expand back to the root",
+          "pass": true
+        },
+        {
+          "name": "changed source content cannot reuse an old body hit from the cache",
+          "pass": true
+        },
+        {
+          "name": "cancelled scans cannot publish late metadata or body results",
+          "pass": true
+        },
+        {
+          "name": "permission loss clears results and requires reconnect instead of returning metadata-only success",
+          "pass": true
+        },
+        {
+          "name": "search never writes source files",
+          "pass": true
+        },
+        {
+          "name": "search never calls a model endpoint",
+          "pass": true
+        }
+      ],
+      "timings": [
+        {
+          "condition": "cold Worker and cache",
+          "ms": 156.5
+        },
+        {
+          "condition": "warm same corpus",
+          "ms": 112.89999985694885
+        }
+      ],
+      "corpusFiles": 13,
+      "condition": "actual local controllers/Worker/hash/IndexedDB and synthetic OPFS/permission; no personal corpus or live model"
+    },
+    "grounded": {
+      "checks": [
+        {
+          "name": "unprepared questions explain how to select sources instead of silently blocking",
+          "pass": true
+        },
+        {
+          "name": "switching to file finding keeps the original question",
+          "pass": true
+        },
+        {
+          "name": "actual file selection prepares question sources without organization or model calls",
+          "pass": true
+        },
+        {
+          "name": "1440: source excerpts scroll without hiding the input or send button",
+          "pass": true
+        },
+        {
+          "name": "768: source excerpts scroll without hiding the input or send button",
+          "pass": true
+        },
+        {
+          "name": "390: source excerpts scroll without hiding the input or send button",
+          "pass": true
+        },
+        {
+          "name": "a changed question requires fresh excerpts instead of reusing an old consent",
+          "pass": true
+        },
+        {
+          "name": "changing the question retains unresolved paths and still requires partial acceptance",
+          "pass": true
+        },
+        {
+          "name": "incomplete source preparation cannot send without accepting the partial scope",
+          "pass": true
+        },
+        {
+          "name": "accepting the visible partial scope unlocks the consented question",
+          "pass": true
+        },
+        {
+          "name": "consent is required before transmission",
+          "pass": true
+        },
+        {
+          "name": "changing the question invalidates previous consent",
+          "pass": true
+        },
+        {
+          "name": "the finished answer remains visible above the composer",
+          "pass": true
+        },
+        {
+          "name": "verified answer includes an exact source quotation",
+          "pass": true
+        },
+        {
+          "name": "citation opens the shared full document preview",
+          "pass": true
+        },
+        {
+          "name": "citation and save controls survive the file preview round trip",
+          "pass": true
+        },
+        {
+          "name": "a new conversation cancels a pending citation navigation",
+          "pass": true
+        },
+        {
+          "name": "source changes during generation suppress the answer",
+          "pass": true
+        },
+        {
+          "name": "cancelled action cannot publish a late answer",
+          "pass": true
+        },
+        {
+          "name": "cancelling an action immediately permits a new request",
+          "pass": true
+        },
+        {
+          "name": "an old action cannot unlock or complete the new request",
+          "pass": true
+        },
+        {
+          "name": "revoked source permission blocks publication",
+          "pass": true
+        },
+        {
+          "name": "invalid action citations fail safely at the client boundary",
+          "pass": true
+        },
+        {
+          "name": "narrow material question does not overflow",
+          "pass": true
+        },
+        {
+          "name": "changed source before sending never reaches the action",
+          "pass": true
+        },
+        {
+          "name": "owner change discards the previous owner's pending answer",
+          "pass": true
+        },
+        {
+          "name": "reload and reopen restore citation references without another model call",
+          "pass": true
+        },
+        {
+          "name": "saved citation text and long file names fit a narrow conversation",
+          "pass": true
+        },
+        {
+          "name": "restored citation rehashes the actual file before navigating",
+          "pass": true
+        },
+        {
+          "name": "changing the draft cancels the saved citation read and leaves no stale preview",
+          "pass": true
+        },
+        {
+          "name": "changed stored source cannot be presented as the old answer's evidence",
+          "pass": true
+        },
+        {
+          "name": "revoked permission blocks a restored reference without navigation",
+          "pass": true
+        },
+        {
+          "name": "a different active source is never silently used for a saved reference",
+          "pass": true
+        }
+      ],
+      "condition": "Actual product components/session/hash Worker and isolated OPFS; synthetic Server Action and permissions; no live model or native permission claims."
+    },
+    "usability": [
+      {
+        "name": "first visit opens a native modal tutorial",
+        "pass": true
+      },
+      {
+        "name": "tour supports previous and next",
+        "pass": true
+      },
+      {
+        "name": "dismissed tour stays closed on the next visit",
+        "pass": true
+      },
+      {
+        "name": "new chat asks for an action before showing input",
+        "pass": true
+      },
+      {
+        "name": "selecting an action opens and focuses the input",
+        "pass": true
+      },
+      {
+        "name": "advanced policy is folded into one section",
+        "pass": true
+      },
+      {
+        "name": "replaying guidance preserves the draft",
+        "pass": true
+      },
+      {
+        "name": "guide step 2 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 2 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 3 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 3 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 4 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 4 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 5 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 5 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 6 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 6 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 7 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 7 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 8 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 8 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 9 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 9 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 10 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 10 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 11 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 11 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 12 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 12 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 13 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 13 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 14 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 14 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 15 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 15 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 16 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 16 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "guide step 17 highlights its actual control",
+        "pass": true
+      },
+      {
+        "name": "guide step 17 leaves its target uncovered",
+        "pass": true
+      },
+      {
+        "name": "all four tasks have their own usage guidance",
+        "pass": true
+      },
+      {
+        "name": "all five record tabs are actually revealed without creating a record",
+        "pass": true
+      },
+      {
+        "name": "ordinary guide transitions keep the same native dialog open",
+        "pass": true
+      },
+      {
+        "name": "guide route changes keep history length and do not invoke the folder picker",
+        "pass": true
+      },
+      {
+        "name": "settings replay link opens the guide without remounting the workspace layout",
+        "pass": true
+      },
+      {
+        "name": "storage selection opens the picker directly once",
+        "pass": true
+      },
+      {
+        "name": "connecting a folder does not enable conversation saving",
+        "pass": true
+      },
+      {
+        "name": "save button does not overlap the focused textarea",
+        "pass": true
+      },
+      {
+        "name": "editor back returns focus to its opener",
+        "pass": true
+      },
+      {
+        "name": "desktop sources focus the existing tree without a second drawer",
+        "pass": true
+      },
+      {
+        "name": "scope has two visible radio controls and search is last",
+        "pass": true
+      },
+      {
+        "name": "evidence is folded while full or related match status remains visible",
+        "pass": true
+      },
+      {
+        "name": "empty search has a single next-action message instead of repeated zero counts",
+        "pass": true
+      },
+      {
+        "name": "search selections lead directly to question preparation while preserving the request",
+        "pass": true
+      },
+      {
+        "name": "file navigation preserves the explicitly chosen task",
+        "pass": true
+      },
+      {
+        "name": "switching from find to chat does not reinterpret a new question as search conditions",
+        "pass": true
+      },
+      {
+        "name": "1920: no document overflow",
+        "pass": true
+      },
+      {
+        "name": "390: no document overflow",
+        "pass": true
+      },
+      {
+        "name": "Korean IME Enter does not submit",
+        "pass": true
+      },
+      {
+        "name": "narrow tour fits the screen",
+        "pass": true
+      },
+      {
+        "name": "guide pauses so an inline unsaved-navigation confirmation is operable",
+        "pass": true
+      },
+      {
+        "name": "a second route request keeps the current leave confirmation",
+        "pass": true
+      },
+      {
+        "name": "cancelling the navigation resumes the same guide step",
+        "pass": true
+      },
+      {
+        "name": "confirming navigation resumes the requested guide step",
+        "pass": true
+      },
+      {
+        "name": "a late first-use claim does not restart a manually opened guide",
+        "pass": true
+      },
+      {
+        "name": "1440: step 1 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 2 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 3 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 4 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 5 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 6 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 7 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 8 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 9 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 10 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 11 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 12 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 13 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 14 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 15 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 16 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: step 17 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "1440: guide does not choose a conversation task",
+        "pass": true
+      },
+      {
+        "name": "768: step 1 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 2 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 3 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 4 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 5 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 6 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 7 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 8 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 9 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 10 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 11 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 12 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 13 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 14 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 15 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 16 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: step 17 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "768: guide does not choose a conversation task",
+        "pass": true
+      },
+      {
+        "name": "390: step 1 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 2 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 3 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 4 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 5 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 6 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 7 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 8 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 9 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 10 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 11 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 12 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 13 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 14 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 15 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 16 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: step 17 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390: guide does not choose a conversation task",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 1 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 2 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 3 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 4 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 5 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 6 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 7 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 8 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 9 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 10 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 11 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 12 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 13 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 14 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 15 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 16 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: step 17 is readable without covering its target",
+        "pass": true
+      },
+      {
+        "name": "390 reduced: guide does not choose a conversation task",
+        "pass": true
+      }
+    ],
+    "worker": {
+      "condition": "Final Next production static Worker bootstrap; synthetic File input; not a full authenticated route or physical disk check",
+      "buildId": "IDAXMtHbHzmyoi2ovEW8p",
+      "bootstrap": {
+        "entry": "static/chunks/turbopack-worker-1hrsqshz0gfey.js",
+        "chunks": [
+          "static/chunks/0cb6wr0ngjcyb.js",
+          "static/chunks/turbopack-01z_2t-_91vta.js",
+          "static/chunks/turbopack-2c3mg3r-05n1w.js"
+        ]
+      },
+      "result": {
+        "hash": {
+          "sha256": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+          "size": 3
+        },
+        "snapshot": {
+          "sha256": "02a86930da277e604373d379a6f79c6f0579480d36179a517c05b8854ff46cb5",
+          "size": 5017,
+          "excerpt": "앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 LCP 성능 실측",
+          "excerptHash": "5f6a59cddfcbf9ed95fcd22916a83032648a99f4214dd0e1ba80c74c07d19f94",
+          "fullText": "앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 LCP 성능 실측",
+          "cacheHit": false,
+          "cacheMetadata": {
+            "format": "text",
+            "size": 5017,
+            "lastModified": 1794717584489,
+            "ocrEnabled": false
+          }
+        },
+        "cachedSnapshot": {
+          "sha256": "02a86930da277e604373d379a6f79c6f0579480d36179a517c05b8854ff46cb5",
+          "size": 5017,
+          "excerpt": "앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 LCP 성능 실측",
+          "excerptHash": "5f6a59cddfcbf9ed95fcd22916a83032648a99f4214dd0e1ba80c74c07d19f94",
+          "fullText": "앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 LCP 성능 실측",
+          "cacheHit": true,
+          "cacheMetadata": {
+            "format": "text",
+            "size": 5017,
+            "lastModified": 1794717584489,
+            "ocrEnabled": false
+          }
+        },
+        "invalid": {
+          "sha256": "eddf68639913a3cb8331cdfe7f87559e0beccf2c289c0d90ac4d89b3204004f8",
+          "size": 2,
+          "issue": "invalid-utf8"
+        },
+        "found": {
+          "sha256": "7c36a10fe252716af03c5866f1461394c2d004d95def912e4994f361abe19d30",
+          "size": 10036,
+          "excerpt": "회의 자료\n앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부",
+          "excerptHash": "fecbc4e2bac19f8431c07f8469ee2aac0b45f7208568f8ed81f70c5e998ec0bc",
+          "fullText": "회의 자료\n앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 \n회의일: 2026-10-15",
+          "cacheHit": false,
+          "cacheMetadata": {
+            "format": "text",
+            "size": 10036,
+            "lastModified": 1794717584491,
+            "ocrEnabled": false
+          },
+          "finding": {
+            "kind": "matched",
+            "dates": [
+              "2026-10-15"
+            ],
+            "evidence": [
+              "앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 \n회의일: 2026-10-15",
+              "회의 자료\n앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분 앞부분"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "index": {
+    "boundaries": {
+      "replaced": true,
+      "isolation": true,
+      "legacy": true,
+      "cancelled": true,
+      "preserved": true,
+      "outsideRetain": true,
+      "corruptRead": true,
+      "corruptWrite": true,
+      "repaired": true,
+      "corruptStats": true,
+      "failedWritePreserved": true,
+      "statsRecovered": true,
+      "blocked": true,
+      "blockedConnectionClosed": true,
+      "multiTabLimit": true
+    },
+    "catalog": {
+      "preserved": true,
+      "corruptHidden": true,
+      "repaired": true,
+      "clearRollback": true,
+      "quotaPreserved": true,
+      "scopedClear": true,
+      "bounded": true,
+      "sentinel": true
+    },
+    "checkpoint": {
+      "quotaPreserved": true,
+      "rolledBack": true,
+      "scopedClear": true,
+      "corruptHidden": true,
+      "nearCapEntries": 1546,
+      "jsonUtf8Bytes": 994055,
+      "timings": [
+        {
+          "cloneMs": 1.7999999523162842,
+          "writeMs": 2.5,
+          "readMs": 2.5
+        },
+        {
+          "cloneMs": 1.2000000476837158,
+          "writeMs": 2.5,
+          "readMs": 1.5999999046325684
+        },
+        {
+          "cloneMs": 1.0999999046325684,
+          "writeMs": 2.5,
+          "readMs": 1.8000001907348633
+        }
+      ]
+    },
+    "consoleErrors": [],
+    "condition": "Synthetic Files, actual Chromium Worker/PDF.js/IDB and two tabs. Catalog/checkpoint migration, corruption, quota, scoped clear, near-cap clone/read/write checked. No physical disk/OS prompt/OCR/production-user timing."
+  },
+  "routes": {
+    "at": "2026-11-15T04:40:15.438Z",
+    "base": "http://127.0.0.1:3034",
+    "condition": "Local production unauthenticated guest routes, no throttling, new target per sample, shared browser HTTP cache. Redirect paths recorded. No matched previous route replay or field INP claim.",
+    "buildId": "IDAXMtHbHzmyoi2ovEW8p",
+    "staticJsCssBytes": 3610476,
+    "files": 47,
+    "samples": [
+      {
+        "route": "/login",
+        "width": 390,
+        "round": 0,
+        "finalPath": "/login",
+        "lcp": 348,
+        "cls": 0,
+        "requests": 24,
+        "transferBytes": 278461,
+        "jsTransferBytes": 197604,
+        "errors": []
+      },
+      {
+        "route": "/login",
+        "width": 390,
+        "round": 1,
+        "finalPath": "/login",
+        "lcp": 52,
+        "cls": 0,
+        "requests": 23,
+        "transferBytes": 17267,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/login",
+        "width": 390,
+        "round": 2,
+        "finalPath": "/login",
+        "lcp": 52,
+        "cls": 0,
+        "requests": 23,
+        "transferBytes": 17264,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/login",
+        "width": 1440,
+        "round": 0,
+        "finalPath": "/login",
+        "lcp": 60,
+        "cls": 0,
+        "requests": 23,
+        "transferBytes": 17268,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/login",
+        "width": 1440,
+        "round": 1,
+        "finalPath": "/login",
+        "lcp": 64,
+        "cls": 0,
+        "requests": 23,
+        "transferBytes": 17267,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/login",
+        "width": 1440,
+        "round": 2,
+        "finalPath": "/login",
+        "lcp": 84,
+        "cls": 0,
+        "requests": 23,
+        "transferBytes": 17266,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/welcome",
+        "width": 390,
+        "round": 0,
+        "finalPath": "/welcome",
+        "lcp": 60,
+        "cls": 0,
+        "requests": 22,
+        "transferBytes": 19227,
+        "jsTransferBytes": 2723,
+        "errors": []
+      },
+      {
+        "route": "/welcome",
+        "width": 390,
+        "round": 1,
+        "finalPath": "/welcome",
+        "lcp": 72,
+        "cls": 0,
+        "requests": 22,
+        "transferBytes": 16501,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/welcome",
+        "width": 390,
+        "round": 2,
+        "finalPath": "/welcome",
+        "lcp": 44,
+        "cls": 0,
+        "requests": 22,
+        "transferBytes": 16502,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/welcome",
+        "width": 1440,
+        "round": 0,
+        "finalPath": "/welcome",
+        "lcp": 64,
+        "cls": 0,
+        "requests": 22,
+        "transferBytes": 16504,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/welcome",
+        "width": 1440,
+        "round": 1,
+        "finalPath": "/welcome",
+        "lcp": 60,
+        "cls": 0,
+        "requests": 22,
+        "transferBytes": 16502,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/welcome",
+        "width": 1440,
+        "round": 2,
+        "finalPath": "/welcome",
+        "lcp": 76,
+        "cls": 0,
+        "requests": 22,
+        "transferBytes": 16504,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/forgot-password",
+        "width": 390,
+        "round": 0,
+        "finalPath": "/forgot-password",
+        "lcp": 56,
+        "cls": 0.07808024691358025,
+        "requests": 19,
+        "transferBytes": 15016,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/forgot-password",
+        "width": 390,
+        "round": 1,
+        "finalPath": "/forgot-password",
+        "lcp": 64,
+        "cls": 0.07808024691358025,
+        "requests": 19,
+        "transferBytes": 15016,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/forgot-password",
+        "width": 390,
+        "round": 2,
+        "finalPath": "/forgot-password",
+        "lcp": 72,
+        "cls": 0.07808024691358025,
+        "requests": 19,
+        "transferBytes": 15015,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/forgot-password",
+        "width": 1440,
+        "round": 0,
+        "finalPath": "/forgot-password",
+        "lcp": 140,
+        "cls": 0.012799800668724281,
+        "requests": 19,
+        "transferBytes": 15016,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/forgot-password",
+        "width": 1440,
+        "round": 1,
+        "finalPath": "/forgot-password",
+        "lcp": 68,
+        "cls": 0.012799800668724281,
+        "requests": 19,
+        "transferBytes": 15018,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/forgot-password",
+        "width": 1440,
+        "round": 2,
+        "finalPath": "/forgot-password",
+        "lcp": 80,
+        "cls": 0.012799800668724281,
+        "requests": 19,
+        "transferBytes": 15019,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/reset-password",
+        "width": 390,
+        "round": 0,
+        "finalPath": "/reset-password",
+        "lcp": 68,
+        "cls": 0.08369753086419753,
+        "requests": 21,
+        "transferBytes": 16440,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/reset-password",
+        "width": 390,
+        "round": 1,
+        "finalPath": "/reset-password",
+        "lcp": 68,
+        "cls": 0.08369753086419753,
+        "requests": 21,
+        "transferBytes": 16440,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/reset-password",
+        "width": 390,
+        "round": 2,
+        "finalPath": "/reset-password",
+        "lcp": 80,
+        "cls": 0.08369753086419753,
+        "requests": 21,
+        "transferBytes": 16443,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/reset-password",
+        "width": 1440,
+        "round": 0,
+        "finalPath": "/reset-password",
+        "lcp": 72,
+        "cls": 0.018556988249099796,
+        "requests": 21,
+        "transferBytes": 16445,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/reset-password",
+        "width": 1440,
+        "round": 1,
+        "finalPath": "/reset-password",
+        "lcp": 80,
+        "cls": 0.018556988249099796,
+        "requests": 21,
+        "transferBytes": 16446,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/reset-password",
+        "width": 1440,
+        "round": 2,
+        "finalPath": "/reset-password",
+        "lcp": 84,
+        "cls": 0.018556988249099796,
+        "requests": 21,
+        "transferBytes": 16444,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/verify-email",
+        "width": 390,
+        "round": 0,
+        "finalPath": "/verify-email",
+        "lcp": 56,
+        "cls": 0.08369753086419753,
+        "requests": 22,
+        "transferBytes": 16963,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/verify-email",
+        "width": 390,
+        "round": 1,
+        "finalPath": "/verify-email",
+        "lcp": 64,
+        "cls": 0.08369753086419753,
+        "requests": 22,
+        "transferBytes": 16961,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/verify-email",
+        "width": 390,
+        "round": 2,
+        "finalPath": "/verify-email",
+        "lcp": 64,
+        "cls": 0.08369753086419753,
+        "requests": 22,
+        "transferBytes": 16961,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/verify-email",
+        "width": 1440,
+        "round": 0,
+        "finalPath": "/verify-email",
+        "lcp": 80,
+        "cls": 0.018556988249099796,
+        "requests": 22,
+        "transferBytes": 16962,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/verify-email",
+        "width": 1440,
+        "round": 1,
+        "finalPath": "/verify-email",
+        "lcp": 84,
+        "cls": 0.018556988249099796,
+        "requests": 22,
+        "transferBytes": 16961,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/verify-email",
+        "width": 1440,
+        "round": 2,
+        "finalPath": "/verify-email",
+        "lcp": 68,
+        "cls": 0.018556988249099796,
+        "requests": 22,
+        "transferBytes": 16959,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/files",
+        "width": 390,
+        "round": 0,
+        "finalPath": "/start",
+        "lcp": 128,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 54667,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/files",
+        "width": 390,
+        "round": 1,
+        "finalPath": "/start",
+        "lcp": 100,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22313,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/files",
+        "width": 390,
+        "round": 2,
+        "finalPath": "/start",
+        "lcp": 112,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22313,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/files",
+        "width": 1440,
+        "round": 0,
+        "finalPath": "/start",
+        "lcp": 112,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 115710,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/files",
+        "width": 1440,
+        "round": 1,
+        "finalPath": "/start",
+        "lcp": 144,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22313,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/files",
+        "width": 1440,
+        "round": 2,
+        "finalPath": "/start",
+        "lcp": 128,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22315,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo",
+        "width": 390,
+        "round": 0,
+        "finalPath": "/demo/intro",
+        "lcp": 156,
+        "cls": 0,
+        "requests": 13,
+        "transferBytes": 13374,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo",
+        "width": 390,
+        "round": 1,
+        "finalPath": "/demo/intro",
+        "lcp": 124,
+        "cls": 0,
+        "requests": 13,
+        "transferBytes": 13374,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo",
+        "width": 390,
+        "round": 2,
+        "finalPath": "/demo/intro",
+        "lcp": 104,
+        "cls": 0,
+        "requests": 13,
+        "transferBytes": 13374,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo",
+        "width": 1440,
+        "round": 0,
+        "finalPath": "/demo/intro",
+        "lcp": 180,
+        "cls": 0,
+        "requests": 13,
+        "transferBytes": 13374,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo",
+        "width": 1440,
+        "round": 1,
+        "finalPath": "/demo/intro",
+        "lcp": 164,
+        "cls": 0,
+        "requests": 13,
+        "transferBytes": 13374,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo",
+        "width": 1440,
+        "round": 2,
+        "finalPath": "/demo/intro",
+        "lcp": 168,
+        "cls": 0,
+        "requests": 13,
+        "transferBytes": 13374,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo/files",
+        "width": 390,
+        "round": 0,
+        "finalPath": "/demo/intro",
+        "lcp": 136,
+        "cls": 0,
+        "requests": 14,
+        "transferBytes": 14541,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo/files",
+        "width": 390,
+        "round": 1,
+        "finalPath": "/demo/intro",
+        "lcp": 144,
+        "cls": 0,
+        "requests": 14,
+        "transferBytes": 14540,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo/files",
+        "width": 390,
+        "round": 2,
+        "finalPath": "/demo/intro",
+        "lcp": 132,
+        "cls": 0,
+        "requests": 14,
+        "transferBytes": 14541,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo/files",
+        "width": 1440,
+        "round": 0,
+        "finalPath": "/demo/intro",
+        "lcp": 136,
+        "cls": 0,
+        "requests": 14,
+        "transferBytes": 14543,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo/files",
+        "width": 1440,
+        "round": 1,
+        "finalPath": "/demo/intro",
+        "lcp": 140,
+        "cls": 0,
+        "requests": 14,
+        "transferBytes": 14542,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo/files",
+        "width": 1440,
+        "round": 2,
+        "finalPath": "/demo/intro",
+        "lcp": 120,
+        "cls": 0,
+        "requests": 14,
+        "transferBytes": 14540,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo/settings",
+        "width": 390,
+        "round": 0,
+        "finalPath": "/demo/intro",
+        "lcp": 116,
+        "cls": 0,
+        "requests": 13,
+        "transferBytes": 13374,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo/settings",
+        "width": 390,
+        "round": 1,
+        "finalPath": "/demo/intro",
+        "lcp": 132,
+        "cls": 0,
+        "requests": 13,
+        "transferBytes": 13374,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo/settings",
+        "width": 390,
+        "round": 2,
+        "finalPath": "/demo/intro",
+        "lcp": 144,
+        "cls": 0,
+        "requests": 13,
+        "transferBytes": 13374,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo/settings",
+        "width": 1440,
+        "round": 0,
+        "finalPath": "/demo/intro",
+        "lcp": 128,
+        "cls": 0,
+        "requests": 13,
+        "transferBytes": 13374,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo/settings",
+        "width": 1440,
+        "round": 1,
+        "finalPath": "/demo/intro",
+        "lcp": 132,
+        "cls": 0,
+        "requests": 13,
+        "transferBytes": 13374,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/demo/settings",
+        "width": 1440,
+        "round": 2,
+        "finalPath": "/demo/intro",
+        "lcp": 140,
+        "cls": 0,
+        "requests": 13,
+        "transferBytes": 13374,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/start",
+        "width": 390,
+        "round": 0,
+        "finalPath": "/start",
+        "lcp": 424,
+        "cls": 0.010541310541310541,
+        "requests": 19,
+        "transferBytes": 22314,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/start",
+        "width": 390,
+        "round": 1,
+        "finalPath": "/start",
+        "lcp": 136,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22313,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/start",
+        "width": 390,
+        "round": 2,
+        "finalPath": "/start",
+        "lcp": 120,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22308,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/start",
+        "width": 1440,
+        "round": 0,
+        "finalPath": "/start",
+        "lcp": 136,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22315,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/start",
+        "width": 1440,
+        "round": 1,
+        "finalPath": "/start",
+        "lcp": 120,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22315,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/start",
+        "width": 1440,
+        "round": 2,
+        "finalPath": "/start",
+        "lcp": 108,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22315,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/",
+        "width": 390,
+        "round": 0,
+        "finalPath": "/start",
+        "lcp": 116,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22313,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/",
+        "width": 390,
+        "round": 1,
+        "finalPath": "/start",
+        "lcp": 96,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22315,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/",
+        "width": 390,
+        "round": 2,
+        "finalPath": "/start",
+        "lcp": 88,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22314,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/",
+        "width": 1440,
+        "round": 0,
+        "finalPath": "/start",
+        "lcp": 136,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22313,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/",
+        "width": 1440,
+        "round": 1,
+        "finalPath": "/start",
+        "lcp": 128,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22314,
+        "jsTransferBytes": 0,
+        "errors": []
+      },
+      {
+        "route": "/",
+        "width": 1440,
+        "round": 2,
+        "finalPath": "/start",
+        "lcp": 140,
+        "cls": 0,
+        "requests": 19,
+        "transferBytes": 22314,
+        "jsTransferBytes": 0,
+        "errors": []
+      }
+    ]
+  },
+  "database": {
+    "apply": {
+      "exitCode": 0,
+      "expectedMigration": "20261115010000_search_query_usage",
+      "checksum": "3e8f09a5419b44ab547e6bf1dc925044e0283629765897b4322998ea71063b85",
+      "applied": true
+    },
+    "after": {
+      "migrations": [
+        {
+          "migration_name": "20261105000000_auth_workspace",
+          "checksum": "636fcdef44cd77a20402e1e4c3e1b19e76fb401a9e7f98564ec735532f6a2db3",
+          "finished": true,
+          "rolled_back": false
+        },
+        {
+          "migration_name": "20261106000000_auth_rate_limit",
+          "checksum": "abe303731f351c477285bace8edbccd654f11e0fac2c5d240dd933897b8c5137",
+          "finished": true,
+          "rolled_back": false
+        },
+        {
+          "migration_name": "20261106010000_login_connection",
+          "checksum": "73565a2e05ab614dd170db65cac9cd94447b5445505fc6879dec56c640f3e266",
+          "finished": true,
+          "rolled_back": false
+        },
+        {
+          "migration_name": "20261109010000_ai_usage",
+          "checksum": "c161dccbf629f51cca1da8a4677320cd7f07a41911efcf7281f58dd8240f6d36",
+          "finished": true,
+          "rolled_back": false
+        },
+        {
+          "migration_name": "20261114000000_workspace_guide",
+          "checksum": "7a9050cbf622a4e546dd9666faebf41b9d68d515589a501471953b606df32a57",
+          "finished": true,
+          "rolled_back": false
+        },
+        {
+          "migration_name": "20261115010000_search_query_usage",
+          "checksum": "3e8f09a5419b44ab547e6bf1dc925044e0283629765897b4322998ea71063b85",
+          "finished": true,
+          "rolled_back": false
+        }
+      ],
+      "constraints": [
+        {
+          "definition": "CHECK ((\"inputTokens\" >= 0))"
+        },
+        {
+          "definition": "CHECK ((operation = ANY (ARRAY['chat'::text, 'grounded'::text, 'organize'::text, 'query'::text])))"
+        },
+        {
+          "definition": "CHECK ((\"outputTokens\" >= 0))"
+        },
+        {
+          "definition": "CHECK ((provider = ANY (ARRAY['openai'::text, 'gemini'::text])))"
+        },
+        {
+          "definition": "CHECK ((status = ANY (ARRAY['reserved'::text, 'completed'::text, 'unknown'::text])))"
+        },
+        {
+          "definition": "CHECK ((\"totalTokens\" >= 0))"
+        }
+      ],
+      "runtime": [
+        {
+          "rolname": "moa_runtime",
+          "rolsuper": false,
+          "rolbypassrls": false
+        }
+      ],
+      "nextMigrationSha256": "3e8f09a5419b44ab547e6bf1dc925044e0283629765897b4322998ea71063b85"
+    }
+  },
+  "production": {
+    "ego": true,
+    "existingLogin": true,
+    "verificationFolderMetadataCount": 6,
+    "localTxtExpectedResults": 1,
+    "groundedPreparation": true,
+    "groundedSendRemainedDisabled": true,
+    "sourceDataSent": false,
+    "autoToggleVerified": true,
+    "widths": [
+      1440,
+      390
+    ],
+    "overflow": false,
+    "queryAttempts": 2,
+    "capturedQuery": {
+      "requests": [
+        {
+          "status": 200,
+          "codes": [],
+          "success": true
+        }
+      ],
+      "notice": "",
+      "proposal": true
+    },
+    "proposalApplied": true,
+    "applyStartedSearch": false,
+    "usageLedgerPreviouslyEnabled": false,
+    "usageLedgerEnabledPendingDeployment": true
+  },
+  "cost": {
+    "earlierRequests": 6,
+    "earlierEstimatedUsd": 0.0003125,
+    "browserRequests": 2,
+    "browserTokensNotRecorded": true,
+    "browserAdditionalStandardTokenCeilingUsd": 0.0024192,
+    "totalStandardTokenCeilingUsd": 0.0027317,
+    "budgetUsd": 1,
+    "billingDashboardChecked": false
+  },
+  "limits": [
+    "No general semantic model adoption",
+    "No full private corpus scan",
+    "No physical IME/mobile/Edge/long-task measurement",
+    "First production interpretation failure cause unknown; next captured attempt succeeded",
+    "No paid grounded answer with private source"
+  ]
+}

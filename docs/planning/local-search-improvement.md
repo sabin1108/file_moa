@@ -1,5 +1,7 @@
 # 로컬 자료 검색 개선 설계와 대안 비교
 
+같은 날 최신 후속: [지속 checkpoint·자동 metadata 확인과 운영 반영](../verification/local-rag-followup-20261115/README.md). 아래 초기 후속의 운영 미실행/checkpoint 없음 표시는 당시 상태다. 다운로드형 의미 검색은 비용·사용성 질문을 반영해 보류했다.
+
 2026-11-15 최신: 요청에 따라 [catalog/query plan/질문만 전송하는 선택 해석·RAG 회귀와 대안 평가](../verification/local-rag-20261115/README.md)를 완료했다. 아래 “후속 제안”은 최초 조사 시점이다. MiniSearch/로컬E5는 실행 비교 후 비채택했으며 의미 검색 제품 기능은 제공하지 않는다. catalog는 관측 목록/수동 갱신으로 지속 checkpoint/자동 감시가 아니다. 운영 migration·flag 활성화·푸시·배포는 미실행이다.
 
 작성일: 2026-11-14. 사용자 요구281. 상태: 조사와 후속 설계 제안. 검색 엔진·모델·새 의존성은 아직 도입하지 않았다. 이번에 구현한 자료 질문 연결과 검색 UI 수정은 [별도 검증 기록](../verification/search-question-20261114/README.md)으로 구분한다.

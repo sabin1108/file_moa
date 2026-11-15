@@ -134,6 +134,8 @@ PDF의 번들/이미지 크기와 경로별 로딩 지표 기록 방식을 참�
 
 ## 근거와 기록
 
+2026-11-15 후속 [자동 확인·재개 검증](verification/local-rag-followup-20261115/README.md): guest66표본/자산47개3,610,476bytes(직전+6,495). 약1MB checkpoint3회 쓰기2.5ms·clone1.1~1.8ms는 한 Chromium 환경 관측이며 실디스크/Edge/현장 지표가 아니다. 실제 운영은 검증 폴더6항목/390px와 선택 TXT 검색만 확인했고 개인 노트 전체 스캔을 실행하지 않았다.
+
 2026-11-15 로컬 검색·RAG 후속의 최신 [경로/자산/기기 비용 기록](verification/local-rag-20261115/performance.md): production guest11경로·2폭·3회66표본, 전체JS/CSS47파일3,603,981bytes(직전+36,071). 로그인 화면·실기기·field 지표와 분리한다. 모델/엔진은 임시 비교만 했고 제품 의존성을 추가하지 않았다.
 - 사용자 관점 lab/field 지표: https://web.dev/articles/user-centric-performance-metrics
 - Lighthouse 점수와 변동: https://developer.chrome.com/docs/lighthouse/performance/performance-scoring
