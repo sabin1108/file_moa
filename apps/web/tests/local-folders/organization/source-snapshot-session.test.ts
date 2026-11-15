@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { FolderConnectionSession } from "../../../src/features/local-folders/connection-session";
 import type { FolderHandle, HandleRepository } from "../../../src/features/local-folders/types";
 import type { SourceSnapshot } from "../../../src/features/local-folders/organization/source-snapshot-rules";
+import { LocalTextIndex } from "../../../src/features/local-folders/search/documents/local-text-index";
 
 const scan = vi.hoisted(() => vi.fn());
 
@@ -35,9 +36,37 @@ async function session() {
   return { session, folder };
 }
 
-afterEach(() => vi.clearAllMocks());
+afterEach(() => { vi.restoreAllMocks(); vi.clearAllMocks(); });
 
 describe("organization snapshot owning connection", () => {
+  it("a user scan interrupts an automatic scan as a benign skip and preserves its saved checkpoint", async () => {
+    const current = await session();
+    vi.spyOn(LocalTextIndex.prototype, "readScan").mockResolvedValue(undefined);
+    const save = vi.spyOn(LocalTextIndex.prototype, "saveScan").mockResolvedValue();
+    let release!: (value: SourceSnapshot) => void;
+    scan.mockImplementationOnce(() => new Promise<SourceSnapshot>(resolve => { release = resolve; }));
+    const automatic = current.session.pollSourceIndex(new AbortController().signal);
+
+    await vi.waitFor(() => expect(release).toBeTypeOf("function"));
+    scan.mockResolvedValueOnce(result);
+    const user = current.session.inspectSourceSnapshot({ kind: "all" }, "자료", new AbortController().signal);
+    release(result);
+
+    await expect(automatic).resolves.toBeNull();
+    await expect(user).resolves.toEqual(result);
+    expect(save).not.toHaveBeenCalled();
+  });
+  it("an automatic poll skips an active user snapshot instead of invalidating it", async () => {
+    const current = await session();
+    let release!: (value: SourceSnapshot) => void;
+    scan.mockImplementationOnce(() => new Promise<SourceSnapshot>(resolve => { release = resolve; }));
+    const pending = current.session.inspectSourceSnapshot({ kind: "all" }, "자료", new AbortController().signal);
+
+    await vi.waitFor(() => expect(release).toBeTypeOf("function"));
+    expect(await current.session.pollSourceIndex(new AbortController().signal)).toBeNull();
+    release(result);
+    await expect(pending).resolves.toEqual(result);
+  });
   it("rechecks only confirmed paths and returns the session owner, retaining the original document IDs", async () => {
     const current = await session();
     const document = {

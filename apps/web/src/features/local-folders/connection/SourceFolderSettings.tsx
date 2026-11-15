@@ -24,7 +24,7 @@ const pendingTitles = {
 };
 
 export function SourceFolderSettings({ onConnected }: { onConnected?: () => void } = {}) {
-  const { state, connect, reconnect, disconnect, reload, recoveryState, recoveryView, sources, activateSource, disconnectSource, readSourceIndexStatus, refreshSourceIndex, clearSourceIndex } = useSharedSourceFolderConnection();
+  const { state, connect, reconnect, disconnect, reload, recoveryState, recoveryView, sources, activateSource, disconnectSource, readSourceIndexStatus, refreshSourceIndex, clearSourceIndex, indexWatch } = useSharedSourceFolderConnection();
   const router = useRouter();
   const pathname = usePathname();
   const mounted = useRef(false);
@@ -136,7 +136,7 @@ export function SourceFolderSettings({ onConnected }: { onConnected?: () => void
       </div>)}
     </div>}
     <OcrControl disabled={!!state.pending} />
-    {state.view?.status === "connected" && <SearchIndexSettings key={sources.find(source => source.active)?.connectionId ?? "active"} readStatus={readSourceIndexStatus} refresh={refreshSourceIndex} clear={clearSourceIndex} />}
+    {state.view?.status === "connected" && <SearchIndexSettings key={sources.find(source => source.active)?.connectionId ?? "active"} readStatus={readSourceIndexStatus} refresh={refreshSourceIndex} clear={clearSourceIndex} watch={indexWatch} />}
     <RecoveryVaultSettings titleRef={vaultTitle} />
     {state.view?.status === "connected" && <div className={styles.finish}>
       <button

@@ -267,7 +267,47 @@ try {
     return { preserved, corruptHidden, repaired, clearRollback, quotaPreserved, scopedClear, bounded, sentinel };
   });
   for (const [name, passed] of Object.entries(catalog)) assert.equal(passed, true, "catalog: " + name);
-  writeFileSync(resolve(output, "cost.json"), JSON.stringify({ ...result, boundaries, catalog, consoleErrors: page.consoleErrors, condition: "Synthetic in-memory Files, real Chromium Worker/PDF.js/IndexedDB and two-tab writer limit; fresh Worker each sample. Warm cache differs from warm Worker. Catalog migration/corruption/quota/scoped clear/cap checked. No physical disk, OS permissions, OCR execution, production-user latency or percentiles." }, null, 2));
+  const checkpoint = await page.eval(async () => {
+    const { LocalTextIndex } = window.cacheTest;
+    const { isLocalIndexScan } = await import("/src/features/local-folders/search/documents/local-index-scan.ts");
+    const index = new LocalTextIndex("synthetic-checkpoint-v4");
+    const scope = { owner: "a", workspace: "w", connection: "c" };
+    const other = { ...scope, owner: "b" };
+    const scan = { version: 1, queue: [{ path: [], kind: "directory" }], cursor: 0, observed: [], discoveredFiles: 0, directories: 0, scanned: 0, failed: false, limits: [], createdAt: 1, updatedAt: 1 };
+    while (true) {
+      scan.queue.push({ path: ["x".repeat(200), "y".repeat(200), "z".repeat(200), `${scan.queue.length}.md`], kind: "file" });
+      if (!isLocalIndexScan(scan)) { scan.queue.pop(); break; }
+    }
+    assert(scan.queue.length > 1000);
+    await index.observe(scope, { path: ["old.md"], size: 0, lastModified: 1, status: "listed" });
+    const timings = [];
+    for (let i = 0; i < 3; i++) {
+      const cloneStart = performance.now(); structuredClone(scan); const cloneMs = performance.now() - cloneStart;
+      const start = performance.now(); await index.saveScan(scope, scan, () => {}); const writeMs = performance.now() - start;
+      const readStart = performance.now(); const saved = await index.readScan(scope); const readMs = performance.now() - readStart;
+      assert(saved.queue.length === scan.queue.length);
+      timings.push({ cloneMs, writeMs, readMs });
+    }
+    const prototype = IDBObjectStore.prototype.put;
+    let rejected = false;
+    IDBObjectStore.prototype.put = function (...args) { if (this.name === "scans") throw new DOMException("synthetic quota", "QuotaExceededError"); return prototype.apply(this, args); };
+    try { await index.saveScan(scope, { ...scan, updatedAt: 2 }, () => {}); } catch { rejected = true; }
+    finally { IDBObjectStore.prototype.put = prototype; }
+    const quotaPreserved = rejected && (await index.readScan(scope)).updatedAt === 1 && (await index.catalog(scope)).length === 1;
+    await index.saveScan(other, scan, () => {});
+    let rolledBack = false;
+    try { await index.clear(scope, () => { throw Error("cancelled"); }); } catch { rolledBack = !!await index.readScan(scope); }
+    await index.clear(scope);
+    const scopedClear = !await index.readScan(scope) && !!await index.readScan(other);
+    const db = await new Promise((resolve, reject) => { const request = indexedDB.open("synthetic-checkpoint-v4"); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
+    await new Promise((resolve, reject) => { const tx = db.transaction("scans", "readwrite"); tx.objectStore("scans").put({ ...scan, cursor: 999999 }, JSON.stringify([other.owner, other.workspace, other.connection])); tx.oncomplete = resolve; tx.onerror = () => reject(tx.error); });
+    const corruptHidden = !await index.readScan(other);
+    db.close();
+    return { quotaPreserved, rolledBack, scopedClear, corruptHidden, nearCapEntries: scan.queue.length, jsonUtf8Bytes: new TextEncoder().encode(JSON.stringify(scan)).length, timings };
+    function assert(value) { if (!value) throw Error("checkpoint assertion failed"); }
+  });
+  for (const name of ["quotaPreserved", "rolledBack", "scopedClear", "corruptHidden"]) assert.equal(checkpoint[name], true, "checkpoint: " + name);
+  writeFileSync(resolve(output, "cost.json"), JSON.stringify({ ...result, boundaries, catalog, checkpoint, consoleErrors: page.consoleErrors, condition: "Synthetic Files, actual Chromium Worker/PDF.js/IDB and two tabs. Catalog/checkpoint migration, corruption, quota, scoped clear, near-cap clone/read/write checked. No physical disk/OS prompt/OCR/production-user timing." }, null, 2));
   console.log(JSON.stringify(result.samples.map(({ file, run, totalMs, probe }) => ({ file, run, totalMs, ...probe })), null, 2));
 } finally {
   await browser.close();

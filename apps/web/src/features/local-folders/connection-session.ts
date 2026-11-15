@@ -89,7 +89,7 @@ import { InlineEditorSession } from "./documents/editing/inline-editor-session";
 import { readSourceSnapshot } from "./organization/source-snapshot";
 import { readOrganizationFolders } from "./organization/organization-reference";
 import { inferOrganizationConditions } from "./organization/organization-intent";
-import { LocalTextIndex, withLocalIndexLock } from "./search/documents/local-text-index";
+import { LocalTextIndex, withLocalIndexLock, tryWithLocalIndexLock } from "./search/documents/local-text-index";
 import { assertOrganizationBaseline } from "./organization/organization-operation";
 import type {
   OrganizationScope,
@@ -893,31 +893,70 @@ export class FolderConnectionSession {
     return result;
   };
 
+  private sourceIndexPending = 0;
+
   clearSourceIndex = async () => {
     this.snapshotSequence++;
     const { scope, check } = this.currentSourceIndex();
 
-    await withLocalIndexLock(scope, () => new LocalTextIndex().clear(scope, check));
-    check();
+    this.sourceIndexPending++;
+    try {
+      await withLocalIndexLock(scope, () => new LocalTextIndex().clear(scope, check));
+      check();
+    } finally { this.sourceIndexPending--; }
   };
 
-  refreshSourceIndex = async (signal: AbortSignal) => {
-    this.snapshotSequence++;
-    const { scope, check } = this.currentSourceIndex();
+  private async refreshSourceIndexBatch(signal: AbortSignal, automatic: boolean) {
+    if (automatic && this.sourceIndexPending > 0) return null;
+    if (!automatic) this.snapshotSequence++;
+    const { scope, check: assertScope } = this.currentSourceIndex();
+    const check = () => {
+      assertScope();
+      if (signal.aborted) throw new DOMException("Snapshot cancelled", "AbortError");
+    };
     const handle = this.slots.source.handle;
 
     if (!handle || !this.slots.source.connected) throw new Error("source-folder-not-connected");
 
-    const result = await withLocalIndexLock(scope, async () => {
+    this.sourceIndexPending++;
+
+    try {
+      const run = async () => {
+        check();
+        await this.assertStoredSourceConnection(scope.connection, check);
+        const index = new LocalTextIndex();
+        const saved = await index.readScan(scope);
+        check();
+        const checkpoint = saved && Date.now() - saved.updatedAt < 24 * 60 * 60 * 1000 && saved.updatedAt <= Date.now() ? saved : undefined;
+        const result = await readSourceSnapshot(handle, { kind: "all" }, "", check, signal, undefined, scope, { metadataOnly: true, checkpointed: true, checkpoint });
+
+        check();
+        try { await index.saveScan(scope, result.checkpoint ?? null, check); }
+        catch (error) { await index.saveScan(scope, null, check).catch(() => {}); throw error; }
+
+        return result;
+      };
+      const result = automatic ? await tryWithLocalIndexLock(scope, run) : await withLocalIndexLock(scope, run, signal);
+
       check();
-      await this.assertStoredSourceConnection(scope.connection, check);
-      return readSourceSnapshot(handle, { kind: "all" }, "", check, signal, undefined, scope, { metadataOnly: true });
-    }, signal);
+      if (!result) return null;
 
-    check();
+      return { complete: result.complete, resumable: !!result.checkpoint };
+    } catch (error) {
+      if (automatic && error instanceof Error && error.message === "stale-connection-operation") return null;
+      throw error;
+    } finally { this.sourceIndexPending--; }
+  }
 
-    return { ...await this.readSourceIndexStatus(), complete: result.complete };
+  refreshSourceIndex = async (signal: AbortSignal) => {
+    const result = await this.refreshSourceIndexBatch(signal, false);
+
+    if (!result) throw new Error("index-refresh-unavailable");
+
+    return { ...await this.readSourceIndexStatus(), ...result };
   };
+
+  pollSourceIndex = (signal: AbortSignal) => this.refreshSourceIndexBatch(signal, true);
 
   private async assertStoredSourceConnection(connection: string, check: () => void) {
     check();
@@ -967,6 +1006,7 @@ export class FolderConnectionSession {
       }
     };
 
+    this.sourceIndexPending++;
     try {
       check();
 
@@ -1016,7 +1056,7 @@ export class FolderConnectionSession {
         slot.connected = false;
 
       throw error;
-    }
+    } finally { this.sourceIndexPending--; }
   };
 
   findSourceDocuments = async (

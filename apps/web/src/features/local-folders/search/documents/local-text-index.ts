@@ -1,7 +1,8 @@
 import { isTextCacheMetadata, type TextCacheMetadata } from "../../content/text-cache";
+import { isLocalIndexScan, type LocalIndexScan } from "./local-index-scan";
 
 export const LOCAL_TEXT_INDEX_VERSION = 2;
-export const LOCAL_TEXT_DATABASE_VERSION = 3;
+export const LOCAL_TEXT_DATABASE_VERSION = 4;
 
 export type CatalogFile = Readonly<{
   path: readonly string[];
@@ -12,7 +13,7 @@ export type CatalogFile = Readonly<{
   hash?: string;
 }>;
 
-export type LocalIndexStatus = Readonly<{ catalogCount: number; textCount: number; textBytes: number }>;
+export type LocalIndexStatus = Readonly<{ catalogCount: number; textCount: number; textBytes: number; resumable?: boolean; scannedFiles?: number }>;
 
 type Scope = Readonly<{
   owner: string;
@@ -25,6 +26,13 @@ export async function withLocalIndexLock<T>(scope: Scope, operation: () => Promi
 
   return await navigator.locks.request(`moa-search-index:${JSON.stringify([scope.owner, scope.workspace, scope.connection])}`,
     { mode: "exclusive", ...(signal ? { signal } : {}) }, operation);
+}
+
+export async function tryWithLocalIndexLock<T>(scope: Scope, operation: () => Promise<T>): Promise<T | null> {
+  if (typeof navigator === "undefined" || !navigator.locks) return operation();
+
+  return await navigator.locks.request(`moa-search-index:${JSON.stringify([scope.owner, scope.workspace, scope.connection])}`,
+    { mode: "exclusive", ifAvailable: true }, lock => lock ? operation() : null);
 }
 
 type CatalogEntry = Scope & CatalogFile & Readonly<{ id: string; updatedAt: number }>;
@@ -112,6 +120,7 @@ export class LocalTextIndex {
         if (!db.objectStoreNames.contains("catalog")) {
           db.createObjectStore("catalog", { keyPath: "id" }).createIndex("scope", ["owner", "workspace", "connection"]);
         }
+        if (!db.objectStoreNames.contains("scans")) db.createObjectStore("scans");
       };
       request.onblocked = () => {
         blocked = true;
@@ -385,12 +394,14 @@ export class LocalTextIndex {
 
     try {
       return await new Promise((resolve, reject) => {
-        const tx = db.transaction(["stats", "catalog"], "readonly");
+        const tx = db.transaction(["stats", "catalog", "scans"], "readonly");
         const stats = tx.objectStore("stats").get(this.scopeId(scope));
         const entries = tx.objectStore("catalog").index("scope").getAll(IDBKeyRange.only([scope.owner, scope.workspace, scope.connection]));
+        const scan = tx.objectStore("scans").get(this.scopeId(scope));
 
         tx.oncomplete = () => isStats(stats.result ?? { count: 0, bytes: 0 })
-          ? resolve({ catalogCount: (entries.result as unknown[]).filter(isCatalogEntry).length, textCount: stats.result?.count ?? 0, textBytes: stats.result?.bytes ?? 0 })
+          ? resolve({ catalogCount: (entries.result as unknown[]).filter(isCatalogEntry).length, textCount: stats.result?.count ?? 0, textBytes: stats.result?.bytes ?? 0,
+            ...(isLocalIndexScan(scan.result) ? { resumable: scan.result.cursor < scan.result.queue.length, scannedFiles: scan.result.discoveredFiles } : {}) })
           : reject(new Error("index-invalid-cache"));
         tx.onerror = () => reject(tx.error);
       });
@@ -402,7 +413,7 @@ export class LocalTextIndex {
 
     try {
       await new Promise<void>((resolve, reject) => {
-        const tx = db.transaction(["documents", "catalog", "stats"], "readwrite");
+        const tx = db.transaction(["documents", "catalog", "stats", "scans"], "readwrite");
 
         for (const name of ["documents", "catalog"]) {
           const request = tx.objectStore(name).index("scope").openKeyCursor(IDBKeyRange.only([scope.owner, scope.workspace, scope.connection]));
@@ -416,8 +427,46 @@ export class LocalTextIndex {
             } catch (error) { tx.abort(); reject(error); }
           };
         }
-        try { assertCurrent(); tx.objectStore("stats").put({ count: 0, bytes: 0 }, this.scopeId(scope)); }
+        try {
+          assertCurrent();
+          tx.objectStore("stats").put({ count: 0, bytes: 0 }, this.scopeId(scope));
+          tx.objectStore("scans").delete(this.scopeId(scope));
+        }
         catch (error) { tx.abort(); reject(error); }
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error ?? new Error("index-update-aborted"));
+      });
+    } finally { db.close(); }
+  }
+
+  async readScan(scope: Scope): Promise<LocalIndexScan | undefined> {
+    const db = await this.open();
+
+    try {
+      return await new Promise((resolve, reject) => {
+        const request = db.transaction("scans", "readonly").objectStore("scans").get(this.scopeId(scope));
+
+        request.onsuccess = () => resolve(isLocalIndexScan(request.result) ? request.result : undefined);
+        request.onerror = () => reject(request.error);
+      });
+    } finally { db.close(); }
+  }
+
+  async saveScan(scope: Scope, scan: LocalIndexScan | null, assertCurrent: () => void): Promise<void> {
+    if (scan !== null && !isLocalIndexScan(scan)) throw new Error("index-invalid-checkpoint");
+
+    const db = await this.open();
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const tx = db.transaction("scans", "readwrite");
+
+        try {
+          assertCurrent();
+          if (scan) tx.objectStore("scans").put(scan, this.scopeId(scope));
+          else tx.objectStore("scans").delete(this.scopeId(scope));
+        } catch (error) { tx.abort(); reject(error); }
         tx.oncomplete = () => resolve();
         tx.onerror = () => reject(tx.error);
         tx.onabort = () => reject(tx.error ?? new Error("index-update-aborted"));

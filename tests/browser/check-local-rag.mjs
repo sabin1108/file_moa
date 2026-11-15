@@ -174,6 +174,77 @@ try {
   await second.goto(origin + "/__rag", { settleMs: 350 });
   for (let i = 0; i < 300 && !await second.eval(() => window.ragProbe?.local?.state.view?.status === "connected"); i++) await pause(25);
   check("second tab restores the same owner connection", await second.eval(() => window.ragProbe.local.state.view?.status === "connected"));
+  await page.eval(async () => {
+    window.listingProbe.preparing = true;
+    const folder = await window.ragRoot.getDirectoryHandle("재개 검증", { create: true });
+    for (let i = 0; i < 300; i++) {
+      const stream = await (await folder.getFileHandle(`checkpoint-${i}.md`, { create: true })).createWritable();
+      await stream.write("합성 checkpoint metadata"); await stream.close();
+    }
+    window.listingProbe.preparing = false;
+    window.metadataReads = [];
+    const getFile = FileSystemFileHandle.prototype.getFile;
+    FileSystemFileHandle.prototype.getFile = function () { if (this.name.startsWith("checkpoint-")) window.metadataReads.push(this.name); return getFile.call(this); };
+  });
+  const firstBatch = await page.eval(async () => window.ragProbe.local.refreshSourceIndex(new AbortController().signal));
+  check("large metadata refresh leaves a persistent resumable checkpoint", firstBatch.resumable && !firstBatch.complete);
+  const saved = await page.eval(async () => window.ragIndex.readScan(window.ragScope));
+  check("checkpoint stores the processed cursor and observed paths", saved.cursor > 0 && saved.cursor < saved.queue.length && saved.observed.length > 0);
+  await second.eval(() => {
+    window.metadataReads = [];
+    const getFile = FileSystemFileHandle.prototype.getFile;
+    FileSystemFileHandle.prototype.getFile = function () { if (this.name.startsWith("checkpoint-")) window.metadataReads.push(this.name); return getFile.call(this); };
+  });
+  const resumed = await second.eval(async () => window.ragProbe.local.refreshSourceIndex(new AbortController().signal));
+  check("another restored tab resumes the same persisted scan and completes", resumed.complete && !resumed.resumable && resumed.catalogCount === 309);
+  const priorReads = await page.eval(() => window.metadataReads);
+  const nextReads = await second.eval(() => window.metadataReads);
+  check("resuming does not reread already committed metadata entries", priorReads.length > 0 && nextReads.length > 0 && !nextReads.some(name => priorReads.includes(name)));
+  check("metadata resume never invokes the content Worker", await page.eval(() => window.workerReads.length) === reads + 1);
+
+  await second.eval(() => Object.defineProperty(document, "visibilityState", { configurable: true, get: () => "hidden" }));
+  await page.eval(async () => {
+    window.listingProbe.preparing = true;
+    const stream = await (await window.ragRoot.getFileHandle("자동 추가.txt", { create: true })).createWritable();
+    await stream.write("합성 자동 갱신"); await stream.close();
+    const changed = await (await window.ragRoot.getFileHandle("가온센터 이력서.md")).createWritable();
+    await changed.write("가온센터 이력서 합성 변경 내용을 확인합니다."); await changed.close();
+    await window.ragRoot.removeEntry(".NET ERR_AUTH.md");
+    window.listingProbe.preparing = false;
+  });
+  await page.eval(() => {
+    window.clockOffset = 0;
+    const now = Date.now;
+    Date.now = () => now() + window.clockOffset;
+    Object.defineProperty(document, "visibilityState", { configurable: true, get: () => window.fixtureVisibility ?? "visible" });
+    window.ragProbe.local.indexWatch.setEnabled(true);
+  });
+  await until('window.ragProbe.local.indexWatch.notice.length > 0');
+  const hiddenScans = await page.eval(() => { window.fixtureVisibility = "hidden"; window.clockOffset += 31_000; document.dispatchEvent(new Event("visibilitychange")); window.dispatchEvent(new Event("focus")); return window.listingProbe.scans; });
+  await page.eval(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  check("automatic metadata checks do not run while hidden", await page.eval(() => window.listingProbe.scans) === hiddenScans);
+  const beforeResumeReads = await page.eval(() => window.metadataReads.length);
+  await page.eval(() => { window.fixtureVisibility = "visible"; document.dispatchEvent(new Event("visibilitychange")); });
+  await until(`window.metadataReads.length > ${beforeResumeReads}`);
+  await until('window.ragProbe.local.indexWatch.notice === "현재 파일 목록을 자동으로 확인했어요."');
+  check("automatic complete scan observes additions, edits and removals", await page.eval(async () => {
+    const rows = await window.ragIndex.catalog(window.ragScope);
+    const changed = rows.find(file => file.path.join("/") === "가온센터 이력서.md");
+    return rows.some(file => file.path[0] === "자동 추가.txt") && !rows.some(file => file.path[0] === ".NET ERR_AUTH.md") && changed.size === new Blob(["가온센터 이력서 합성 변경 내용을 확인합니다."]).size;
+  }));
+  check("visible opted-in checks restart without any model request", await page.eval(() => window.ragProbe.requests.length === 2));
+  await page.eval(async () => { window.ragProbe.local.indexWatch.setEnabled(false); await window.ragProbe.local.clearSourceIndex(); });
+  check("clearing the index disables automatic recreation and removes the checkpoint", await page.eval(async () => !window.ragProbe.local.indexWatch.enabled && !await window.ragIndex.readScan(window.ragScope)));
+  await page.eval(async () => { for (let i = 0; i < 3; i++) { const result = await window.ragProbe.local.refreshSourceIndex(new AbortController().signal); if (!result.resumable) break; } });
+  await page.eval(() => {
+    window.restoreScanPut = IDBObjectStore.prototype.put;
+    IDBObjectStore.prototype.put = function (...args) { if (this.name === "scans") throw new DOMException("synthetic quota", "QuotaExceededError"); return window.restoreScanPut.apply(this, args); };
+    window.ragProbe.local.indexWatch.setEnabled(true);
+  });
+  await until('!window.ragProbe.local.indexWatch.enabled && window.ragProbe.local.indexWatch.notice.includes("중지")');
+  await page.eval(() => { IDBObjectStore.prototype.put = window.restoreScanPut; });
+  check("checkpoint quota failure stops automatic retries and preserves catalog", await page.eval(async () => !await window.ragIndex.readScan(window.ragScope) && (await window.ragIndex.status(window.ragScope)).catalogCount === 309));
+
   await page.eval(async () => { const local = window.ragProbe.local; await local.disconnectSource(local.sources.find(source => source.active).connectionId); });
   const stale = await second.eval(async () => { try { await window.ragProbe.local.refreshSourceIndex(new AbortController().signal); return "unexpected-success"; } catch (error) { return error.message; } });
   check("a disconnected second-tab handle cannot recreate a cleared index", stale === "source-folder-not-connected" && await page.eval(async () => (await window.ragIndex.status(window.ragScope)).catalogCount === 0));
@@ -182,6 +253,7 @@ try {
   writeFileSync(resolve(output, "checks.json"), JSON.stringify({ checks, condition: "Actual UI/controllers/Worker/hash/IDB/OPFS/Web Locks; synthetic folder permissions and model response. Real OS permission dialog, physical IME/device and paid service authorization are separate." }, null, 2));
   console.log(`${checks.length} local RAG browser checks passed.`);
 } catch (error) {
-  writeFileSync(resolve(output, "failure.json"), JSON.stringify({ checks, error: String(error), stack: error.stack }, null, 2));
+  const probe = page ? await page.eval(() => ({ watch: window.ragProbe?.local?.indexWatch, visibility: document.visibilityState, scans: window.listingProbe?.scans })).catch(() => null) : null;
+  writeFileSync(resolve(output, "failure.json"), JSON.stringify({ checks, probe, error: String(error), stack: error.stack }, null, 2));
   throw error;
 } finally { await browser.close(); await server.close(); }

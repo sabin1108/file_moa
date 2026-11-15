@@ -5,7 +5,8 @@
  * effect에서 브라우저 지원/연결 복원을 시작하고, 구독으로 UI를 갱신하며 Provider 종료 때 이전 요청을 무효화한다.
  */
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { createBrowserStringStore } from "../../shared/browser-string-store";
 import type { SourceFileExpectation } from "../../shared/grounded-evidence";
 import type { ConnectionOwner, FolderHandle } from "./types";
 import { FolderConnectionSession } from "./connection-session";
@@ -61,6 +62,56 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
     controller.getSnapshot,
     controller.getServerSnapshot,
   );
+  const connectionId = state.sources.find(source => source.active)?.connectionId ?? "";
+  const indexWatchStore = useMemo(() => createBrowserStringStore(
+    `moa-index-watch:${JSON.stringify([owner.userId, owner.workspaceId, connectionId])}`,
+    () => window.localStorage,
+  ), [owner.userId, owner.workspaceId, connectionId]);
+  const indexWatchEnabled = useSyncExternalStore(indexWatchStore.subscribe, () => indexWatchStore.read() === "true", () => false);
+  const [indexWatchNotice, setIndexWatchNotice] = useState("");
+
+  useEffect(() => {
+    if (!indexWatchEnabled || !connectionId || state.view?.status !== "connected") return;
+
+    let running: AbortController | null = null;
+    let stopped = false;
+    let nextCheckAt = 0;
+    const check = async () => {
+      if (document.visibilityState !== "visible") { running?.abort(); return; }
+      if (running || stopped || indexWatchStore.read() !== "true" || Date.now() < nextCheckAt) return;
+
+      const abort = new AbortController();
+      running = abort;
+      nextCheckAt = Date.now() + 30_000;
+
+      try {
+        const result = await session.pollSourceIndex(abort.signal);
+        if (!stopped && !abort.signal.aborted && result) {
+          setIndexWatchNotice(result.resumable ? "목록을 나눠 확인하고 있어요. 다음 확인 때 이어갑니다." : result.complete ? "현재 파일 목록을 자동으로 확인했어요." : "읽기·목록·저장 상한으로 자동 확인을 중지했어요. 수동으로 범위를 확인해 주세요.");
+          if (!result.complete && !result.resumable) indexWatchStore.write("false");
+        }
+      } catch {
+        if (!stopped && !abort.signal.aborted) {
+          setIndexWatchNotice("자동 목록 확인을 중지했어요. 폴더 권한과 저장 상태를 확인해 주세요.");
+          indexWatchStore.write("false");
+        }
+      } finally { if (running === abort) running = null; }
+    };
+    const onChange = () => { void check(); };
+
+    onChange();
+    const timer = window.setInterval(onChange, 30_000);
+    window.addEventListener("focus", onChange);
+    document.addEventListener("visibilitychange", onChange);
+
+    return () => {
+      stopped = true;
+      running?.abort();
+      window.clearInterval(timer);
+      window.removeEventListener("focus", onChange);
+      document.removeEventListener("visibilitychange", onChange);
+    };
+  }, [session, indexWatchStore, indexWatchEnabled, connectionId, state.view?.status]);
 
   useEffect(() => {
     const check = () => {
@@ -158,7 +209,12 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
     finding: controller.finding,
     readSourceIndexStatus: session.readSourceIndexStatus,
     refreshSourceIndex: session.refreshSourceIndex,
-    clearSourceIndex: session.clearSourceIndex,
+    clearSourceIndex: async () => { indexWatchStore.write("false"); await session.clearSourceIndex(); },
+    indexWatch: {
+      enabled: indexWatchEnabled,
+      notice: indexWatchNotice,
+      setEnabled: (enabled: boolean) => { setIndexWatchNotice(""); indexWatchStore.write(String(enabled)); },
+    },
     inspectBackup: session.inspectSourceBackup,
     executeBackup: session.executeSourceBackup,
     connect: controller.connect,

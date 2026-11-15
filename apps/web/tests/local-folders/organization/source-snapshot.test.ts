@@ -55,6 +55,45 @@ function directory(name: string, entries: Record<string, File | FolderHandle>): 
 afterEach(() => { vi.restoreAllMocks(); vi.clearAllMocks(); });
 
 describe("read-only TXT/MD organization snapshot", () => {
+  it("persists a metadata batch and resumes from its cursor without reading earlier files again", async () => {
+    const files = Object.fromEntries(Array.from({ length: 300 }, (_, index) => [`${index}.md`, new File(["abc"], `${index}.md`)]));
+    const root = directory("자료", files);
+    const context = { owner: "owner", workspace: "workspace", connection: "connection" };
+    vi.spyOn(LocalTextIndex.prototype, "observe").mockResolvedValue();
+    const retain = vi.spyOn(LocalTextIndex.prototype, "retain").mockResolvedValue();
+    vi.spyOn(LocalTextIndex.prototype, "retainCatalog").mockResolvedValue();
+    const check = () => {};
+    const first = await readSourceSnapshot(root, { kind: "all" }, "", check, undefined, undefined, context, { metadataOnly: true, checkpointed: true });
+
+    expect(first.complete).toBe(false);
+    expect(first.checkpoint?.cursor).toBe(250);
+    expect(retain).not.toHaveBeenCalled();
+    const reads = vi.mocked(root.getFileHandle).mock.calls.length;
+    const next = await readSourceSnapshot(root, { kind: "all" }, "", check, undefined, undefined, context, { metadataOnly: true, checkpointed: true, checkpoint: first.checkpoint });
+
+    expect(next.complete).toBe(true);
+    expect(next.checkpoint).toBeUndefined();
+    expect(vi.mocked(root.getFileHandle).mock.calls.length - reads).toBe(51);
+    expect(readText).not.toHaveBeenCalled();
+    expect(retain.mock.calls[0][1]).toHaveLength(300);
+  });
+
+  it("drains a failed metadata cycle before discarding its checkpoint, without pruning", async () => {
+    const files = Object.fromEntries(Array.from({ length: 300 }, (_, index) => [`${index}.md`, new File(["abc"], `${index}.md`)]));
+    const root = directory("자료", files);
+    vi.mocked(root.getFileHandle).mockRejectedValueOnce(new DOMException("synthetic failure", "NotReadableError"));
+    const retain = vi.spyOn(LocalTextIndex.prototype, "retain").mockResolvedValue();
+    vi.spyOn(LocalTextIndex.prototype, "observe").mockResolvedValue();
+    const result = await readSourceSnapshot(root, { kind: "all" }, "", () => {}, undefined, undefined, { owner: "a", workspace: "w", connection: "c" }, { metadataOnly: true, checkpointed: true });
+
+    expect(result.complete).toBe(false);
+    expect(result.checkpoint?.failed).toBe(true);
+    const next = await readSourceSnapshot(root, { kind: "all" }, "", () => {}, undefined, undefined, { owner: "a", workspace: "w", connection: "c" }, { metadataOnly: true, checkpointed: true, checkpoint: result.checkpoint });
+
+    expect(next.complete).toBe(false);
+    expect(next.checkpoint).toBeUndefined();
+    expect(retain).not.toHaveBeenCalled();
+  });
   it("CACHE-003 stores observed extraction metadata and avoids rewriting validated cache hits", async () => {
     const file = new File(["abc"], "note.md", { lastModified: 100 });
     const root = directory("자료", { "note.md": file });

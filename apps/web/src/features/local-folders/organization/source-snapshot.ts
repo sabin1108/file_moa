@@ -17,6 +17,7 @@ import type {
 import { findTextEvidence } from "../search/documents/document-find";
 import { retainFindCandidate } from "../search/documents/document-find-ranking";
 import { matchesDocumentMetadata } from "../search/documents/document-field-match";
+import { isLocalIndexScan, type LocalIndexScan } from "../search/documents/local-index-scan";
 
 /** Bounded source snapshot. Optional extracted-text cache stays in this browser. */
 
@@ -28,8 +29,9 @@ export async function readSourceSnapshot(
   signal?: AbortSignal,
   find?: FindQuery,
   indexContext?: Omit<TextIndexContext, "path">,
-  options?: Readonly<{ metadataOnly: boolean }>,
-): Promise<FindableSnapshot> {
+  options?: Readonly<{ metadataOnly: boolean; checkpointed?: boolean; checkpoint?: LocalIndexScan }>,
+): Promise<FindableSnapshot & { checkpoint?: LocalIndexScan }> {
+  const previous = options?.metadataOnly && options.checkpointed ? options.checkpoint : undefined;
   const starts =
     scope.kind === "all"
       ? [{ path: [], kind: "directory" as const }]
@@ -43,20 +45,21 @@ export async function readSourceSnapshot(
   if (!starts.length || starts.length > DOCUMENT_LIMITS.workspaceDocuments)
     throw Error("invalid-snapshot-scope");
 
-  const queue = [...starts];
-  const seen = new Set<string>();
+  const queue = previous ? previous.queue.map(entry => ({ ...entry, path: [...entry.path] })) : [...starts];
+  let cursor = previous?.cursor ?? 0;
+  const seen = new Set(queue.slice(0, cursor).map(entry => JSON.stringify(entry.path)));
   const documents: SnapshotDocument[] = [];
   const findings: FindDocument[] = [];
   const excluded: {
     path: readonly string[];
     reason: string
   }[] = [];
-  const limits = new Set<string>();
-  let discoveredFiles = 0,
-    directories = 0,
+  const limits = new Set<string>(previous?.limits);
+  let discoveredFiles = previous?.discoveredFiles ?? 0,
+    directories = previous?.directories ?? 0,
     bytes = 0,
-    scanned = 0,
-    failed = false;
+    scanned = previous?.scanned ?? 0,
+    failed = previous?.failed ?? false;
   const started = Date.now();
   const check = () => {
     assertCurrent();
@@ -66,7 +69,7 @@ export async function readSourceSnapshot(
   };
   const reader = createCopyHasher(signal);
   const indexStore = indexContext ? new LocalTextIndex() : null;
-  const observedPaths: (readonly string[])[] = [];
+  const observedPaths: (readonly string[])[] = [...(previous?.observed ?? [])];
   let catalogHealthy = true;
   const observe = async (file: CatalogFile) => {
     if (!indexStore || !indexContext) return;
@@ -87,8 +90,11 @@ export async function readSourceSnapshot(
   };
 
   try {
-    for (let index = 0; index < queue.length; index++) {
+    let batchEntries = 0;
+    for (; cursor < queue.length; cursor++) {
       check();
+
+      if (options?.checkpointed && (batchEntries >= 250 || Date.now() - started > 1000)) break;
 
       if (
         scanned >= 20000 ||
@@ -100,7 +106,8 @@ export async function readSourceSnapshot(
         break;
       }
 
-      const entry = queue[index];
+      const entry = queue[cursor];
+      batchEntries++;
       const key = JSON.stringify(entry.path);
 
       if (
@@ -339,7 +346,16 @@ export async function readSourceSnapshot(
 
     check();
 
-    if (indexContext && scope.kind === "all" && !failed && !limits.size) {
+    let checkpoint: LocalIndexScan | undefined;
+
+    if (options?.checkpointed && cursor < queue.length && scanned < 20000 && directories < 1000) {
+      const candidate: LocalIndexScan = { version: 1, queue, cursor, observed: observedPaths, discoveredFiles, directories, scanned, failed, limits: [...limits], createdAt: previous?.createdAt ?? started, updatedAt: Date.now() };
+      if (isLocalIndexScan(candidate)) checkpoint = candidate;
+      else limits.add("scan-limit");
+    }
+    const paused = !!checkpoint;
+
+    if (indexContext && scope.kind === "all" && !paused && !failed && !limits.size) {
       await indexStore?.retain(indexContext, observedPaths, check).catch(() => {
         check();
       });
@@ -353,12 +369,13 @@ export async function readSourceSnapshot(
     return {
       documents,
       excluded,
-      complete: !failed && !limits.size,
+      complete: !paused && !failed && !limits.size,
       limits: [...limits],
       discoveredFiles,
       directories,
       bytes,
       ...(find ? { findings } : {}),
+      ...(checkpoint ? { checkpoint } : {}),
     };
   } finally {
     reader.dispose();
