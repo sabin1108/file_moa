@@ -1,0 +1,41 @@
+{
+  "observedAt": "2026-11-15T12:09:29.593Z",
+  "featureCommit": "2a10c9c461cae7a28ae251a4e7f3c9353886c821",
+  "deploymentUrl": "https://vercel.com/sabins-projects-011c6dea/web/2v6MBWbRQBzHhXjfGahp4A5eLdy5",
+  "productionUrl": "https://web-eight-rho-72.vercel.app",
+  "ready": true,
+  "currentAtObservation": true,
+  "production": true,
+  "commitMatches": true,
+  "liveSyntheticSemanticSearch": {
+    "rows": 1,
+    "label": "단어·의미 검색에서 함께 찾음 · 필수 조건 확인 · 본문 1~63자",
+    "scopeOnlySynthetic": true,
+    "realBrowserWorker": true,
+    "remoteAiCalls": 0,
+    "nativeOsPicker": false
+  },
+  "cleanup": {
+    "originalConnectionsRestored": 3,
+    "originalModelCacheKeys": 0,
+    "addedPublicModelKeysRemoved": 7,
+    "syntheticConnectionAndFolderRemoved": true
+  },
+  "validation": {
+    "command": "pnpm check",
+    "unitTests": 1515,
+    "serverBoundary": 26,
+    "webBoundary": 32,
+    "domainBoundary": 6,
+    "layoutChecks": 3,
+    "typecheck": true,
+    "lint": true,
+    "build": true
+  },
+  "limits": [
+    "Frozen v2 semantic forbidden-document count remains 4 and misses remain.",
+    "Long-document answer-provider checks are synthetic; no new paid answer call.",
+    "Performance figures measure the documented Worker/cache boundary, not full folder search or server CPU.",
+    "Large private reports and raw local evidence are not in the commit."
+  ]
+}
