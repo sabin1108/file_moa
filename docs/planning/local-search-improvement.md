@@ -1,5 +1,7 @@
 # 로컬 자료 검색 개선 설계와 대안 비교
 
+2026-11-15 최신: 요청에 따라 [catalog/query plan/질문만 전송하는 선택 해석·RAG 회귀와 대안 평가](../verification/local-rag-20261115/README.md)를 완료했다. 아래 “후속 제안”은 최초 조사 시점이다. MiniSearch/로컬E5는 실행 비교 후 비채택했으며 의미 검색 제품 기능은 제공하지 않는다. catalog는 관측 목록/수동 갱신으로 지속 checkpoint/자동 감시가 아니다. 운영 migration·flag 활성화·푸시·배포는 미실행이다.
+
 작성일: 2026-11-14. 사용자 요구281. 상태: 조사와 후속 설계 제안. 검색 엔진·모델·새 의존성은 아직 도입하지 않았다. 이번에 구현한 자료 질문 연결과 검색 UI 수정은 [별도 검증 기록](../verification/search-question-20261114/README.md)으로 구분한다.
 
 후속 요구282의 첫 실행 단위: 이름/경로/본문의 모든 검색어 확인, field별 기본 순위와 metadata-only 선택 경계를 구현했다. [선택 근거·실행 흐름·검증·다음 단계](../verification/search-fields-20261114/README.md)를 현재 상태로 우선한다. 아래의 본문 strict AND 진단은 첫 조사 당시 상태이며, 현재는 field를 결합한 AND다. 지속 catalog/증분 색인/범용 query understanding/동의어/vector/라이브러리 채택은 아직 후속 제안이다.

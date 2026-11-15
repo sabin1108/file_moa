@@ -1,5 +1,7 @@
 # 검색 캐시 재사용과 갱신 검증
 
+같은 날 후속 요청의 최신 상태는 [catalog·query plan·대안 평가 검증](../local-rag-20261115/README.md)이다. 아래 schema2·자동 eviction 없음·catalog 후속 표시는3d251c0 당시 상태다. 후속에서 schema3/catalog와 파생 본문 eviction을 구현했다.
+
 2026-11-15. 어제 마친 [검색 필드 결합](../search-fields-20261114/README.md) 다음 작업을 진행했다. 기존 IndexedDB 캐시에 추출 metadata를 보강하고, 현재 원본 hash가 일치할 때 TXT/MD 디코딩과 PDF/OCR 추출을 재사용한다. 검색어 해석이나 순위는 바꾸지 않았다.
 
 ## 문제와 선택 근거

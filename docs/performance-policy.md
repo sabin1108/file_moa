@@ -133,6 +133,8 @@ Lighthouse의 TBT는 INP 측정값이 아니다. Performance API로 계산한 �
 PDF의 번들/이미지 크기와 경로별 로딩 지표 기록 방식을 참고한다. 해당 프로젝트의 점수·개선율을 이 프로젝트 목표나 실측으로 복사하지 않는다. PDF 보고 수치는 여기서 재현한 결과가 아니며 원시 로그는 확인하지 못했다.
 
 ## 근거와 기록
+
+2026-11-15 로컬 검색·RAG 후속의 최신 [경로/자산/기기 비용 기록](verification/local-rag-20261115/performance.md): production guest11경로·2폭·3회66표본, 전체JS/CSS47파일3,603,981bytes(직전+36,071). 로그인 화면·실기기·field 지표와 분리한다. 모델/엔진은 임시 비교만 했고 제품 의존성을 추가하지 않았다.
 - 사용자 관점 lab/field 지표: https://web.dev/articles/user-centric-performance-metrics
 - Lighthouse 점수와 변동: https://developer.chrome.com/docs/lighthouse/performance/performance-scoring
 - 서버 부하 단계 참고: https://grafana.com/docs/k6/latest/testing-guides/test-types/

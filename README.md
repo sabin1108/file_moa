@@ -8,6 +8,8 @@
 
 ## 현재 화면과 개발 상태
 
+- [2026-11-15 로컬 검색·RAG 후속](docs/verification/local-rag-20261115/README.md): 원문 기반 검색 조건·기기 catalog 관리·질문만 전송하는 선택 해석과 합성 비교 검증. 원격 해석은 기본 비활성, 운영 migration/배포 미실행이며 의미 검색 모델은 평가 후 비채택했습니다.
+
 - [실제 로그인](http://127.0.0.1:3034/login) · [회원가입](http://127.0.0.1:3034/welcome) · [비밀번호 찾기](http://127.0.0.1:3034/forgot-password): 공통 Stepper를 재사용합니다. [인증 UI 검증](docs/verification/auth-ui/README.md). 로그인 후 작업 공간으로 이동하며 개발용 폴더를 자동 연결하지 않습니다.
 
 - 처음 읽는 분을 위한 [화면부터 따라가는 자세한 코드 설명서](docs/코드_이해하기.md): 버튼 → 컴포넌트 → controller → session → 파일 처리, 수동·자동저장과 F5 복원까지 설명합니다.
