@@ -23,7 +23,7 @@ export function matchesDocumentMetadata(source: FindSource, plan: DocumentQueryP
     && plan.clauses.every(clause => clause.role !== "exclude" || !fields.some(field => field.includes(clause.value.toLocaleLowerCase("ko"))));
 }
 
-export function matchDocumentFields(text: string, terms: readonly string[], source?: FindSource, plan?: DocumentQueryPlan) {
+export function matchDocumentFields(text: string, terms: readonly string[], source?: FindSource, plan?: DocumentQueryPlan, allowEmptyTerms = false) {
   const body = text.toLocaleLowerCase("ko");
   const name = source?.name ?? "";
   const path = source?.path.slice(0, -1).join(" / ") ?? "";
@@ -53,7 +53,7 @@ export function matchDocumentFields(text: string, terms: readonly string[], sour
     body: matchingTerms.filter((_, index) => positions[index] >= 0),
   };
 
-  if (!terms.length || terms.some(term => !has(term))) return null;
+  if (!allowEmptyTerms && !terms.length || terms.some(term => !has(term))) return null;
 
   const evidence: string[] = [];
 

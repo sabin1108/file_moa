@@ -14,6 +14,7 @@ import { Icon } from "../../../../components/ui/Icon";
 import { RemoteQueryControl } from "./RemoteQueryControl";
 import type { SearchQueryAction } from "../../../../shared/search-query";
 import type { ConnectionOwner } from "../../types";
+import { SemanticModelPanel, type SemanticTools } from "../semantic/SemanticModelPanel";
 
 export function DocumentFindPanel({
   controller,
@@ -26,6 +27,7 @@ export function DocumentFindPanel({
   canPrepare,
   queryAction,
   owner,
+  semanticTools,
 }: {
   controller: DocumentFindController;
   state: DocumentFindState;
@@ -37,13 +39,14 @@ export function DocumentFindPanel({
   canPrepare: boolean;
   queryAction?: SearchQueryAction;
   owner?: ConnectionOwner;
+  semanticTools?: SemanticTools;
 }) {
   const busy = state.phase === "searching";
   const period = state.filters.month !== "all";
   let range = "기간 제한 없음";
 
   try {
-    const q = confirmFindQuery(state.filters);
+    const q = confirmFindQuery(state.filters, state.semantic.enabled);
 
     if (q.from) range = `${q.from} ~ ${q.to}`;
   } catch {
@@ -66,7 +69,7 @@ export function DocumentFindPanel({
               <span className={findStyles.label}>필수 검색어 <small>이름·경로·본문에서 확인 · 정확한 문구는 따옴표</small></span>
               <input
                 aria-label="본문 검색어"
-                required
+                required={!state.semantic.enabled}
                 maxLength={200}
                 value={state.filters.terms}
                 onChange={(event) =>
@@ -74,6 +77,16 @@ export function DocumentFindPanel({
                 }
               />
             </label>
+            {semanticTools && <div>
+              <label><input type="checkbox" aria-label="의미 검색 함께 사용" checked={state.semantic.enabled} onChange={event => controller.configureSemantic({ enabled: event.target.checked })} />의미 검색 함께 사용</label>
+              {state.semantic.enabled && <>
+                <label className={styles.basis}>찾고 싶은 내용의 설명
+                  <textarea aria-label="의미 검색 설명" maxLength={300} rows={3} value={state.semantic.meaning} onChange={event => controller.configureSemantic({ meaning: event.target.value })} />
+                </label>
+                <p className={styles.note}>설명에 해당하는 단어는 위 필수 검색어에서 직접 빼 주세요. 회사명·사람 이름·기술명처럼 반드시 일치해야 하는 조건은 필수 검색어에 남겨 주세요. +검색어·따옴표 문구·제외·형식·경로·명시한 기간은 유지합니다.</p>
+                <label><input type="checkbox" aria-label="의미 검색 조건 확인" checked={state.semantic.confirmed} onChange={event => controller.configureSemantic({ confirmed: event.target.checked })} />설명과 반드시 지킬 조건을 직접 구분했어요.</label>
+              </>}
+            </div>}
             <details className={findStyles.period} open={!!(state.filters.preferred || state.filters.excluded || state.filters.formats || state.filters.folder)}>
               <summary>검색 조건 더 보기 <span>선호 문서·제외·형식·경로</span></summary>
               <div className={styles.findFields}>
@@ -200,6 +213,7 @@ export function DocumentFindPanel({
           </fieldset>
         </form>
       </details>
+      {semanticTools && <SemanticModelPanel tools={semanticTools} scope={state.scope} connected={true} scopeName={state.scope.kind === "folder" ? [folderName, ...state.scope.path].join(" / ") : folderName} />}
       {state.issue && <StatusNotice state="attention" title={state.issue} />}
       {busy && <p role="status">본문을 읽고 근거를 확인하고 있어요…</p>}
       {state.result

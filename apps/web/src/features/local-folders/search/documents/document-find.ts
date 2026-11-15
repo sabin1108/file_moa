@@ -24,6 +24,7 @@ export type FindQuery = Readonly<{
   to: string | null;
   basis: "meeting" | "written" | "body" | "modified";
   plan?: DocumentQueryPlan;
+  semantic?: Readonly<{ meaning: string; confirmed: true; lexical: FindQuery | null }>;
 }>;
 
 export type FindEvidence = Readonly<{
@@ -40,6 +41,7 @@ export type FindDocument = Readonly<{
   finding: FindEvidence;
   ocr?: boolean;
   contentAvailable?: boolean;
+  retrieval?: Readonly<{ kind: "semantic"; score: number; start: number; end: number; partial: boolean }>;
 }>;
 
 export type FindResult = Readonly<{
@@ -48,6 +50,7 @@ export type FindResult = Readonly<{
   excluded: SourceSnapshot["excluded"];
   limits: readonly string[];
   discoveredFiles: number;
+  notice?: string;
 }>;
 
 export type FindableSnapshot = SourceSnapshot & {
@@ -103,7 +106,7 @@ export function inferFindRequest(request: string, referenceYear?: number): FindF
   };
 }
 
-export function confirmFindQuery(filters: FindFilters): FindQuery {
+export function confirmFindQuery(filters: FindFilters, allowEmptyTerms = false): FindQuery {
   const input = [filters.terms,
     ...(filters.preferred?.trim().split(/\s+/u).filter(Boolean).map(term => `~${term}`) ?? []),
     ...(filters.excluded?.match(/"[^"]+"|[^\s]+/gu)?.map(term => `-${term}`) ?? []),
@@ -117,7 +120,7 @@ export function confirmFindQuery(filters: FindFilters): FindQuery {
   };
   const terms = plan.clauses.filter(clause => clause.role === "must" || clause.role === "phrase").map(clause => clause.value);
 
-  if (plan.issues.length || !terms.length || terms.length > 8) throw Error("invalid-find-terms");
+  if (plan.issues.length || !allowEmptyTerms && !terms.length || terms.length > 8) throw Error("invalid-find-terms");
 
   const withPeriod = (from: string | null, to: string | null, basis: FindQuery["basis"]) => {
     const inferred = filters.originalRequest ? inferFindRequest(filters.originalRequest, new Date().getFullYear()) : null;
@@ -170,8 +173,9 @@ export function findTextEvidence(
   query: FindQuery,
   lastModified?: number,
   source?: FindSource,
+  allowEmptyTerms = false,
 ): FindEvidence | null {
-  const match = matchDocumentFields(text, query.terms, source, query.plan);
+  const match = matchDocumentFields(text, query.terms, source, query.plan, allowEmptyTerms);
 
   if (!match) return null;
 

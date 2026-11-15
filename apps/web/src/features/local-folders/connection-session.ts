@@ -65,6 +65,9 @@ import {
 } from "./recovery/archive/recovery-archive";
 import { createCopyHasher } from "./content/copy-hash";
 import { rankFindDocuments } from "./search/documents/document-find-ranking";
+import { SemanticModelController } from "./search/semantic/semantic-model-controller";
+import { prepareSemanticSource, semanticSourceMatches } from "./search/semantic/semantic-source";
+import { readInstalledModel } from "./search/semantic/model-assets";
 import {
   prepareRecoveryRestore,
   executeRecoveryRestore,
@@ -176,6 +179,7 @@ export class FolderConnectionSession {
   } | null = null;
   private slots = emptySlots();
   private sourceConnectionId = "legacy";
+  readonly semanticModel = new SemanticModelController();
   constructor(private readonly repository: HandleRepository) { }
 
   state(kind: FolderKind): FolderConnectionView["status"] {
@@ -230,6 +234,7 @@ export class FolderConnectionSession {
   };
 
   async switchOwner(next: ConnectionOwner | null): Promise<void> {
+    this.semanticModel.stop();
     this.inlineEditor.invalidate();
     this.discardManaged();
     this.editBaseline = null;
@@ -1069,16 +1074,64 @@ export class FolderConnectionSession {
       query.terms.join(" "),
       signal,
       undefined,
-      query,
+      query.semantic ? query.semantic.lexical ?? undefined : query,
     );
 
+    const documents = [...result.findings ?? []];
+    let notice: string | undefined;
+    if (query.semantic) {
+      const { scope: key, check } = this.currentSourceIndex();
+      try {
+        const semantic = await semanticSourceMatches(key, result, { ...query, semantic: query.semantic }, this.semanticModel, signal, check);
+        check();
+        const existing = new Set(documents.map(document => JSON.stringify(document.path)));
+        documents.push(...semantic.documents.filter(document => !existing.has(JSON.stringify(document.path))));
+        notice = semantic.notice;
+      } catch (error) {
+        check();
+        if (signal.aborted) throw new DOMException("Semantic cancelled", "AbortError");
+        notice = "의미 검색을 사용할 수 없어 설명 문장까지 단어로 검사한 기본 검색 결과를 표시해요. 모델 설치와 선택 범위 준비 상태를 확인해 주세요.";
+        if (error instanceof DOMException && ["NotAllowedError", "SecurityError"].includes(error.name)) throw error;
+      }
+    }
+
     return {
-      documents: rankFindDocuments(result.findings ?? []),
+      documents: rankFindDocuments(documents),
       complete: result.complete,
       excluded: result.excluded,
       limits: result.limits,
       discoveredFiles: result.discoveredFiles,
+      ...(notice ? { notice } : {}),
     };
+  };
+
+  prepareSourceSemantic = async (scope: OrganizationScope, signal: AbortSignal, progress: (count: number) => void) => {
+    const start = this.currentSourceIndex();
+    const installed = await readInstalledModel(location.origin);
+    const epoch = await new LocalTextIndex().semanticEpoch(start.scope);
+    start.check();
+    if (!installed || signal.aborted) throw new Error("semantic-model-missing");
+    const snapshot = await this.inspectSourceSnapshot(scope, "", signal);
+    const { scope: key, check } = this.currentSourceIndex();
+    if (JSON.stringify(key) !== JSON.stringify(start.scope) || (await readInstalledModel(location.origin))?.stamp !== installed.stamp) throw new Error("semantic-model-changed");
+    this.sourceIndexPending++;
+    try {
+      return await withLocalIndexLock(key, async () => {
+        check();
+        await this.assertStoredSourceConnection(key.connection, check);
+        const result = await prepareSemanticSource(key, snapshot, epoch, this.semanticModel, signal, check, progress);
+        if ((await readInstalledModel(location.origin))?.stamp !== installed.stamp) throw new Error("semantic-model-changed");
+        check();
+        return result;
+      }, signal);
+    } finally { this.sourceIndexPending--; }
+  };
+
+  readSourceSemanticStatus = async () => {
+    const { scope, check } = this.currentSourceIndex();
+    const status = await new LocalTextIndex().semanticStatus(scope);
+    check();
+    return status;
   };
 
   recheckSourceSnapshot = async (

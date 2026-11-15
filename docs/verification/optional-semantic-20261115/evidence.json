@@ -1,0 +1,719 @@
+{
+  "at": "2026-11-15T07:40:33.562Z",
+  "fixtureSha256": "dd7adaa4088ea0e3c1a71905a75e7eef1cd32fc1fd89aa1c4fd5fec499936646",
+  "modelAssetsBytes": 135138424,
+  "runtimeBytes": 21640503,
+  "downloadBytes": 156778927,
+  "units": {
+    "files": 172,
+    "passed": 1509
+  },
+  "regressions": {
+    "localRag": 37,
+    "searchFields": 21
+  },
+  "storageAssertions": 79,
+  "threshold": 0.85,
+  "thresholdSource": "Existing dev relevant meaning .852 vs dev unrelated maximum .839; not tuned on holdout.",
+  "evaluation": {
+    "seed": 20261115,
+    "modelExecution": "actual browser Worker/WASM; PDF text authored fixture directly passed to Worker for retrieval comparison, not PDF extraction verification",
+    "indexMs": 2345.399999856949,
+    "metrics": {
+      "local": {
+        "dev": {
+          "queries": 8,
+          "recallAt5": 0.8571428571428571,
+          "mrr": 0.8571428571428571,
+          "forbidden": 0,
+          "emptyFalsePositives": 0
+        },
+        "holdout": {
+          "queries": 11,
+          "recallAt5": 0.6,
+          "mrr": 0.6,
+          "forbidden": 0,
+          "emptyFalsePositives": 0
+        }
+      },
+      "optional": {
+        "dev": {
+          "queries": 8,
+          "recallAt5": 1,
+          "mrr": 1,
+          "forbidden": 0,
+          "emptyFalsePositives": 0
+        },
+        "holdout": {
+          "queries": 11,
+          "recallAt5": 1,
+          "mrr": 1,
+          "forbidden": 0,
+          "emptyFalsePositives": 0
+        }
+      }
+    },
+    "rows": [
+      {
+        "id": "dev-career",
+        "split": "dev",
+        "raw": "가온센터 이력서 찾아줘",
+        "relevant": [
+          "career-a",
+          "career-notes",
+          "research-a"
+        ],
+        "forbidden": [
+          "career-other",
+          "research-other"
+        ],
+        "purpose": "필수 대상 보존과 유형 선호/관련 후보",
+        "local": [
+          "career-a",
+          "research-a",
+          "career-notes"
+        ],
+        "optional": [
+          "career-a",
+          "career-notes",
+          "research-a"
+        ],
+        "elapsedMs": 26.09999990463257
+      },
+      {
+        "id": "dev-template",
+        "split": "dev",
+        "raw": "이력서 양식 찾아줘",
+        "relevant": [
+          "career-a",
+          "career-other"
+        ],
+        "forbidden": [
+          "career-notes"
+        ],
+        "purpose": "유형만 있는 요청은 완화하지 않음",
+        "local": [
+          "career-other",
+          "career-a"
+        ],
+        "optional": [
+          "career-other",
+          "career-a"
+        ],
+        "elapsedMs": 23.899999856948853
+      },
+      {
+        "id": "dev-phrase",
+        "split": "dev",
+        "raw": "Next.js \"로그인 오류\" -초안 찾아줘",
+        "relevant": [
+          "login-final"
+        ],
+        "forbidden": [
+          "login-draft",
+          "login-split"
+        ],
+        "purpose": "정확 구절과 제외",
+        "local": [
+          "login-final"
+        ],
+        "optional": [
+          "login-final"
+        ],
+        "elapsedMs": 32.39999985694885
+      },
+      {
+        "id": "dev-path",
+        "split": "dev",
+        "raw": "C++ ext:pdf path:\"연구 / 2026\" 찾아줘",
+        "relevant": [
+          "threads"
+        ],
+        "forbidden": [
+          "threads-old"
+        ],
+        "purpose": "형식과 경로",
+        "local": [
+          "threads"
+        ],
+        "optional": [
+          "threads"
+        ],
+        "elapsedMs": 33.90000009536743
+      },
+      {
+        "id": "dev-symbols",
+        "split": "dev",
+        "raw": ".NET ERR_AUTH 찾아줘",
+        "relevant": [
+          "dotnet"
+        ],
+        "forbidden": [
+          "csharp"
+        ],
+        "purpose": "기술 기호/식별자",
+        "local": [
+          "dotnet"
+        ],
+        "optional": [
+          "dotnet"
+        ],
+        "elapsedMs": 25.100000143051147
+      },
+      {
+        "id": "dev-date",
+        "split": "dev",
+        "raw": "2026년 10월 회의일 기준 회의록 찾아줘",
+        "relevant": [
+          "meeting",
+          "meeting-conflict"
+        ],
+        "forbidden": [
+          "meeting-outside"
+        ],
+        "purpose": "확정 날짜와 충돌 표시",
+        "local": [
+          "meeting",
+          "meeting-conflict"
+        ],
+        "optional": [
+          "meeting",
+          "meeting-conflict"
+        ],
+        "elapsedMs": 27.600000143051147
+      },
+      {
+        "id": "dev-semantic",
+        "split": "dev",
+        "raw": "돈을 벌어도 남는 금액이 없을 때",
+        "relevant": [
+          "budget"
+        ],
+        "forbidden": [
+          "bread",
+          "plants"
+        ],
+        "purpose": "표현이 다른 의미 검색 비교",
+        "local": [],
+        "optional": [
+          "budget"
+        ],
+        "elapsedMs": 28.200000047683716
+      },
+      {
+        "id": "dev-empty",
+        "split": "dev",
+        "raw": "QZX993 특수 규정",
+        "relevant": [],
+        "forbidden": [
+          "budget",
+          "bread",
+          "plants",
+          "threads"
+        ],
+        "purpose": "관련 자료 없는 요청",
+        "local": [],
+        "optional": [],
+        "elapsedMs": 21.90000009536743
+      },
+      {
+        "id": "holdout-csharp",
+        "split": "holdout",
+        "raw": "C# 취소 찾아줘",
+        "relevant": [
+          "csharp"
+        ],
+        "forbidden": [
+          "dotnet"
+        ],
+        "purpose": "서로 다른 기술 대상",
+        "local": [
+          "csharp"
+        ],
+        "optional": [
+          "csharp"
+        ],
+        "elapsedMs": 20.699999809265137
+      },
+      {
+        "id": "holdout-report",
+        "split": "holdout",
+        "raw": "가온센터 연구보고 ext:pdf 찾아줘",
+        "relevant": [
+          "research-a"
+        ],
+        "forbidden": [
+          "research-other",
+          "career-a"
+        ],
+        "purpose": "유형과 명시 형식",
+        "local": [
+          "research-a"
+        ],
+        "optional": [
+          "research-a"
+        ],
+        "elapsedMs": 29.90000009536743
+      },
+      {
+        "id": "holdout-negation",
+        "split": "holdout",
+        "raw": "Next.js 초안 말고 \"로그인 오류\" 찾아줘",
+        "relevant": [
+          "login-final"
+        ],
+        "forbidden": [
+          "login-draft",
+          "login-split"
+        ],
+        "purpose": "자연어 제외",
+        "local": [
+          "login-final"
+        ],
+        "optional": [
+          "login-final"
+        ],
+        "elapsedMs": 29.600000143051147
+      },
+      {
+        "id": "holdout-metadata",
+        "split": "holdout",
+        "raw": "계약서 ext:docx 찾아줘",
+        "relevant": [
+          "contract"
+        ],
+        "forbidden": [
+          "career-a"
+        ],
+        "purpose": "본문 미지원 자료의 이름 후보",
+        "local": [
+          "contract"
+        ],
+        "optional": [
+          "contract"
+        ],
+        "elapsedMs": 27.299999952316284
+      },
+      {
+        "id": "holdout-version",
+        "split": "holdout",
+        "raw": "v2026 ERR_2026 찾아줘",
+        "relevant": [
+          "v2026"
+        ],
+        "forbidden": [
+          "dotnet"
+        ],
+        "purpose": "버전/오류 코드를 날짜로 바꾸지 않음",
+        "local": [
+          "v2026"
+        ],
+        "optional": [
+          "v2026"
+        ],
+        "elapsedMs": 24.399999856948853
+      },
+      {
+        "id": "holdout-explicit",
+        "split": "holdout",
+        "raw": "가온센터 +이력서 찾아줘",
+        "relevant": [
+          "career-a"
+        ],
+        "forbidden": [
+          "career-notes",
+          "research-a"
+        ],
+        "purpose": "명시 필수 유형 유지",
+        "local": [
+          "career-a"
+        ],
+        "optional": [
+          "career-a"
+        ],
+        "elapsedMs": 26.299999952316284
+      },
+      {
+        "id": "holdout-thread-meaning",
+        "split": "holdout",
+        "raw": "여러 실행 흐름이 잠금을 서로 기다려 멈추는 현상",
+        "relevant": [
+          "threads"
+        ],
+        "forbidden": [
+          "login-final",
+          "budget"
+        ],
+        "purpose": "의미 표현 차이",
+        "local": [],
+        "optional": [
+          "threads"
+        ],
+        "elapsedMs": 25.700000047683716
+      },
+      {
+        "id": "holdout-bread-meaning",
+        "split": "holdout",
+        "raw": "빵을 만들 때 부피가 커지는 이유",
+        "relevant": [
+          "bread"
+        ],
+        "forbidden": [
+          "plants",
+          "accounting"
+        ],
+        "purpose": "다른 분야 의미 표현 차이",
+        "local": [],
+        "optional": [
+          "bread"
+        ],
+        "elapsedMs": 28.5
+      },
+      {
+        "id": "holdout-plants-meaning",
+        "split": "holdout",
+        "raw": "식물이 햇빛을 받아 산소를 만들어 내는 과정",
+        "relevant": [
+          "plants"
+        ],
+        "forbidden": [
+          "bread",
+          "threads"
+        ],
+        "purpose": "생물 의미 표현 차이",
+        "local": [],
+        "optional": [
+          "plants"
+        ],
+        "elapsedMs": 29.90000009536743
+      },
+      {
+        "id": "holdout-accounting-meaning",
+        "split": "holdout",
+        "raw": "거래를 양쪽 장부에 동일 금액으로 적는 방법",
+        "relevant": [
+          "accounting"
+        ],
+        "forbidden": [
+          "budget",
+          "bread"
+        ],
+        "purpose": "서로 인접한 분야의 의미 구별",
+        "local": [],
+        "optional": [
+          "accounting"
+        ],
+        "elapsedMs": 34.40000009536743
+      },
+      {
+        "id": "holdout-unrelated",
+        "split": "holdout",
+        "raw": "ZXQ991 우주선 항법 도면",
+        "relevant": [],
+        "forbidden": [
+          "budget",
+          "bread",
+          "plants",
+          "accounting",
+          "threads"
+        ],
+        "purpose": "무관 후보 억제",
+        "local": [],
+        "optional": [],
+        "elapsedMs": 26.90000009536743
+      }
+    ]
+  },
+  "storage": {
+    "readMs": [
+      12.200000047683716,
+      12.5,
+      12.599999904632568
+    ],
+    "mainLongTasksMs": []
+  },
+  "flows": {
+    "phase": "done",
+    "longMs": 23761.299999952316,
+    "chunks": 64,
+    "complete": false,
+    "contiguous": true,
+    "scoreMs": 44.700000047683716,
+    "scoreCount": 64,
+    "mainLongTasksMs": [],
+    "cancelOutcome": "AbortError",
+    "cancelMs": 82.40000009536743,
+    "productWrites": 0,
+    "remoteQueryCalls": 0
+  },
+  "lifecycle": {
+    "lifecycle": {
+      "race": {
+        "phase": "rejected",
+        "message": "semantic-model-changed"
+      },
+      "vectors": {
+        "documents": 0,
+        "chunks": 0,
+        "partial": 0,
+        "bytes": 0
+      },
+      "basic": 3
+    },
+    "installed": {
+      "phase": "done",
+      "elapsedMs": 6108.700000047684,
+      "progress": [
+        {
+          "phase": "downloading",
+          "loaded": 0
+        },
+        {
+          "phase": "verifying",
+          "loaded": 44484
+        },
+        {
+          "phase": "downloading",
+          "loaded": 658
+        },
+        {
+          "phase": "verifying",
+          "loaded": 658
+        },
+        {
+          "phase": "downloading",
+          "loaded": 658
+        },
+        {
+          "phase": "verifying",
+          "loaded": 658
+        },
+        {
+          "phase": "downloading",
+          "loaded": 443
+        },
+        {
+          "phase": "verifying",
+          "loaded": 443
+        },
+        {
+          "phase": "downloading",
+          "loaded": 14511
+        },
+        {
+          "phase": "verifying",
+          "loaded": 17082730
+        },
+        {
+          "phase": "downloading",
+          "loaded": 17082730
+        },
+        {
+          "phase": "verifying",
+          "loaded": 17082730
+        },
+        {
+          "phase": "downloading",
+          "loaded": 20971520
+        },
+        {
+          "phase": "verifying",
+          "loaded": 118054593
+        },
+        {
+          "phase": "downloading",
+          "loaded": 118054593
+        },
+        {
+          "phase": "verifying",
+          "loaded": 118054593
+        },
+        {
+          "phase": "ready",
+          "loaded": 156778927
+        }
+      ],
+      "result": {
+        "phase": "ready",
+        "loaded": 156778927,
+        "total": 156778927,
+        "issue": ""
+      }
+    }
+  },
+  "ui": {
+    "checks": [
+      {
+        "width": 390,
+        "fits": true,
+        "candidates": 1
+      },
+      {
+        "width": 768,
+        "fits": true,
+        "candidates": 1
+      },
+      {
+        "width": 1440,
+        "fits": true,
+        "candidates": 1
+      },
+      {
+        "width": 1920,
+        "fits": true,
+        "candidates": 1
+      }
+    ],
+    "syntheticIME": true,
+    "rag": {
+      "documents": [
+        {
+          "name": "빵 반죽.md",
+          "hasEvidence": true
+        }
+      ],
+      "consentKey": null,
+      "providerCalls": 0
+    }
+  },
+  "workerEvidence": {
+    "prepared": {
+      "prepared": 1,
+      "partial": false,
+      "scanned": 1
+    },
+    "result": {
+      "documents": [
+        {
+          "name": "빵 반죽.md",
+          "path": [
+            "조리",
+            "빵 반죽.md"
+          ],
+          "finding": {
+            "kind": "matched",
+            "dates": [],
+            "evidence": [
+              "빵 반죽의 효모는 따뜻한 곳에서 당을 분해하며 기체를 만든다. 반죽 부피가 늘어나면 발효를 마친다."
+            ],
+            "matches": {
+              "name": [],
+              "path": [],
+              "body": []
+            },
+            "relevance": {
+              "kind": "all",
+              "missing": [],
+              "phraseBoost": 0
+            }
+          },
+          "contentAvailable": true,
+          "retrieval": {
+            "kind": "semantic",
+            "score": 0.8710488937070539,
+            "start": 0,
+            "end": 55,
+            "partial": false
+          }
+        }
+      ],
+      "complete": false,
+      "excluded": [
+        {
+          "path": [
+            "가온센터",
+            "연구보고.pdf"
+          ],
+          "reason": "pdf-invalid"
+        },
+        {
+          "path": [
+            "다른센터",
+            "연구보고.pdf"
+          ],
+          "reason": "pdf-invalid"
+        },
+        {
+          "path": [
+            "법무",
+            "계약서.docx"
+          ],
+          "reason": "unsupported-extension"
+        },
+        {
+          "path": [
+            "연구",
+            "2026",
+            "C++ 스레드.pdf"
+          ],
+          "reason": "pdf-invalid"
+        }
+      ],
+      "limits": [],
+      "discoveredFiles": 22,
+      "notice": "현재 내용과 일치하는 1개 자료에 의미 검색을 적용했어요. 일부 자료나 본문은 준비 범위에 포함되지 않았어요. 의미가 비슷한 후보는 원문 근거를 확인해 주세요."
+    },
+    "largeDateEvidenceMs": 237.40000009536743,
+    "largeDateFinding": "matched",
+    "mainLongTasksMs": []
+  },
+  "productionWorker": {
+    "phase": "done",
+    "messages": 58,
+    "missingBeforeInstall": true,
+    "installMs": 6557.900000095367,
+    "dimensions": 384,
+    "totalMs": 6580.100000143051
+  },
+  "memory": {
+    "coldMs": 1667.8000001907349,
+    "warmMs": 26.699999809265137,
+    "wasmLinearMaxBytes": 345309184,
+    "condition": "Observed WebAssembly linear-memory buffers only; excludes SDK JS heap, ONNX model copies, tokenizer, cache write buffers and browser overhead; not peak total RAM."
+  },
+  "build": {
+    "id": "Yf5bWDcbm2xbrJZMjocSq",
+    "files": 51,
+    "jsCssBytes": 4523292,
+    "modelWeightsOnServer": false
+  },
+  "routes": {
+    "samples": 66,
+    "routeCount": 11,
+    "automaticModelRequests": 0,
+    "condition": "Ego real Chromium; local production guest routes, two widths and three visits, shared profile HTTP cache, different timing collection from prior CDP baseline. No authenticated search/field INP or matched speed improvement claim."
+  },
+  "finalWorker": {
+    "phase": "done",
+    "messages": 763,
+    "installMs": 2522.7000000476837,
+    "dimensions": 384,
+    "finding": "matched",
+    "totalMs": 2551.5999999046326
+  },
+  "sourceHash": {
+    "before": true,
+    "changed": false,
+    "restored": true
+  },
+  "lockFallback": {
+    "phase": "ready",
+    "heldUntilFallback": true,
+    "elapsedMs": 618.9000000953674,
+    "notice": "의미 검색을 사용할 수 없어 설명 문장까지 단어로 검사한 기본 검색 결과를 표시해요. 모델 설치와 선택 범위 준비 상태를 확인해 주세요."
+  },
+  "explicitCacheRepair": {
+    "missing": "absent",
+    "ready": "ready",
+    "dimensions": 384,
+    "elapsedMs": 1434.5
+  },
+  "newPaidAiCalls": 0,
+  "limitations": [
+    "Small authored evaluation, not independent corpus quality",
+    "Physical IME/mobile/low-memory devices and total peak RAM unverified",
+    "Guest route samples precede final wording and Worker-evidence edits; no matched speedup or field INP claim",
+    "Ego screenshot unavailable; separate isolated default UI captures checked",
+    "Raw optimized Worker installation/query/evidence checked separately from authenticated production UI"
+  ]
+}

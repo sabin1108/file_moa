@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/prepare-ocr-assets.mjs && prisma generate && next dev --hostname 127.0.0.1 --port 3034",
-    "build": "node scripts/prepare-ocr-assets.mjs && prisma generate && next build",
+    "dev": "node scripts/prepare-ocr-assets.mjs && node scripts/prepare-semantic-assets.mjs && prisma generate && next dev --hostname 127.0.0.1 --port 3034",
+    "build": "node scripts/prepare-ocr-assets.mjs && node scripts/prepare-semantic-assets.mjs && prisma generate && next build",
     "start": "next start --hostname 127.0.0.1 --port 3034",
     "typecheck": "prisma generate && tsc --noEmit",
     "lint": "eslint .",
@@ -12,6 +12,7 @@
     "db:generate": "prisma generate"
   },
   "dependencies": {
+    "@huggingface/transformers": "3.8.1",
     "@personal-ai/domain": "workspace:*",
     "@prisma/adapter-pg": "7.10.1",
     "@prisma/client": "7.10.1",

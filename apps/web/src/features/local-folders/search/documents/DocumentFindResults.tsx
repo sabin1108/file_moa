@@ -60,6 +60,7 @@ export function DocumentFindResults({
 
   return (
     <section data-find-results className={findStyles.results} aria-label="자료 검색 결과">
+      {result.notice && <p role="status">{result.notice}</p>}
       {result.documents.length > 0 ? <header className={findStyles.resultHeading}>
         <h3 ref={heading}>찾은 자료 {result.documents.length}개</h3>
         {uncertain.length > 0 && <p>날짜 확인 필요 {uncertain.length}개</p>}
@@ -83,7 +84,8 @@ export function DocumentFindResults({
               onPreview={() => onOpenFile(document.path)}
             />
             <div className={styles.findMeta}>
-            {document.finding.matches && <p className={styles.note} data-find-fields>{[
+            {document.retrieval && <p className={styles.findStatus} data-find-semantic>뜻이 비슷한 후보 · 필수 조건 확인 · 본문 {document.retrieval.start + 1}~{document.retrieval.end}자{document.retrieval.partial ? " · 일부 본문만 준비됨" : ""}</p>}
+            {document.finding.matches && Object.values(document.finding.matches).some(terms => terms.length > 0) && <p className={styles.note} data-find-fields>{[
               document.finding.matches.name.length > 0 && "이름",
               document.finding.matches.path.length > 0 && "폴더 경로",
               document.finding.matches.body.length > 0 && "본문",
@@ -92,7 +94,7 @@ export function DocumentFindResults({
             {document.finding.relevance?.kind === "related" && <p className={styles.findStatus} data-find-related>관련 자료 · 선호 조건 미확인: {document.finding.relevance.missing.join(", ")}</p>}
             {((document.contentAvailable !== false && document.finding.relevance?.kind !== "related") || document.finding.kind !== "matched" || document.finding.dates.length > 0) && <p className={styles.findStatus} data-verified={document.finding.kind === "matched"}>
               {document.finding.kind === "matched"
-                ? document.contentAvailable === false ? "날짜 조건 일치" : document.finding.relevance?.kind === "related" ? "필수 조건 일치" : "✓ 조건 일치"
+                ? document.contentAvailable === false ? "날짜 조건 일치" : document.retrieval ? "필수 조건 확인" : document.finding.relevance?.kind === "related" ? "필수 조건 일치" : "✓ 조건 일치"
                 : document.finding.kind === "date-unknown"
                   ? "날짜 확인 필요"
                   : "여러 날짜가 있어 확인 필요"}

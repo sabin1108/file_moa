@@ -8,6 +8,7 @@ import {
 import type { OrganizationScope } from "../../organization/source-snapshot-rules";
 import { copyFolderPath } from "../../folder-path";
 import { parseFindReply } from "./document-find-reply";
+import { confirmSemanticQuery } from "../semantic/semantic-query";
 
 const initial = {
   phase: "idle" as
@@ -25,6 +26,7 @@ const initial = {
   issue: null as string | null,
   submittedReply: "",
   selectedPaths: [] as readonly (readonly string[])[],
+  semantic: { enabled: false, meaning: "", confirmed: false },
 };
 
 export type DocumentFindState = typeof initial;
@@ -70,6 +72,7 @@ export class DocumentFindController {
       request: request.trim(),
       draft: request,
       filters: inferFindRequest(request, new Date().getFullYear()),
+      semantic: { enabled: false, meaning: request.trim(), confirmed: false },
     });
   };
   updateDraft = (draft: string) => this.publish({ ...this.state, draft });
@@ -98,6 +101,7 @@ export class DocumentFindController {
       result: null,
       issue: null,
       selectedPaths: [],
+      semantic: { ...this.state.semantic, confirmed: false },
     });
   };
   setScope = (path: readonly string[] | null) => {
@@ -112,6 +116,7 @@ export class DocumentFindController {
       result: null,
       issue: null,
       selectedPaths: [],
+      semantic: { ...this.state.semantic, confirmed: false },
     });
   };
   search = async () => {
@@ -120,11 +125,13 @@ export class DocumentFindController {
     let query: FindQuery;
 
     try {
-      query = confirmFindQuery(this.state.filters);
+      query = this.state.semantic.enabled
+        ? confirmSemanticQuery(this.state.filters, this.state.semantic.meaning, this.state.semantic.confirmed)
+        : confirmFindQuery(this.state.filters);
     } catch {
       this.publish({
         ...this.state,
-        issue: "검색어와 연도·날짜 기준·기간을 확인해 주세요.",
+        issue: this.state.semantic.enabled ? "설명 문장과 필수 조건을 확인하고 확인란을 선택해 주세요. 원래 요청의 명시 조건과 기간은 유지해야 해요." : "검색어와 연도·날짜 기준·기간을 확인해 주세요.",
       });
 
       return;
@@ -169,6 +176,10 @@ export class DocumentFindController {
     } finally {
       if (generation === this.generation) this.abort = null;
     }
+  };
+  configureSemantic = (patch: Partial<DocumentFindState["semantic"]>) => {
+    this.stop();
+    this.publish({ ...this.state, semantic: { ...this.state.semantic, confirmed: false, ...patch }, phase: "confirm", result: null, selectedPaths: [], issue: null });
   };
   cancel = () => {
     this.stop();

@@ -27,6 +27,10 @@ export function compareFindDocuments(left: FindDocument, right: FindDocument) {
 
   if (completeness) return completeness;
 
+  const retrievalOrder = Number(!!left.retrieval) - Number(!!right.retrieval);
+  if (retrievalOrder) return retrievalOrder;
+  if (left.retrieval && right.retrieval) return right.retrieval.score - left.retrieval.score || JSON.stringify(left.path).localeCompare(JSON.stringify(right.path), "ko");
+
   const scoreOrder = (fieldScore(right) + (right.finding.relevance?.phraseBoost ?? 0) * 8) - (fieldScore(left) + (left.finding.relevance?.phraseBoost ?? 0) * 8);
 
   if (scoreOrder) return scoreOrder;

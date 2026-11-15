@@ -1,5 +1,13 @@
 # 기술 경계
 
+## 선택 로컬 의미 검색 — 2026-11-15
+
+`SemanticModelPanel`을 자료 찾기·폴더 설정에서 공유하고 Provider 소유 `SemanticModelController`만 전용 Worker를 시작한다. 설치 상태 확인은 Cache API만 읽으며 SDK·모델 추론·폴더 읽기를 시작하지 않는다. Transformers.js3.8.1과 ORT Web 버전을 고정하고 실행 파일만 앱에서 제공한다. 모델 가중치는 서버에 올리지 않고 설치 행동 뒤 공개된 고정 revision에서 받는다. Worker의 네트워크 guard는 고정 공개 파일만 허용하고 SDK가 파싱하기 전에 전체 크기·SHA-256을 검증한다. 추론 중 공개 파일 누락은 네트워크로 재설치하지 않고 기본 검색으로 돌아간다. 이는 전체 사이트의 오프라인 제공을 뜻하지 않는다.
+
+모델 Cache는 브라우저 origin 안에서 공유한다. IndexedDB schema5의 semanticVectors·semanticStats·semanticEpoch는 owner/workspace/connection과 path/hash/parser/model 버전으로 격리한다. 본문은 벡터 행에 중복 저장하지 않는다. 현재 원본 읽기·hash 검사는 기존 Worker에서 유지하고, 일치하는 현재 본문의 구간만 의미 후보가 된다. 점수 계산은 의미 검색 Worker에서 한다. 삭제/clear 세대는 같은 저장 transaction에서 바뀌며 늦은 준비·결과를 거부한다. 의미 검색은 설명 문장과 사용자가 확인한 필수 조건을 분리하고 +검색어·구절·제외·형식·경로·명시 기간을 완화하지 않는다. 원격 질문 해석과 별도 기능이며 선택 자료의 AI 전송은 기존 발췌 확인·동의 경로를 유지한다.
+
+한도·검증·라이선스 출처는 [명세](specs/optional-semantic-search.md), [검증](verification/optional-semantic-20261115/README.md)을 따른다.
+
 ## 현재 구조와 상태 소유 — 2026-11-13
 
 현재 제품은 Next.js 앱 하나 안에서 기능별 모듈을 나누는 구조다. `src/app`은 페이지·layout·Action·Route Handler 진입점이고, `features`는 기능별 UI·상태·규칙·브라우저 저장소, `server`는 인증·DB·AI 외부 접근을 맡는다. 아래 날짜별 개정은 결정 당시의 기록이며 이 절을 현재 기준으로 읽는다.
@@ -22,7 +30,7 @@ FolderConnectionSession의 공통 owner·핸들·무효화 책임은 유지한�
 
 `LiveConversation` 하나가 공통 대화와 입력을 소유한다. `useWorkspaceConversation`이 요청을 판별해 일반 스트림 또는 기존 검색/정리 controller로 연결하고 애매한 요청만 확인한다. 자료 UI는 `MaterialWorkPanel`과 기존 검색/준비/미리보기 컴포넌트를 재사용하며 전체 화면을 교체하지 않는다. owner 범위 `ConversationStateProvider`가 대화·초안·저장 선택을 유지한다. 일반 모델에는 완료된 일반 turn만 같은 origin `POST /api/chat`으로 보내며 로컬 작업 turn은 묵시적 문맥에서 제외한다. Route Handler → `server/chat/chat`의 세션·Origin·입력·원자 공유 한도 → 공급자 count → 생성 직전 세션 재검사 → 공급자 스트림 정규화 → 검증된 SSE 이벤트 → store/reducer 순서다. 서버는 토큰별 DB 쓰기나 대화 본문 저장을 하지 않는다. 승인한 로컬 기록과 자료 전송 동의는 별도 경계다. [단일 대화 검증](verification/unified-conversation/README.md).
 
-이 경로만 브라우저 fetch 예외다. 초기 전체 인증은 새 Headers 식별자로 요청 메모이즈 재사용을 피한다. 이후 생성 전·각 본문 공개 전에는 정확한 서버 세션 snapshot·로그인 자격·이름·workspace/owner/연결 관계를 새로 SELECT한다. RLS caller 설정과 SELECT는 같은 짧은 transaction이며 작업 공간 준비는 반복하지 않는다. 공개 검사 시작 기준은100ms다. 검사 전에 본문/완료 묶음을 고정하고 검사 중 공급자는 계속 읽으며 새 본문은 다음 검사를 받는다. 마지막 본문과 완료는 함께 고정했을 때 한 검사로 승인한다. 브라우저는 실제 받은 본문만120~650ms 동안 frame별로 표시하고 표시가 끝나야 완료 이벤트를 확정한다. 중지·세션 오류의 미표시 본문은 버리고 단절은 승인된 부분 답변을 미완료로 보존한다. 자동 재전송과 모델 응답을 기다리는 전체 시간 동안 유지하는 DB transaction은 없다. 세부 계약은 [일반 채팅 명세](specs/general-chat.md), [최신 검증](verification/progressive-chat/README.md)을 따른다.
+이 채팅 경로와 위 고정 공개 모델 파일 Worker가 브라우저 fetch 예외다. 초기 전체 인증은 새 Headers 식별자로 요청 메모이즈 재사용을 피한다. 이후 생성 전·각 본문 공개 전에는 정확한 서버 세션 snapshot·로그인 자격·이름·workspace/owner/연결 관계를 새로 SELECT한다. RLS caller 설정과 SELECT는 같은 짧은 transaction이며 작업 공간 준비는 반복하지 않는다. 공개 검사 시작 기준은100ms다. 검사 전에 본문/완료 묶음을 고정하고 검사 중 공급자는 계속 읽으며 새 본문은 다음 검사를 받는다. 마지막 본문과 완료는 함께 고정했을 때 한 검사로 승인한다. 브라우저는 실제 받은 본문만120~650ms 동안 frame별로 표시하고 표시가 끝나야 완료 이벤트를 확정한다. 중지·세션 오류의 미표시 본문은 버리고 단절은 승인된 부분 답변을 미완료로 보존한다. 자동 재전송과 모델 응답을 기다리는 전체 시간 동안 유지하는 DB transaction은 없다. 세부 계약은 [일반 채팅 명세](specs/general-chat.md), [최신 검증](verification/progressive-chat/README.md)을 따른다.
 
 ## AI 공급자 선택과 전송 확인 — 2026-11-08
 

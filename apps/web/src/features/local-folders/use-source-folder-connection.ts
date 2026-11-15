@@ -63,6 +63,7 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
     controller.getServerSnapshot,
   );
   const connectionId = state.sources.find(source => source.active)?.connectionId ?? "";
+  useEffect(() => { session.semanticModel.connect(); return session.semanticModel.dispose; }, [session]);
   const indexWatchStore = useMemo(() => createBrowserStringStore(
     `moa-index-watch:${JSON.stringify([owner.userId, owner.workspaceId, connectionId])}`,
     () => window.localStorage,
@@ -207,6 +208,9 @@ export function useSourceFolderConnection(owner: ConnectionOwner) {
     organization: controller.organization,
     organizationExecution: controller.organizationExecution,
     finding: controller.finding,
+    semanticModel: session.semanticModel,
+    prepareSourceSemantic: session.prepareSourceSemantic,
+    readSourceSemanticStatus: session.readSourceSemanticStatus,
     readSourceIndexStatus: session.readSourceIndexStatus,
     refreshSourceIndex: session.refreshSourceIndex,
     clearSourceIndex: async () => { indexWatchStore.write("false"); await session.clearSourceIndex(); },

@@ -361,6 +361,7 @@ export async function readSourceSnapshot(
       });
 
       if (catalogHealthy) await indexStore?.retainCatalog(indexContext, observedPaths, check).catch(() => { check(); catalogHealthy = false; });
+      await indexStore?.retainSemantic(indexContext, observedPaths, check).catch(() => { check(); });
       check();
     }
 

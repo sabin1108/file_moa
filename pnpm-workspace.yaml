@@ -13,6 +13,8 @@ allowBuilds:
   prisma: true
   unrs-resolver: false
   tesseract.js: false
+  # Browser inference uses onnxruntime-web; do not download unused native runtimes in CI.
+  onnxruntime-node: false
 
 minimumReleaseAgeExclude:
   - '@better-auth/core@1.7.17'

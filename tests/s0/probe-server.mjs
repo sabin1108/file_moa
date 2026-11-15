@@ -68,7 +68,7 @@ function moduleUrl(specifier, sourceUrl) {
 
   const target = new URL(specifier, sourceUrl);
 
-  if (!/\.(ts|js|mjs)$/u.test(target.pathname)) target.pathname += '.ts';
+  if (!/\.(ts|js|mjs|json)$/u.test(target.pathname)) target.pathname += '.ts';
 
   const path = resolve(fileURLToPath(target));
 
@@ -84,7 +84,8 @@ function moduleUrl(specifier, sourceUrl) {
 
   if (!allowedRoots.some(root => local.startsWith(root)) || !existsSync(path)) throw new Error('Unmapped probe source dependency');
 
-  const endpoint = '/__source/' + local.replace(/\.ts$/u, '.js');
+  if (target.pathname.endsWith('.json') && local !== 'apps/web/src/features/local-folders/search/semantic/runtime-manifest.json') throw new Error('Unmapped probe JSON dependency');
+  const endpoint = '/__source/' + local.replace(/\.(ts|json)$/u, '.js');
 
   files.set(endpoint, [target.href, 'text/javascript']);
 
@@ -127,7 +128,8 @@ export async function startProbe(port = 0) {
       const sourceUrl = new URL(entry[0], import.meta.url);
       let source = await readFile(sourceUrl, 'utf8');
 
-      if (entry[0].endsWith('.ts')) source = rewriteProbeImports(ts.transpileModule(source, {
+      if (entry[0].endsWith('.json')) source = `export default ${JSON.stringify(JSON.parse(source))};`;
+      else if (entry[0].endsWith('.ts')) source = rewriteProbeImports(ts.transpileModule(source, {
         compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
       }).outputText, sourceUrl);
       else if (entry[1] === 'text/javascript') source = rewriteProbeImports(source, sourceUrl);

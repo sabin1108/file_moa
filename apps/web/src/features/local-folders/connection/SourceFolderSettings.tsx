@@ -16,6 +16,7 @@ import { RecoveryVaultSettings } from "../recovery/RecoveryVaultSettings";
 import { FolderPermissionGuide } from "./FolderPermissionGuide";
 import { OcrControl } from "../content/ocr/OcrControl";
 import { SearchIndexSettings } from "../search/documents/SearchIndexSettings";
+import { SemanticModelPanel } from "../search/semantic/SemanticModelPanel";
 
 const pendingTitles = {
   connect: "폴더 선택과 연결을 기다리고 있어요.",
@@ -24,7 +25,7 @@ const pendingTitles = {
 };
 
 export function SourceFolderSettings({ onConnected }: { onConnected?: () => void } = {}) {
-  const { state, connect, reconnect, disconnect, reload, recoveryState, recoveryView, sources, activateSource, disconnectSource, readSourceIndexStatus, refreshSourceIndex, clearSourceIndex, indexWatch } = useSharedSourceFolderConnection();
+  const { state, connect, reconnect, disconnect, reload, recoveryState, recoveryView, sources, activateSource, disconnectSource, readSourceIndexStatus, refreshSourceIndex, clearSourceIndex, indexWatch, semanticModel, prepareSourceSemantic, readSourceSemanticStatus } = useSharedSourceFolderConnection();
   const router = useRouter();
   const pathname = usePathname();
   const mounted = useRef(false);
@@ -137,6 +138,7 @@ export function SourceFolderSettings({ onConnected }: { onConnected?: () => void
     </div>}
     <OcrControl disabled={!!state.pending} />
     {state.view?.status === "connected" && <SearchIndexSettings key={sources.find(source => source.active)?.connectionId ?? "active"} readStatus={readSourceIndexStatus} refresh={refreshSourceIndex} clear={clearSourceIndex} watch={indexWatch} />}
+    <SemanticModelPanel key={`semantic:${sources.find(source => source.active)?.connectionId ?? "none"}`} tools={{ model: semanticModel, prepare: prepareSourceSemantic, readStatus: readSourceSemanticStatus }} scope={{ kind: "all" }} connected={state.view?.status === "connected"} scopeName={state.view?.folderName ?? "연결한 자료 폴더"} />
     <RecoveryVaultSettings titleRef={vaultTitle} />
     {state.view?.status === "connected" && <div className={styles.finish}>
       <button

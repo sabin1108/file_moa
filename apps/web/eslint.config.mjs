@@ -13,6 +13,6 @@ export default defineConfig([
     files: ["src/**/*.{ts,tsx}"],
     rules: { "@typescript-eslint/no-explicit-any": "error" },
   },
-  globalIgnores([".next/**", "generated/prisma/**", "next-env.d.ts", "public/ocr/core/**", "public/ocr/worker.min.js"]),
+  globalIgnores([".next/**", "generated/prisma/**", "next-env.d.ts", "public/ocr/core/**", "public/ocr/worker.min.js", "public/semantic-runtime/**"]),
 ]);
 

@@ -1,8 +1,9 @@
 import { isTextCacheMetadata, type TextCacheMetadata } from "../../content/text-cache";
 import { isLocalIndexScan, type LocalIndexScan } from "./local-index-scan";
+import { isSemanticRecord, SEMANTIC_LIMITS, type SemanticEpoch, type SemanticRecord } from "../semantic/semantic-record";
 
 export const LOCAL_TEXT_INDEX_VERSION = 2;
-export const LOCAL_TEXT_DATABASE_VERSION = 4;
+export const LOCAL_TEXT_DATABASE_VERSION = 5;
 
 export type CatalogFile = Readonly<{
   path: readonly string[];
@@ -121,6 +122,13 @@ export class LocalTextIndex {
           db.createObjectStore("catalog", { keyPath: "id" }).createIndex("scope", ["owner", "workspace", "connection"]);
         }
         if (!db.objectStoreNames.contains("scans")) db.createObjectStore("scans");
+        if (!db.objectStoreNames.contains("semanticVectors")) {
+          const vectors = db.createObjectStore("semanticVectors", { keyPath: "id" });
+          vectors.createIndex("scope", ["owner", "workspace", "connection"]);
+          vectors.createIndex("document", ["owner", "workspace", "connection", "pathKey"]);
+          db.createObjectStore("semanticStats");
+          db.createObjectStore("semanticEpoch");
+        }
       };
       request.onblocked = () => {
         blocked = true;
@@ -413,9 +421,9 @@ export class LocalTextIndex {
 
     try {
       await new Promise<void>((resolve, reject) => {
-        const tx = db.transaction(["documents", "catalog", "stats", "scans"], "readwrite");
+        const tx = db.transaction(["documents", "catalog", "stats", "scans", "semanticVectors", "semanticStats", "semanticEpoch"], "readwrite");
 
-        for (const name of ["documents", "catalog"]) {
+        for (const name of ["documents", "catalog", "semanticVectors"]) {
           const request = tx.objectStore(name).index("scope").openKeyCursor(IDBKeyRange.only([scope.owner, scope.workspace, scope.connection]));
 
           request.onsuccess = () => {
@@ -431,11 +439,128 @@ export class LocalTextIndex {
           assertCurrent();
           tx.objectStore("stats").put({ count: 0, bytes: 0 }, this.scopeId(scope));
           tx.objectStore("scans").delete(this.scopeId(scope));
+          tx.objectStore("semanticStats").delete(this.scopeId(scope));
+          tx.objectStore("semanticEpoch").put(crypto.randomUUID(), this.scopeId(scope));
         }
         catch (error) { tx.abort(); reject(error); }
         tx.oncomplete = () => resolve();
         tx.onerror = () => reject(tx.error);
         tx.onabort = () => reject(tx.error ?? new Error("index-update-aborted"));
+      });
+    } finally { db.close(); }
+  }
+
+  async semanticEpoch(scope: Scope): Promise<SemanticEpoch> {
+    const db = await this.open();
+    try {
+      return await new Promise((resolve, reject) => {
+        const tx = db.transaction("semanticEpoch", "readwrite");
+        const store = tx.objectStore("semanticEpoch");
+        const local = store.get(this.scopeId(scope));
+        const model = store.get("model");
+        let epoch: SemanticEpoch;
+        model.onsuccess = () => {
+          epoch = { scope: typeof local.result === "string" ? local.result : crypto.randomUUID(), model: typeof model.result === "string" ? model.result : crypto.randomUUID() };
+          store.put(epoch.scope, this.scopeId(scope));
+          store.put(epoch.model, "model");
+        };
+        tx.oncomplete = () => resolve(epoch);
+        tx.onerror = tx.onabort = () => reject(tx.error ?? new Error("semantic-storage-failed"));
+      });
+    } finally { db.close(); }
+  }
+
+  async semanticRecords(scope: Scope): Promise<SemanticRecord[]> {
+    const db = await this.open();
+    try {
+      return await new Promise((resolve, reject) => {
+        const tx = db.transaction(["semanticVectors", "semanticEpoch"], "readonly");
+        const local = tx.objectStore("semanticEpoch").get(this.scopeId(scope));
+        const model = tx.objectStore("semanticEpoch").get("model");
+        const rows = tx.objectStore("semanticVectors").index("scope").getAll(IDBKeyRange.only([scope.owner, scope.workspace, scope.connection]));
+        tx.oncomplete = () => resolve((rows.result as unknown[]).filter(isSemanticRecord).filter(row => row.epoch.scope === local.result && row.epoch.model === model.result));
+        tx.onerror = tx.onabort = () => reject(tx.error ?? new Error("semantic-storage-failed"));
+      });
+    } finally { db.close(); }
+  }
+
+  async putSemantic(record: SemanticRecord, assertCurrent: () => void = () => {}): Promise<boolean> {
+    if (!isSemanticRecord(record)) throw new Error("semantic-invalid-record");
+    const db = await this.open();
+    try {
+      return await new Promise((resolve, reject) => {
+        const tx = db.transaction(["semanticVectors", "semanticStats", "semanticEpoch"], "readwrite");
+        const vectors = tx.objectStore("semanticVectors");
+        const stats = tx.objectStore("semanticStats");
+        const local = tx.objectStore("semanticEpoch").get(this.scopeId(record));
+        const model = tx.objectStore("semanticEpoch").get("model");
+        const before = stats.get(this.scopeId(record));
+        const previous = vectors.index("document").getAll(IDBKeyRange.only([record.owner, record.workspace, record.connection, record.pathKey]));
+        let saved = false;
+        previous.onsuccess = () => {
+          try {
+            assertCurrent();
+            if (record.epoch.scope !== local.result || record.epoch.model !== model.result) return;
+            const old = (previous.result as unknown[]).filter(isSemanticRecord);
+            const current = before.result as { documents: number; chunks: number; partial: number; bytes: number } | undefined;
+            const removed = old.reduce((sum, row) => sum + row.chunks.length, 0);
+            const documents = (current?.documents ?? 0) + 1 - old.length;
+            const chunks = (current?.chunks ?? 0) + record.chunks.length - removed;
+            const partial = (current?.partial ?? 0) + Number(!record.complete) - old.filter(row => !row.complete).length;
+            if (![documents, chunks, partial].every(value => Number.isSafeInteger(value) && value >= 0) || documents > SEMANTIC_LIMITS.documents || chunks > SEMANTIC_LIMITS.totalChunks) return;
+            for (const row of previous.result as SemanticRecord[]) vectors.delete(row.id);
+            vectors.put(record);
+            stats.put({ documents, chunks, partial, bytes: chunks * 384 * 4 }, this.scopeId(record));
+            saved = true;
+          } catch (error) { tx.abort(); reject(error); }
+        };
+        tx.oncomplete = () => resolve(saved);
+        tx.onerror = tx.onabort = () => reject(tx.error ?? new Error("semantic-storage-failed"));
+      });
+    } finally { db.close(); }
+  }
+
+  async semanticStatus(scope: Scope) {
+    const rows = await this.semanticRecords(scope);
+    const chunks = rows.reduce((sum, row) => sum + row.chunks.length, 0);
+    return { documents: rows.length, chunks, partial: rows.filter(row => !row.complete).length, bytes: chunks * 384 * 4 };
+  }
+
+  async retainSemantic(scope: Scope, paths: readonly (readonly string[])[], assertCurrent: () => void): Promise<void> {
+    const keep = new Set(paths.map(path => JSON.stringify(path)));
+    const db = await this.open();
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const tx = db.transaction(["semanticVectors", "semanticStats"], "readwrite");
+        const cursor = tx.objectStore("semanticVectors").index("scope").openCursor(IDBKeyRange.only([scope.owner, scope.workspace, scope.connection]));
+        const stats = { documents: 0, chunks: 0, partial: 0, bytes: 0 };
+        cursor.onsuccess = () => {
+          try {
+            assertCurrent();
+            const item = cursor.result;
+            if (!item) { stats.bytes = stats.chunks * 384 * 4; tx.objectStore("semanticStats").put(stats, this.scopeId(scope)); return; }
+            const row: unknown = item.value;
+            if (!isSemanticRecord(row) || !keep.has(row.pathKey)) item.delete();
+            else { stats.documents++; stats.chunks += row.chunks.length; stats.partial += Number(!row.complete); }
+            item.continue();
+          } catch (error) { tx.abort(); reject(error); }
+        };
+        tx.oncomplete = () => resolve();
+        tx.onerror = tx.onabort = () => reject(tx.error ?? new Error("semantic-storage-failed"));
+      });
+    } finally { db.close(); }
+  }
+
+  async invalidateSemanticModel(): Promise<void> {
+    const db = await this.open();
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const tx = db.transaction(["semanticVectors", "semanticStats", "semanticEpoch"], "readwrite");
+        tx.objectStore("semanticEpoch").put(crypto.randomUUID(), "model");
+        tx.objectStore("semanticVectors").clear();
+        tx.objectStore("semanticStats").clear();
+        tx.oncomplete = () => resolve();
+        tx.onerror = tx.onabort = () => reject(tx.error ?? new Error("semantic-storage-failed"));
       });
     } finally { db.close(); }
   }

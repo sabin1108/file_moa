@@ -56,6 +56,7 @@ function FindWorkPanel({ onPrepare, onQuestion, canStart, queryAction }: {
         canPrepare={canStart}
         queryAction={queryAction}
         owner={local.owner}
+        semanticTools={{ model: local.semanticModel, prepare: local.prepareSourceSemantic, readStatus: local.readSourceSemanticStatus }}
         onOpenFile={path => {
           trigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
           void local.preview.open(path);
