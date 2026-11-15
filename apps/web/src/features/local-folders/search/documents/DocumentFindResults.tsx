@@ -84,7 +84,7 @@ export function DocumentFindResults({
               onPreview={() => onOpenFile(document.path)}
             />
             <div className={styles.findMeta}>
-            {document.retrieval && <p className={styles.findStatus} data-find-semantic>뜻이 비슷한 후보 · 필수 조건 확인 · 본문 {document.retrieval.start + 1}~{document.retrieval.end}자{document.retrieval.partial ? " · 일부 본문만 준비됨" : ""}</p>}
+            {document.retrieval && <p className={styles.findStatus} data-find-semantic>{document.retrieval.lexical ? "단어·의미 검색에서 함께 찾음" : "뜻이 비슷한 후보"} · 필수 조건 확인 · 본문 {document.retrieval.start + 1}~{document.retrieval.end}자{document.retrieval.partial ? " · 일부 본문만 준비됨" : ""}</p>}
             {document.finding.matches && Object.values(document.finding.matches).some(terms => terms.length > 0) && <p className={styles.note} data-find-fields>{[
               document.finding.matches.name.length > 0 && "이름",
               document.finding.matches.path.length > 0 && "폴더 경로",

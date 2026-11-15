@@ -64,7 +64,7 @@ import {
   type RecoveryArchiveSnapshot,
 } from "./recovery/archive/recovery-archive";
 import { createCopyHasher } from "./content/copy-hash";
-import { rankFindDocuments } from "./search/documents/document-find-ranking";
+import { mergeFindDocuments, rankFindDocuments } from "./search/documents/document-find-ranking";
 import { SemanticModelController } from "./search/semantic/semantic-model-controller";
 import { prepareSemanticSource, semanticSourceMatches } from "./search/semantic/semantic-source";
 import { readInstalledModel } from "./search/semantic/model-assets";
@@ -1077,15 +1077,14 @@ export class FolderConnectionSession {
       query.semantic ? query.semantic.lexical ?? undefined : query,
     );
 
-    const documents = [...result.findings ?? []];
+    let documents = [...result.findings ?? []];
     let notice: string | undefined;
     if (query.semantic) {
       const { scope: key, check } = this.currentSourceIndex();
       try {
         const semantic = await semanticSourceMatches(key, result, { ...query, semantic: query.semantic }, this.semanticModel, signal, check);
         check();
-        const existing = new Set(documents.map(document => JSON.stringify(document.path)));
-        documents.push(...semantic.documents.filter(document => !existing.has(JSON.stringify(document.path))));
+        documents = mergeFindDocuments(documents, semantic.documents);
         notice = semantic.notice;
       } catch (error) {
         check();

@@ -27,8 +27,8 @@ const checks = [];
 const check = (name, passed) => { checks.push({ name, passed: !!passed }); assert.ok(passed, name); };
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 let page;
-const until = async expression => {
-  for (let i = 0; i < 700; i++) { if (await page.eval(`Boolean(${expression})`)) return; await pause(25); }
+const until = async (expression, attempts = 700) => {
+  for (let i = 0; i < attempts; i++) { if (await page.eval(`Boolean(${expression})`)) return; await pause(25); }
   throw Error("Timed out: " + expression);
 };
 const click = async text => page.eval(text => { const buttons = [...document.querySelectorAll("button")].filter(button => button.textContent.trim() === text); assertOne(buttons); buttons[0].click(); function assertOne(nodes) { if (nodes.length !== 1) throw Error("Ambiguous button: " + text + " " + nodes.length); } }, text);
@@ -127,6 +127,21 @@ try {
   }));
   check("related results are explained without a full-condition badge", await page.eval(() => [...document.querySelectorAll("[data-find-related]")].every(node => !node.parentElement.textContent.includes("✓ 조건 일치"))));
   check("metadata-only files cannot be selected for grounded preparation", await page.eval(() => { const inputs = [...document.querySelectorAll('[data-find-metadata="true"] input')]; return inputs.length === 1 && inputs.every(input => input.disabled); }));
+  if (process.argv.includes("--answer")) {
+    await page.eval(() => document.querySelector('[data-find-candidate]:not([data-find-metadata]) input[type="checkbox"]').click());
+    const readsBefore = await page.eval(() => window.workerReads.length);
+    await page.eval(() => document.querySelector('[data-find-question]').click());
+    await until('document.querySelector(\'[aria-label="선택 자료 전송 확인"]\')');
+    check("search selection rereads original bytes for the question", await page.eval(count => window.workerReads.length > count, readsBefore));
+    check("question preview requires separate consent without an action call", await page.eval(() => window.ragProbe.groundedRequests.length === 0 && document.querySelector('[data-action="organization-send"]').disabled));
+    await page.eval(() => document.querySelector('[aria-label="선택 자료 전송 확인"] input').click());
+    await page.eval(() => document.querySelector('[data-action="organization-send"]').click());
+    await until('document.querySelector(\'[aria-label="자료 근거 답변"] q\')');
+    check("search through answer uses one synthetic action with verified excerpt hashes", await page.eval(() => window.ragProbe.groundedRequests.length === 1 && window.ragProbe.groundedRequests[0].consent && window.ragProbe.groundedRequests[0].documents.every(document => /^[a-f0-9]{64}$/u.test(document.sha256) && /^[a-f0-9]{64}$/u.test(document.excerptHash))));
+    check("answer quotes the selected source excerpt exactly", await page.eval(() => document.querySelector('[aria-label="자료 근거 답변"] q').textContent === window.ragProbe.groundedRequests[0].documents[0].excerpt.slice(0, 20)));
+    check("full synthetic flow never writes source files", await page.eval(() => window.listingProbe.productWrites === 0));
+    writeFileSync(resolve(output, "synthetic-action.json"), JSON.stringify(await page.eval(() => window.ragProbe.groundedRequests), null, 2));
+  } else {
   for (const width of [1440, 768, 390]) {
     await page.setViewport({ width, height: 900 });
     check(`${width}: query conditions and results stay within the viewport`, await page.eval(() => document.documentElement.scrollWidth <= innerWidth));
@@ -195,11 +210,16 @@ try {
     const getFile = FileSystemFileHandle.prototype.getFile;
     FileSystemFileHandle.prototype.getFile = function () { if (this.name.startsWith("checkpoint-")) window.metadataReads.push(this.name); return getFile.call(this); };
   });
-  const resumed = await second.eval(async () => window.ragProbe.local.refreshSourceIndex(new AbortController().signal));
-  check("another restored tab resumes the same persisted scan and completes", resumed.complete && !resumed.resumable && resumed.catalogCount === 309);
+  // Each slice is time-bounded; a busy host can need more than one resumed slice.
+  let resumed;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    resumed = await second.eval(async () => window.ragProbe.local.refreshSourceIndex(new AbortController().signal));
+    if (resumed.complete) break;
+  }
+  check("another restored tab resumes bounded persisted slices and completes", resumed?.complete && !resumed.resumable && resumed.catalogCount === 309);
   const priorReads = await page.eval(() => window.metadataReads);
   const nextReads = await second.eval(() => window.metadataReads);
-  check("resuming does not reread already committed metadata entries", priorReads.length > 0 && nextReads.length > 0 && !nextReads.some(name => priorReads.includes(name)));
+  check("resuming does not reread already committed metadata entries", priorReads.length > 0 && nextReads.length > 0 && !nextReads.some(name => priorReads.includes(name)) && new Set(nextReads).size === nextReads.length);
   check("metadata resume never invokes the content Worker", await page.eval(() => window.workerReads.length) === reads + 1);
 
   await second.eval(() => Object.defineProperty(document, "visibilityState", { configurable: true, get: () => "hidden" }));
@@ -226,7 +246,8 @@ try {
   const beforeResumeReads = await page.eval(() => window.metadataReads.length);
   await page.eval(() => { window.fixtureVisibility = "visible"; document.dispatchEvent(new Event("visibilitychange")); });
   await until(`window.metadataReads.length > ${beforeResumeReads}`);
-  await until('window.ragProbe.local.indexWatch.notice === "현재 파일 목록을 자동으로 확인했어요."');
+  // A partial timed slice resumes on the next 30-second automatic check.
+  await until('window.ragProbe.local.indexWatch.notice === "현재 파일 목록을 자동으로 확인했어요."', 2700);
   check("automatic complete scan observes additions, edits and removals", await page.eval(async () => {
     const rows = await window.ragIndex.catalog(window.ragScope);
     const changed = rows.find(file => file.path.join("/") === "가온센터 이력서.md");
@@ -250,6 +271,7 @@ try {
   check("a disconnected second-tab handle cannot recreate a cleared index", stale === "source-folder-not-connected" && await page.eval(async () => (await window.ragIndex.status(window.ragScope)).catalogCount === 0));
   check("source files receive no product writes", await page.eval(() => window.listingProbe.productWrites === 0));
   check("browser reports no product exceptions", page.consoleErrors.length === 0 && second.consoleErrors.length === 0);
+  }
   writeFileSync(resolve(output, "checks.json"), JSON.stringify({ checks, condition: "Actual UI/controllers/Worker/hash/IDB/OPFS/Web Locks; synthetic folder permissions and model response. Real OS permission dialog, physical IME/device and paid service authorization are separate." }, null, 2));
   console.log(`${checks.length} local RAG browser checks passed.`);
 } catch (error) {

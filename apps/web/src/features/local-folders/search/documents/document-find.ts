@@ -41,7 +41,7 @@ export type FindDocument = Readonly<{
   finding: FindEvidence;
   ocr?: boolean;
   contentAvailable?: boolean;
-  retrieval?: Readonly<{ kind: "semantic"; score: number; start: number; end: number; partial: boolean }>;
+  retrieval?: Readonly<{ kind: "semantic"; score: number; start: number; end: number; partial: boolean; lexical?: true }>;
 }>;
 
 export type FindResult = Readonly<{

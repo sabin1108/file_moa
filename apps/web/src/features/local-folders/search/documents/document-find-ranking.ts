@@ -27,9 +27,9 @@ export function compareFindDocuments(left: FindDocument, right: FindDocument) {
 
   if (completeness) return completeness;
 
-  const retrievalOrder = Number(!!left.retrieval) - Number(!!right.retrieval);
+  const retrievalOrder = Number(!!left.retrieval && !left.retrieval.lexical) - Number(!!right.retrieval && !right.retrieval.lexical);
   if (retrievalOrder) return retrievalOrder;
-  if (left.retrieval && right.retrieval) return right.retrieval.score - left.retrieval.score || JSON.stringify(left.path).localeCompare(JSON.stringify(right.path), "ko");
+  if (left.retrieval && right.retrieval && !left.retrieval.lexical && !right.retrieval.lexical) return right.retrieval.score - left.retrieval.score || JSON.stringify(left.path).localeCompare(JSON.stringify(right.path), "ko");
 
   const scoreOrder = (fieldScore(right) + (right.finding.relevance?.phraseBoost ?? 0) * 8) - (fieldScore(left) + (left.finding.relevance?.phraseBoost ?? 0) * 8);
 
@@ -40,6 +40,25 @@ export function compareFindDocuments(left: FindDocument, right: FindDocument) {
 
 export function rankFindDocuments(documents: readonly FindDocument[]): FindDocument[] {
   return [...documents].sort(compareFindDocuments);
+}
+
+export function mergeFindDocuments(literal: readonly FindDocument[], semantic: readonly FindDocument[]): FindDocument[] {
+  const byPath = new Map(semantic.map(document => [JSON.stringify(document.path), document]));
+  const paths = new Set(literal.map(document => JSON.stringify(document.path)));
+  const merged = literal.map(document => {
+    const other = byPath.get(JSON.stringify(document.path));
+    if (!other?.retrieval || document.contentAvailable === false) return document;
+
+    const additional = other.finding.evidence.filter(line => !document.finding.evidence.includes(line));
+    // Reserve both retrieval reasons before applying the shared evidence limit.
+    const evidence = [...document.finding.evidence.slice(0, 1), ...additional.slice(0, 1), ...document.finding.evidence.slice(1), ...additional.slice(1)];
+    return {
+      ...document,
+      finding: { ...document.finding, evidence: [...new Set(evidence)].slice(0, 12) },
+      retrieval: { ...other.retrieval, lexical: true as const },
+    };
+  });
+  return [...merged, ...semantic.filter(document => !paths.has(JSON.stringify(document.path)))];
 }
 
 export function retainFindCandidate(documents: FindDocument[], candidate: FindDocument, limit: number): boolean {

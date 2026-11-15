@@ -9,16 +9,23 @@ import { WorkspaceShell } from "../../src/components/layout/WorkspaceShell";
 import ui from "../../src/styles/workspace-ui.module.css";
 import layout from "../../src/styles/workspace-layout.module.css";
 import { compileSearchQuerySuggestion, searchQueryRequestSchema, type SearchQueryAction, type SearchQueryResult } from "../../src/shared/search-query";
+import { groundedRequestSchema, type GroundedAction, type GroundedRequest } from "../../src/shared/grounded-chat";
 import "../../src/styles/globals.css";
 
 type Probe = {
   local?: ReturnType<typeof useSharedSourceFolderConnection>;
   requests: unknown[];
+  groundedRequests: GroundedRequest[];
   mode: "ok" | "hold" | "invalid";
   release: (() => void) | null;
 };
 const browser = window as unknown as Window & { ragProbe: Probe };
-browser.ragProbe = { requests: [], mode: "ok", release: null };
+browser.ragProbe = { requests: [], groundedRequests: [], mode: "ok", release: null };
+const groundedAction: GroundedAction = async value => {
+  const input = groundedRequestSchema.parse(value);
+  browser.ragProbe.groundedRequests.push(input);
+  return { ok: true, model: "synthetic-only", answer: { answer: "합성 자료에서 확인한 답변입니다.", citations: [{ documentId: input.documents[0].id, quote: input.documents[0].excerpt.slice(0, 20) }] } };
+};
 
 // Only the paid model response is replaced; product UI, controllers, permissions, Worker and IDB run.
 const queryAction: SearchQueryAction = async value => {
@@ -44,7 +51,7 @@ function Workspace() {
       <button data-rag-connect disabled={local.state.phase !== "ready" || !!local.state.pending} onClick={() => { void local.connect(); }}>합성 폴더 연결</button>
       <button data-rag-settings onClick={() => setSettings(value => !value)}>{settings ? "대화로 돌아가기" : "폴더 설정"}</button>
     </nav>
-    {settings ? <WorkspaceShell title="설정" active="settings"><div className={`${ui.canvas} ${layout.settingsCanvas}`}><section className={layout.settingsSection}><header className={layout.settingsHeader}><h2>자료 폴더와 복구 보관함</h2></header><div className={layout.settingsPanel}><SourceFolderSettings /></div></section></div></WorkspaceShell> : <LiveConversation aiProvider="openai" queryAction={queryAction} />}
+    {settings ? <WorkspaceShell title="설정" active="settings"><div className={`${ui.canvas} ${layout.settingsCanvas}`}><section className={layout.settingsSection}><header className={layout.settingsHeader}><h2>자료 폴더와 복구 보관함</h2></header><div className={layout.settingsPanel}><SourceFolderSettings /></div></section></div></WorkspaceShell> : <LiveConversation aiProvider="openai" queryAction={queryAction} groundedAction={groundedAction} />}
   </>;
 }
 

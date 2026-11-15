@@ -3,6 +3,8 @@ import { FolderConnectionSession } from "../../src/features/local-folders/connec
 import { connectionKey } from "../../src/features/local-folders/connection/connection-validation";
 import { LocalTextIndex } from "../../src/features/local-folders/search/documents/local-text-index";
 import type { ConnectionOwner, FolderHandle, HandleRepository, SourceFolderRepository, SourceFolderConnection } from "../../src/features/local-folders/types";
+import * as semanticSource from "../../src/features/local-folders/search/semantic/semantic-source";
+import type { FindDocument, FindQuery } from "../../src/features/local-folders/search/documents/document-find";
 
 const a = { userId: "a", workspaceId: "work" };
 const b = { userId: "b", workspaceId: "work" };
@@ -73,6 +75,22 @@ function sourceRepository() {
 }
 
 describe("account-scoped folder connections", () => {
+  it("keeps lexical and semantic evidence when the session finds the same current path", async () => {
+    const session = new FolderConnectionSession(sourceRepository());
+    await session.switchOwner(a);
+    await session.select("source", async () => handle("A"));
+    const literal: FindDocument = { name: "release.md", path: ["release.md"], contentAvailable: true, finding: { kind: "matched", dates: [], evidence: ["literal"] } };
+    vi.spyOn(session, "inspectSourceSnapshot").mockResolvedValue({ documents: [], findings: [literal], complete: true, excluded: [], limits: [], discoveredFiles: 1, directories: 1, bytes: 10 });
+    vi.spyOn(semanticSource, "semanticSourceMatches").mockResolvedValue({ documents: [{ ...literal, finding: { ...literal.finding, evidence: ["semantic"] }, retrieval: { kind: "semantic", score: 0.93, start: 0, end: 10, partial: false } }], notice: "synthetic" });
+    const companion: FindQuery = { terms: ["release"], from: null, to: null, basis: "body" };
+    const query: FindQuery = { ...companion, semantic: { meaning: "합성 질문", confirmed: true, lexical: companion } };
+    const signal = new AbortController().signal;
+    const result = await session.findSourceDocuments({ kind: "all" }, query, signal);
+    expect(session.inspectSourceSnapshot).toHaveBeenCalledWith({ kind: "all" }, "release", signal, undefined, companion);
+    expect(result.documents).toHaveLength(1);
+    expect(result.documents[0].finding.evidence).toEqual(["literal", "semantic"]);
+    expect(result.documents[0].retrieval?.lexical).toBe(true);
+  });
   it("stores multiple source roots, switches active root, and removes only the selected root", async () => {
     // Persistence is exercised separately in the real IndexedDB browser check.
     vi.spyOn(LocalTextIndex.prototype, "clear").mockResolvedValue();

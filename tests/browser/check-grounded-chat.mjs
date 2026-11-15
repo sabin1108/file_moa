@@ -118,6 +118,64 @@ try {
   });
   await click("[data-grounded-connect]");
   await until(() => document.body.innerText.includes("검증 자료 A"));
+  if (process.argv.includes("--long-multi")) {
+    await click('[data-tour="task-grounded"]');
+    await page.eval(async () => {
+      window.listingProbe.preparing = true;
+      const prefix = "사전 논의에서 확정하지 않은 내용입니다. ".repeat(3000);
+      const sources = [
+        ["evidence.md", prefix + "\n납품일: 2026-12-03. 첫 문서는 이 날짜를 제안했다."],
+        ["addendum.md", "납품일: 2026-12-10. 두 번째 문서는 다른 날짜를 제안했다. 두 문서는 합의된 최종 날짜를 정하지 않았다."],
+      ];
+      const { createSyntheticPdf } = await import("/tests/browser-fixtures/cache-equivalence.ts");
+      sources.push(["report.pdf", createSyntheticPdf(24, 0)]);
+      for (const [name, text] of sources) {
+        const stream = await (await window.listingProbe.a.getFileHandle(name, { create: true })).createWritable();
+        await stream.write(text); await stream.close();
+      }
+      window.listingProbe.preparing = false;
+      window.listingProbe.productWrites = 0;
+      window.groundedProbe.paths = ["evidence.md", "addendum.md", "report.pdf"];
+      window.groundedProbe.citationMode = "all";
+      window.groundedProbe.answer = "두 문서의 납품일이 서로 다릅니다. 제공된 발췌만으로 최종 날짜를 확정할 수 없습니다.";
+    });
+    await fill("납품일 page23 근거를 비교해 주세요.");
+    await prepare();
+    const prepared = await page.eval(() => window.groundedProbe.prepared);
+    check("long Markdown is read fully while the current question selects a bounded excerpt", prepared.documents.some(document => document.name === "evidence.md" && document.size > 100000 && document.excerpt.includes("2026-12-03") && document.excerpt.length <= 1200 && document.sha256 !== document.excerptHash));
+    check("multiple selected files preserve separate paths and source hashes", prepared.documents.length === 3 && new Set(prepared.documents.map(document => document.path.join("/"))).size === 3 && prepared.documents.every(document => /^[a-f0-9]{64}$/u.test(document.sha256)));
+    check("real PDF extraction covers 24 pages before the question excerpt is selected", prepared.documents.some(document => document.name === "report.pdf" && document.pdf?.pages === 24 && document.pdf?.complete && document.excerpt.includes("page23")));
+    check("conflicting dates remain present as separate source excerpts", prepared.documents.some(document => document.excerpt.includes("2026-12-03")) && prepared.documents.some(document => document.excerpt.includes("2026-12-10")));
+    check("a complete file read does not claim the whole text will be sent", await page.eval(() => document.querySelector('[data-grounded-preparation]').textContent.includes("전체 원문")));
+    check("multi-source question requires explicit consent and no action ran during preparation", await page.eval(() => !document.querySelector('[aria-label="선택 자료 전송 확인"] input').checked && document.querySelector('[data-action="organization-send"]').disabled && groundedProbe.calls.length === 0));
+    await consentAndSend();
+    await until(() => document.querySelector('[aria-label="자료 근거 답변"] q'));
+    const first = await page.eval(() => window.groundedProbe.calls[0]);
+    check("the action receives three bounded excerpts, not full long documents", first.documents.length === 3 && first.documents.every(document => document.excerpt.length <= 1200) && first.documents.reduce((sum, document) => sum + document.excerpt.length, 0) <= 6000);
+    check("each citation quote belongs to its own selected document", await page.eval(() => [...document.querySelectorAll('[aria-label="자료 근거 답변"] q')].length === 3 && [...document.querySelectorAll('[aria-label="자료 근거 답변"] q')].every(node => groundedProbe.calls[0].documents.some(document => document.excerpt.includes(node.textContent)))));
+    check("a synthetic conflict answer can preserve uncertainty without selecting a winner", await page.eval(() => document.body.textContent.includes("최종 날짜를 확정할 수 없습니다")));
+
+    await page.eval(() => { groundedProbe.citationMode = "none"; groundedProbe.answer = "제공된 자료에서 이 질문의 근거를 찾을 수 없습니다."; });
+    await fill("위성의 공전 주기를 알려 주세요.");
+    check("changing to an unsupported question removes the old transmission consent", await page.eval(() => groundedProbe.calls.length === 1 && !document.querySelector('[aria-label="선택 자료 전송 확인"] input').checked));
+    await consentAndSend();
+    await until(() => document.body.textContent.includes("제공된 자료에서 이 질문의 근거를 찾을 수 없습니다."));
+    check("a synthetic no-evidence response creates no invented source citation", await page.eval(() => groundedProbe.calls.length === 2 && document.querySelectorAll('[aria-label="자료 근거 답변"]').length === 1 && document.querySelectorAll('[aria-label="자료 근거 답변"] q').length === 0));
+
+    await fill("납품일 변경 여부를 확인해 주세요.");
+    await page.eval(async () => {
+      listingProbe.preparing = true;
+      const stream = await (await listingProbe.a.getFileHandle("evidence.md")).createWritable();
+      await stream.write("납품일: 2027-01-05. 검토 뒤 외부에서 바뀐 합성 원본이다."); await stream.close();
+      listingProbe.preparing = false;
+    });
+    await consentAndSend();
+    await until(() => document.body.textContent.includes("자료·권한이 바뀌었거나 답변을 확인하지 못했어요."));
+    check("a changed long source is stopped before another action receives old excerpts", await page.eval(() => groundedProbe.calls.length === 2));
+    check("long and multi-source flow never writes source files through product code", await page.eval(() => listingProbe.productWrites === 0));
+    writeFileSync(resolve(output, "long-multi-evidence.json"), JSON.stringify({ prepared, firstAction: first, checks, condition: "Actual UI, current-source Worker/hash, 24-page PDF extraction and OPFS. Synthetic answer provider; no real new AI calls or semantic answer-quality claim." }, null, 2));
+    console.log(`${checks.length} long/multi-source browser checks passed.`);
+  } else {
   await click('[data-tour="task-grounded"]');
   await until(() => document.querySelector('#message-draft'));
   await page.eval(() => { const input = document.querySelector('#message-draft'); input.focus(); });
@@ -502,6 +560,7 @@ try {
     "a different active source is never silently used for a saved reference",
     await page.eval(() => groundedProbe.navigations.length === 1 && groundedProbe.calls.length === 0)
   );
+  }
   writeFileSync(
     resolve(output, "grounded-checks.json"),
     JSON.stringify(

@@ -8,6 +8,7 @@ import { groundedRequestSchema, type GroundedRequest, type GroundedAction } from
 import "../../src/styles/globals.css";
 import ui from "../../src/styles/workspace-ui.module.css";
 import files from "../../src/features/local-folders/browsing/folder-workspace.module.css";
+import type { SourceSnapshot } from "../../src/shared/source-snapshot";
 
 declare global {
   interface Window {
@@ -16,7 +17,10 @@ declare global {
       mode: "success" | "hold" | "forged";
       finish: (() => void) | null;
       navigations: string[];
-      answer?: string
+      answer?: string;
+      paths?: string[];
+      citationMode?: "first" | "all" | "none";
+      prepared?: SourceSnapshot | null;
     };
   }
 }
@@ -25,7 +29,9 @@ const probe = window.groundedProbe = {
   calls: [] as GroundedRequest[],
   mode: "success" as "success" | "hold" | "forged",
   finish: null as (() => void) | null,
-  navigations: [] as string[]
+  navigations: [] as string[],
+  paths: undefined as string[] | undefined,
+  citationMode: "first" as "first" | "all" | "none"
 };
 const action: GroundedAction = async input => {
   const parsed = groundedRequestSchema.parse(input);
@@ -36,15 +42,16 @@ const action: GroundedAction = async input => {
     probe.finish = resolve;
   });
 
+  let citations = [{ documentId: probe.mode === "forged" ? "document-999" : parsed.documents[0].id, quote: parsed.documents[0].excerpt.slice(0, 20) }];
+  if (probe.citationMode === "none") citations = [];
+  else if (probe.citationMode === "all") citations = parsed.documents.map(document => ({ documentId: document.id, quote: document.excerpt.slice(-80) }));
+
   return {
     ok: true,
     model: "fixture-only",
     answer: {
       answer: window.groundedProbe.answer ?? "합성 근거에서 확인한 답변입니다.",
-      citations: [{
-        documentId: probe.mode === "forged" ? "document-999" : parsed.documents[0].id,
-        quote: parsed.documents[0].excerpt.slice(0, 20)
-      }]
+      citations
     }
   };
 };
@@ -57,6 +64,8 @@ function Workbench() {
     local.organization.getServerSnapshot
   );
   const [view, setView] = useState("chat");
+
+  useEffect(() => { window.groundedProbe.prepared = preparation.snapshot; }, [preparation.snapshot]);
 
   useEffect(() => {
     const navigate = (event: Event) => {
@@ -88,7 +97,7 @@ function Workbench() {
           local.organization.update({
             purpose: "grounded",
             request: document.querySelector<HTMLTextAreaElement>("#message-draft")?.value.trim() || "합성 자료 확인",
-            scope: { kind: "selected", entries: [{ path: ["evidence.md"], kind: "file" }] },
+            scope: { kind: "selected", entries: (probe.paths ?? ["evidence.md"]).map(name => ({ path: [name], kind: "file" as const })) },
             reference: null,
             destination: null
           });
