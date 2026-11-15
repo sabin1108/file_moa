@@ -3,6 +3,7 @@ import { findTextEvidence, type FindQuery } from "../search/documents/document-f
 import { extractPdfText } from "./pdf/pdf-text";
 import { createOcrReader } from "./ocr/ocr-text";
 import type { FindSource } from "../search/documents/document-field-match";
+import { reusableCachedText, textCacheFormat, type CachedText } from "./text-cache";
 
 type IndexContext = Readonly<{
   owner: string;
@@ -21,10 +22,7 @@ self.onmessage = async (
       find?: FindQuery;
       source?: FindSource;
       index?: IndexContext;
-      cached?: {
-        hash: string;
-        text: string
-      };
+      cached?: CachedText;
       ocr?: boolean
     }
   >,
@@ -55,7 +53,14 @@ self.onmessage = async (
       complete: boolean
     } | undefined;
 
-    if (/\.pdf$/iu.test(file.name)) {
+    const ocrEnabled = request.ocr === true;
+    const cacheHit = reusableCachedText(request.cached, file, sha256, ocrEnabled);
+
+    if (cacheHit && request.cached?.metadata) {
+      text = request.cached.text;
+      pdf = request.cached.metadata.pdf;
+      ocr = request.cached.metadata.ocr;
+    } else if (/\.pdf$/iu.test(file.name)) {
       const reader = request.ocr ? createOcrReader() : null;
 
       try {
@@ -114,9 +119,7 @@ self.onmessage = async (
       }
     } else {
       try {
-        const decoded = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-
-        text = request.cached?.hash === sha256 && request.cached.text === decoded ? request.cached.text : decoded;
+        text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
       } catch {
         self.postMessage({ sha256, size: bytes.byteLength, issue: "invalid-utf8" });
 
@@ -139,6 +142,11 @@ self.onmessage = async (
       excerpt,
       excerptHash,
       fullText: text,
+      cacheHit,
+      cacheMetadata: {
+        format: textCacheFormat(file.name), size, lastModified: file.lastModified, ocrEnabled,
+        ...(pdf ? { pdf } : {}), ...(ocr ? { ocr } : {}),
+      },
       ...(pdf ? { pdf } : {}),
       ...(ocr ? { ocr } : {}),
       ...(request.find

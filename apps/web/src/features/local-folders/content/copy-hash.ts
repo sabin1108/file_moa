@@ -6,6 +6,7 @@ import {
 import { readOcrEnabled } from "./ocr/ocr-preferences";
 import { isOcrDetails, OCR_LIMITS } from "./ocr/ocr-image";
 import type { FindSource } from "../search/documents/document-field-match";
+import { isTextCacheMetadata, type CachedText, type TextCacheMetadata } from "./text-cache";
 
 export type TextFileSnapshot = Readonly<{
   sha256: string;
@@ -22,6 +23,8 @@ export type TextFileSnapshot = Readonly<{
     complete: boolean
   }>;
   fullText?: string;
+  cacheHit?: boolean;
+  cacheMetadata?: TextCacheMetadata;
 }>;
 
 export type TextIndexContext = Readonly<{
@@ -59,10 +62,7 @@ export function createCopyHasher(signal?: AbortSignal) {
     instruction?: string,
     find?: FindQuery,
     index?: TextIndexContext,
-    cached?: {
-      hash: string;
-      text: string
-    },
+    cached?: CachedText,
     source?: FindSource,
   ): Promise<TextFileSnapshot | {
     sha256: string;
@@ -120,6 +120,9 @@ export function createCopyHasher(signal?: AbortSignal) {
             settle(new Error("hash-read-failed"));
           } else if ("ocr" in data && !isOcrDetails(data.ocr)) {
             settle(new Error("hash-read-failed"));
+          } else if (("cacheMetadata" in data && !isTextCacheMetadata(data.cacheMetadata))
+            || ("cacheHit" in data && typeof data.cacheHit !== "boolean")) {
+            settle(new Error("hash-read-failed"));
           } else if (instruction === undefined) {
             settle(undefined, { sha256: data.sha256, size: file.size });
           } else if ("issue" in data && typeof data.issue === "string") {
@@ -159,6 +162,8 @@ export function createCopyHasher(signal?: AbortSignal) {
                 : {}),
               ...("ocr" in data && isOcrDetails(data.ocr) ? { ocr: data.ocr } : {}),
               ...("fullText" in data && typeof data.fullText === "string" ? { fullText: data.fullText } : {}),
+              ...("cacheHit" in data ? { cacheHit: data.cacheHit as boolean } : {}),
+              ...("cacheMetadata" in data && isTextCacheMetadata(data.cacheMetadata) ? { cacheMetadata: data.cacheMetadata } : {}),
               ...(find && "finding" in data
                 ? { finding: data.finding as FindEvidence | null }
                 : {}),
@@ -200,10 +205,7 @@ export function createCopyHasher(signal?: AbortSignal) {
       instruction: string,
       find?: FindQuery,
       index?: TextIndexContext,
-      cached?: {
-        hash: string;
-        text: string
-      },
+      cached?: CachedText,
       source?: FindSource) =>
       (await request(file, instruction, find, index, cached, source)) as TextFileSnapshot,
     dispose,

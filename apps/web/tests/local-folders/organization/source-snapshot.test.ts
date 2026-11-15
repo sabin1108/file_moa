@@ -3,6 +3,7 @@ import { DOCUMENT_LIMITS } from "@personal-ai/domain";
 import { readSourceSnapshot } from "../../../src/features/local-folders/organization/source-snapshot";
 import type { FolderHandle } from "../../../src/features/local-folders/types";
 import { withAbsentVaultMarker } from "../fixtures/absent-vault-marker";
+import { LocalTextIndex, LOCAL_TEXT_INDEX_VERSION } from "../../../src/features/local-folders/search/documents/local-text-index";
 
 const readText = vi.hoisted(() => vi.fn());
 const dispose = vi.hoisted(() => vi.fn());
@@ -51,9 +52,52 @@ function directory(name: string, entries: Record<string, File | FolderHandle>): 
   return root as unknown as FolderHandle;
 }
 
-afterEach(() => vi.clearAllMocks());
+afterEach(() => { vi.restoreAllMocks(); vi.clearAllMocks(); });
 
 describe("read-only TXT/MD organization snapshot", () => {
+  it("CACHE-003 stores observed extraction metadata and avoids rewriting validated cache hits", async () => {
+    const file = new File(["abc"], "note.md", { lastModified: 100 });
+    const root = directory("자료", { "note.md": file });
+    const context = { owner: "owner", workspace: "workspace", connection: "connection" };
+    const metadata = { format: "text" as const, size: 3, lastModified: 100, ocrEnabled: false };
+    const cached = { ...context, id: "cached", path: ["note.md"], hash: "a".repeat(64), text: "abc", parserVersion: LOCAL_TEXT_INDEX_VERSION, updatedAt: 1, metadata };
+    vi.spyOn(LocalTextIndex.prototype, "readPath").mockResolvedValue(cached);
+    const put = vi.spyOn(LocalTextIndex.prototype, "put").mockResolvedValue();
+    vi.spyOn(LocalTextIndex.prototype, "retain").mockResolvedValue();
+    const check = vi.fn();
+    readText.mockResolvedValue({ sha256: cached.hash, size: 3, fullText: "abc", excerpt: "abc", excerptHash: "b".repeat(64), cacheMetadata: metadata, cacheHit: false });
+
+    await readSourceSnapshot(root, { kind: "all" }, "abc", check, undefined, undefined, context);
+
+    expect(readText.mock.calls[0][4]).toEqual(cached);
+    expect(put).toHaveBeenCalledWith(expect.objectContaining({ ...context, path: ["note.md"], hash: cached.hash }), "abc", expect.any(Function), metadata);
+    put.mockClear();
+    readText.mockResolvedValue({ sha256: cached.hash, size: 3, fullText: "abc", excerpt: "abc", excerptHash: "b".repeat(64), cacheMetadata: metadata, cacheHit: true });
+
+    await readSourceSnapshot(root, { kind: "selected", entries: [{ kind: "file", path: ["note.md"] }] }, "abc", check, undefined, undefined, context);
+
+    expect(put).not.toHaveBeenCalled();
+  });
+
+  it("CACHE-005 only prunes after a complete full scan, preserving entries after failure or partial selection", async () => {
+    const root = directory("자료", { "note.md": new File(["abc"], "note.md") });
+    const context = { owner: "owner", workspace: "workspace", connection: "connection" };
+    vi.spyOn(LocalTextIndex.prototype, "readPath").mockResolvedValue(undefined);
+    vi.spyOn(LocalTextIndex.prototype, "put").mockResolvedValue();
+    const retain = vi.spyOn(LocalTextIndex.prototype, "retain").mockResolvedValue();
+    readText.mockResolvedValue({ sha256: "a".repeat(64), size: 3, excerpt: "abc", excerptHash: "b".repeat(64) });
+
+    await readSourceSnapshot(root, { kind: "all" }, "abc", () => {}, undefined, undefined, context);
+
+    expect(retain).toHaveBeenCalledWith(context, [["note.md"]], expect.any(Function));
+    retain.mockClear();
+    await readSourceSnapshot(root, { kind: "selected", entries: [{ kind: "file", path: ["note.md"] }] }, "abc", () => {}, undefined, undefined, context);
+    readText.mockRejectedValueOnce(new Error("invalid-utf8"));
+    const failed = await readSourceSnapshot(root, { kind: "all" }, "abc", () => {}, undefined, undefined, context);
+
+    expect(failed.complete).toBe(false);
+    expect(retain).not.toHaveBeenCalled();
+  });
   it("keeps only name evidence and discards stale modification dates when a file changes during reading", async () => {
     const name = "해솔연구.md";
     const root = directory("자료", { [name]: new File(["x"], name) });

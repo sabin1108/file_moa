@@ -182,10 +182,10 @@ try {
   const cache = await page.eval(async () => {
     const index = new window.Index("pdf-index-fixture");
     const a = { owner: "a", workspace: "w", connection: "stable-root-a" };
-    const key = { ...a, path: ["notes.txt"], hash: "one", parserVersion: 2 };
+    const key = { ...a, path: ["notes.txt"], hash: "1".repeat(64), parserVersion: 2 };
 
     await index.put(key, "first text");
-    await index.put({ ...key, hash: "two" }, "changed text");
+    await index.put({ ...key, hash: "2".repeat(64) }, "changed text");
 
     const updated = await index.search(a, "text");
     const isolated = await index.search({ ...a, connection: "stable-root-b" }, "text");
@@ -209,7 +209,7 @@ try {
     };
   });
 
-  assert.deepEqual(cache.updated, [["two", "changed text"]]);
+  assert.deepEqual(cache.updated, [["2".repeat(64), "changed text"]]);
   assert.equal(cache.isolated.length, 0);
   assert.ok(cache.revoked);
   assert.equal(cache.remaining.length, 0);

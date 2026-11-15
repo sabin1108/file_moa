@@ -25,6 +25,20 @@ afterEach(() => {
 });
 
 describe("copy hash Worker lifetime", () => {
+  it("CACHE-002 rejects malformed extraction metadata at the Worker boundary", async () => {
+    vi.stubGlobal("Worker", TestWorker);
+    const hasher = createCopyHasher();
+    const pending = hasher.readText(new File(["abc"], "note.md"), "abc");
+    const rejection = expect(pending).rejects.toThrow("hash-read-failed");
+
+    TestWorker.instances[0].onmessage!({ data: {
+      sha256: "a".repeat(64), size: 3, excerpt: "abc", excerptHash: "b".repeat(64),
+      cacheMetadata: { format: "pdf", size: 3, lastModified: 100, ocrEnabled: false, pdf: { pages: -1, complete: true } },
+    } });
+
+    await rejection;
+    expect(TestWorker.instances[0].terminate).toHaveBeenCalledOnce();
+  });
   it("bounds opt-in OCR time and rejects malformed OCR metadata", async () => {
     vi.stubGlobal("Worker", TestWorker);
     vi.stubGlobal("localStorage", { getItem: () => "true" });

@@ -1,23 +1,31 @@
 import { createHash } from "node:crypto";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+const pdfRead = vi.hoisted(() => vi.fn());
+
 vi.mock("pdfjs-dist/legacy/build/pdf.mjs", () => ({
   PDFWorker: class { destroy() { } },
-  getDocument: () => ({
-    promise: Promise.resolve({
-      numPages: 1,
-      getPage: async () => ({
-        getTextContent: async () => ({ items: [{ str: "PDF 본문 검색어" }] }),
-        cleanup: vi.fn(),
+  getDocument: (...args: unknown[]) => {
+    pdfRead(...args);
+
+    return {
+      promise: Promise.resolve({
+        numPages: 1,
+        getPage: async () => ({
+          getTextContent: async () => ({ items: [{ str: "PDF 본문 검색어" }] }),
+          cleanup: vi.fn(),
+        }),
       }),
-    }),
-    destroy: vi.fn(),
-  }),
+      destroy: vi.fn(),
+    };
+  },
 }));
 
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.resetModules();
+  vi.restoreAllMocks();
+  pdfRead.mockClear();
 });
 
 async function worker() {
@@ -36,6 +44,87 @@ async function worker() {
 }
 
 describe("shared hash and text snapshot Worker", () => {
+  it("CACHE-002 reuses validated text after hashing bytes and regenerates the current question excerpt", async () => {
+    const self = await worker();
+    const text = "AlphaEvidence " + "중립 문장 ".repeat(400) + " BetaEvidence";
+    const file = new File([text], "note.md", { lastModified: 100 });
+    const decode = vi.spyOn(TextDecoder.prototype, "decode");
+    const read = vi.spyOn(file, "arrayBuffer");
+    const cached = {
+      hash: createHash("sha256").update(text).digest("hex"), text,
+      metadata: { format: "text", size: file.size, lastModified: 100, ocrEnabled: false },
+    };
+
+    await self.onmessage!({ data: { file, instruction: "BetaEvidence", cached } });
+
+    expect(read).toHaveBeenCalledOnce();
+    expect(decode).not.toHaveBeenCalled();
+    expect(self.postMessage.mock.calls[0][0]).toMatchObject({ cacheHit: true, fullText: text });
+    expect(self.postMessage.mock.calls[0][0].excerpt).toContain("BetaEvidence");
+  });
+
+  it("CACHE-004 same size and mtime never hide changed bytes or invalid UTF8", async () => {
+    const self = await worker();
+    const file = new File([new Uint8Array([0xc3, 0x28])], "note.md", { lastModified: 100 });
+    const cached = {
+      hash: createHash("sha256").update("ok").digest("hex"), text: "ok",
+      metadata: { format: "text", size: 2, lastModified: 100, ocrEnabled: false },
+    };
+
+    await self.onmessage!({ data: { file, instruction: "ok", cached } });
+
+    expect(self.postMessage.mock.calls[0][0]).toMatchObject({ issue: "invalid-utf8" });
+  });
+
+  it("CACHE-002 skips PDF extraction only for matching metadata and keeps truncation details", async () => {
+    const self = await worker();
+    const file = new File(["pdf bytes"], "note.pdf", { lastModified: 100 });
+    const cached = {
+      hash: createHash("sha256").update("pdf bytes").digest("hex"), text: "CachedPDF evidence",
+      metadata: { format: "pdf", size: file.size, lastModified: 100, ocrEnabled: false, pdf: { pages: 51, complete: false } },
+    };
+
+    await self.onmessage!({ data: { file, instruction: "CachedPDF", cached } });
+
+    expect(pdfRead).not.toHaveBeenCalled();
+    expect(self.postMessage.mock.calls[0][0]).toMatchObject({ cacheHit: true, pdf: { pages: 51, complete: false } });
+
+    await self.onmessage!({ data: { file, instruction: "PDF", cached, ocr: true } });
+
+    expect(pdfRead).toHaveBeenCalledOnce();
+    expect(self.postMessage.mock.calls[1][0].cacheHit).toBe(false);
+  });
+
+  it("CACHE-002 cached OCR text retains its partial status and cannot bypass OCR being disabled", async () => {
+    const self = await worker();
+    const file = new File(["image bytes"], "scan.png", { lastModified: 100 });
+    const cached = {
+      hash: createHash("sha256").update("image bytes").digest("hex"), text: "CachedOCR evidence",
+      metadata: { format: "image", size: file.size, lastModified: 100, ocrEnabled: true, ocr: { pages: 1, complete: false } },
+    };
+
+    await self.onmessage!({ data: { file, instruction: "CachedOCR", cached, ocr: true } });
+
+    expect(self.postMessage.mock.calls[0][0]).toMatchObject({ cacheHit: true, ocr: { pages: 1, complete: false }, fullText: cached.text });
+
+    await self.onmessage!({ data: { file, instruction: "CachedOCR", cached } });
+
+    expect(self.postMessage.mock.calls[1][0]).toMatchObject({ issue: "ocr-disabled" });
+  });
+
+  it.each([
+    { hash: "a".repeat(64), text: "old text" },
+    { hash: "a".repeat(64), text: 42, metadata: { format: "text", size: 3, lastModified: 100, ocrEnabled: false } },
+    { hash: "a".repeat(64), text: "old text", metadata: { format: "pdf", size: 3, lastModified: 100, ocrEnabled: false, pdf: { pages: -1, complete: true } } },
+  ])("CACHE-002 ignores legacy or malformed cache entries", async cached => {
+    const self = await worker();
+    const file = new File(["abc"], "note.md", { lastModified: 100 });
+    cached.hash = createHash("sha256").update("abc").digest("hex");
+
+    await self.onmessage!({ data: { file, instruction: "abc", cached } });
+
+    expect(self.postMessage.mock.calls[0][0]).toMatchObject({ fullText: "abc", cacheHit: false });
+  });
   it("extracts PDF text in the Worker and returns only a bounded excerpt", async () => {
     const self = await worker();
     const file = new File(["not the real bytes"], "자료.pdf");

@@ -261,11 +261,12 @@ export async function readSourceSnapshot(
 
         if (content.ocr && !content.ocr.complete) limits.add("ocr-limit");
 
-        if (indexContext && typeof content.fullText === "string") {
+        if (indexContext && typeof content.fullText === "string" && !content.cacheHit) {
           await new LocalTextIndex().put(
             { ...indexContext, path: entry.path, hash: content.sha256, parserVersion: LOCAL_TEXT_INDEX_VERSION },
             content.fullText,
-            check
+            check,
+            content.cacheMetadata,
           ).catch(() => {
             check();
           });

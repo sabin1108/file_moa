@@ -1,3 +1,5 @@
+import { isTextCacheMetadata, type TextCacheMetadata } from "../../content/text-cache";
+
 export const LOCAL_TEXT_INDEX_VERSION = 2;
 
 type Scope = Readonly<{
@@ -15,13 +17,35 @@ type IndexKey = Scope & Readonly<{
 export type LocalTextIndexEntry = IndexKey & Readonly<{
   id: string;
   text: string;
-  updatedAt: number
+  updatedAt: number;
+  metadata?: TextCacheMetadata;
 }>;
 
 type Stats = {
   count: number;
   bytes: number
 };
+
+function isStoredEntry(value: unknown): value is LocalTextIndexEntry {
+  if (typeof value !== "object" || value === null) return false;
+
+  return "owner" in value && typeof value.owner === "string"
+    && "workspace" in value && typeof value.workspace === "string"
+    && "connection" in value && typeof value.connection === "string"
+    && "path" in value && Array.isArray(value.path) && value.path.every(part => typeof part === "string")
+    && "id" in value && value.id === JSON.stringify([value.owner, value.workspace, value.connection, value.path])
+    && "hash" in value && typeof value.hash === "string" && /^[a-f0-9]{64}$/u.test(value.hash)
+    && "text" in value && typeof value.text === "string"
+    && "parserVersion" in value && typeof value.parserVersion === "number" && Number.isSafeInteger(value.parserVersion) && value.parserVersion > 0
+    && "updatedAt" in value && typeof value.updatedAt === "number" && Number.isFinite(value.updatedAt)
+    && (!("metadata" in value) || isTextCacheMetadata(value.metadata));
+}
+
+function isStats(value: unknown): value is Stats {
+  return typeof value === "object" && value !== null
+    && "count" in value && typeof value.count === "number" && Number.isSafeInteger(value.count) && value.count >= 0
+    && "bytes" in value && typeof value.bytes === "number" && Number.isSafeInteger(value.bytes) && value.bytes >= 0;
+}
 
 /** Regenerable extracted text. Source bytes and permissions remain the authority. */
 
@@ -31,6 +55,7 @@ export class LocalTextIndex {
   private open(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(this.databaseName, 2);
+      let blocked = false;
 
       request.onupgradeneeded = () => {
         const db = request.result;
@@ -43,8 +68,17 @@ export class LocalTextIndex {
         store.createIndex("scope", ["owner", "workspace", "connection"]);
         db.createObjectStore("stats");
       };
-      request.onblocked = () => reject(new Error("index-database-blocked"));
+      request.onblocked = () => {
+        blocked = true;
+        reject(new Error("index-database-blocked"));
+      };
       request.onsuccess = () => {
+        if (blocked) {
+          request.result.close();
+
+          return;
+        }
+
         request.result.onversionchange = () => request.result.close();
         resolve(request.result);
       };
@@ -66,7 +100,7 @@ export class LocalTextIndex {
       return await new Promise((resolve, reject) => {
         const request = db.transaction("documents", "readonly").objectStore("documents").get(this.id({ ...scope, path }));
 
-        request.onsuccess = () => resolve(request.result?.parserVersion === LOCAL_TEXT_INDEX_VERSION ? request.result : undefined);
+        request.onsuccess = () => resolve(isStoredEntry(request.result) && request.result.parserVersion === LOCAL_TEXT_INDEX_VERSION ? request.result : undefined);
         request.onerror = () => reject(request.error);
       });
     } finally {
@@ -74,7 +108,7 @@ export class LocalTextIndex {
     }
   }
 
-  async put(key: IndexKey, text: string, assertCurrent: () => void = () => { }): Promise<void> {
+  async put(key: IndexKey, text: string, assertCurrent: () => void = () => { }, metadata?: TextCacheMetadata): Promise<void> {
     const db = await this.open();
 
     try {
@@ -89,15 +123,20 @@ export class LocalTextIndex {
           try {
             assertCurrent();
 
+            if ((previous.result !== undefined && !isStoredEntry(previous.result))
+              || (stats.result !== undefined && !isStats(stats.result))) throw new Error("index-invalid-cache");
+
             const before: Stats = stats.result ?? { count: 0, bytes: 0 };
             const next = {
               count: before.count + (previous.result ? 0 : 1),
               bytes: before.bytes - (previous.result?.text.length ?? 0) * 2 + text.length * 2
             };
 
+            if (!isStats(next)) throw new Error("index-invalid-cache");
+
             if (next.count > 500 || next.bytes > 50 * 1024 * 1024) throw new Error("index-storage-limit");
 
-            store.put({ ...key, id: this.id(key), text, updatedAt: Date.now() });
+            store.put({ ...key, id: this.id(key), text, updatedAt: Date.now(), ...(metadata ? { metadata } : {}) });
             statsStore.put(next, this.scopeId(key));
           } catch (error) {
             tx.abort();
@@ -130,7 +169,7 @@ export class LocalTextIndex {
             const stats = { count: 0, bytes: 0 };
 
             for (const entry of request.result as LocalTextIndexEntry[]) {
-              if (!keep.has(JSON.stringify(entry.path))) store.delete(entry.id);
+              if (!isStoredEntry(entry) || !keep.has(JSON.stringify(entry.path))) store.delete(entry.id);
               else {
                 stats.count++;
                 stats.bytes += entry.text.length * 2;
@@ -159,7 +198,7 @@ export class LocalTextIndex {
       return await new Promise((resolve, reject) => {
         const request = db.transaction("documents", "readonly").objectStore("documents").index("scope").getAll(IDBKeyRange.only([scope.owner, scope.workspace, scope.connection]));
 
-        request.onsuccess = () => resolve((request.result as LocalTextIndexEntry[]).filter(entry => entry.parserVersion === LOCAL_TEXT_INDEX_VERSION
+        request.onsuccess = () => resolve((request.result as unknown[]).filter(isStoredEntry).filter(entry => entry.parserVersion === LOCAL_TEXT_INDEX_VERSION
           && entry.text.toLocaleLowerCase("ko").includes(term.toLocaleLowerCase("ko"))));
         request.onerror = () => reject(request.error);
       });

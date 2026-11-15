@@ -54,7 +54,9 @@ try {
 
     try {
       const hash = await request(new File(["abc"], "copy.bin"));
-      const snapshot = await request({ file: new File(["앞부분 ".repeat(500) + "LCP 성능 실측"], "note.md"), instruction: "성능" });
+      const file = new File(["앞부분 ".repeat(500) + "LCP 성능 실측"], "note.md");
+      const snapshot = await request({ file, instruction: "성능" });
+      const cachedSnapshot = await request({ file, instruction: "LCP", cached: { hash: snapshot.sha256, text: snapshot.fullText, metadata: snapshot.cacheMetadata } });
       const invalid = await request({ file: new File([new Uint8Array([0xc3, 0x28])], "bad.md"), instruction: "자료" });
       const found = await request({
         file: new File(["회의 자료\n" + "앞부분 ".repeat(1000) + "\n회의일: 2026-10-15"], "meeting.md"),
@@ -62,7 +64,7 @@ try {
         find: { terms: ["회의"], from: "2026-10-01", to: "2026-10-31", basis: "meeting" }
       });
 
-      return { hash, snapshot, invalid, found };
+      return { hash, snapshot, cachedSnapshot, invalid, found };
     } finally {
       worker.terminate();
     }
@@ -70,6 +72,9 @@ try {
   assert.equal(result.hash.sha256, "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
   assert.ok(result.snapshot.excerpt.includes("LCP 성능 실측"));
   assert.match(result.snapshot.excerptHash, /^[a-f0-9]{64}$/);
+  assert.equal(result.cachedSnapshot.cacheHit, true);
+  assert.equal(result.cachedSnapshot.sha256, result.snapshot.sha256);
+  assert.ok(result.cachedSnapshot.excerpt.includes("LCP"));
   assert.equal(result.invalid.issue, "invalid-utf8");
   assert.equal(result.found.finding.kind, "matched");
   assert.deepEqual(result.found.finding.dates, ["2026-10-15"]);
@@ -87,4 +92,4 @@ writeFileSync(`${output}/production-worker.json`, JSON.stringify({
   bootstrap,
   result,
 }, null, 2));
-console.log("Production Worker: binary hash, text excerpt/hash, invalid UTF8 and full-body finding passed");
+console.log("Production Worker: binary hash, text excerpt/hash, cached re-excerpt, invalid UTF8 and full-body finding passed");
