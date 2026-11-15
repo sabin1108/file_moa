@@ -1960,6 +1960,12 @@
         }
       ],
       "nextMigrationSha256": "3e8f09a5419b44ab547e6bf1dc925044e0283629765897b4322998ea71063b85"
+    },
+    "runtime": {
+      "verifiedTls": true,
+      "runtimeRestricted": true,
+      "forcedRls": true,
+      "unscopedVisibleRows": 0
     }
   },
   "production": {
@@ -1976,7 +1982,7 @@
       390
     ],
     "overflow": false,
-    "queryAttempts": 2,
+    "queryAttempts": 3,
     "capturedQuery": {
       "requests": [
         {
@@ -1991,17 +1997,57 @@
     "proposalApplied": true,
     "applyStartedSearch": false,
     "usageLedgerPreviouslyEnabled": false,
-    "usageLedgerEnabledPendingDeployment": true
+    "usageLedgerEnabledPendingDeployment": false,
+    "ledgerDeployment": "https://vercel.com/sabins-projects-011c6dea/web/2uzwYLVUPE8ssnQRiEK8PWZPnyPX",
+    "ledgerCommit": "e931e2bda4cf0c6468636828385116f863316f08",
+    "usageLedgerEnabled": true,
+    "finalQuery": {
+      "requests": [
+        {
+          "status": 200,
+          "codes": [],
+          "success": false
+        },
+        {
+          "requestId": "1794718511693:dd090435-bc58-458e-af18-ec9879ed4a10",
+          "status": 200,
+          "codes": [],
+          "success": true
+        }
+      ],
+      "notice": "",
+      "proposal": true
+    },
+    "usage": {
+      "at": "2026-11-15T04:55:18.802Z",
+      "operation": "query",
+      "window": "last30min",
+      "rows": [
+        {
+          "status": "completed",
+          "model": "gpt-6-luna",
+          "calls": 1,
+          "input_tokens": 227,
+          "output_tokens": 31
+        }
+      ]
+    },
+    "keyboardReachedSend": true
   },
   "cost": {
     "earlierRequests": 6,
     "earlierEstimatedUsd": 0.0003125,
-    "browserRequests": 2,
+    "browserRequests": 3,
     "browserTokensNotRecorded": true,
-    "browserAdditionalStandardTokenCeilingUsd": 0.0024192,
-    "totalStandardTokenCeilingUsd": 0.0027317,
+    "browserAdditionalStandardTokenCeilingUsd": 0.0036288,
+    "totalStandardTokenCeilingUsd": 0.0039413,
     "budgetUsd": 1,
-    "billingDashboardChecked": false
+    "billingDashboardChecked": false,
+    "finalMeasuredInputTokens": 227,
+    "finalMeasuredOutputTokens": 31,
+    "finalEstimatedUsd": 0.0000382,
+    "knownEstimatedSubtotalUsd": 0.0003507,
+    "unrecordedBrowserAttempts": 2
   },
   "limits": [
     "No general semantic model adoption",
