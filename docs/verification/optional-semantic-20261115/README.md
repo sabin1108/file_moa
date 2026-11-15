@@ -75,3 +75,5 @@ Transformers.js3.8.1과 ORT Web1.22.0-dev.20250409-89f8206ba4, Xenova/multilingu
 ## 운영 설치 정책 수정
 
 기능 커밋9885bf9의 첫 Vercel 빌드는 `ERR_PNPM_IGNORED_BUILDS`로 중단됐다. 새 SDK가 가져온 protobufjs7.6.6·sharp0.34.5의 설치 후 스크립트가 기존 pnpm 정책에 없었던 것이 확인된 원인이다. 브라우저 추론에 필요 없는 protobuf 메타데이터 스크립트와 Sharp 선택 소스 빌드를 명시적으로 제외했다. 기존 사전 빌드 패키지와 허용된 Prisma 단계는 유지하며 네이티브 ONNX 설치도 실행하지 않는다. 실제 앱 추론 실패나 원본 손실로 기록하지 않는다. 고정 lockfile 일반 설치와 빌드를 재확인했다. 이미 제공하는100ms 간격 다운로드 진행 알림과 중복되는 SDK의 buffer 읽기 알림은 제거했고, 설치/384차원 질문을 다시 확인했다.
+
+수정 커밋f6f109c는 GitHub Vercel check 성공과 실제 대시보드의 Production Ready·Current를 확인했다. [관측 기록](release.json)의 시점과 소스 SHA를 따른다. 운영 설정 화면에서 선택 설치·약150MiB/수백MiB 안내·자동 모델 요청0을 확인했다. 공개 실행 모듈은44,484bytes/SHA-256 일치와 immutable 응답이었다. 사용자 운영 환경에는 모델 설치·폴더 권한 요청·본문 읽기·유료 AI 호출을 실행하지 않았다. 검증용 localhost 두 origin의 모델 Cache와 합성 연결은 정리했다. 이후 근거만 추가하는 커밋과 기능 소스를 구분한다.

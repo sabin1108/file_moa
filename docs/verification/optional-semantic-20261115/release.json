@@ -1,0 +1,31 @@
+{
+  "observedAt": "2026-11-15T08:03:04.503Z",
+  "sha": "f6f109c9240940c1d8fbb45e9b5f9187386b4111",
+  "deploymentUrl": "https://vercel.com/sabins-projects-011c6dea/web/8eumUn42xuvz9JeYoddHr4vK5kc2",
+  "deployment": {
+    "ready": true,
+    "current": true,
+    "production": true,
+    "sha": true,
+    "domain": true
+  },
+  "ui": {
+    "path": "/settings",
+    "summary": "선택 기능 · 이 기기에서 의미 검색 ",
+    "costPreview": true,
+    "installAvailable": true,
+    "automaticallyLoadedModelAssets": 0,
+    "automaticMetadata": null
+  },
+  "runtime": {
+    "status": 200,
+    "bytes": 44484,
+    "matchesManifest": true,
+    "cacheControl": "public, max-age=31536000, immutable"
+  },
+  "cleanup": {
+    "disconnectedSyntheticSources": 1,
+    "model": "absent"
+  },
+  "inferenceScope": "Local optimized Next Worker and synthetic browser sources; production settings and public runtime checked without installing a model for the user, granting OS folder permission or paid AI calls."
+}
