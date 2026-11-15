@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawn, spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -237,7 +237,7 @@ try {
     prismaCommand(["migrate", "deploy"], localUrl);
     assert.equal(
       sql('SELECT count(*) FROM moa_app._prisma_migrations WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL'),
-      "5"
+      String(readdirSync(migrations, { withFileTypes: true }).filter(entry => entry.isDirectory() && existsSync(join(migrations, entry.name, "migration.sql"))).length)
     );
   });
 
@@ -306,6 +306,16 @@ try {
       sql("SELECT (relrowsecurity AND relforcerowsecurity)::int FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='moa_app' AND c.relname='workspace'"),
       "1"
     );
+  });
+
+  await test("query interpretation usage keeps workspace isolation and operation validation", () => {
+    const insert = `INSERT INTO moa_app.ai_usage_event(id,"workspaceId","requestId",provider,operation,status)
+      VALUES ('fixture-query-usage','workspace-a','fixture-query-request','openai','query','reserved')`;
+
+    assert.equal(sql(asUser("fixture-a", insert + `; SELECT count(*) FROM moa_app.ai_usage_event WHERE operation='query'`)), "1");
+    assert.equal(sql(asUser("fixture-b", `SELECT count(*) FROM moa_app.ai_usage_event WHERE operation='query'`)), "0");
+    denied(asUser("fixture-b", insert.replaceAll("fixture-query", "foreign-query")), "42501");
+    denied(asUser("fixture-a", insert.replaceAll("fixture-query", "invalid-query").replace("'query'", "'unknown-operation'")), "23514");
   });
 
   await test("runtime setup is repeatable and rejects elevated existing roles", () => {

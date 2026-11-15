@@ -11,6 +11,9 @@ import { confirmFindQuery } from "./document-find";
 import styles from "../../organization/organization-preparation.module.css";
 import findStyles from "./document-find.module.css";
 import { Icon } from "../../../../components/ui/Icon";
+import { RemoteQueryControl } from "./RemoteQueryControl";
+import type { SearchQueryAction } from "../../../../shared/search-query";
+import type { ConnectionOwner } from "../../types";
 
 export function DocumentFindPanel({
   controller,
@@ -21,6 +24,8 @@ export function DocumentFindPanel({
   onPrepare,
   onQuestion,
   canPrepare,
+  queryAction,
+  owner,
 }: {
   controller: DocumentFindController;
   state: DocumentFindState;
@@ -30,6 +35,8 @@ export function DocumentFindPanel({
   onPrepare: () => void;
   onQuestion?: () => void;
   canPrepare: boolean;
+  queryAction?: SearchQueryAction;
+  owner?: ConnectionOwner;
 }) {
   const busy = state.phase === "searching";
   const period = state.filters.month !== "all";
@@ -56,7 +63,7 @@ export function DocumentFindPanel({
           <fieldset disabled={busy} className={styles.conditions}>
             <legend className="sr-only">검색 조건 입력</legend>
             <label className={styles.basis}>
-              <span className={findStyles.label}>검색어 <small>이름·경로·본문에서 모든 단어 확인</small></span>
+              <span className={findStyles.label}>필수 검색어 <small>이름·경로·본문에서 확인 · 정확한 문구는 따옴표</small></span>
               <input
                 aria-label="본문 검색어"
                 required
@@ -67,6 +74,24 @@ export function DocumentFindPanel({
                 }
               />
             </label>
+            <details className={findStyles.period} open={!!(state.filters.preferred || state.filters.excluded || state.filters.formats || state.filters.folder)}>
+              <summary>검색 조건 더 보기 <span>선호 문서·제외·형식·경로</span></summary>
+              <div className={styles.findFields}>
+                <label className={styles.basis}>선호하는 문서·단어
+                  <input aria-label="선호 검색어" maxLength={200} value={state.filters.preferred ?? ""} onChange={event => controller.configure({ preferred: event.target.value })} />
+                </label>
+                <label className={styles.basis}>제외할 단어
+                  <input aria-label="제외 검색어" maxLength={200} value={state.filters.excluded ?? ""} onChange={event => controller.configure({ excluded: event.target.value })} />
+                </label>
+                <label className={styles.basis}>파일 형식
+                  <input aria-label="검색 파일 형식" placeholder="pdf, md" maxLength={64} value={state.filters.formats ?? ""} onChange={event => controller.configure({ formats: event.target.value })} />
+                </label>
+                <label className={styles.basis}>포함할 폴더 경로
+                  <input aria-label="검색 폴더 경로 조건" maxLength={64} value={state.filters.folder ?? ""} onChange={event => controller.configure({ folder: event.target.value })} />
+                </label>
+              </div>
+              <p className={styles.note}>필수 검색어와 제외·형식·경로는 유지합니다. 선호 조건이 맞지 않는 결과는 관련 자료로 구분합니다.</p>
+            </details>
             <details className={findStyles.period} open={period}>
               <summary>기간 <span data-find-range>{range}</span></summary>
               <div className={styles.findFields}>
@@ -168,6 +193,7 @@ export function DocumentFindPanel({
             <p className={styles.note}>
               이 기기에서만 검색합니다.
             </p>
+            {queryAction && owner && <RemoteQueryControl key={`${owner.userId}:${owner.workspaceId}:${state.request}`} action={queryAction} owner={owner} question={state.request} filters={state.filters} onApply={controller.configure} />}
             <div className={styles.actions}>
               <button type="submit" data-find-search className={actionClasses("primary")}><Icon name="search" size={18} />검색 시작</button>
             </div>

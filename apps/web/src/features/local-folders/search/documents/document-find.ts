@@ -1,3 +1,4 @@
+import { parseDocumentQueryPlan, queryPlanInput, type DocumentQueryPlan } from "./document-query-plan";
 import { contentDates } from "../../../../shared/content-dates";
 import type { SourceSnapshot } from "../../organization/source-snapshot-rules";
 import { findDateBasisPatterns, findRelativeYear } from "./document-find-reply";
@@ -10,6 +11,11 @@ export type FindFilters = Readonly<{
   basis: string;
   window: string;
   endMonth?: string;
+  preferred?: string;
+  excluded?: string;
+  formats?: string;
+  folder?: string;
+  originalRequest?: string;
 }>;
 
 export type FindQuery = Readonly<{
@@ -17,6 +23,7 @@ export type FindQuery = Readonly<{
   from: string | null;
   to: string | null;
   basis: "meeting" | "written" | "body" | "modified";
+  plan?: DocumentQueryPlan;
 }>;
 
 export type FindEvidence = Readonly<{
@@ -24,6 +31,7 @@ export type FindEvidence = Readonly<{
   dates: readonly string[];
   evidence: readonly string[];
   matches?: FindFieldMatches;
+  relevance?: Readonly<{ kind: "all" | "related"; missing: readonly string[]; phraseBoost: number }>;
 }>;
 
 export type FindDocument = Readonly<{
@@ -54,78 +62,30 @@ export function isFindRequest(request: string) {
 }
 
 export function inferFindRequest(request: string, referenceYear?: number): FindFilters {
-  const bases = Object.entries(findDateBasisPatterns).filter(([, pattern]) => pattern.test(request));
-  const negated = /말고|제외|빼고|아닌|아니고|않|하지\s*마/u.test(request);
+  const dateRequest = request.replace(/"[^"\n]*"/gu, value => " ".repeat(value.length));
+  const bases = Object.entries(findDateBasisPatterns).filter(([, pattern]) => pattern.test(dateRequest));
+  const negated = /(?:20\d{2}\s*년?|\d{1,2}\s*월(?:말|초)?|회의일|작성일|수정일|본문\s*날짜)\s*(?:말고|제외|빼고|아닌|아니고)/u.test(dateRequest);
   const years = [
     ...new Set(
-      [...request.matchAll(/(?<!\d)(20\d{2})(?!\d)/gu)].map(
+      [...dateRequest.matchAll(/(?<![a-zA-Z0-9_.])(20\d{2})(?![a-zA-Z0-9_.])/gu)].map(
         (match) => match[1],
       ),
     ),
   ];
   const months = [
     ...new Set(
-      [...request.matchAll(/(?<!\d)(1[0-2]|0?[1-9])\s*월/gu)].map((match) =>
+      [...dateRequest.matchAll(/(?<!\d)(1[0-2]|0?[1-9])\s*월/gu)].map((match) =>
         String(Number(match[1])),
       ),
     ),
   ];
-  const words =
-    Object.values(findDateBasisPatterns).reduce((text, pattern) => text.replace(new RegExp(pattern.source, "gu"), " "), request)
-      .replace(/재작년|작년|올해/gu, " ")
-      .replace(/20\d{2}\s*년?/gu, " ")
-      .replace(
-        /\d{1,2}\s*월?\s*(?:부터|~|에서|-)\s*\d{1,2}\s*월(?:까지)?/gu,
-        " "
-      )
-      .replace(
-        /\d{1,2}\s*월(?:쯤|경|초|말|무렵)?/gu,
-        " "
-      )
-      .match(/\.[a-zA-Z][a-zA-Z0-9]*(?:\.[a-zA-Z0-9]+)*|[가-힣a-zA-Z0-9]+(?:[.+][가-힣a-zA-Z0-9]+)*(?:\+\+|#)?/gu) ?? [];
-  const generic = new Set([
-    "내가",
-    "제가",
-    "한",
-    "있는",
-    "있는데",
-    "있어",
-    "그것",
-    "그것좀",
-    "그거",
-    "좀",
-    "주세요",
-    "줄래",
-    "해줘",
-    "해",
-    "쯤",
-    "기준",
-    "기준으로",
-  ]);
-  const terms = [
-    ...new Set(
-      words
-        .map((word) =>
-          word.replace(/(?:자료|문서|파일)(?:[은는이가을를])?$/u, ""),
-        )
-        .filter(
-          (word) =>
-            word.length >= 2 &&
-            !generic.has(word) &&
-            !/^(?:찾|검색)/u.test(word)
-            &&
-            !/^(?:(?:정리|분류|이동|복사)(?:해(?:줘|주세요)?|하기|하자)|모아(?:줘|주세요))$/u.test(word),
-        ),
-    ),
-  ].slice(
-    0,
-    8
-  );
-  const monthRange = request.match(/(?<!\d)(1[0-2]|0?[1-9])\s*월?\s*(?:부터|~|에서|-)\s*(1[0-2]|0?[1-9])\s*월(?:까지)?/u);
-  const relativeYear = findRelativeYear(request, referenceYear);
+  const lexical = queryPlanInput(parseDocumentQueryPlan(request));
+  const monthRange = dateRequest.match(/(?<!\d)(1[0-2]|0?[1-9])\s*월?\s*(?:부터|~|에서|-)\s*(1[0-2]|0?[1-9])\s*월(?:까지)?/u);
+  const relativeYear = findRelativeYear(dateRequest, referenceYear);
 
   return {
-    terms: terms.join(" "),
+    ...lexical,
+    originalRequest: request,
     year: negated ? "" : years.length === 1 && !relativeYear ? years[0] : !years.length ? relativeYear : "",
     month: negated
       ? ""
@@ -133,30 +93,42 @@ export function inferFindRequest(request: string, referenceYear?: number): FindF
         ? String(+monthRange[1])
         : months.length === 1
           ? months[0]
-          : years.length || /월|재작년|작년|올해/u.test(request)
+          : years.length || /월|재작년|작년|올해/u.test(dateRequest)
             ? ""
             : "all",
     basis:
       negated || bases.length !== 1 ? "" : bases[0][0],
-    window: monthRange ? "months" : /월\s*말/u.test(request) ? "late" : /쯤|전후|무렵|월\s*(?:초|중순)/u.test(request) ? "" : "month",
+    window: monthRange ? "months" : /월\s*말/u.test(dateRequest) ? "late" : /쯤|전후|무렵|월\s*(?:초|중순)/u.test(dateRequest) ? "" : "month",
     endMonth: monthRange ? String(+monthRange[2]) : "",
   };
 }
 
 export function confirmFindQuery(filters: FindFilters): FindQuery {
-  const terms = [
-    ...new Set(filters.terms.trim().split(/\s+/u).filter(Boolean)),
-  ];
+  const input = [filters.terms,
+    ...(filters.preferred?.trim().split(/\s+/u).filter(Boolean).map(term => `~${term}`) ?? []),
+    ...(filters.excluded?.match(/"[^"]+"|[^\s]+/gu)?.map(term => `-${term}`) ?? []),
+    ...(filters.formats ? [`ext:${filters.formats.replace(/\s/gu, "")}`] : []),
+    ...(filters.folder ? [`path:"${filters.folder}"`] : []),
+  ].join(" ");
+  const parsedPlan = parseDocumentQueryPlan(input, "confirmed");
+  const original = filters.originalRequest ? parseDocumentQueryPlan(filters.originalRequest) : null;
+  const plan: DocumentQueryPlan = { ...parsedPlan, originalRequest: filters.originalRequest ?? input,
+    clauses: parsedPlan.clauses.map(clause => original?.clauses.find(previous => previous.value === clause.value && previous.role === clause.role) ?? clause),
+  };
+  const terms = plan.clauses.filter(clause => clause.role === "must" || clause.role === "phrase").map(clause => clause.value);
 
-  if (
-    !terms.length ||
-    terms.length > 8 ||
-    terms.some((term) => term.length < 2 || term.length > 64)
-  )
-    throw Error("invalid-find-terms");
+  if (plan.issues.length || !terms.length || terms.length > 8) throw Error("invalid-find-terms");
+
+  const withPeriod = (from: string | null, to: string | null, basis: FindQuery["basis"]) => {
+    const inferred = filters.originalRequest ? inferFindRequest(filters.originalRequest, new Date().getFullYear()) : null;
+    const unchanged = inferred && (["year", "month", "basis", "window", "endMonth"] as const).every(key => (inferred[key] ?? "") === (filters[key] ?? ""));
+    const text = unchanged ? filters.originalRequest! : [filters.year, filters.month, filters.endMonth, filters.basis, filters.window].join(" ");
+
+    return { ...plan, period: { from, to, basis, source: { kind: unchanged ? "request" as const : "confirmed" as const, text, start: 0, end: text.length } } };
+  };
 
   if (filters.month === "all")
-    return { terms, from: null, to: null, basis: "body" };
+    return { terms, from: null, to: null, basis: "body", plan: withPeriod(null, null, "body") };
 
   if (
     !/^20\d{2}$/u.test(filters.year) ||
@@ -190,7 +162,7 @@ export function confirmFindQuery(filters: FindFilters): FindQuery {
   if (!from.startsWith("20") || !to.startsWith("20"))
     throw Error("unsupported-find-period");
 
-  return { terms, from, to, basis: filters.basis as FindQuery["basis"] };
+  return { terms, from, to, basis: filters.basis as FindQuery["basis"], plan: withPeriod(from, to, filters.basis as FindQuery["basis"]) };
 }
 
 export function findTextEvidence(
@@ -199,7 +171,7 @@ export function findTextEvidence(
   lastModified?: number,
   source?: FindSource,
 ): FindEvidence | null {
-  const match = matchDocumentFields(text, query.terms, source);
+  const match = matchDocumentFields(text, query.terms, source, query.plan);
 
   if (!match) return null;
 
@@ -208,7 +180,7 @@ export function findTextEvidence(
       .slice(Math.max(0, position - 50), position + Math.min(length, 100) + 50)
       .trim();
   const evidence = [...match.evidence, ...match.positions.map(position => snippet(position))];
-  const fields = source ? { matches: match.matches } : {};
+  const fields = { ...(source ? { matches: match.matches } : {}), ...(match.relevance ? { relevance: match.relevance } : {}) };
 
   if (!query.from || !query.to) return { kind: "matched", dates: [], evidence, ...fields };
 
@@ -264,14 +236,14 @@ export function findTextEvidence(
   return {
     ...fields,
     kind: inside.size === dates.size ? "matched" : "date-conflict",
-    dates: [...new Set([...inside, ...dates])].slice(0, 4),
+    dates: [...new Set(inside.size === dates.size ? [...inside] : [[...inside][0], [...dates].find(date => !inside.has(date))!, ...inside, ...dates])].slice(0, 4),
     evidence: [
       ...new Set([...(insideEvidence ? [insideEvidence] : []), ...evidence]),
     ].slice(0, 12),
   };
 }
 
-export function isFindEvidence(value: unknown): value is FindEvidence | null {
+export function isFindEvidence(value: unknown, query?: FindQuery): value is FindEvidence | null {
   if (value === null) return true;
 
   if (!value || typeof value !== "object") return false;
@@ -297,5 +269,45 @@ export function isFindEvidence(value: unknown): value is FindEvidence | null {
     item.evidence.every(
       (line) => typeof line === "string" && line.length <= 200,
     ) && (item.matches === undefined || isFieldMatches(item.matches))
+    && (item.relevance === undefined || isFindRelevance(item.relevance))
+    && (!query?.plan || isFindRelevance(item.relevance) && matchesPlanRelevance(item.relevance, query, item.matches))
+    && (!query || matchesQueryDates(item as FindEvidence, query))
   );
+}
+
+function matchesPlanRelevance(value: NonNullable<FindEvidence["relevance"]>, query: FindQuery, fields: unknown) {
+  const preferred = query.plan!.clauses.filter(clause => clause.role === "preferred").map(clause => clause.value);
+  const phrases = query.plan!.clauses.filter(clause => clause.role === "phrase").length;
+
+  if (value.phraseBoost !== phrases || value.missing.some(term => !preferred.includes(term)) || new Set(value.missing).size !== value.missing.length) return false;
+
+  if (!isFieldMatches(fields)) return false;
+
+  const matched = [...fields.name, ...fields.path, ...fields.body];
+  const allowed = [...query.terms, ...preferred];
+
+  if (query.terms.some(term => !matched.includes(term)) || matched.some(term => !allowed.includes(term))) return false;
+  const missing = preferred.filter(term => !matched.includes(term));
+
+  return missing.length === value.missing.length && missing.every(term => value.missing.includes(term));
+}
+
+function matchesQueryDates(value: FindEvidence, query: FindQuery) {
+  if (!query.from || !query.to) return value.kind === "matched" && value.dates.length === 0;
+  if (value.kind === "date-unknown") return value.dates.length === 0;
+
+  const inside = value.dates.filter(date => date >= query.from! && date <= query.to!);
+
+  return inside.length > 0 && (value.kind === "matched" ? inside.length === value.dates.length : inside.length < value.dates.length);
+}
+
+function isFindRelevance(value: unknown): value is NonNullable<FindEvidence["relevance"]> {
+  if (typeof value !== "object" || value === null) return false;
+
+  const item = value as Record<string, unknown>;
+
+  return ["all", "related"].includes(String(item.kind)) && Array.isArray(item.missing) && item.missing.length <= 8
+    && item.missing.every(term => typeof term === "string" && term.length > 0 && term.length <= 64)
+    && typeof item.phraseBoost === "number" && Number.isSafeInteger(item.phraseBoost) && item.phraseBoost >= 0 && item.phraseBoost <= 8
+    && (item.kind === "related" ? item.missing.length > 0 : item.missing.length === 0);
 }

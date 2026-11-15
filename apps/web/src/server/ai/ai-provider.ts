@@ -21,6 +21,10 @@ export function getAiProvider(): AiProvider | null {
   return null;
 }
 
+export function getSearchQueryProvider(): AiProvider | null {
+  return process.env.ENABLE_REMOTE_QUERY_PLAN === "true" ? getAiProvider() : null;
+}
+
 export function getSampleAiProvider(): AiProvider | null {
   const enabled = process.env.ENABLE_PUBLIC_SAMPLE_AI?.trim();
 

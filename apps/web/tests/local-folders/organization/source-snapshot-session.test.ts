@@ -97,6 +97,10 @@ describe("organization snapshot owning connection", () => {
 
       const abort = new AbortController();
       const pending = current.session.inspectSourceSnapshot({ kind: "all" }, "자료", abort.signal);
+      const rejection = expect(pending).rejects.toThrow();
+      let next: Promise<SourceSnapshot> | undefined;
+
+      await vi.waitFor(() => expect(resolve).toBeTypeOf("function"));
 
       if (action === "owner")
         await current.session.switchOwner({ userId: "B", workspaceId: "test" });
@@ -109,7 +113,7 @@ describe("organization snapshot owning connection", () => {
 
       if (action === "scan") {
         scan.mockResolvedValueOnce(result);
-        await current.session.inspectSourceSnapshot(
+        next = current.session.inspectSourceSnapshot(
           { kind: "all" },
           "새 요청",
           new AbortController().signal
@@ -117,7 +121,8 @@ describe("organization snapshot owning connection", () => {
       }
 
       resolve(result);
-      await expect(pending).rejects.toThrow();
+      await rejection;
+      await next;
     }
   });
 

@@ -1,7 +1,7 @@
 import { LiveConversation } from "../../features/conversation-workspace/LiveConversation";
-import { liveOrganizationAction, groundedChatAction } from "../actions/live-ai";
+import { liveOrganizationAction, groundedChatAction, searchQueryAction } from "../actions/live-ai";
 import { readUsageAction } from "../actions/ai-usage";
-import { getAiProvider } from "../../server/ai/ai-provider";
+import { getAiProvider, getSearchQueryProvider } from "../../server/ai/ai-provider";
 
 export default function Home() {
   const provider = getAiProvider();
@@ -10,6 +10,7 @@ export default function Home() {
     aiProvider={provider}
     organizeAction={liveOrganizationAction.bind(null, provider)}
     groundedAction={groundedChatAction.bind(null, provider)}
+    queryAction={getSearchQueryProvider() ? searchQueryAction.bind(null, provider) : undefined}
     readUsage={readUsageAction}
   />;
 }

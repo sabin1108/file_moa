@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createCopyHasher } from "../../../src/features/local-folders/content/copy-hash";
+import { confirmFindQuery, inferFindRequest } from "../../../src/features/local-folders/search/documents/document-find";
 
 // Models browser delivery/termination, not cryptographic correctness (covered in the real browser).
 
@@ -25,6 +26,20 @@ afterEach(() => {
 });
 
 describe("copy hash Worker lifetime", () => {
+  it("RAG-S04 refuses missing or invented plan relevance in Worker responses", async () => {
+    vi.stubGlobal("Worker", TestWorker);
+    const find = confirmFindQuery(inferFindRequest("가온센터 이력서 찾아줘"));
+
+    for (const relevance of [undefined, { kind: "all", missing: [], phraseBoost: 7 }, { kind: "related", missing: ["invented"], phraseBoost: 0 }]) {
+      const hasher = createCopyHasher();
+      const pending = hasher.readText(new File(["abc"], "a.md"), "가온센터", find);
+      const rejection = expect(pending).rejects.toThrow("hash-read-failed");
+
+      TestWorker.instances.at(-1)!.onmessage!({ data: { sha256: "a".repeat(64), size: 3, excerpt: "abc", excerptHash: "b".repeat(64), finding: { kind: "matched", dates: [], evidence: ["가온센터"], ...(relevance ? { relevance } : {}) } } });
+
+      await rejection;
+    }
+  });
   it("CACHE-002 rejects malformed extraction metadata at the Worker boundary", async () => {
     vi.stubGlobal("Worker", TestWorker);
     const hasher = createCopyHasher();
@@ -38,6 +53,25 @@ describe("copy hash Worker lifetime", () => {
 
     await rejection;
     expect(TestWorker.instances[0].terminate).toHaveBeenCalledOnce();
+  });
+  it("RAG-S04 rejects evidence without field matches or a dated match without dates", async () => {
+    vi.stubGlobal("Worker", TestWorker);
+
+    const filters = inferFindRequest("가온센터 찾아줘");
+
+    for (const dated of [false, true]) {
+      const find = confirmFindQuery(dated ? { ...filters, month: "3", year: "2026", basis: "body" } : filters);
+      const hasher = createCopyHasher();
+      const pending = hasher.readText(new File(["abc"], "a.md"), "가온센터", find);
+      const rejection = expect(pending).rejects.toThrow("hash-read-failed");
+
+      TestWorker.instances.at(-1)!.onmessage!({ data: {
+        sha256: "a".repeat(64), size: 3, excerpt: "abc", excerptHash: "b".repeat(64),
+        finding: { kind: "matched", dates: [], evidence: ["가온센터"], relevance: { kind: "all", missing: [], phraseBoost: 0 }, ...(dated ? { matches: [{ field: "body", terms: ["가온센터"] }] } : {}) },
+      } });
+
+      await rejection;
+    }
   });
   it("bounds opt-in OCR time and rejects malformed OCR metadata", async () => {
     vi.stubGlobal("Worker", TestWorker);

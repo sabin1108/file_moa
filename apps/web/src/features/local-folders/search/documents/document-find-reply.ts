@@ -1,11 +1,7 @@
 import type { FindFilters } from "./document-find";
 
-export const findDateBasisPatterns = {
-  meeting: /회의\s*(?:일시|날짜|일)(?=\s|[은는을를로:：]|$)/u,
-  written: /작성\s*(?:일시|날짜|일)(?=\s|[은는을를로:：]|$)/u,
-  modified: /(?:파일(?:을)?\s*)?(?:마지막(?:으로)?\s*)?수정(?:한|된)?\s*(?:파일\s*)?(?:일시|날짜|일)(?=\s|[은는을를로:：]|$)/u,
-  body: /본문(?:에)?\s*(?:기록된|적힌)?\s*(?:파일\s*)?날짜(?:\s*전체)?/u,
-} as const;
+import { searchDateBasisPatterns as findDateBasisPatterns } from "../../../../shared/search-query-dates";
+export { findDateBasisPatterns };
 
 type FindReply = Readonly<{
   kind: "apply";

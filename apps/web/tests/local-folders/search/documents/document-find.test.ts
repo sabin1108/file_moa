@@ -192,7 +192,7 @@ describe("FIND-002/005: read-only search lifecycle", () => {
     await c.search();
     expect(read).toHaveBeenCalledWith(
       { kind: "all" },
-      query(),
+      expect.objectContaining({ terms: query().terms, from: query().from, to: query().to, basis: query().basis }),
       expect.any(AbortSignal),
     );
     expect(c.getSnapshot()).toMatchObject({ phase: "ready", result });

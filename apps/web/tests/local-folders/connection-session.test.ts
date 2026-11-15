@@ -1,10 +1,12 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { FolderConnectionSession } from "../../src/features/local-folders/connection-session";
 import { connectionKey } from "../../src/features/local-folders/connection/connection-validation";
+import { LocalTextIndex } from "../../src/features/local-folders/search/documents/local-text-index";
 import type { ConnectionOwner, FolderHandle, HandleRepository, SourceFolderRepository, SourceFolderConnection } from "../../src/features/local-folders/types";
 
 const a = { userId: "a", workspaceId: "work" };
 const b = { userId: "b", workspaceId: "work" };
+afterEach(() => vi.restoreAllMocks());
 
 function handle(name = "notes"): FolderHandle {
   const folder = {
@@ -72,6 +74,8 @@ function sourceRepository() {
 
 describe("account-scoped folder connections", () => {
   it("stores multiple source roots, switches active root, and removes only the selected root", async () => {
+    // Persistence is exercised separately in the real IndexedDB browser check.
+    vi.spyOn(LocalTextIndex.prototype, "clear").mockResolvedValue();
     const repo = sourceRepository();
     const session = new FolderConnectionSession(repo);
 
@@ -93,6 +97,34 @@ describe("account-scoped folder connections", () => {
     await session.disconnectSourceConnection(active.connectionId);
     expect((await session.listSourceConnections())).toHaveLength(1);
     expect(session.view("source").folderName).toBe("B");
+  });
+  it("preserves a connection when clearing its derived index fails", async () => {
+    const repo = sourceRepository();
+    const session = new FolderConnectionSession(repo);
+    vi.spyOn(LocalTextIndex.prototype, "clear").mockRejectedValue(new Error("synthetic-storage-failure"));
+    await session.switchOwner(a);
+    await session.select("source", async () => handle("A"));
+    const source = (await session.listSourceConnections())[0];
+
+    await expect(session.disconnectSourceConnection(source.connectionId)).rejects.toThrow("synthetic-storage-failure");
+
+    expect(repo.removeSource).not.toHaveBeenCalled();
+    expect(await session.listSourceConnections()).toHaveLength(1);
+  });
+  it("prevents another session from writing a disconnected scope even when it still holds the handle", async () => {
+    const repo = sourceRepository();
+    const first = new FolderConnectionSession(repo);
+    const second = new FolderConnectionSession(repo);
+    vi.spyOn(LocalTextIndex.prototype, "clear").mockResolvedValue();
+    const observe = vi.spyOn(LocalTextIndex.prototype, "observe");
+    await first.switchOwner(a);
+    await first.select("source", async () => handle("A"));
+    await second.switchOwner(a);
+    const source = (await first.listSourceConnections())[0];
+    await first.disconnectSourceConnection(source.connectionId);
+
+    await expect(second.inspectSourceSnapshot({ kind: "all" }, "", new AbortController().signal)).rejects.toThrow("source-folder-not-connected");
+    expect(observe).not.toHaveBeenCalled();
   });
   it("rejects a late active-root switch after changing account", async () => {
     const repo = sourceRepository();

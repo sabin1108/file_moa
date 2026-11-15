@@ -89,7 +89,7 @@ import { InlineEditorSession } from "./documents/editing/inline-editor-session";
 import { readSourceSnapshot } from "./organization/source-snapshot";
 import { readOrganizationFolders } from "./organization/organization-reference";
 import { inferOrganizationConditions } from "./organization/organization-intent";
-import { LocalTextIndex } from "./search/documents/local-text-index";
+import { LocalTextIndex, withLocalIndexLock } from "./search/documents/local-text-index";
 import { assertOrganizationBaseline } from "./organization/organization-operation";
 import type {
   OrganizationScope,
@@ -505,18 +505,20 @@ export class FolderConnectionSession {
 
     const repository = this.repository as SourceFolderRepository;
 
-    await repository.removeSource(operation.owner, connectionId);
-    operation.assertCurrent();
-    await new LocalTextIndex().retain(
-      { owner: operation.owner.userId, workspace: operation.owner.workspaceId, connection: connectionId },
-      [],
-      operation.assertCurrent
-    ).catch(() => {
+    this.snapshotSequence++;
+    const scope = { owner: operation.owner.userId, workspace: operation.owner.workspaceId, connection: connectionId };
+
+    await withLocalIndexLock(scope, async () => {
+      operation.assertCurrent();
+      await new LocalTextIndex().clear(scope, operation.assertCurrent);
+      operation.assertCurrent();
+      await repository.removeSource(operation.owner, connectionId);
       operation.assertCurrent();
     });
-    operation.assertCurrent();
 
     const remaining = await repository.listSource(operation.owner);
+
+    operation.assertCurrent();
 
     if (remaining.length === 0) {
       operation.slot.handle = undefined;
@@ -864,6 +866,71 @@ export class FolderConnectionSession {
   }
 
   /** Independent from browsing/preview requests; owner/connection changes invalidate the whole batch. */
+  private currentSourceIndex() {
+    const owner = this.owner;
+    const connection = this.sourceConnectionId;
+    const generation = this.generation;
+    const snapshotSequence = this.snapshotSequence;
+    const sequence = this.slots.source.sequence;
+    const handle = this.slots.source.handle;
+
+    if (!owner || !this.ready) throw new Error("source-folder-not-connected");
+
+    const check = () => {
+      if (snapshotSequence !== this.snapshotSequence || owner !== this.owner || generation !== this.generation || connection !== this.sourceConnectionId
+        || sequence !== this.slots.source.sequence || handle !== this.slots.source.handle) throw new Error("stale-connection-operation");
+    };
+
+    return { scope: { owner: owner.userId, workspace: owner.workspaceId, connection }, check };
+  }
+
+  readSourceIndexStatus = async () => {
+    const { scope, check } = this.currentSourceIndex();
+    const result = await new LocalTextIndex().status(scope);
+
+    check();
+
+    return result;
+  };
+
+  clearSourceIndex = async () => {
+    this.snapshotSequence++;
+    const { scope, check } = this.currentSourceIndex();
+
+    await withLocalIndexLock(scope, () => new LocalTextIndex().clear(scope, check));
+    check();
+  };
+
+  refreshSourceIndex = async (signal: AbortSignal) => {
+    this.snapshotSequence++;
+    const { scope, check } = this.currentSourceIndex();
+    const handle = this.slots.source.handle;
+
+    if (!handle || !this.slots.source.connected) throw new Error("source-folder-not-connected");
+
+    const result = await withLocalIndexLock(scope, async () => {
+      check();
+      await this.assertStoredSourceConnection(scope.connection, check);
+      return readSourceSnapshot(handle, { kind: "all" }, "", check, signal, undefined, scope, { metadataOnly: true });
+    }, signal);
+
+    check();
+
+    return { ...await this.readSourceIndexStatus(), complete: result.complete };
+  };
+
+  private async assertStoredSourceConnection(connection: string, check: () => void) {
+    check();
+    const owner = this.owner;
+
+    if (!owner) throw new Error("source-folder-not-connected");
+    if ("listSource" in this.repository) {
+      const sources = await (this.repository as SourceFolderRepository).listSource(owner);
+      check();
+      if (!sources.some(source => source.connectionId === connection)) throw new Error("source-folder-not-connected");
+    }
+  }
+
   inspectSourceSnapshot = async (
     scope: OrganizationScope,
     instruction: string,
@@ -903,7 +970,11 @@ export class FolderConnectionSession {
     try {
       check();
 
-      const result = await readSourceSnapshot(
+      const scopeKey = { owner: owner.userId, workspace: owner.workspaceId, connection: this.sourceConnectionId };
+      const result = await withLocalIndexLock(scopeKey, async () => {
+        check();
+        await this.assertStoredSourceConnection(scopeKey.connection, check);
+        return readSourceSnapshot(
         handle,
         scope,
         instruction,
@@ -912,6 +983,7 @@ export class FolderConnectionSession {
         find,
         { owner: owner.userId, workspace: owner.workspaceId, connection: this.sourceConnectionId },
       );
+      }, signal);
 
       check();
 

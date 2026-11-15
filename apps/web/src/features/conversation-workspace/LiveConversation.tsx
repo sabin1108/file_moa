@@ -26,6 +26,7 @@ import { AiLibraryPanel } from "../ai-records/library/AiLibraryPanel";
 import { AI_RECORD_LIMITS, type AiRecordPayload, type ConversationPayload } from "../../shared/ai-records";
 import { selectPersonalContext } from "../ai-records/context/personal-context";
 import type { GroundedAction } from "../../shared/grounded-chat";
+import type { SearchQueryAction } from "../../shared/search-query";
 import type { GroundedEvidence } from "../../shared/grounded-evidence";
 import type { UsageSummary } from "../../shared/ai-usage";
 import { makeWikiDraft } from "../ai-records/wiki/wiki";
@@ -34,10 +35,11 @@ import type { WorkspaceRequestKind } from "./material-work/workspace-request";
 import { replayWorkspaceTour } from "../onboarding/workspace-tour";
 import { useWorkspaceTourRecordView } from "../onboarding/workspace-tour-view";
 
-export function LiveConversation({ organizeAction, groundedAction, readUsage, aiProvider = "gemini" }: {
+export function LiveConversation({ organizeAction, groundedAction, readUsage, queryAction, aiProvider = "gemini" }: {
   organizeAction?: LiveOrganizationAction;
   aiProvider?: AiProvider | null;
   groundedAction?: GroundedAction;
+  queryAction?: SearchQueryAction;
   readUsage?: () => Promise<UsageSummary | null>;
 }) {
   const local = useSharedSourceFolderConnection();
@@ -194,6 +196,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, ai
           workflow.task.kind === "grounded"
             ? <GroundedAnswerView conversation={workflow.grounded} allowWikiSave={!editor} />
             : <MaterialWorkPanel
+              queryAction={queryAction}
               kind={workflow.task.kind}
               onPrepare={workflow.prepareFound}
               onQuestion={workflow.prepareFoundForQuestion}

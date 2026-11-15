@@ -153,7 +153,7 @@ try {
   check("scope has two visible radio controls and search is last", await page.eval(() => { const form = document.querySelector('[data-document-find] form'); const inputs = [...form.querySelectorAll("input, select, button")]; return form.querySelectorAll('input[type="radio"]').length === 2 && inputs.at(-1).hasAttribute("data-find-search"); }));
   await click("검색 시작");
   await until(() => document.querySelector('[data-find-results] li'));
-  check("evidence is folded while match status remains visible", await page.eval(() => [...document.querySelectorAll('[data-find-candidate]')].every(node => node.querySelector('details:not([open])') && node.textContent.includes("조건 일치"))));
+  check("evidence is folded while full or related match status remains visible", await page.eval(() => [...document.querySelectorAll('[data-find-candidate]')].every(node => node.querySelector('details:not([open])') && (node.textContent.includes("조건 일치") || node.querySelector('[data-find-related]')))));
   await page.screenshot({ path: resolve(output, "search-1440.png"), format: "png" });
   await page.eval(() => { document.querySelector('[data-document-find] > details').open = true; });
   await fill('[aria-label="본문 검색어"]', "없는합성키워드");

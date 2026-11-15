@@ -1,12 +1,33 @@
 import { isTextCacheMetadata, type TextCacheMetadata } from "../../content/text-cache";
 
 export const LOCAL_TEXT_INDEX_VERSION = 2;
+export const LOCAL_TEXT_DATABASE_VERSION = 3;
+
+export type CatalogFile = Readonly<{
+  path: readonly string[];
+  size: number | null;
+  lastModified: number | null;
+  status: "listed" | "indexed" | "unsupported" | "unreadable" | "changed";
+  reason?: string;
+  hash?: string;
+}>;
+
+export type LocalIndexStatus = Readonly<{ catalogCount: number; textCount: number; textBytes: number }>;
 
 type Scope = Readonly<{
   owner: string;
   workspace: string;
   connection: string
 }>;
+
+export async function withLocalIndexLock<T>(scope: Scope, operation: () => Promise<T>, signal?: AbortSignal): Promise<T> {
+  if (typeof navigator === "undefined" || !navigator.locks) return operation();
+
+  return await navigator.locks.request(`moa-search-index:${JSON.stringify([scope.owner, scope.workspace, scope.connection])}`,
+    { mode: "exclusive", ...(signal ? { signal } : {}) }, operation);
+}
+
+type CatalogEntry = Scope & CatalogFile & Readonly<{ id: string; updatedAt: number }>;
 
 type IndexKey = Scope & Readonly<{
   path: readonly string[];
@@ -47,6 +68,24 @@ function isStats(value: unknown): value is Stats {
     && "bytes" in value && typeof value.bytes === "number" && Number.isSafeInteger(value.bytes) && value.bytes >= 0;
 }
 
+function isCatalogEntry(value: unknown): value is CatalogEntry {
+  if (typeof value !== "object" || value === null) return false;
+
+  return "owner" in value && typeof value.owner === "string"
+    && "workspace" in value && typeof value.workspace === "string"
+    && "connection" in value && typeof value.connection === "string"
+    && "path" in value && Array.isArray(value.path) && value.path.length > 0 && value.path.length <= 65
+    && value.path.every(part => typeof part === "string" && part.length > 0 && part.length <= 255)
+    && "id" in value && value.id === JSON.stringify([value.owner, value.workspace, value.connection, value.path])
+    && "size" in value && (value.size === null || typeof value.size === "number" && Number.isSafeInteger(value.size) && value.size >= 0)
+    && "lastModified" in value && (value.lastModified === null || typeof value.lastModified === "number" && Number.isSafeInteger(value.lastModified))
+    && "status" in value && ["listed", "indexed", "unsupported", "unreadable", "changed"].includes(String(value.status))
+    && (!("hash" in value) || typeof value.hash === "string" && /^[a-f0-9]{64}$/u.test(value.hash))
+    && (value.status !== "indexed" || "hash" in value)
+    && (!("reason" in value) || typeof value.reason === "string" && value.reason.length <= 128)
+    && "updatedAt" in value && typeof value.updatedAt === "number" && Number.isSafeInteger(value.updatedAt) && value.updatedAt >= 0;
+}
+
 /** Regenerable extracted text. Source bytes and permissions remain the authority. */
 
 export class LocalTextIndex {
@@ -54,19 +93,25 @@ export class LocalTextIndex {
 
   private open(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.databaseName, 2);
+      const request = indexedDB.open(this.databaseName, LOCAL_TEXT_DATABASE_VERSION);
       let blocked = false;
 
-      request.onupgradeneeded = () => {
+      request.onupgradeneeded = event => {
         const db = request.result;
         // v1 is a disposable cache; persistent AI records live in a separate filesystem folder.
 
-        if (db.objectStoreNames.contains("documents")) db.deleteObjectStore("documents");
+        if (event.oldVersion < 2) {
+          if (db.objectStoreNames.contains("documents")) db.deleteObjectStore("documents");
 
-        const store = db.createObjectStore("documents", { keyPath: "id" });
+          const store = db.createObjectStore("documents", { keyPath: "id" });
 
-        store.createIndex("scope", ["owner", "workspace", "connection"]);
-        db.createObjectStore("stats");
+          store.createIndex("scope", ["owner", "workspace", "connection"]);
+          db.createObjectStore("stats");
+        }
+
+        if (!db.objectStoreNames.contains("catalog")) {
+          db.createObjectStore("catalog", { keyPath: "id" }).createIndex("scope", ["owner", "workspace", "connection"]);
+        }
       };
       request.onblocked = () => {
         blocked = true;
@@ -134,10 +179,39 @@ export class LocalTextIndex {
 
             if (!isStats(next)) throw new Error("index-invalid-cache");
 
-            if (next.count > 500 || next.bytes > 50 * 1024 * 1024) throw new Error("index-storage-limit");
+            const save = () => {
+              store.put({ ...key, id: this.id(key), text, updatedAt: Date.now(), ...(metadata ? { metadata } : {}) });
+              statsStore.put(next, this.scopeId(key));
+            };
 
-            store.put({ ...key, id: this.id(key), text, updatedAt: Date.now(), ...(metadata ? { metadata } : {}) });
-            statsStore.put(next, this.scopeId(key));
+            if (text.length * 2 > 50 * 1024 * 1024) throw new Error("index-storage-limit");
+
+            if (next.count <= 500 && next.bytes <= 50 * 1024 * 1024) save();
+            else {
+              const entries = store.index("scope").getAll(IDBKeyRange.only([key.owner, key.workspace, key.connection]));
+
+              entries.onsuccess = () => {
+                try {
+                  assertCurrent();
+
+                  if (!(entries.result as unknown[]).every(isStoredEntry)) throw new Error("index-invalid-cache");
+
+                  const oldest = (entries.result as LocalTextIndexEntry[]).filter(entry => entry.id !== this.id(key)).sort((a, b) => a.updatedAt - b.updatedAt || a.id.localeCompare(b.id));
+
+                  for (const entry of oldest) {
+                    if (next.count <= 500 && next.bytes <= 50 * 1024 * 1024) break;
+
+                    store.delete(entry.id);
+                    next.count--;
+                    next.bytes -= entry.text.length * 2;
+                  }
+
+                  if (!isStats(next) || next.count > 500 || next.bytes > 50 * 1024 * 1024) throw new Error("index-invalid-cache");
+
+                  save();
+                } catch (error) { tx.abort(); reject(error); }
+              };
+            }
           } catch (error) {
             tx.abort();
             reject(error);
@@ -205,5 +279,149 @@ export class LocalTextIndex {
     } finally {
       db.close();
     }
+  }
+
+  async observe(scope: Scope, file: CatalogFile, assertCurrent: () => void = () => {}): Promise<void> {
+    const record = { ...scope, ...file, id: this.id({ ...scope, path: file.path }), updatedAt: Date.now() };
+
+    if (!isCatalogEntry(record)) throw new Error("index-invalid-cache");
+
+    const db = await this.open();
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const tx = db.transaction("catalog", "readwrite");
+        const store = tx.objectStore("catalog");
+        const id = this.id({ ...scope, path: file.path });
+        const previous = store.get(id);
+        const count = store.index("scope").count(IDBKeyRange.only([scope.owner, scope.workspace, scope.connection]));
+
+        count.onsuccess = () => {
+          try {
+            assertCurrent();
+
+            const save = () => store.put(record);
+
+            if (previous.result === undefined && count.result >= 20_000) {
+              const entries = store.index("scope").openCursor(IDBKeyRange.only([scope.owner, scope.workspace, scope.connection]));
+              let oldest: { key: IDBValidKey; updatedAt: number } | null = null;
+              let valid = 0;
+
+              entries.onsuccess = () => {
+                try {
+                  assertCurrent();
+
+                  const cursor = entries.result;
+
+                  if (cursor) {
+                    if (!isCatalogEntry(cursor.value)) cursor.delete();
+                    else {
+                      valid++;
+                      if (!oldest || cursor.value.updatedAt < oldest.updatedAt) oldest = { key: cursor.primaryKey, updatedAt: cursor.value.updatedAt };
+                    }
+
+                    cursor.continue();
+
+                    return;
+                  }
+
+                  if (valid >= 20_000 && oldest) store.delete(oldest.key);
+                  save();
+                } catch (error) { tx.abort(); reject(error); }
+              };
+            } else save();
+          } catch (error) { tx.abort(); reject(error); }
+        };
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error ?? new Error("index-update-aborted"));
+      });
+    } finally { db.close(); }
+  }
+
+  async catalog(scope: Scope): Promise<readonly CatalogFile[]> {
+    const db = await this.open();
+
+    try {
+      return await new Promise((resolve, reject) => {
+        const request = db.transaction("catalog", "readonly").objectStore("catalog").index("scope").getAll(IDBKeyRange.only([scope.owner, scope.workspace, scope.connection]));
+
+        request.onsuccess = () => resolve((request.result as unknown[]).filter(isCatalogEntry));
+        request.onerror = () => reject(request.error);
+      });
+    } finally { db.close(); }
+  }
+
+  async retainCatalog(scope: Scope, paths: readonly (readonly string[])[], assertCurrent: () => void = () => {}): Promise<void> {
+    const keep = new Set(paths.map(path => JSON.stringify(path)));
+    const db = await this.open();
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const tx = db.transaction("catalog", "readwrite");
+        const store = tx.objectStore("catalog");
+        const request = store.index("scope").openCursor(IDBKeyRange.only([scope.owner, scope.workspace, scope.connection]));
+
+        request.onsuccess = () => {
+          try {
+            assertCurrent();
+
+            const cursor = request.result;
+
+            if (!cursor) return;
+            if (!isCatalogEntry(cursor.value) || !keep.has(JSON.stringify(cursor.value.path))) cursor.delete();
+            cursor.continue();
+          } catch (error) { tx.abort(); reject(error); }
+        };
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error ?? new Error("index-update-aborted"));
+      });
+    } finally { db.close(); }
+  }
+
+  async status(scope: Scope): Promise<LocalIndexStatus> {
+    const db = await this.open();
+
+    try {
+      return await new Promise((resolve, reject) => {
+        const tx = db.transaction(["stats", "catalog"], "readonly");
+        const stats = tx.objectStore("stats").get(this.scopeId(scope));
+        const entries = tx.objectStore("catalog").index("scope").getAll(IDBKeyRange.only([scope.owner, scope.workspace, scope.connection]));
+
+        tx.oncomplete = () => isStats(stats.result ?? { count: 0, bytes: 0 })
+          ? resolve({ catalogCount: (entries.result as unknown[]).filter(isCatalogEntry).length, textCount: stats.result?.count ?? 0, textBytes: stats.result?.bytes ?? 0 })
+          : reject(new Error("index-invalid-cache"));
+        tx.onerror = () => reject(tx.error);
+      });
+    } finally { db.close(); }
+  }
+
+  async clear(scope: Scope, assertCurrent: () => void = () => {}): Promise<void> {
+    const db = await this.open();
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const tx = db.transaction(["documents", "catalog", "stats"], "readwrite");
+
+        for (const name of ["documents", "catalog"]) {
+          const request = tx.objectStore(name).index("scope").openKeyCursor(IDBKeyRange.only([scope.owner, scope.workspace, scope.connection]));
+
+          request.onsuccess = () => {
+            try {
+              assertCurrent();
+              const cursor = request.result;
+
+              if (cursor) { tx.objectStore(name).delete(cursor.primaryKey); cursor.continue(); }
+            } catch (error) { tx.abort(); reject(error); }
+          };
+        }
+        try { assertCurrent(); tx.objectStore("stats").put({ count: 0, bytes: 0 }, this.scopeId(scope)); }
+        catch (error) { tx.abort(); reject(error); }
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error ?? new Error("index-update-aborted"));
+      });
+    } finally { db.close(); }
   }
 }

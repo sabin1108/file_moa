@@ -140,7 +140,7 @@ export function createCopyHasher(signal?: AbortSignal) {
           ) {
             if (
               find &&
-              (!("finding" in data) || !isFindEvidence(data.finding))
+              (!("finding" in data) || !isFindEvidence(data.finding, find))
             ) {
               settle(new Error("hash-read-failed"));
 

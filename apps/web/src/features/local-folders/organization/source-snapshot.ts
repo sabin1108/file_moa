@@ -8,7 +8,7 @@ import type { FolderHandle } from "../types";
 import { createCopyHasher, type TextIndexContext } from "../content/copy-hash";
 import { readSourceFolderListing } from "../browsing/source-folder-listing";
 import { openSourceDirectory } from "../source-directory";
-import { LocalTextIndex, LOCAL_TEXT_INDEX_VERSION } from "../search/documents/local-text-index";
+import { LocalTextIndex, LOCAL_TEXT_INDEX_VERSION, type CatalogFile } from "../search/documents/local-text-index";
 import type {
   FindDocument,
   FindQuery,
@@ -16,6 +16,7 @@ import type {
 } from "../search/documents/document-find";
 import { findTextEvidence } from "../search/documents/document-find";
 import { retainFindCandidate } from "../search/documents/document-find-ranking";
+import { matchesDocumentMetadata } from "../search/documents/document-field-match";
 
 /** Bounded source snapshot. Optional extracted-text cache stays in this browser. */
 
@@ -27,6 +28,7 @@ export async function readSourceSnapshot(
   signal?: AbortSignal,
   find?: FindQuery,
   indexContext?: Omit<TextIndexContext, "path">,
+  options?: Readonly<{ metadataOnly: boolean }>,
 ): Promise<FindableSnapshot> {
   const starts =
     scope.kind === "all"
@@ -63,6 +65,15 @@ export async function readSourceSnapshot(
       throw new DOMException("Snapshot cancelled", "AbortError");
   };
   const reader = createCopyHasher(signal);
+  const indexStore = indexContext ? new LocalTextIndex() : null;
+  const observedPaths: (readonly string[])[] = [];
+  let catalogHealthy = true;
+  const observe = async (file: CatalogFile) => {
+    if (!indexStore || !indexContext) return;
+
+    await indexStore.observe(indexContext, file, check).catch(() => { check(); catalogHealthy = false; });
+    check();
+  };
   let contentBudgetExhausted = false;
   const addFinding = (document: FindDocument) => {
     if (retainFindCandidate(findings, document, DOCUMENT_LIMITS.workspaceDocuments)) limits.add("result-limit");
@@ -156,23 +167,13 @@ export async function readSourceSnapshot(
 
       if (!name) throw Error("invalid-file-path");
 
-      const extensionIssue = checkDocumentCandidate(name, 0);
-
-      if (extensionIssue && (!find || !findTextEvidence("", find, undefined, { name, path: entry.path }))) {
-        excluded.push({ path: entry.path, reason: extensionIssue });
-
-        continue;
-      }
-
-      if (documents.length >= DOCUMENT_LIMITS.workspaceDocuments) {
+      if (!options?.metadataOnly && documents.length >= DOCUMENT_LIMITS.workspaceDocuments) {
         limits.add("document-limit");
 
         if (!find) break;
 
         contentBudgetExhausted = true;
       }
-
-      if (find && contentBudgetExhausted && !findTextEvidence("", find, undefined, { name, path: entry.path })) continue;
 
       let metadata: File | undefined;
 
@@ -200,6 +201,8 @@ export async function readSourceSnapshot(
         check();
 
         const issue = checkDocumentCandidate(name, file.size);
+        observedPaths.push(entry.path);
+        await observe({ path: entry.path, size: file.size, lastModified: file.lastModified, status: issue ? "unsupported" : "listed", ...(issue ? { reason: issue } : {}) });
 
         if (issue) {
           addMetadataFinding(name, entry.path, file.lastModified);
@@ -207,6 +210,10 @@ export async function readSourceSnapshot(
 
           continue;
         }
+
+        if (options?.metadataOnly) continue;
+
+        if (find?.plan && !matchesDocumentMetadata({ name, path: entry.path }, find.plan)) continue;
 
         if (find && contentBudgetExhausted) {
           addMetadataFinding(name, entry.path, file.lastModified);
@@ -225,7 +232,7 @@ export async function readSourceSnapshot(
           continue;
         }
 
-        const cached = indexContext ? await new LocalTextIndex().readPath(indexContext, entry.path).catch(() => undefined) : undefined;
+        const cached = indexContext ? await indexStore?.readPath(indexContext, entry.path).catch(() => undefined) : undefined;
 
         check();
 
@@ -262,7 +269,7 @@ export async function readSourceSnapshot(
         if (content.ocr && !content.ocr.complete) limits.add("ocr-limit");
 
         if (indexContext && typeof content.fullText === "string" && !content.cacheHit) {
-          await new LocalTextIndex().put(
+          await indexStore?.put(
             { ...indexContext, path: entry.path, hash: content.sha256, parserVersion: LOCAL_TEXT_INDEX_VERSION },
             content.fullText,
             check,
@@ -272,6 +279,8 @@ export async function readSourceSnapshot(
           });
           check();
         }
+
+        await observe({ path: entry.path, size: file.size, lastModified: file.lastModified, hash: content.sha256, status: "indexed" });
 
         if (finding) addFinding({ name, path: entry.path, finding, contentAvailable: true, ...(content.ocr ? { ocr: true } : {}) });
 
@@ -305,6 +314,10 @@ export async function readSourceSnapshot(
         if (["unsupported-hash", "hash-read-failed"].includes(reason))
           throw error;
 
+        await observe({ path: entry.path, size: reason === "source-changed" ? null : metadata?.size ?? null,
+          lastModified: reason === "source-changed" ? null : metadata?.lastModified ?? null,
+          status: reason === "source-changed" ? "changed" : "unreadable", reason: reason === "invalid-utf8" || reason === "source-changed" || reason.startsWith("pdf-") || reason.startsWith("ocr-") ? reason : "unreadable-file" });
+
         addMetadataFinding(name, entry.path, reason === "source-changed" ? undefined : metadata?.lastModified);
 
         failed = true;
@@ -320,18 +333,22 @@ export async function readSourceSnapshot(
 
     check();
 
-    if (find && (await root.queryPermission({ mode: "read" })) !== "granted") {
+    if ((find || options?.metadataOnly) && (await root.queryPermission({ mode: "read" })) !== "granted") {
       throw new DOMException("Read permission required", "NotAllowedError");
     }
 
     check();
 
     if (indexContext && scope.kind === "all" && !failed && !limits.size) {
-      await new LocalTextIndex().retain(indexContext, documents.map(document => document.path), check).catch(() => {
+      await indexStore?.retain(indexContext, observedPaths, check).catch(() => {
         check();
       });
+
+      if (catalogHealthy) await indexStore?.retainCatalog(indexContext, observedPaths, check).catch(() => { check(); catalogHealthy = false; });
       check();
     }
+
+    if (options?.metadataOnly && !catalogHealthy) throw new Error("index-storage-unavailable");
 
     return {
       documents,

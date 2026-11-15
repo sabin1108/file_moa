@@ -9,11 +9,13 @@ import { useSharedSourceFolderConnection } from "../../local-folders/SourceFolde
 import type { LiveOrganizationAction } from "../../../shared/live-organization";
 import type { AiProvider } from "../../../shared/ai-provider";
 import { actionClasses } from "../../../components/ui/action-classes";
+import type { SearchQueryAction } from "../../../shared/search-query";
 
-function FindWorkPanel({ onPrepare, onQuestion, canStart }: {
+function FindWorkPanel({ onPrepare, onQuestion, canStart, queryAction }: {
   onPrepare: () => void;
   onQuestion?: () => void;
   canStart: boolean
+  queryAction?: SearchQueryAction;
 }) {
   const local = useSharedSourceFolderConnection();
   const state = useSyncExternalStore(
@@ -52,6 +54,8 @@ function FindWorkPanel({ onPrepare, onQuestion, canStart }: {
         onPrepare={onPrepare}
         onQuestion={onQuestion}
         canPrepare={canStart}
+        queryAction={queryAction}
+        owner={local.owner}
         onOpenFile={path => {
           trigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
           void local.preview.open(path);
@@ -76,7 +80,7 @@ function FindWorkPanel({ onPrepare, onQuestion, canStart }: {
   </>;
 }
 
-export function MaterialWorkPanel({ kind, onPrepare, onQuestion, canStart, organizeAction, aiProvider, waitingForSource, onContinue }: {
+export function MaterialWorkPanel({ kind, onPrepare, onQuestion, canStart, organizeAction, aiProvider, waitingForSource, onContinue, queryAction }: {
   kind: "find" | "organize";
   onPrepare: () => void;
   onQuestion?: () => void;
@@ -85,6 +89,7 @@ export function MaterialWorkPanel({ kind, onPrepare, onQuestion, canStart, organ
   aiProvider: AiProvider | null;
   waitingForSource: boolean;
   onContinue: () => void;
+  queryAction?: SearchQueryAction;
 }) {
   const local = useSharedSourceFolderConnection();
 
@@ -98,6 +103,6 @@ export function MaterialWorkPanel({ kind, onPrepare, onQuestion, canStart, organ
   >연결한 폴더로 요청 계속</button>;
 
   return kind === "find"
-    ? <FindWorkPanel onPrepare={onPrepare} onQuestion={onQuestion} canStart={canStart} />
+    ? <FindWorkPanel onPrepare={onPrepare} onQuestion={onQuestion} canStart={canStart} queryAction={queryAction} />
     : <OrganizationPreparationPanel organizeAction={organizeAction} aiProvider={aiProvider} />;
 }

@@ -17,7 +17,7 @@ export async function startUsage(
   owner: UsageOwner,
   requestId: string,
   provider: AiProvider,
-  operation: "chat" | "grounded" | "organize") {
+  operation: "chat" | "grounded" | "organize" | "query") {
   if (!enabled()) return;
 
   await getDatabase().$transaction(async tx => {

@@ -23,7 +23,11 @@ export function compareFindDocuments(left: FindDocument, right: FindDocument) {
 
   if (dateOrder) return dateOrder;
 
-  const scoreOrder = fieldScore(right) - fieldScore(left);
+  const completeness = Number(right.finding.relevance?.kind !== "related") - Number(left.finding.relevance?.kind !== "related");
+
+  if (completeness) return completeness;
+
+  const scoreOrder = (fieldScore(right) + (right.finding.relevance?.phraseBoost ?? 0) * 8) - (fieldScore(left) + (left.finding.relevance?.phraseBoost ?? 0) * 8);
 
   if (scoreOrder) return scoreOrder;
 

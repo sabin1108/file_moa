@@ -56,7 +56,7 @@ export function UsageView({ read }: { read: () => Promise<UsageSummary | null> }
               ? estimateUsageCost(entry.provider, entry.model ?? "", usage, REVIEWED_TOKEN_PRICES)
               : null;
 
-            return <li key={entry.requestId}>{new Date(entry.createdAt).toLocaleString("ko-KR")} · {entry.operation === "chat" ? "대화" : entry.operation === "grounded" ? "자료 질문" : "자료 정리"} · {entry.status === "reserved"
+            return <li key={entry.requestId}>{new Date(entry.createdAt).toLocaleString("ko-KR")} · {entry.operation === "chat" ? "대화" : entry.operation === "grounded" ? "자료 질문" : entry.operation === "query" ? "검색 조건 해석" : "자료 정리"} · {entry.status === "reserved"
               ? "처리 중 또는 결과 확인 안 됨"
               : entry.status === "unknown"
                 ? "사용량 확인 안 됨"
