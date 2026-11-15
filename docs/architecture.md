@@ -8,6 +8,8 @@
 
 한도·검증·라이선스 출처는 [명세](specs/optional-semantic-search.md), [검증](verification/optional-semantic-20261115/README.md)을 따른다.
 
+원본 snapshot만 기존 source WebLock으로 보호하며 긴 모델 계산은 이 잠금을 점유하지 않는다. 벡터 저장은 documents/semanticVectors/semanticStats/semanticEpoch를 한 readwrite transaction으로 묶어 현재 본문 hash/parser/textLength까지 검사한다. 이 경계로 다른 탭의 기본 검색을 모델 계산에서 분리하고 오래된 준비의 덮어쓰기를 막는다.
+
 ## 현재 구조와 상태 소유 — 2026-11-13
 
 현재 제품은 Next.js 앱 하나 안에서 기능별 모듈을 나누는 구조다. `src/app`은 페이지·layout·Action·Route Handler 진입점이고, `features`는 기능별 UI·상태·규칙·브라우저 저장소, `server`는 인증·DB·AI 외부 접근을 맡는다. 아래 날짜별 개정은 결정 당시의 기록이며 이 절을 현재 기준으로 읽는다.

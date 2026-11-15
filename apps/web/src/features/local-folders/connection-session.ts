@@ -1116,14 +1116,12 @@ export class FolderConnectionSession {
     if (JSON.stringify(key) !== JSON.stringify(start.scope) || (await readInstalledModel(location.origin))?.stamp !== installed.stamp) throw new Error("semantic-model-changed");
     this.sourceIndexPending++;
     try {
-      return await withLocalIndexLock(key, async () => {
-        check();
-        await this.assertStoredSourceConnection(key.connection, check);
-        const result = await prepareSemanticSource(key, snapshot, epoch, this.semanticModel, signal, check, progress);
-        if ((await readInstalledModel(location.origin))?.stamp !== installed.stamp) throw new Error("semantic-model-changed");
-        check();
-        return result;
-      }, signal);
+      check();
+      await this.assertStoredSourceConnection(key.connection, check);
+      const result = await prepareSemanticSource(key, snapshot, epoch, this.semanticModel, signal, check, progress);
+      if ((await readInstalledModel(location.origin))?.stamp !== installed.stamp) throw new Error("semantic-model-changed");
+      check();
+      return result;
     } finally { this.sourceIndexPending--; }
   };
 

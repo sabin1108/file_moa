@@ -15,22 +15,26 @@ export async function checkSemanticStorage() {
     const value = { ...key, path: [path], pathKey: JSON.stringify([path]), hash: "a".repeat(64), parserVersion: 2, model: SEMANTIC_MODEL.version };
     return { ...value, id: semanticRecordId(value), epoch, textLength: chunks, complete: true, chunks: Array.from({ length: chunks }, (_, i) => ({ start: i, end: i + 1, vector })), updatedAt: 1 };
   };
+  const save = async (row: ReturnType<typeof record>) => {
+    await index.put({ owner: row.owner, workspace: row.workspace, connection: row.connection, path: row.path, hash: row.hash, parserVersion: row.parserVersion }, "x".repeat(row.textLength));
+    return index.putSemantic(row);
+  };
   try {
     const epoch = await index.semanticEpoch(scope);
-    check(await index.putSemantic(record("a.md", epoch)), "scoped write");
+    check(await save(record("a.md", epoch)), "scoped write");
     check((await index.semanticRecords(other)).length === 0, "owner isolation");
     const bEpoch = await index.semanticEpoch(other);
-    check(await index.putSemantic(record("b.md", bEpoch, 1, other)), "other owner write");
+    check(await save(record("b.md", bEpoch, 1, other)), "other owner write");
     await index.clear(scope);
     check(!(await index.putSemantic(record("late.md", epoch))), "clear rejects late completion");
     check((await index.semanticRecords(other)).length === 1, "clear preserves other owner");
     const after = await index.semanticEpoch(scope);
-    check(await index.putSemantic(record("a.md", after)), "new preparation after clear");
+    check(await save(record("a.md", after)), "new preparation after clear");
     await index.invalidateSemanticModel();
     check(!(await index.putSemantic(record("late.md", after))), "model deletion rejects late completion");
     check((await index.semanticRecords(other)).length === 0, "model deletion clears all derived vectors");
     const full = await index.semanticEpoch(scope);
-    for (let i = 0; i < 64; i++) check(await index.putSemantic(record(`${i}.md`, full, 64)), `chunk capacity write ${i}`);
+    for (let i = 0; i < 64; i++) check(await save(record(`${i}.md`, full, 64)), `chunk capacity write ${i}`);
     check(!(await index.putSemantic(record("overflow.md", full))), "4096 chunk cap rejects overflow");
     check((await index.semanticStatus(scope)).chunks === 4096, "cap preserves committed records");
     const readMs: number[] = [];
@@ -46,15 +50,16 @@ export async function checkSemanticStorage() {
     observer.disconnect();
     await index.clear(scope);
     const countEpoch = await index.semanticEpoch(scope);
-    for (let i = 0; i < 500; i++) if (!await index.putSemantic(record(`${i}.md`, countEpoch))) throw new Error("document capacity early rejection");
+    for (let i = 0; i < 500; i++) if (!await save(record(`${i}.md`, countEpoch))) throw new Error("document capacity early rejection");
     check(!(await index.putSemantic(record("501.md", countEpoch))), "500 document cap");
     check((await index.semanticStatus(scope)).documents === 500, "document count stable");
     const old = record("0.md", countEpoch);
     const changed = { ...old, hash: "b".repeat(64) };
-    check(await index.putSemantic({ ...changed, id: semanticRecordId(changed) }), "same-path new hash replaces at cap");
+    check(await save({ ...changed, id: semanticRecordId(changed) }), "same-path new hash replaces at cap");
     check((await index.semanticStatus(scope)).documents === 500, "replacement does not grow count");
     await index.retainSemantic(scope, [["0.md"]], () => {});
     check((await index.semanticStatus(scope)).documents === 1, "complete scope refresh prunes deleted vector paths and statistics");
+    check(!(await index.putSemantic(old)), "older preparation cannot replace the vector for a newer cached source hash");
     return { checks, maxCapacityReadMs: readMs, mainLongTasksMs: longTasks };
   } finally {
     await new Promise<void>((resolve, reject) => { const request = indexedDB.deleteDatabase(name); request.onsuccess = () => resolve(); request.onerror = () => reject(request.error); });

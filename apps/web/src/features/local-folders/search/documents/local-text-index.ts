@@ -489,18 +489,22 @@ export class LocalTextIndex {
     const db = await this.open();
     try {
       return await new Promise((resolve, reject) => {
-        const tx = db.transaction(["semanticVectors", "semanticStats", "semanticEpoch"], "readwrite");
+        const tx = db.transaction(["documents", "semanticVectors", "semanticStats", "semanticEpoch"], "readwrite");
         const vectors = tx.objectStore("semanticVectors");
         const stats = tx.objectStore("semanticStats");
         const local = tx.objectStore("semanticEpoch").get(this.scopeId(record));
         const model = tx.objectStore("semanticEpoch").get("model");
         const before = stats.get(this.scopeId(record));
+        const cached = tx.objectStore("documents").get(this.id(record));
         const previous = vectors.index("document").getAll(IDBKeyRange.only([record.owner, record.workspace, record.connection, record.pathKey]));
         let saved = false;
         previous.onsuccess = () => {
           try {
             assertCurrent();
             if (record.epoch.scope !== local.result || record.epoch.model !== model.result) return;
+            const cachedText: unknown = cached.result;
+            // Embedding runs outside the scan lock; an older snapshot must not replace a newer version.
+            if (!isStoredEntry(cachedText) || cachedText.hash !== record.hash || cachedText.parserVersion !== record.parserVersion || cachedText.text.length !== record.textLength) return;
             const old = (previous.result as unknown[]).filter(isSemanticRecord);
             const current = before.result as { documents: number; chunks: number; partial: number; bytes: number } | undefined;
             const removed = old.reduce((sum, row) => sum + row.chunks.length, 0);

@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-15T07:54:11.812Z",
+  "at": "2026-11-15T08:38:20.598Z",
   "fixtureSha256": "dd7adaa4088ea0e3c1a71905a75e7eef1cd32fc1fd89aa1c4fd5fec499936646",
   "modelAssetsBytes": 135138424,
   "runtimeBytes": 21640503,
@@ -12,7 +12,7 @@
     "localRag": 37,
     "searchFields": 21
   },
-  "storageAssertions": 79,
+  "storageAssertions": 80,
   "threshold": 0.85,
   "thresholdSource": "Existing dev relevant meaning .852 vs dev unrelated maximum .839; not tuned on holdout.",
   "evaluation": {
@@ -426,9 +426,9 @@
   },
   "storage": {
     "readMs": [
-      12.200000047683716,
-      12.5,
-      12.599999904632568
+      12.800000190734863,
+      11.399999856948853,
+      12.700000047683716
     ],
     "mainLongTasksMs": []
   },
@@ -672,9 +672,9 @@
     "condition": "Observed WebAssembly linear-memory buffers only; excludes SDK JS heap, ONNX model copies, tokenizer, cache write buffers and browser overhead; not peak total RAM."
   },
   "build": {
-    "id": "2Zr-iK3yFObXEhBgpRyMP",
+    "id": "N1MYMpB4NyFb2pIY0q_mV",
     "files": 51,
-    "jsCssBytes": 4523143,
+    "jsCssBytes": 4523282,
     "modelWeightsOnServer": false
   },
   "routes": {
@@ -707,6 +707,25 @@
     "ready": "ready",
     "dimensions": 384,
     "elapsedMs": 1434.5
+  },
+  "preparingWithConcurrentBasic": {
+    "sameScope": true,
+    "basic": {
+      "phase": "ready",
+      "documents": 3,
+      "elapsedMs": 671.7999999523163
+    },
+    "heldUntilBasicFinished": true,
+    "prepared": {
+      "phase": "done",
+      "held": true,
+      "result": {
+        "prepared": 1,
+        "partial": false,
+        "scanned": 1
+      }
+    },
+    "condition": "Actual File/IDB/Web Locks and two tabs; embedding paused at the model boundary, then the real model completed after basic search."
   },
   "newPaidAiCalls": 0,
   "limitations": [
