@@ -27,11 +27,16 @@ const choose = (page, mode) => page.eval(mode => {
   select.value = mode;
   select.dispatchEvent(new Event("change", { bubbles: true }));
 }, mode);
-async function example(page, mode) {
-  await page.eval(() => { document.querySelector('[aria-label="현재 대화 작업"] details').open = true; });
-  await click(page, `[data-task-example="${mode}"]`);
-  await wait(page, () => document.getElementById('message-draft')?.value.trim().length > 0
-    );
+async function example(page) {
+  await wait(page, () => document.getElementById('message-draft')?.placeholder.includes('\n예: '));
+  const text = await page.eval(() => document.getElementById('message-draft').placeholder.split('\n예: ')[1]);
+  await page.eval(() => {
+    const input = document.getElementById('message-draft');
+    input.focus();
+    input.select();
+  });
+  await page.send('Input.insertText', { text });
+  await wait(page, () => document.getElementById('message-draft')?.value.trim().length > 0);
 }
 
 let page;
@@ -70,8 +75,8 @@ try {
     return parseFloat(getComputedStyle(input).minHeight) >= 36 && input.parentElement.className.includes('modeChoice');
   }));
   check('task meaning remains visible outside the examples', await page.eval(() => document.querySelector('[aria-label="현재 대화 작업"]').textContent.includes('궁금한 내용을 바로 질문해요')));
-  await example(page, 'chat');
-  check('an example only fills the draft and does not submit', (await saved(page)).messages.length === 0 && (await saved(page)).draft.length > 0);
+  await example(page);
+  check('typing a placeholder example preserves the draft without submission', (await saved(page)).messages.length === 0 && (await saved(page)).draft.length > 0);
   await page.goto(base + '/demo/files', { settleMs: 300 });
   await wait(page, () => document.querySelector('[data-listing-phase="ready"]'));
   check('sample folders use the product listing and start unchecked', await page.eval(() => !!document.querySelector('[aria-label="자료 폴더 탐색"]') && !document.querySelector('[data-tour="folder-list"] input:checked')));
@@ -95,14 +100,14 @@ try {
   await wait(page, () => document.querySelector('select[aria-label="대화 작업"]'));
   check('refresh and route changes do not automatically restart the tour', await page.eval(() => !document.querySelector('#workspace-tour-title')));
   await choose(page, 'find');
-  await example(page, 'find');
+  await example(page);
   await click(page, '[data-action="organization-send"]');
   await wait(page, () => document.querySelector('[aria-label="샘플 검색 결과"]'));
   check('sample search still returns real excerpt matches', (await saved(page)).findings.length > 0);
   await click(page, '[data-drawer-close]');
   await wait(page, () => document.getElementById('conversation-materials')?.dataset.drawerState === 'closed');
   await choose(page, 'grounded');
-  await example(page, 'grounded');
+  await example(page);
   check('offline verification cannot send a grounded request or substitute a prepared answer', await page.eval(() =>
     document.querySelector('[data-action="organization-send"]').disabled && !document.querySelector('[aria-label="답변 출처"]')));
   await click(page, '[data-tour="records"]');

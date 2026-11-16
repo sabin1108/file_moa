@@ -19,11 +19,12 @@ import { SampleDocumentPreview } from "../files/SampleDocumentPreview";
 import { SampleFolderPanel } from "../files/SampleFolderPanel";
 import styles from "../sample-workspace.module.css";
 import { SampleFolderTree } from "../files/SampleFolderTree";
-import { ConversationTaskControls, ConversationTaskIntro } from "../../conversation-workspace/material-work/ConversationTaskControls";
+import { ConversationTaskControls, ConversationTaskIntro, conversationInputPlaceholder } from "../../conversation-workspace/material-work/ConversationTaskControls";
 import type { ConversationKind } from "../../../shared/ai-records";
 import { SampleLibraryPanel } from "./SampleLibraryPanel";
 import { ConversationContextBar, type ConversationPanelView } from "../../conversation-workspace/ConversationContextBar";
 import { ConversationSettingsPanel } from "../../conversation-workspace/settings/ConversationSettingsPanel";
+import { AI_DAILY_LIMITS } from "../../../shared/ai-daily-limits";
 import { replayWorkspaceTour } from "../../onboarding/workspace-tour";
 import { useWorkspaceTourRecordView } from "../../onboarding/workspace-tour-view";
 import { ConversationPanelNavigation } from "../../conversation-workspace/ConversationPanelNavigation";
@@ -165,7 +166,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
         onDraftChange={fill}
         pending={aiPending}
         inputLabel="AI에게 질문하기"
-        inputPlaceholder="질문하거나 찾고 정리할 자료를 적어 주세요"
+        inputPlaceholder={conversationInputPlaceholder(state.mode)}
         onCancel={store.cancelAi}
         panelOpen={panelOpen || !!tourRecordKind}
         panelModal={!tourRecordKind}
@@ -184,7 +185,10 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
         canSend={!disabled && state.phase !== "review" && !!state.draft.trim() && (mode === "find" || (!!aiProvider && consented)) && (mode === "chat" || mode === "find" || (mode === "grounded" ? state.selected.length > 0 && !questionScopeIssue : documentIds.length > 0))}
         onSend={send}
         submitLabel="보내기"
-        intro={<ConversationTaskIntro mode={state.mode} disabled={disabled || state.phase === "review"} onChoose={chooseTask} />}
+        intro={<>
+          <ConversationTaskIntro mode={state.mode} disabled={disabled || state.phase === "review"} onChoose={chooseTask} />
+          <p role="note" className={options.taskDescription}>개인정보나 비밀번호는 입력하지 마세요. 대화는 이 탭에 임시 보관됩니다.</p>
+        </>}
         notice={
           <>
             {resetting && <section role="group" aria-label="샘플 초기화 확인"><p>이 세션의 대화·정리 내역·임시 기록을 처음으로 돌릴까요?</p>
@@ -204,15 +208,9 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
         }
         scope={
           <div>
-            {started && <ConversationTaskControls mode={state.mode} disabled={disabled || state.phase === "review"} onChoose={chooseTask} onExample={fill} />}
+            {started && <ConversationTaskControls mode={state.mode} disabled={disabled || state.phase === "review"} onChoose={chooseTask} />}
             <ConversationContextBar temporary status="임시 대화" sourceName="예시 자료" provider={mode === "find" || !aiProvider ? null : providerLabel} onOpen={openPanel} />
-            <p>데모 AI는 하루 30회 · 한국 시간 자정 초기화</p>
-            <details className={styles.conversationScope}><summary>체험 범위와 정보 보관</summary>
-              <p>질문·답변·기록은 이 탭에 평문으로 임시 보관합니다. 민감한 내용은 입력하지 마세요.</p>
-              <p>초대 링크를 전달받은 사람도 로그인 없이 사용할 수 있습니다. 브라우저별로 횟수를 집계하며, 브라우저 데이터를 지우거나 다른 브라우저를 사용하면 새 방문자로 집계될 수 있습니다.</p>
-            </details>
             {started && mode !== "find" && <>
-              {mode === "chat" && <p>보내기를 누르면 이 질문과 최근 완료된 AI 대화 최대 3회를 {providerLabel}로 전송합니다.</p>}
               {!aiProvider && <StatusNotice state="attention" title="AI 연결을 사용할 수 없어요." detail="서버 연결 설정을 확인해야 합니다. 준비된 답변으로 대체하지 않습니다." />}
               {mode !== "chat" && <label><input type="checkbox" data-demo-ai-consent checked={consented} disabled={disabled || !aiProvider || !state.draft.trim()}
                 onChange={event => setConsent(event.target.checked ? consentKey : null)} />
@@ -266,7 +264,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
             <div hidden={!showingRecords}><SampleLibraryPanel key={resetVersion} previewKind={tourRecordKind ?? undefined} state={state} catalog={catalog} disabled={disabled} dispatch={store.dispatch} onPreview={openPreview}
               onReveal={() => { setRecordsOpen(true); setPanelOpen(true); }} /></div>
             <div hidden={!!tourRecordKind || panelView !== "settings"}><ConversationSettingsPanel includeMemory={false} onIncludeMemory={() => {}} projectId={projectId} onProjectId={setProjectId}
-              canUseMemory={false} disabled={disabled} provider={aiProvider ? providerLabel : null} temporary storageDescription="이 탭의 샘플 세션 동안 임시 보관합니다. 새로고침해도 복원되며 실제 폴더에는 저장하지 않아요." onStorage={() => openPanel("storage")}
+              canUseMemory={false} disabled={disabled} provider={aiProvider ? providerLabel : null} temporary dailyLimit={AI_DAILY_LIMITS.demo} storageDescription="이 탭의 샘플 세션 동안 임시 보관합니다. 새로고침해도 복원되며 실제 폴더에는 저장하지 않아요." onStorage={() => openPanel("storage")}
               onReplayTour={() => { setPanelOpen(false); requestAnimationFrame(replayWorkspaceTour); }} /></div>
             <div hidden={showingRecords || panelView === "settings"}>
             {mode === "grounded" && <section aria-label="질문할 예시 자료 선택">

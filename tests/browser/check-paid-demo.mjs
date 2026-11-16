@@ -34,13 +34,19 @@ try {
   await page.goto(url, { settleMs: 400 });
   await wait(page, () => document.querySelector('[data-tour="task-chat"]'));
   check('mount and restored state generate no automatic requests', await page.eval(() => paidDemo.answers.length === 0 && paidDemo.organizations === 0));
+  check('privacy guidance appears in the empty conversation only', await page.eval(() => document.querySelector('[role="note"]')?.textContent.includes('개인정보나 비밀번호')));
   await click(page, '[data-tour="task-chat"]');
-  await page.eval(() => { document.querySelector('[aria-label="현재 대화 작업"] details').open = true; });
-  await click(page, '[data-task-example="chat"]');
-  check('input examples fill the draft without generation', await page.eval(() => paidDemo.answers.length === 0 && document.getElementById('message-draft').value.length > 0));
+  check('the input shows a multiline example without autofilling', await page.eval(() => document.getElementById('message-draft').placeholder.includes('\n예: 보고서') && !document.getElementById('message-draft').value));
+  check('composer context omits repeated quota, history and invite cautions', await page.eval(() => {
+    const text = document.querySelector('[data-tour="context"]').textContent;
+    return !text.includes('하루 30회') && !text.includes('최근 완료된 AI 대화') && !text.includes('초대 링크') && !text.includes('체험 범위와 정보 보관');
+  }));
+  await fill(page, '보고서를 읽기 쉽게 쓰는 방법을 알려줘');
+  check('typing an example does not generate automatically', await page.eval(() => paidDemo.answers.length === 0));
   await send(page);
   await wait(page, () => paidDemo.store.getSnapshot().state.messages.length === 2);
   check('chat send calls the supplied server action exactly once and labels the actual model', await page.eval(() => paidDemo.answers.length === 1 && document.body.textContent.includes('gpt-6-luna')));
+  check('the first-use privacy note does not repeat in an ongoing conversation', await page.eval(() => !document.querySelector('[role="note"]')));
   await fill(page, '최근 질문을 이어서 설명해줘');
   await send(page);
   await wait(page, () => paidDemo.store.getSnapshot().state.messages.length === 4);
@@ -93,6 +99,10 @@ try {
   await click(page, '[data-tour="settings"]');
   await wait(page, () => document.querySelector('[aria-label="대화 설정 내용"]')?.checkVisibility());
   check('settings show the connected provider', await page.eval(() => document.querySelector('[aria-label="대화 설정 내용"]').textContent.includes('OpenAI')));
+  check('settings retain the correct daily demo quota', await page.eval(() => {
+    const text = document.querySelector('[aria-label="대화 설정 내용"]').textContent;
+    return text.includes('하루 30회') && text.includes('한국 시간 자정 초기화') && !text.includes('1시간 10회');
+  }));
   await page.eval(() => [...document.querySelectorAll('[aria-label="대화 설정 내용"] button')].find(button => button.textContent === '사용 방법 다시 보기').click());
   await wait(page, () => document.querySelector('#workspace-tour-title'));
   check('tutorial replay starts no AI request', await page.eval(() => paidDemo.answers.length === 5 && paidDemo.organizations === 1));

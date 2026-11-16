@@ -4,9 +4,10 @@ import { SettingRow } from "../../../components/ui/SettingRow";
 import { actionClasses } from "../../../components/ui/action-classes";
 import { UsageView } from "./UsageView";
 import type { UsageSummary } from "../../../shared/ai-usage";
+import { AI_DAILY_LIMITS } from "../../../shared/ai-daily-limits";
 import styles from "../conversation-options.module.css";
 
-export function ConversationSettingsPanel({ includeMemory, onIncludeMemory, projectId, onProjectId, canUseMemory, disabled, provider, temporary, onStorage, onReplayTour, readUsage, storageDescription }: {
+export function ConversationSettingsPanel({ includeMemory, onIncludeMemory, projectId, onProjectId, canUseMemory, disabled, provider, temporary, onStorage, onReplayTour, readUsage, storageDescription, dailyLimit = AI_DAILY_LIMITS.live }: {
   includeMemory: boolean;
   onIncludeMemory: (enabled: boolean) => void;
   projectId: string;
@@ -19,6 +20,7 @@ export function ConversationSettingsPanel({ includeMemory, onIncludeMemory, proj
   onReplayTour?: () => void;
   readUsage?: () => Promise<UsageSummary | null>;
   storageDescription?: string;
+  dailyLimit?: number;
 }) {
   return <div className={styles.settings} aria-label="대화 설정 내용">
     <section>
@@ -77,7 +79,7 @@ export function ConversationSettingsPanel({ includeMemory, onIncludeMemory, proj
         </div>
         <div>
           <dt>요청 한도</dt>
-          <dd>자료 정리와 합쳐 계정·작업 공간별 1시간 10회</dd>
+          <dd>하루 {dailyLimit}회 · 한국 시간 자정 초기화</dd>
         </div>
       </dl>
       <p>서버 공유 한도로 더 일찍 제한될 수 있습니다. 중지·실패도 횟수에 포함되고 이미 발생한 비용은 남을 수 있어요. 기억을 자동 추출하지 않습니다.</p>

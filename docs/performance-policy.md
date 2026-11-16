@@ -1,5 +1,7 @@
 # 사이트 전체 성능 측정 정책
 
+2026-11-16 입력 예시·데모 안내 정리: [검증 조건](verification/demo-copy-20261116/README.md). 로컬 production6경로/2폭/36표본, JS/CSS54개4,590,365bytes(직전 대비-1,707). 단순 표시/컴포넌트 재사용 변경의 비용 관찰이며 속도 개선율·운영 AI/field INP의 보장이 아니다.
+
 2026-11-16 명시 전송 AI·초대 데모: [실행 검증과 로딩 관찰](verification/paid-ai-demo-20261116/README.md). 로컬 production6경로/2폭/36표본, JS/CSS54개4,592,072bytes(+5,332). 초대 이후 공개/샘플 로딩이며 실제 AI 합성3회와 별도다. 전후 개선율·실제 인증·field INP·운영 비용 검증으로 확대하지 않는다.
 
 2026-11-16 데모 진입·자료 질문·로그인 실패 후속: [로컬 production 6경로/2폭/36표본](verification/demo-usability-20261116/performance.md). 전체 JS/CSS54파일4,586,740bytes, 익명/준비 자료 조건의 변경 후 관찰이다. 전후 속도 개선율·실제 인증 성공·field INP·운영 비용으로 확대하지 않는다.

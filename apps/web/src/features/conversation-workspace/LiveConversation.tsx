@@ -30,7 +30,7 @@ import type { SearchQueryAction } from "../../shared/search-query";
 import type { GroundedEvidence } from "../../shared/grounded-evidence";
 import type { UsageSummary } from "../../shared/ai-usage";
 import { makeWikiDraft } from "../ai-records/wiki/wiki";
-import { ConversationTaskControls, ConversationTaskIntro } from "./material-work/ConversationTaskControls";
+import { ConversationTaskControls, ConversationTaskIntro, conversationInputPlaceholder } from "./material-work/ConversationTaskControls";
 import { ConversationPanelNavigation } from "./ConversationPanelNavigation";
 import { replayWorkspaceTour } from "../onboarding/workspace-tour";
 import { useWorkspaceTourRecordView } from "../onboarding/workspace-tour-view";
@@ -122,7 +122,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
       onCancel={workflow.cancel}
       cancelLabel={chat.state.active ? "답변 중지" : "작업 대기 중지"}
       inputLabel="AI에게 질문하기"
-      inputPlaceholder="질문하거나 찾고 정리할 자료를 적어 주세요"
+      inputPlaceholder={conversationInputPlaceholder(workflow.mode)}
       submitLabel="보내기"
       panel={<>
         <ConversationPanelNavigation selected={panelView} onOpen={openPanel} />
@@ -268,7 +268,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
           : null}
       intro={<ConversationTaskIntro mode={workflow.mode} onChoose={workflow.selectMode} disabled={workflow.blocked} />}
       scope={<div>
-        {(workflow.mode || chat.state.turns.length > 0) && <ConversationTaskControls mode={workflow.mode} disabled={workflow.blocked} onChoose={workflow.selectMode} onExample={chat.updateDraft} />}
+        {(workflow.mode || chat.state.turns.length > 0) && <ConversationTaskControls mode={workflow.mode} disabled={workflow.blocked} onChoose={workflow.selectMode} />}
         <ConversationContextBar
           temporary={conversation.temporary}
           status={conversation.status}

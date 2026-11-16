@@ -40,13 +40,13 @@ describe("demo presents the product UI", () => {
       expect(step.route === null || step.route.startsWith("/demo")).toBe(true);
     }
   });
-  it("explains the current task and marks example controls as filling the draft only", async () => {
-    const { ConversationTaskControls, ConversationTaskIntro } = await import("../../src/features/conversation-workspace/material-work/ConversationTaskControls");
-    const html = renderToStaticMarkup(createElement(ConversationTaskControls, { mode: "find", disabled: false, onChoose() {}, onExample() {} }));
+  it("keeps task meaning and puts the example in the shared input placeholder", async () => {
+    const { ConversationTaskControls, ConversationTaskIntro, conversationInputPlaceholder } = await import("../../src/features/conversation-workspace/material-work/ConversationTaskControls");
+    const html = renderToStaticMarkup(createElement(ConversationTaskControls, { mode: "find", disabled: false, onChoose() {} }));
     expect(html).toContain('aria-label="대화 작업"');
     expect(html).toContain("단어와 날짜로 파일을 찾아요");
-    expect(html).toContain("입력 예시");
-    expect(html).toContain("자동으로 실행하지 않아요");
+    expect(html).not.toContain("입력 예시");
+    expect(conversationInputPlaceholder("find")).toContain("\n예: 성능 찾아줘");
     const intro = renderToStaticMarkup(createElement(ConversationTaskIntro, { mode: "grounded", disabled: false, onChoose() {} }));
     expect(intro).toContain("자료로 질문 시작하기");
     expect(intro).toContain("선택한 자료를 참고해 답변받아요");
