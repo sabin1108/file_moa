@@ -61,7 +61,8 @@ export class SampleWorkspaceStore {
 
         if (saved) {
           state = restoreSampleState(this.catalog, saved);
-          if (state.fileSelected.length) notice = `이 탭에서 보관한 폴더의 파일 선택 ${state.fileSelected.length}개를 복원했어요. 파일 선택의 ‘전체 선택 해제’로 비울 수 있습니다.`;
+          const selectionCount = state.fileSelected.length + state.fileSelectedFolders.length;
+          if (selectionCount) notice = `이 탭에서 보관한 폴더의 항목 선택 ${selectionCount}개를 복원했어요. 파일 선택의 ‘전체 선택 해제’로 비울 수 있습니다.`;
         }
       } catch {
         notice = "보관된 샘플 상태를 읽지 못해 처음 상태로 열었습니다. 이 탭에서 계속 체험할 수 있어요.";

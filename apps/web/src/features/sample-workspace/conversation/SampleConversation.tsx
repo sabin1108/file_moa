@@ -109,9 +109,6 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
   const chooseTask = (kind: ConversationKind) => {
     store.dispatch({ type: "mode", mode: kind });
     setConsent(null);
-    if (kind === "grounded") {
-      openPanel("sources", document.activeElement instanceof HTMLElement ? document.activeElement : undefined);
-    }
   };
   const send = () => {
     panelTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -199,7 +196,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
               <button type="button" className={actionClasses("primary")} disabled={disabled} onClick={() => {
                 store.dispatch({ type: "reset" }); setConsent(null); setPreviewId(null); setResetVersion(value => value + 1); setResetting(false); setRecordsOpen(false);
               }}>초기화 확인</button><button type="button" className={actionClasses("ghost")} onClick={() => setResetting(false)}>취소</button></section>}
-            {notice && <StatusNotice state="attention" title="요청 안내" detail={notice} />}
+            {notice && <StatusNotice state="attention" title="요청 안내" detail={notice} compact={notice.startsWith("이 탭에서 보관한")} />}
             {expired
               && (
                 <StatusNotice
@@ -225,8 +222,8 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
                 {needsConsent && <p id="sample-ai-consent-help" role="status">자료를 보내려면 전송에 동의해 주세요.</p>}
               </div>}
             </>}
-            {mode === "grounded" && <p role="status">질문에 사용할 자료 {selectedIds.length}개 선택 · 선택한 자료의 발췌를 AI에 보내고 답변 출처를 확인합니다.
-              <button type="button" className={actionClasses("secondary")} disabled={disabled || state.phase === "review"}
+            {mode === "grounded" && <p role="status" className={options.sourceSelection}><span>질문에 사용할 자료 {selectedIds.length}개 선택 · 선택한 자료의 발췌를 AI에 보내고 답변 출처를 확인합니다.</span>
+              <button type="button" data-action="select-question-sources" className={actionClasses("secondary")} disabled={disabled || state.phase === "review"}
                 onClick={event => openPanel("sources", event.currentTarget)}>질문할 자료 선택</button>
             </p>}
             {mode === "grounded" && questionScopeIssue && <p role="alert">{questionScopeIssue}</p>}

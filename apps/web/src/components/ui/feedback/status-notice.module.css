@@ -9,6 +9,9 @@
 .notice[data-state="error"] { background: var(--ui-danger-bg, #fcf0ee); border-color: var(--ui-danger, #a33232); border-left-width: 4px; color: var(--ui-danger, #a33232); }
 .notice[data-state="error"] p { color: var(--ui-danger, #a33232); }
 .notice[data-state="error"] > svg { color: var(--ui-danger, #a33232); }
+.notice[data-compact="true"] { gap: 8px; padding: 8px 12px; font-size: 13px; line-height: 1.6; background: color-mix(in srgb, var(--ui-warning-bg, #fff1cc) 72%, transparent); }
+.notice[data-compact="true"] > svg { width: 18px; height: 18px; }
+.notice[data-compact="true"] p { margin-top: 2px; font-size: 12px; }
 .action { display: flex; gap: 8px; flex-shrink: 0; }
 .dismiss { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 32px; height: 32px; padding: 0; margin: -4px -4px 0 0; border: 0; border-radius: var(--ui-radius-control); background: transparent; color: inherit; cursor: pointer; }
 .dismiss:hover { background: rgb(0 0 0 / 6%); }

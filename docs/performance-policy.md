@@ -186,3 +186,8 @@ production 게스트 보호경로3개와 demo3개 각각3회/history9, 실제 de
 최신 데모 선택·동의·기록 편집: [검증 보고서](verification/demo-selection-20261116/README.md). 최종 로컬 production 6경로×2폭×3회 36표본, JS/CSS 54파일·4,589,701bytes. 변경 전 동일 조건 비교·개선율·실계정·현장 INP·물리 IME·실제 AI 지연은 미측정이다. 기본 병렬 전체 검사 시간 초과와 한 작업자 전체 1,623개 통과는 구분한다.
 
 <!-- demo-consent-selection-20261116 -->
+
+
+최신 자료 창 진입·폴더 선택·복원 안내: [검증 보고서](verification/demo-folder-selection-20261116/README.md). 최종 로컬6경로×2폭×3회36표본, JS/CSS54파일4,592,221bytes. 4폭 간격/알림/긴누르기·Space/F5를 별도검증했다. 변경 전 동일조건 비교·실사용 INP·실계정/모델 지연은 미측정이다.
+
+<!-- grounded-folder-selection-20261116 -->

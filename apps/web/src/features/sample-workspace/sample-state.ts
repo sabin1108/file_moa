@@ -28,6 +28,7 @@ const usageSchema = z.strictObject({
   outputTokens: z.number().int().nonnegative(),
   totalTokens: z.number().int().nonnegative()
 });
+const fileFolderSelectionSchema = z.array(z.array(z.string().min(1).max(120)).min(1).max(20)).max(200);
 const stateSchema = z.strictObject({
   version: z.literal("1"),
   mode: z.enum(conversationKinds).nullable().default(null),
@@ -42,6 +43,7 @@ const stateSchema = z.strictObject({
   phase: z.enum(["select", "review", "result"]),
   selected: z.array(z.string()).max(200),
   fileSelected: z.array(z.string()).max(200).default([]),
+  fileSelectedFolders: fileFolderSelectionSchema.default([]),
   questionSelected: z.array(z.string()).max(SAMPLE_ANSWER_LIMITS.documents).nullable().default(null),
   createdFolders: createdFoldersSchema.default([]),
   draft: z.string().max(800).default(""),
@@ -73,6 +75,7 @@ const stateSchema = z.strictObject({
 export type SampleState = z.infer<typeof stateSchema>;
 
 export type SampleAction =
+  | Readonly<{ type: "select-file-folders"; paths: readonly (readonly string[])[] }>
   | Readonly<{ type: "select-files"; ids: readonly string[] }>
   | Readonly<{ type: "select-question"; ids: readonly string[] }>
   | Readonly<{ type: "ai-answer"; requestId: string; mode: "chat" | "grounded"; question: string; result: Extract<SampleAnswerResult, { ok: true }> }>
@@ -119,6 +122,7 @@ export function createSampleState(catalog: SampleCatalog): SampleState {
     phase: "select",
     selected: [],
     fileSelected: [],
+    fileSelectedFolders: [],
     questionSelected: null,
     locations: Object.fromEntries(catalog.documents.map(document => [document.id, document.sourceFolderId ?? null])),
     targets: {},
@@ -166,7 +170,7 @@ export function restoreSampleState(catalog: SampleCatalog, serialized: string): 
   const validLocations = (locations: SampleState["locations"]) => Object.keys(locations).length === documents.size
     && Object.entries(locations).every(([id, folder]) => documents.has(id) && (folder === null || folders.has(folder)));
 
-  if (!validIds(state.selected) || !validIds(state.fileSelected) || (state.questionSelected !== null && !validQuestionSelection(catalog, state.questionSelected)) || !validLocations(state.locations)
+  if (!validIds(state.selected) || !validIds(state.fileSelected) || !validFolderSelection(catalog, state.fileSelectedFolders) || (state.questionSelected !== null && !validQuestionSelection(catalog, state.questionSelected)) || !validLocations(state.locations)
     || Object.entries(state.targets).some(([id, folder]) => !state.selected.includes(id) || (folder !== null && !folders.has(folder)))
     || (state.phase === "review" && (!state.selected.length || Object.keys(state.targets).length !== state.selected.length))) {
     throw new Error("invalid-sample-state");
@@ -247,6 +251,12 @@ function validQuestionSelection(catalog: SampleCatalog, ids: readonly string[]) 
   return ids.length <= SAMPLE_ANSWER_LIMITS.documents && new Set(ids).size === ids.length
     && documents.every(document => !!document)
     && documents.reduce((sum, document) => sum + (document?.excerpt.length ?? 0), 0) <= SAMPLE_ANSWER_LIMITS.excerptCharacters;
+}
+
+function validFolderSelection(catalog: SampleCatalog, paths: readonly (readonly string[])[]) {
+  if (!fileFolderSelectionSchema.safeParse(paths).success || new Set(paths.map(path => JSON.stringify(path))).size !== paths.length) return false;
+  const folders = [["받은 자료"], ...catalog.folders.map(folder => sampleFolderPath(catalog, folder.id))];
+  return paths.every(path => folders.some(folder => path.length <= folder.length && path.every((part, index) => folder[index] === part)));
 }
 
 /** 질문 선택은 폴더 관리·정리 계획의 선택과 별도로 보관한다. null만 첫 체험 기본값을 뜻한다. */
@@ -401,6 +411,10 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
       || action.ids.some(id => !catalog.documents.some(document => document.id === id))) throw Error("invalid-sample-selection");
     return { ...state, fileSelected: [...action.ids] };
   }
+  if (action.type === "select-file-folders") {
+    if (!validFolderSelection(sampleActiveCatalog(catalog, state), action.paths)) throw Error("invalid-sample-folder-selection");
+    return { ...state, fileSelectedFolders: action.paths.map(path => [...path]) };
+  }
   if (action.type === "guide") {
     if (!Number.isInteger(action.step) || action.step < 0 || action.step > 5) throw Error("invalid-sample-guide");
     return { ...state, guideStep: action.step, guideDismissed: action.dismissed };
@@ -520,14 +534,19 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
     return { ...state, selected: [...action.ids], targets: {}, ai: null, organization: null };
   }
 
-  if (action.type === "back") return {
-    ...state,
-    phase: "select",
-    targets: {},
-    ai: null,
-    organization: null,
-    createdFolders: state.phase === "review" && state.organization ? state.organization.foldersBefore : state.createdFolders
-  };
+  if (action.type === "back") {
+    const createdFolders = state.phase === "review" && state.organization ? state.organization.foldersBefore : state.createdFolders;
+    const folders = sampleActiveCatalog(catalog, { createdFolders });
+    return {
+      ...state,
+      phase: "select",
+      targets: {},
+      ai: null,
+      organization: null,
+      createdFolders,
+      fileSelectedFolders: state.fileSelectedFolders.filter(path => validFolderSelection(folders, [path]))
+    };
+  }
 
   if (action.type === "propose" || action.type === "ai-propose") {
     if (state.phase !== "select" || !state.selected.length) throw new Error("sample-review-required");
@@ -614,6 +633,7 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
     ai: null,
     organization: null,
     createdFolders: state.lastApplied.foldersBefore,
+    fileSelectedFolders: state.fileSelectedFolders.filter(path => validFolderSelection(sampleActiveCatalog(catalog, { createdFolders: state.lastApplied!.foldersBefore }), [path])),
     lastApplied: null,
     messages: [
       ...state.messages,

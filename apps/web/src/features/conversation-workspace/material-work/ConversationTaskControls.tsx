@@ -40,6 +40,6 @@ export function ConversationTaskControls({ mode, disabled, onChoose }: TaskProps
         {conversationActions.map(action => <option key={action.kind} value={action.kind}>{action.label}</option>)}
       </select>
     </label>
-    {action && <p className={styles.taskDescription}>{action.description}</p>}
+    {action && mode !== "grounded" && <p className={styles.taskDescription}>{action.description}</p>}
   </section>;
 }

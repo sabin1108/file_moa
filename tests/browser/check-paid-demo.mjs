@@ -86,6 +86,8 @@ try {
   await wait(page, () => document.querySelector('[aria-label="샘플 검색 결과"]'));
   check('local find still uses no AI action', await page.eval(() => paidDemo.answers.length === 3 && paidDemo.store.getSnapshot().state.findings.length === 42));
   await close(page); await choose(page, 'grounded');
+  check('choosing grounded keeps the source drawer closed and omits the redundant task description', await page.eval(() => !document.getElementById('conversation-materials')?.open && !document.querySelector('[aria-label="현재 대화 작업"]').textContent.includes('선택한 자료를 참고해 답변받아요')));
+  await click(page, '[data-action="select-question-sources"]');
   await wait(page, () => document.getElementById('conversation-materials')?.open);
   check('grounded starts with the website documents while folder selection stays empty', await page.eval(() => paidDemo.store.getSnapshot().state.questionSelected.length === 2 && paidDemo.store.getSnapshot().state.selected.length === 0));
   await page.eval(() => [...document.querySelectorAll('[role="group"][aria-label="파일 선택"] button')].find(button => button.textContent === '전체 선택 해제').click());
@@ -94,6 +96,15 @@ try {
   await click(page, '[data-grounded-selection-done]');
   await wait(page, () => !document.getElementById('conversation-materials')?.open);
   await fill(page, '선택 자료의 핵심을 알려줘');
+  for (const width of [390, 768, 1440]) {
+    await page.setViewport({ width, height: 1000 });
+    check(`${width}: source selection button stays separated from the explanatory text`, await page.eval(() => {
+      const button = document.querySelector('[data-action="select-question-sources"]');
+      const text = button.previousElementSibling.getBoundingClientRect();
+      const box = button.getBoundingClientRect();
+      return (text.right + 8 <= box.left || text.bottom + 8 <= box.top) && document.documentElement.scrollWidth <= innerWidth;
+    }));
+  }
   check('grounded transmission requires explicit source consent', await page.eval(() => document.querySelector('[data-action="organization-send"]').disabled));
   check('unchecked actionable consent is outlined and explains the disabled send button', await page.eval(() => {
     const input = document.querySelector('[data-demo-ai-consent]');
@@ -153,6 +164,7 @@ try {
   }
   await page.goto(url, { settleMs: 400 }); await wait(page, () => document.querySelector('select[aria-label="대화 작업"]'));
   check('refresh restores answers without replaying any AI call', await page.eval(() => paidDemo.answers.length === 0 && paidDemo.organizations === 0 && paidDemo.store.getSnapshot().state.messages.some(message => message.model === 'gpt-6-luna')));
+  check('refresh keeps the source drawer closed until requested', await page.eval(() => !document.getElementById('conversation-materials')?.open));
   check('the product UI has no browser exceptions', page.consoleErrors.length === 0);
 } catch (error) {
   checks.push({ name: 'run', passed: false, detail: String(error) }); process.exitCode = 1;

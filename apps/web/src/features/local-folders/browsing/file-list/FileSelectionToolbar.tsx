@@ -106,8 +106,8 @@ export function FileSelectionToolbar({
       {selectedFolderCount > 0
         && (
           <p className={styles.selectionHint}>
-            폴더 {selectedFolderCount}개 포함 · 하위 자료까지 검사하며 이름 충돌과 관리 폴더를
-            확인합니다.
+            폴더 {selectedFolderCount}개 포함
+            {(onReviewPlan || onTrash) && " · 하위 자료까지 검사하며 이름 충돌과 관리 폴더를 확인합니다."}
           </p>
         )}
       {hiddenSelectedCount > 0 && (

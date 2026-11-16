@@ -45,13 +45,20 @@ export function SampleWorkspace({ catalog: sourceCatalog, session, remainingMs, 
       onOpenFile={value => setPreviewId(catalog.documents.find(document => document.name === value.at(-1)
         && JSON.stringify(sampleFolderPath(catalog, state.locations[document.id])) === JSON.stringify(value.slice(0, -1)))?.id ?? null)}
       onSelectPrevious={() => {}}
-      footer={<span>{path.at(-1) ?? "예시 자료"} · {sampleFolderListing(catalog, state, path).entries.length}개 항목 · {state.fileSelected.length}개 선택</span>}
+      footer={<span>{path.at(-1) ?? "예시 자료"} · {sampleFolderListing(catalog, state, path).entries.length}개 항목 · {state.fileSelected.length + state.fileSelectedFolders.length}개 선택</span>}
       preview={<FilePreviewPane open={!!preview} onClose={() => setPreviewId(null)}>
         {preview && <SampleDocumentPreview document={preview} headingRef={heading} />}
       </FilePreviewPane>}>
       {expired && <StatusNotice state="attention" title="샘플 세션이 만료됐어요" action={<a href="/demo/start">새 세션 시작</a>} />}
-      {notice && <StatusNotice state="attention" title="샘플 안내" detail={notice} />}
+      {notice && <StatusNotice state="attention" title="샘플 안내" detail={notice} compact={notice.startsWith("이 탭에서 보관한")} />}
       <SampleFolderPanel catalog={catalog} state={{ locations: state.locations, selected: state.fileSelected, phase: "select" }} path={path} onOpen={setPath} onPreview={setPreviewId} disabled={disabled}
+        selectedFolders={state.fileSelectedFolders}
+        onToggleFolder={path => {
+          const folders = store.getSnapshot().state.fileSelectedFolders;
+          const key = JSON.stringify(path);
+          store.dispatch({ type: "select-file-folders", paths: folders.some(folder => JSON.stringify(folder) === key)
+            ? folders.filter(folder => JSON.stringify(folder) !== key) : [...folders, path] });
+        }}
         onToggle={id => {
           const selected = store.getSnapshot().state.fileSelected;
           store.dispatch({ type: "select-files", ids: selected.includes(id) ? selected.filter(value => value !== id) : [...selected, id] });

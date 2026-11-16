@@ -15,16 +15,19 @@ type ListingState = Pick<SampleState, "locations" | "selected" | "phase">;
 export function sampleFolderListing(catalog: SampleCatalog, state: Pick<SampleState, "locations">, path: readonly string[]): FolderListing {
   const items = catalog.documents.map(document => ({ document, path: sampleFolderPath(catalog, state.locations[document.id]) }));
   const descendants = items.filter(item => path.every((part, index) => item.path[index] === part));
-  const folders = [...new Set(descendants.filter(item => item.path.length > path.length).map(item => item.path[path.length]))].sort();
+  const folderPaths = [...descendants.map(item => item.path), ...catalog.folders.map(folder => sampleFolderPath(catalog, folder.id))];
+  const folders = [...new Set(folderPaths.filter(folder => folder.length > path.length && path.every((part, index) => folder[index] === part)).map(folder => folder[path.length]))].sort();
   return { path, truncated: false, entries: [
     ...folders.map(name => ({ name, kind: "directory" as const })),
     ...descendants.filter(item => item.path.length === path.length).map(({ document }) => ({ name: document.name, kind: "file" as const })),
   ] };
 }
 
-export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onToggle, disabled, selecting = false }: {
+export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onToggle, disabled, selecting = false, selectedFolders = [], onToggleFolder }: {
   catalog: SampleCatalog; state: ListingState; path: readonly string[];
   onOpen: (path: string[]) => void; onPreview: (id: string) => void; onToggle: (id: string) => void; disabled: boolean; selecting?: boolean;
+  selectedFolders?: readonly (readonly string[])[];
+  onToggleFolder?: (path: readonly string[]) => void;
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   const [query, setQuery] = useState("");
@@ -36,10 +39,21 @@ export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onT
   const searchAbort = useRef<AbortController | null>(null);
   const result = sampleFolderListing(catalog, state, path);
   const documents = catalog.documents.filter(document => JSON.stringify(sampleFolderPath(catalog, state.locations[document.id])) === JSON.stringify(path));
-  const selectedNames = documents.filter(document => state.selected.includes(document.id)).map(document => document.name);
+  const canSelectFolders = !selecting && !!onToggleFolder;
+  const selectedFolderNames = canSelectFolders ? result.entries.filter(entry => entry.kind === "directory"
+    && selectedFolders.some(folder => JSON.stringify(folder) === JSON.stringify([...path, entry.name]))).map(entry => entry.name) : [];
+  const selectedNames = [...documents.filter(document => state.selected.includes(document.id)).map(document => document.name), ...selectedFolderNames];
   const toggle = (name: string) => {
     const document = documents.find(document => document.name === name);
     if (document) { setSelectionOpen(true); onToggle(document.id); }
+    else if (canSelectFolders && result.entries.some(entry => entry.kind === "directory" && entry.name === name)) {
+      setSelectionOpen(true);
+      onToggleFolder?.([...path, name]);
+    }
+  };
+  const clearSelection = () => {
+    state.selected.forEach(onToggle);
+    if (canSelectFolders) selectedFolders.forEach(folder => onToggleFolder?.(folder));
   };
   const listing: SourceListingState = {
     available: !disabled, phase: "ready", result, requestedPath: path, stale: false, issue: null,
@@ -58,7 +72,7 @@ export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onT
   return <>
     {notice && <p role="status">{notice}</p>}
     <FolderListingView state={listing} folderName="예시 자료" headingRef={heading}
-      allowFolderSelection={false}
+      allowFolderSelection={canSelectFolders}
       selectionLocked={state.phase === "review" || (!selecting && state.phase !== "select")} previewSupported={() => true}
       connectionControls={<span data-tour="folder-connection">예시 자료 · 연결됨</span>}
       historyControls={null} creation={null} previewName={null} searchState={search}
@@ -76,14 +90,20 @@ export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onT
           setQuery("");
           onOpen([...parentPath]);
           if (!state.selected.includes(document.id)) onToggle(document.id);
+        } else if (kind === "directory" && canSelectFolders) {
+          setQuery("");
+          onOpen([...parentPath]);
+          setSelectionOpen(true);
+          const folder = [...parentPath, name];
+          if (!selectedFolders.some(selected => JSON.stringify(selected) === JSON.stringify(folder))) onToggleFolder?.(folder);
         }
       }}
       onRefresh={() => setNotice("준비된 예시 자료의 현재 상태입니다.")} onRetry={() => setNotice("")} onCancel={() => {}}
       onToggleSelection={toggle}
       onSelectAll={() => documents.filter(document => !state.selected.includes(document.id)).forEach(document => onToggle(document.id))}
       onClearVisibleSelection={() => documents.filter(document => state.selected.includes(document.id)).forEach(document => onToggle(document.id))}
-      onQueryChange={value => { setSearch({ phase: "loading", result: null }); setQuery(value); }} onClearSelection={() => state.selected.forEach(onToggle)}
-      onExitSelection={selecting ? undefined : () => { state.selected.forEach(onToggle); setSelectionOpen(false); }}
+      onQueryChange={value => { setSearch({ phase: "loading", result: null }); setQuery(value); }} onClearSelection={clearSelection}
+      onExitSelection={selecting ? undefined : () => { clearSelection(); setSelectionOpen(false); }}
     />
   </>;
 }

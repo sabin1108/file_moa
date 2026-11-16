@@ -81,6 +81,27 @@ try {
   await wait(page, () => document.querySelector('[data-listing-phase="ready"]'));
   check('sample folders use the product listing and start unchecked', await page.eval(() => !!document.querySelector('[aria-label="자료 폴더 탐색"]') && !document.querySelector('[data-tour="folder-list"] input:checked')));
   check('folder browsing has no demo-only AI classification or forced workflow controls', await page.eval(() => !document.querySelector('[data-action="sample-ai"]') && !document.querySelector('[data-action="sample-reset"]') && !document.body.innerText.includes('AI로 분류 제안')));
+  const folderButton = '[aria-label$=" 폴더 열기"]';
+  const point = await page.eval(selector => {
+    const rect = document.querySelector(selector).getBoundingClientRect();
+    return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+  }, folderButton);
+  await page.send('Input.dispatchMouseEvent', { type: 'mousePressed', ...point, button: 'left', clickCount: 1 });
+  await wait(page, () => JSON.parse(Object.entries(sessionStorage).find(([key]) => key.startsWith('moa.sample.v1.'))?.[1] ?? 'null')?.fileSelectedFolders.length === 1);
+  await page.send('Input.dispatchMouseEvent', { type: 'mouseReleased', ...point, button: 'left', clickCount: 1 });
+  check('holding a demo folder selects it through the common folder row without opening it', await page.eval(() => document.querySelector('[data-tour="folder-list"] h2').textContent === '받은 자료' && !!document.querySelector('[aria-label$=" 폴더 선택"]:checked')));
+  await page.goto(base + '/demo/files', { settleMs: 300 });
+  await wait(page, () => document.querySelector('[data-listing-phase="ready"]'));
+  check('refresh restores selected folders independently of question documents', (await saved(page)).fileSelectedFolders.length === 1 && (await saved(page)).questionSelected === null && (await saved(page)).selected.length === 0);
+  check('the restore notice is smaller with a translucent background and opaque text', await page.eval(() => {
+    const notice = document.querySelector('[data-compact="true"]');
+    const style = getComputedStyle(notice);
+    return parseFloat(style.paddingTop) === 8 && parseFloat(getComputedStyle(notice.querySelector('p')).fontSize) === 12 && style.opacity === '1' && /(?:\/\s*0\.72\)|,\s*0\.72\))/.test(style.backgroundColor);
+  }));
+  await page.eval(selector => document.querySelector(selector).focus(), folderButton);
+  await page.send('Input.dispatchKeyEvent', { type: 'keyDown', key: ' ', code: 'Space', windowsVirtualKeyCode: 32 });
+  await page.send('Input.dispatchKeyEvent', { type: 'keyUp', key: ' ', code: 'Space', windowsVirtualKeyCode: 32 });
+  check('Space toggles the restored folder selection', (await saved(page)).fileSelectedFolders.length === 0);
   await page.eval(() => [...document.querySelectorAll('[data-tour="folder-list"] button')].find(button => button.textContent.trim() === '검색').click());
   await page.eval(() => document.querySelector('[role="search"] input').focus());
   await page.send('Input.insertText', { text: '웹사이트' });

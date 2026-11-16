@@ -36,6 +36,8 @@ try {
   await click(page, 'a[href="/demo/start?intro=done"]');
   await dismiss(page);
   await click(page, '[data-tour="task-grounded"]');
+  check('choosing a question task does not automatically open the material drawer', await page.eval(() => !document.getElementById('conversation-materials')?.open));
+  await click(page, '[data-action="select-question-sources"]');
   await wait(page, () => document.getElementById('conversation-materials')?.open);
   check('starting grounded questions opens the website documents with a bounded preset', await page.eval(() =>
     [...document.querySelectorAll('[data-tour="folder-list"] input[type="checkbox"]')].some(node => node.checkVisibility())

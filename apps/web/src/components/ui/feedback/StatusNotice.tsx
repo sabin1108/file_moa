@@ -12,10 +12,11 @@ export type StatusNoticeProps = {
   action?: ReactNode;
   role?: "status" | "alert";
   onDismiss?: () => void;
+  compact?: boolean;
 };
 
-export function StatusNotice({ state, title, detail, action, role = "status", onDismiss }: StatusNoticeProps) {
-  return <div className={styles.notice} data-state={state}>
+export function StatusNotice({ state, title, detail, action, role = "status", onDismiss, compact = false }: StatusNoticeProps) {
+  return <div className={styles.notice} data-state={state} data-compact={compact || undefined}>
     {state === "pending" ? <MoaLoader /> : <Icon name={state === "success" ? "check" : "warning"} size={22} />}
     <div className={styles.noticeText} role={role} aria-atomic="true">
       <strong>
