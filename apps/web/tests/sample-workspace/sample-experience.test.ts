@@ -17,7 +17,7 @@ const generated = (mode: "chat" | "grounded", citations = mode === "grounded" ? 
 describe("demo state and local search experience", () => {
   it("retains prior source results when switching tasks and keeps the source answer with citations", () => {
     let state = transitionSampleState(catalog, createSampleState(catalog), reply("find", "성능 찾아줘"));
-    state = transitionSampleState(catalog, state, { type: "select", ids: ["meeting"] });
+    state = transitionSampleState(catalog, state, { type: "select-question", ids: ["meeting"] });
     state = transitionSampleState(catalog, state, generated("grounded"));
     const sourceReply = state.sourceReply;
     state = transitionSampleState(catalog, state, generated("chat"));
@@ -57,7 +57,7 @@ describe("demo state and local search experience", () => {
     expect(() => transitionSampleState(catalog, state, reply("grounded", "요약해줘", []))).toThrow();
     expect(() => transitionSampleState(catalog, state, reply("grounded", "요약해줘", ["forged"]))).toThrow();
     expect(() => transitionSampleState(catalog, state, generated("grounded"))).toThrow();
-    const selected = transitionSampleState(catalog, state, { type: "select", ids: ["meeting"] });
+    const selected = transitionSampleState(catalog, state, { type: "select-question", ids: ["meeting"] });
     const answer = transitionSampleState(catalog, selected, generated("grounded"));
     expect(answer.citations).toEqual(["meeting"]);
     expect(answer.messages.at(-1)?.text).toContain("응답 시간");

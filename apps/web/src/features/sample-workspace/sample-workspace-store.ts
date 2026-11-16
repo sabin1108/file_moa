@@ -4,6 +4,7 @@ import {
   SAMPLE_STATE_CHARACTER_LIMIT,
   restoreSampleState,
   transitionSampleState,
+  sampleQuestionSelection,
   type SampleAction,
   type SampleState
 } from "./sample-state";
@@ -60,7 +61,7 @@ export class SampleWorkspaceStore {
 
         if (saved) {
           state = restoreSampleState(this.catalog, saved);
-          if (state.selected.length) notice = `이 탭에서 보관한 파일 선택 ${state.selected.length}개를 복원했어요. 파일 선택의 ‘전체 선택 해제’로 비울 수 있습니다.`;
+          if (state.fileSelected.length) notice = `이 탭에서 보관한 폴더의 파일 선택 ${state.fileSelected.length}개를 복원했어요. 파일 선택의 ‘전체 선택 해제’로 비울 수 있습니다.`;
         }
       } catch {
         notice = "보관된 샘플 상태를 읽지 못해 처음 상태로 열었습니다. 이 탭에서 계속 체험할 수 있어요.";
@@ -138,8 +139,9 @@ export class SampleWorkspaceStore {
 
   requestAnswer = async (request: SampleAnswerAction, mode: "chat" | "grounded") => {
     const state = this.snapshot.state;
+    const questionIds = sampleQuestionSelection(this.catalog, state);
     if (!this.snapshot.ready || this.snapshot.aiPending || performance.now() >= this.deadline || state.phase === "review" || !state.draft.trim()
-      || (mode === "grounded" && !state.selected.length)) return;
+      || (mode === "grounded" && !questionIds.length)) return;
     const history: ChatMessageInput[][] = [];
     for (let index = 0; index < state.messages.length - 1; index++) {
       const question = state.messages[index];
@@ -157,7 +159,7 @@ export class SampleWorkspaceStore {
     this.snapshot = { ...this.snapshot, aiPending: true, notice: null };
     this.emit();
     try {
-      const result = await request({ requestId, mode, messages, documentIds: mode === "grounded" ? [...state.selected] : [], consent: true });
+      const result = await request({ requestId, mode, messages, documentIds: mode === "grounded" ? [...questionIds] : [], consent: true });
       if (generation !== this.generation || performance.now() >= this.deadline) return;
       if (result.ok) { this.dispatch({ type: "ai-answer", requestId, mode, question: state.draft, result }); return; }
       this.snapshot = { ...this.snapshot, aiPending: false, notice: SAMPLE_AI_MESSAGES[result.code] + (result.retryAfter ? ` 약 ${result.retryAfter}초 뒤 다시 시도할 수 있어요.` : "") };

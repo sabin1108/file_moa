@@ -7,7 +7,7 @@ import { organizationPathSchema, organizationResponseSchema, parseOrganizationRe
 import type { SampleOrganizationResult } from "../../shared/sample-organization";
 import { conversationKinds } from "../../shared/ai-records";
 import { prepareSampleReply } from "./sample-experience";
-import { sampleAnswerSchema, type SampleAnswerResult } from "../../shared/sample-answer";
+import { SAMPLE_ANSWER_LIMITS, sampleAnswerSchema, type SampleAnswerResult } from "../../shared/sample-answer";
 import { recordKinds } from "../../shared/record-kinds";
 
 export const sampleRecordSchema = z.strictObject({
@@ -41,6 +41,8 @@ const stateSchema = z.strictObject({
   path: z.array(z.string().min(1).max(120)).min(1).max(20).default(["받은 자료"]),
   phase: z.enum(["select", "review", "result"]),
   selected: z.array(z.string()).max(200),
+  fileSelected: z.array(z.string()).max(200).default([]),
+  questionSelected: z.array(z.string()).max(SAMPLE_ANSWER_LIMITS.documents).nullable().default(null),
   createdFolders: createdFoldersSchema.default([]),
   draft: z.string().max(800).default(""),
   messages: z.array(z.strictObject({ id: z.string(), author: z.enum(["user", "assistant"]), text: z.string().max(8000), model: z.string().min(1).max(200).optional() })).max(40).default([]),
@@ -71,6 +73,8 @@ const stateSchema = z.strictObject({
 export type SampleState = z.infer<typeof stateSchema>;
 
 export type SampleAction =
+  | Readonly<{ type: "select-files"; ids: readonly string[] }>
+  | Readonly<{ type: "select-question"; ids: readonly string[] }>
   | Readonly<{ type: "ai-answer"; requestId: string; mode: "chat" | "grounded"; question: string; result: Extract<SampleAnswerResult, { ok: true }> }>
   | Readonly<{ type: "mode"; mode: typeof conversationKinds[number] }>
   | Readonly<{ type: "guide"; step: number; dismissed: boolean }>
@@ -114,6 +118,8 @@ export function createSampleState(catalog: SampleCatalog): SampleState {
     scope: "all", path: ["받은 자료"],
     phase: "select",
     selected: [],
+    fileSelected: [],
+    questionSelected: null,
     locations: Object.fromEntries(catalog.documents.map(document => [document.id, document.sourceFolderId ?? null])),
     targets: {},
     ai: null,
@@ -160,7 +166,7 @@ export function restoreSampleState(catalog: SampleCatalog, serialized: string): 
   const validLocations = (locations: SampleState["locations"]) => Object.keys(locations).length === documents.size
     && Object.entries(locations).every(([id, folder]) => documents.has(id) && (folder === null || folders.has(folder)));
 
-  if (!validIds(state.selected) || !validLocations(state.locations)
+  if (!validIds(state.selected) || !validIds(state.fileSelected) || (state.questionSelected !== null && !validQuestionSelection(catalog, state.questionSelected)) || !validLocations(state.locations)
     || Object.entries(state.targets).some(([id, folder]) => !state.selected.includes(id) || (folder !== null && !folders.has(folder)))
     || (state.phase === "review" && (!state.selected.length || Object.keys(state.targets).length !== state.selected.length))) {
     throw new Error("invalid-sample-state");
@@ -234,6 +240,29 @@ export function sampleActiveCatalog(catalog: SampleCatalog, state: Pick<SampleSt
     ...catalog,
     folders: [...catalog.folders.filter(folder => !state.createdFolders.some(created => created.id === folder.id)), ...state.createdFolders]
   };
+}
+
+function validQuestionSelection(catalog: SampleCatalog, ids: readonly string[]) {
+  const documents = ids.map(id => catalog.documents.find(document => document.id === id));
+  return ids.length <= SAMPLE_ANSWER_LIMITS.documents && new Set(ids).size === ids.length
+    && documents.every(document => !!document)
+    && documents.reduce((sum, document) => sum + (document?.excerpt.length ?? 0), 0) <= SAMPLE_ANSWER_LIMITS.excerptCharacters;
+}
+
+/** 질문 선택은 폴더 관리·정리 계획의 선택과 별도로 보관한다. null만 첫 체험 기본값을 뜻한다. */
+export function sampleQuestionSelection(catalog: SampleCatalog, state: Pick<SampleState, "questionSelected" | "locations" | "createdFolders">): string[] {
+  if (state.questionSelected !== null) return state.questionSelected;
+  const active = sampleActiveCatalog(catalog, state);
+  const ids: string[] = [];
+  let characters = 0;
+  for (const document of catalog.documents) {
+    const folder = active.folders.find(folder => folder.id === state.locations[document.id]);
+    if (folder?.label.split("/").at(-1) !== "웹사이트 문서") continue;
+    if (ids.length >= SAMPLE_ANSWER_LIMITS.documents || characters + document.excerpt.length > SAMPLE_ANSWER_LIMITS.excerptCharacters) continue;
+    ids.push(document.id);
+    characters += document.excerpt.length;
+  }
+  return ids;
 }
 
 export function organizationRequest(catalog: SampleCatalog, instruction: string, candidateIds: readonly string[]) {
@@ -356,7 +385,21 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
 
   if (action.type === "mode") {
     if (state.phase === "review" || !conversationKinds.includes(action.mode)) throw Error("sample-review-required");
+    if (action.mode === "grounded" && state.questionSelected === null) {
+      const ids = sampleQuestionSelection(catalog, state);
+      const folderId = ids.length ? state.locations[ids[0]] : null;
+      return { ...state, mode: action.mode, questionSelected: ids, path: folderId ? sampleFolderPath(sampleActiveCatalog(catalog, state), folderId) : state.path };
+    }
     return { ...state, mode: action.mode };
+  }
+  if (action.type === "select-question") {
+    if (state.phase === "review" || !validQuestionSelection(catalog, action.ids)) throw Error("invalid-sample-question-selection");
+    return { ...state, questionSelected: [...action.ids] };
+  }
+  if (action.type === "select-files") {
+    if (action.ids.length > 200 || new Set(action.ids).size !== action.ids.length
+      || action.ids.some(id => !catalog.documents.some(document => document.id === id))) throw Error("invalid-sample-selection");
+    return { ...state, fileSelected: [...action.ids] };
   }
   if (action.type === "guide") {
     if (!Number.isInteger(action.step) || action.step < 0 || action.step > 5) throw Error("invalid-sample-guide");
@@ -366,7 +409,7 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
     const id = action.requestId;
     const answer = sampleAnswerSchema.parse(action.result.answer);
     const citations = answer.citations.map(citation => citation.documentId);
-    if (citations.some(id => !state.selected.includes(id))) throw Error("invalid-sample-citation");
+    if (citations.some(id => !sampleQuestionSelection(catalog, state).includes(id))) throw Error("invalid-sample-citation");
     return { ...state, mode: action.mode, draft: "", citations: action.mode === "grounded" ? [...new Set(citations)] : state.citations,
       sourceReply: action.mode === "grounded" ? answer.answer : state.sourceReply,
       messages: [...state.messages, { id: `ai-question-${id}`, author: "user" as const, text: action.question.trim() },

@@ -10,9 +10,9 @@ import type { SampleCatalog } from "../../src/shared/sample-contract";
 import "../../src/styles/globals.css";
 
 const catalog: SampleCatalog = {
-  version: "1", folders: [{ id: "work", label: "업무" }],
+  version: "1", folders: [{ id: "work", label: "업무" }, { id: "web", label: "받은 자료/개발/웹사이트 문서" }],
   documents: Array.from({ length: 42 }, (_, index) => ({ id: `doc-${index + 1}`, name: `회의자료-${index + 1}.md`, format: "md" as const,
-    excerpt: `합성 회의 자료 ${index + 1}입니다. 다음 작업과 일정을 검토했습니다.`, proposal: { folderId: "work", reason: "회의", reviewRequired: false } })),
+    ...(index < 2 ? { sourceFolderId: "web" } : {}), excerpt: `합성 회의 자료 ${index + 1}입니다. 다음 작업과 일정을 검토했습니다.`, proposal: { folderId: "work", reason: "회의", reviewRequired: false } })),
 };
 const store = new SampleWorkspaceStore(catalog, { kind: "sample", id: "paid-browser-fixture", expiresAt: Date.now() + 3600000, version: "1" });
 const control = { store, answers: [] as SampleAnswerRequest[], organizations: 0, hold: false, failure: null as SampleAiErrorCode | null, resolve: [] as (() => void)[] };

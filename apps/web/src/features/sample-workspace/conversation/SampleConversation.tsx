@@ -11,7 +11,7 @@ import { StatusNotice } from "../../../components/ui/feedback/StatusNotice";
 import { actionClasses } from "../../../components/ui/action-classes";
 import type { SampleCatalog } from "../../../shared/sample-contract";
 import type { SampleOrganizationAction } from "../../../shared/sample-organization";
-import { sampleActiveCatalog, sampleFolderPath } from "../sample-state";
+import { sampleActiveCatalog, sampleFolderPath, sampleQuestionSelection } from "../sample-state";
 import { selectOrganizationCandidates } from "../organization/organization-candidates";
 import type { SampleWorkspaceStore } from "../sample-workspace-store";
 import { SamplePlanReview } from "../organization/SamplePlanReview";
@@ -44,6 +44,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
   const activeCatalog = sampleActiveCatalog(catalog, state);
   const scope = state.scope;
   const [consent, setConsent] = useState<string | null>(null);
+  const [selectionNotice, setSelectionNotice] = useState("");
   const [consentProvider, setConsentProvider] = useState(aiProvider);
 
   if (consentProvider !== aiProvider) {
@@ -56,6 +57,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
   const [panelOpen, setPanelOpen] = useState(false);
   const started = state.mode !== null || state.messages.length > 0;
   const mode = state.mode ?? "organize";
+  const selectedIds = mode === "grounded" ? sampleQuestionSelection(catalog, state) : state.selected;
   const [recordsOpen, setRecordsOpen] = useState(false);
   const [panelView, setPanelView] = useState<ConversationPanelView>("records");
   const tourRecordKind = useWorkspaceTourRecordView();
@@ -67,18 +69,20 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
   const panelTrigger = useRef<HTMLElement | null>(null);
   const scopedDocuments = catalog.documents.filter(document => scope === "all"
     || (scope === "selected"
-      ? state.selected.includes(document.id)
+      ? selectedIds.includes(document.id)
       : path.every((part, index) => sampleFolderPath(activeCatalog, state.locations[document.id])[index] === part)));
   const documentIds = selectOrganizationCandidates(scopedDocuments, state.draft).map(document => document.id);
-  const consentKey = JSON.stringify([aiProvider, mode, state.draft.trim(), [...(mode === "grounded" ? state.selected : mode === "organize" ? documentIds : [])].sort()]);
+  const consentKey = JSON.stringify([aiProvider, mode, state.draft.trim(), [...(mode === "grounded" ? selectedIds : mode === "organize" ? documentIds : [])].sort()]);
   const consented = !!aiProvider && (mode === "chat" || consent === consentKey);
-  const questionDocuments = catalog.documents.filter(document => state.selected.includes(document.id));
+  const questionDocuments = catalog.documents.filter(document => selectedIds.includes(document.id));
   const questionScopeIssue = questionDocuments.length > SAMPLE_ANSWER_LIMITS.documents
     ? `질문 자료는 최대 ${SAMPLE_ANSWER_LIMITS.documents}개까지 선택해 주세요.`
     : questionDocuments.reduce((sum, document) => sum + document.excerpt.length, 0) > SAMPLE_ANSWER_LIMITS.excerptCharacters
       ? `질문 자료의 발췌는 합계 ${SAMPLE_ANSWER_LIMITS.excerptCharacters}자까지입니다. 선택을 줄여 주세요.` : null;
   const providerLabel = aiProvider ? AI_PROVIDER_LABELS[aiProvider] : "설정되지 않은 외부 AI";
   const disabled = !ready || expired || aiPending;
+  const consentDisabled = disabled || !aiProvider || !state.draft.trim();
+  const needsConsent = !consentDisabled && !consented;
   const previewDocument = catalog.documents.find(document => document.id === previewId);
 
   useEffect(() => {
@@ -105,7 +109,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
   const chooseTask = (kind: ConversationKind) => {
     store.dispatch({ type: "mode", mode: kind });
     setConsent(null);
-    if (kind === "grounded" && (!state.selected.length || questionScopeIssue)) {
+    if (kind === "grounded") {
       openPanel("sources", document.activeElement instanceof HTMLElement ? document.activeElement : undefined);
     }
   };
@@ -182,7 +186,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
           setPanelOpen(open);
         }}
         planReady={mode === "organize" && (state.phase === "review" || state.phase === "result")}
-        canSend={!disabled && state.phase !== "review" && !!state.draft.trim() && (mode === "find" || (!!aiProvider && consented)) && (mode === "chat" || mode === "find" || (mode === "grounded" ? state.selected.length > 0 && !questionScopeIssue : documentIds.length > 0))}
+        canSend={!disabled && state.phase !== "review" && !!state.draft.trim() && (mode === "find" || (!!aiProvider && consented)) && (mode === "chat" || mode === "find" || (mode === "grounded" ? selectedIds.length > 0 && !questionScopeIssue : documentIds.length > 0))}
         onSend={send}
         submitLabel="보내기"
         intro={<>
@@ -212,19 +216,23 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
             <ConversationContextBar temporary status="임시 대화" sourceName="예시 자료" provider={mode === "find" || !aiProvider ? null : providerLabel} onOpen={openPanel} />
             {started && mode !== "find" && <>
               {!aiProvider && <StatusNotice state="attention" title="AI 연결을 사용할 수 없어요." detail="서버 연결 설정을 확인해야 합니다. 준비된 답변으로 대체하지 않습니다." />}
-              {mode !== "chat" && <label><input type="checkbox" data-demo-ai-consent checked={consented} disabled={disabled || !aiProvider || !state.draft.trim()}
-                onChange={event => setConsent(event.target.checked ? consentKey : null)} />
-                이 질문과 최근 대화{mode === "grounded" ? `, 선택한 예시 자료 ${state.selected.length}개의 발췌` : mode === "organize" ? `, 이번 범위의 예시 자료 ${documentIds.length}개` : ""}를 {providerLabel}로 전송하는 데 동의해요.
-              </label>}
+              {mode !== "chat" && <div className={options.transmissionConsent} data-consent-required={needsConsent}>
+                <label><input type="checkbox" data-demo-ai-consent checked={consented} disabled={consentDisabled}
+                  aria-describedby={needsConsent ? "sample-ai-consent-help" : undefined}
+                  onChange={event => setConsent(event.target.checked ? consentKey : null)} />
+                  <span>이 질문과 최근 대화{mode === "grounded" ? `, 선택한 예시 자료 ${selectedIds.length}개의 발췌` : `, 이번 범위의 예시 자료 ${documentIds.length}개`}를 {providerLabel}로 전송하는 데 동의해요.</span>
+                </label>
+                {needsConsent && <p id="sample-ai-consent-help" role="status">자료를 보내려면 전송에 동의해 주세요.</p>}
+              </div>}
             </>}
-            {mode === "grounded" && <p role="status">질문에 사용할 자료 {state.selected.length}개 선택 · 선택한 자료의 발췌를 AI에 보내고 답변 출처를 확인합니다.
+            {mode === "grounded" && <p role="status">질문에 사용할 자료 {selectedIds.length}개 선택 · 선택한 자료의 발췌를 AI에 보내고 답변 출처를 확인합니다.
               <button type="button" className={actionClasses("secondary")} disabled={disabled || state.phase === "review"}
                 onClick={event => openPanel("sources", event.currentTarget)}>질문할 자료 선택</button>
             </p>}
             {mode === "grounded" && questionScopeIssue && <p role="alert">{questionScopeIssue}</p>}
           {mode === "chat" ? null : <details className={styles.conversationScope}>
-            <summary>샘플 자료 · {mode === "grounded" ? `선택 ${state.selected.length}개` : `범위 ${scopedDocuments.length}개`}</summary>
-            {mode === "grounded" && <p>자료 보기에서 체크한 {state.selected.length}개의 발췌만 전송하며, AI가 근거를 확인할 수 없는 내용은 답하지 않도록 요청합니다.</p>}
+            <summary>샘플 자료 · {mode === "grounded" ? `선택 ${selectedIds.length}개` : `범위 ${scopedDocuments.length}개`}</summary>
+            {mode === "grounded" && <p>자료 보기에서 체크한 {selectedIds.length}개의 발췌만 전송하며, AI가 근거를 확인할 수 없는 내용은 답하지 않도록 요청합니다.</p>}
             <label className={options.modeChoice}>
               {"자료 범위 "}
               <select
@@ -243,7 +251,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
                 <option value="folder">현재 폴더와 하위 자료</option>
                 <option value="selected">
                   {"선택한 자료 "}
-                  {state.selected.length}개
+                  {selectedIds.length}개
                 </option>
               </select>
             </label>
@@ -268,13 +276,14 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
               onReplayTour={() => { setPanelOpen(false); requestAnimationFrame(replayWorkspaceTour); }} /></div>
             <div hidden={showingRecords || panelView === "settings"}>
             {mode === "grounded" && <section aria-label="질문할 예시 자료 선택">
-              <p>아래 파일을 최대 {SAMPLE_ANSWER_LIMITS.documents}개, 발췌 합계 {SAMPLE_ANSWER_LIMITS.excerptCharacters}자까지 선택하세요. 전송에 동의하고 보내면 AI가 답변하며 출처는 최대 {SAMPLE_ANSWER_LIMITS.citations}개 확인할 수 있습니다.</p>
+              <p>처음에는 웹사이트 문서를 선택해 두었어요. 필요한 자료를 추가하거나 해제하세요. 최대 {SAMPLE_ANSWER_LIMITS.documents}개, 발췌 합계 {SAMPLE_ANSWER_LIMITS.excerptCharacters}자까지 사용할 수 있습니다.</p>
               {questionScopeIssue && <p role="alert">{questionScopeIssue}</p>}
-              <button type="button" data-grounded-selection-done className={actionClasses("secondary")} disabled={disabled || !state.selected.length || !!questionScopeIssue}
+              {selectionNotice && <p role="status">{selectionNotice}</p>}
+              <button type="button" data-grounded-selection-done className={actionClasses("secondary")} disabled={disabled || !selectedIds.length || !!questionScopeIssue}
                 onClick={() => {
                   panelTrigger.current = document.getElementById("message-draft");
                   setPanelOpen(false);
-                }}>선택한 {state.selected.length}개로 질문하기</button>
+                }}>선택한 {selectedIds.length}개로 질문하기</button>
             </section>}
             {mode === "find" && state.findings.length > 0 && <section aria-label="샘플 검색 결과"><h2>검색 결과 {state.findings.length}개</h2>{state.findings.map(id => <p key={id}>
               <button type="button" onClick={() => openPreview(id)}>{catalog.documents.find(document => document.id === id)?.name}</button></p>)}</section>}
@@ -356,14 +365,23 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
               <SampleFolderPanel
                 selecting={mode === "grounded"}
                 catalog={activeCatalog}
-                state={state}
+                state={{ locations: state.locations, selected: selectedIds, phase: state.phase }}
                 path={path}
                 onOpen={path => store.dispatch({ type: "scope", scope, path })}
                 onPreview={openPreview}
                 disabled={disabled}
                 onToggle={id => {
                   setConsent(null);
-                  if (mode === "grounded" && store.getSnapshot().state.phase === "result") store.dispatch({ type: "back" });
+                  if (mode === "grounded") {
+                    const current = store.getSnapshot().state;
+                    const selected = sampleQuestionSelection(catalog, current);
+                    const next = selected.includes(id) ? selected.filter(value => value !== id) : [...selected, id];
+                    if (next.length > SAMPLE_ANSWER_LIMITS.documents) { setSelectionNotice(`질문 자료는 최대 ${SAMPLE_ANSWER_LIMITS.documents}개까지 선택해 주세요.`); return; }
+                    if (catalog.documents.filter(document => next.includes(document.id)).reduce((sum, document) => sum + document.excerpt.length, 0) > SAMPLE_ANSWER_LIMITS.excerptCharacters) { setSelectionNotice(`질문 자료의 발췌는 합계 ${SAMPLE_ANSWER_LIMITS.excerptCharacters}자까지입니다. 선택을 줄여 주세요.`); return; }
+                    setSelectionNotice("");
+                    store.dispatch({ type: "select-question", ids: next });
+                    return;
+                  }
                   const selected = store.getSnapshot().state.selected;
                   store.dispatch({
                     type: "select",

@@ -57,10 +57,10 @@ export function SampleLibraryPanel({ state, catalog, disabled, dispatch, onPrevi
       {notice && <p role="status">{notice}</p>}
       <RecordTitleField inputRef={title} value={editing.title} disabled={disabled} onChange={value => setEditing({ ...editing, title: value })} />
       <RecordBodyField value={editing.content} maxLength={8000} disabled={disabled} onChange={content => setEditing({ ...editing, content })} />
-      {editing.kind === "memory" && <label><input type="checkbox" checked={editing.approved} disabled={disabled}
-        onChange={event => setEditing({ ...editing, approved: event.target.checked })} />내용을 검토하고 승인했어요 (체험용)</label>}
-      <div className={styles.actions}><button type="submit" disabled={disabled} className={actionClasses("primary")}>임시 기록 저장</button>
-        <button type="button" className={actionClasses("ghost")} onClick={() => setEditing(null)}>편집 취소</button></div>
+      {editing.kind === "memory" && <label className={library.checkRow}><input type="checkbox" checked={editing.approved} disabled={disabled}
+        onChange={event => setEditing({ ...editing, approved: event.target.checked })} /><span>내용을 검토하고 승인했어요</span></label>}
+      <div className={library.editorActions}><button type="submit" disabled={disabled} className={actionClasses("primary")}>임시 기록 저장</button>
+        <button type="button" className={actionClasses("secondary")} onClick={() => setEditing(null)}>편집 취소</button></div>
       <p>저장 전 편집 내용은 이 패널을 닫으면 사라질 수 있어요. 저장한 기록은 같은 세션에서 다시 열 수 있습니다.</p>
     </form> : <>
       <RecordKindTabs selected={kind} onChange={value => { setKind(value); setRemoveId(null); }} counts={Object.fromEntries(kinds.map(([value]) => [value, state.records.filter(record => record.kind === value).length]))} />
@@ -70,7 +70,7 @@ export function SampleLibraryPanel({ state, catalog, disabled, dispatch, onPrevi
       {state.records.length >= 20 && <p role="status">샘플 기록 20개 한도입니다. 기존 기록을 정리한 뒤 다시 저장하세요.</p>}
       {!state.records.some(record => record.kind === kind) && <p>아직 보관한 기록이 없어요.</p>}
       {state.records.filter(record => record.kind === kind).map(record => <article key={record.id} className={styles.sampleRecord}>
-        <h3>{record.title}</h3>{record.kind === "memory" && <p>{record.approved ? "승인함 · 체험용" : "검토 전"}</p>}
+        <h3>{record.title}</h3>{record.kind === "memory" && <p>{record.approved ? "승인함" : "검토 전"}</p>}
         <pre>{record.content}</pre>
         {record.sources.map(id => <button type="button" className={actionClasses("secondary")} key={id} onClick={() => onPreview(id)}>출처: {catalog.documents.find(document => document.id === id)?.name}</button>)}
         <div className={styles.actions}><button type="button" className={actionClasses("secondary")} disabled={disabled} onClick={() => setEditing(record)}>열어 편집</button>

@@ -8,6 +8,11 @@
 .contextActions button span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .settingsButton { margin-left: auto; flex: none; }
 .transmission { color: var(--muted); font-size: 12px; }
+.transmissionConsent { display: grid; gap: 8px; margin-block: 12px; padding: 12px; border: 1px solid var(--control-border); border-radius: 6px; }
+.transmissionConsent[data-consent-required="true"] { outline: 1px solid var(--focus); outline-offset: 1px; }
+.transmissionConsent label { display: flex; align-items: flex-start; gap: 10px; line-height: 1.7; cursor: pointer; }
+.transmissionConsent input[type="checkbox"] { flex: none; width: 18px; height: 18px; margin-top: 3px; accent-color: var(--focus); }
+.transmissionConsent p { margin: 0; font-size: 13px; }
 .sourcePreparation { display: grid; gap: 12px; margin-top: 12px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 14px; }
 .sourcePreparation p { color: var(--muted); }
 .sourcePreparation .messageActions { margin-top: 0; }

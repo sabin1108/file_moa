@@ -80,6 +80,7 @@ try {
   await page.goto(base + '/demo/files', { settleMs: 300 });
   await wait(page, () => document.querySelector('[data-listing-phase="ready"]'));
   check('sample folders use the product listing and start unchecked', await page.eval(() => !!document.querySelector('[aria-label="자료 폴더 탐색"]') && !document.querySelector('[data-tour="folder-list"] input:checked')));
+  check('folder browsing has no demo-only AI classification or forced workflow controls', await page.eval(() => !document.querySelector('[data-action="sample-ai"]') && !document.querySelector('[data-action="sample-reset"]') && !document.body.innerText.includes('AI로 분류 제안')));
   await page.eval(() => [...document.querySelectorAll('[data-tour="folder-list"] button')].find(button => button.textContent.trim() === '검색').click());
   await page.eval(() => document.querySelector('[role="search"] input').focus());
   await page.send('Input.insertText', { text: '웹사이트' });
@@ -87,15 +88,17 @@ try {
   await page.eval(() => document.querySelector('[aria-label="하위 폴더 포함 검색 결과"] [aria-label$="미리보기"]').focus());
   await page.send('Input.dispatchKeyEvent', { type: 'keyDown', key: ' ', code: 'Space', windowsVirtualKeyCode: 32 });
   await page.send('Input.dispatchKeyEvent', { type: 'keyUp', key: ' ', code: 'Space', windowsVirtualKeyCode: 32 });
-  check('selecting a nested filename search result checks exactly that sample', (await saved(page)).selected.length === 1);
-  const chosenFile = (await saved(page)).selected[0];
+  check('selecting a nested filename search result checks exactly that sample', (await saved(page)).fileSelected.length === 1);
+  const chosenFile = (await saved(page)).fileSelected[0];
   await page.eval(() => document.querySelector('[role="search"] input').focus());
   await page.send('Input.insertText', { text: '웹사이트' });
   await wait(page, () => document.querySelector('[aria-label="하위 폴더 포함 검색 결과"] [aria-label$="미리보기"]'));
   await page.eval(() => document.querySelector('[aria-label="하위 폴더 포함 검색 결과"] [aria-label$="미리보기"]').focus());
   await page.send('Input.dispatchKeyEvent', { type: 'keyDown', key: ' ', code: 'Space', windowsVirtualKeyCode: 32 });
   await page.send('Input.dispatchKeyEvent', { type: 'keyUp', key: ' ', code: 'Space', windowsVirtualKeyCode: 32 });
-  check('choosing an already-selected search result preserves explicit selection', (await saved(page)).selected.length === 1 && (await saved(page)).selected[0] === chosenFile);
+  check('choosing an already-selected search result preserves explicit selection', (await saved(page)).fileSelected.length === 1 && (await saved(page)).fileSelected[0] === chosenFile);
+  await page.eval(() => [...document.querySelectorAll('[aria-label="파일 선택"] button')].find(button => button.textContent === '선택 모드 끝내기').click());
+  check('the common selection exit clears only manually selected folder files', (await saved(page)).fileSelected.length === 0 && (await saved(page)).selected.length === 0 && (await saved(page)).questionSelected === null);
   await page.goto(base + '/demo', { settleMs: 300 });
   await wait(page, () => document.querySelector('select[aria-label="대화 작업"]'));
   check('refresh and route changes do not automatically restart the tour', await page.eval(() => !document.querySelector('#workspace-tour-title')));

@@ -10,7 +10,9 @@ import type { FolderListing } from "../../local-folders/browsing/source-folder-l
 import type { FolderSearchState } from "../../local-folders/browsing/search/folder-search-controller";
 import { searchFolderTree } from "../../local-folders/browsing/search/folder-tree-search";
 
-export function sampleFolderListing(catalog: SampleCatalog, state: SampleState, path: readonly string[]): FolderListing {
+type ListingState = Pick<SampleState, "locations" | "selected" | "phase">;
+
+export function sampleFolderListing(catalog: SampleCatalog, state: Pick<SampleState, "locations">, path: readonly string[]): FolderListing {
   const items = catalog.documents.map(document => ({ document, path: sampleFolderPath(catalog, state.locations[document.id]) }));
   const descendants = items.filter(item => path.every((part, index) => item.path[index] === part));
   const folders = [...new Set(descendants.filter(item => item.path.length > path.length).map(item => item.path[path.length]))].sort();
@@ -21,13 +23,14 @@ export function sampleFolderListing(catalog: SampleCatalog, state: SampleState, 
 }
 
 export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onToggle, disabled, selecting = false }: {
-  catalog: SampleCatalog; state: SampleState; path: readonly string[];
+  catalog: SampleCatalog; state: ListingState; path: readonly string[];
   onOpen: (path: string[]) => void; onPreview: (id: string) => void; onToggle: (id: string) => void; disabled: boolean; selecting?: boolean;
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [notice, setNotice] = useState("");
+  const [selectionOpen, setSelectionOpen] = useState(false);
   const [search, setSearch] = useState<FolderSearchState>({ phase: "idle", result: null });
   const [searchRevision, setSearchRevision] = useState(0);
   const searchAbort = useRef<AbortController | null>(null);
@@ -36,12 +39,11 @@ export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onT
   const selectedNames = documents.filter(document => state.selected.includes(document.id)).map(document => document.name);
   const toggle = (name: string) => {
     const document = documents.find(document => document.name === name);
-    if (document) onToggle(document.id);
-    else setNotice("샘플에서는 폴더를 열어 필요한 파일을 선택해 주세요.");
+    if (document) { setSelectionOpen(true); onToggle(document.id); }
   };
   const listing: SourceListingState = {
     available: !disabled, phase: "ready", result, requestedPath: path, stale: false, issue: null,
-    selectedNames, query, searchOpen, selectionOpen: selecting || selectedNames.length > 0,
+    selectedNames, query, searchOpen, selectionOpen: selecting || selectionOpen || selectedNames.length > 0,
   };
   useEffect(() => {
     if (!query.trim()) return;
@@ -56,7 +58,7 @@ export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onT
   return <>
     {notice && <p role="status">{notice}</p>}
     <FolderListingView state={listing} folderName="예시 자료" headingRef={heading}
-      allowFolderSelection={!selecting}
+      allowFolderSelection={false}
       selectionLocked={state.phase === "review" || (!selecting && state.phase !== "select")} previewSupported={() => true}
       connectionControls={<span data-tour="folder-connection">예시 자료 · 연결됨</span>}
       historyControls={null} creation={null} previewName={null} searchState={search}
@@ -81,7 +83,7 @@ export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onT
       onSelectAll={() => documents.filter(document => !state.selected.includes(document.id)).forEach(document => onToggle(document.id))}
       onClearVisibleSelection={() => documents.filter(document => state.selected.includes(document.id)).forEach(document => onToggle(document.id))}
       onQueryChange={value => { setSearch({ phase: "loading", result: null }); setQuery(value); }} onClearSelection={() => state.selected.forEach(onToggle)}
-      onReviewPlan={selecting ? undefined : () => setNotice("이 샘플의 정리 제안에서 목적지와 계획을 검토할 수 있어요. 실제 복사·이동은 정식 사용의 파일 작업입니다.")}
+      onExitSelection={selecting ? undefined : () => { state.selected.forEach(onToggle); setSelectionOpen(false); }}
     />
   </>;
 }

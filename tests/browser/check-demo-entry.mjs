@@ -37,22 +37,25 @@ try {
   await dismiss(page);
   await click(page, '[data-tour="task-grounded"]');
   await wait(page, () => document.getElementById('conversation-materials')?.open);
-  check('starting grounded questions opens source selection without implicit checks', await page.eval(() =>
+  check('starting grounded questions opens the website documents with a bounded preset', await page.eval(() =>
     [...document.querySelectorAll('[data-tour="folder-list"] input[type="checkbox"]')].some(node => node.checkVisibility())
-    && !document.querySelector('[data-tour="folder-list"] input:checked')));
-  check('a question cannot be submitted before selecting a file', await page.eval(() => document.querySelector('[data-action="organization-send"]').disabled));
+    && document.querySelector('[data-tour="folder-list"] h2').textContent === '웹사이트 문서'
+    && document.querySelectorAll('[data-previewing] input:checked').length > 0
+    && document.querySelectorAll('[data-previewing] input:checked').length <= 40));
+  check('a question cannot be submitted without text and explicit consent', await page.eval(() => document.querySelector('[data-action="organization-send"]').disabled));
   check('source selection does not offer unsupported folder checkboxes', await page.eval(() => !document.querySelector('[aria-label$=" 폴더 선택"]:not(:disabled)')));
   check('source selection offers selection controls without copy or move actions', await page.eval(() =>
     ![...document.querySelectorAll('[aria-label="파일 선택"] button')].some(node => ['복사', '이동'].includes(node.textContent.trim()))));
+  await page.eval(() => [...document.querySelectorAll('[aria-label="파일 선택"] button')].find(node => node.textContent === '전체 선택 해제').click());
   await click(page, '[data-tour="folder-list"] [data-previewing] input[type="checkbox"]');
   await wait(page, () => document.querySelector('[data-tour="folder-list"] [data-previewing] input:checked'));
-  await wait(page, () => JSON.parse(Object.entries(sessionStorage).find(([key]) => key.startsWith('moa.sample.v1.'))?.[1] ?? 'null')?.selected.length === 1);
-  check('only the explicitly checked source is selected', (await state(page)).selected.length === 1);
+  await wait(page, () => JSON.parse(Object.entries(sessionStorage).find(([key]) => key.startsWith('moa.sample.v1.'))?.[1] ?? 'null')?.questionSelected.length === 1);
+  check('the user can replace the preset with one explicitly checked question source', (await state(page)).questionSelected.length === 1 && (await state(page)).selected.length === 0);
   await click(page, '[data-grounded-selection-done]');
   await wait(page, () => !document.getElementById('conversation-materials')?.open);
   check('finishing selection focuses the question input', await page.eval(() => document.activeElement === document.getElementById('message-draft')));
   await page.send('Input.insertText', { text: '선택한 자료를 요약해줘' });
-  check('offline source selection keeps explicit files without a prepared answer', (await state(page)).selected.length === 1
+  check('offline source selection keeps explicit files without a prepared answer', (await state(page)).questionSelected.length === 1
     && await page.eval(() => document.querySelector('[data-action="organization-send"]').disabled && !document.querySelector('[aria-label="답변 출처"]')));
   const previous = await state(page);
   await page.goto(base + '/demo/start?intro=done', { settleMs: 400 });

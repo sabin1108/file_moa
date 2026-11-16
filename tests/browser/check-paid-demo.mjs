@@ -35,6 +35,32 @@ try {
   await wait(page, () => document.querySelector('[data-tour="task-chat"]'));
   check('mount and restored state generate no automatic requests', await page.eval(() => paidDemo.answers.length === 0 && paidDemo.organizations === 0));
   check('privacy guidance appears in the empty conversation only', await page.eval(() => document.querySelector('[role="note"]')?.textContent.includes('개인정보나 비밀번호')));
+  await click(page, '[data-tour="records"]');
+  await click(page, '[data-tour="record-memory"]');
+  await page.eval(() => [...document.querySelectorAll('[aria-label="샘플 기록함"] button')].find(button => button.textContent === '새 기억').click());
+  check('memory approval aligns the checkbox beside its text and omits the trial suffix', await page.eval(() => {
+    const input = document.querySelector('[aria-label="샘플 기록함"] form input[type="checkbox"]');
+    const label = input.closest('label');
+    const box = input.getBoundingClientRect();
+    return getComputedStyle(label).display === 'flex' && box.width === 18 && !label.textContent.includes('체험용');
+  }));
+  check('cancel editing uses the outlined secondary action', await page.eval(() => {
+    const button = [...document.querySelectorAll('[aria-label="샘플 기록함"] form button')].find(button => button.textContent === '편집 취소');
+    return getComputedStyle(button).borderStyle === 'solid' && parseFloat(getComputedStyle(button).borderWidth) >= 1;
+  }));
+  for (const width of [390, 768, 1440]) {
+    await page.setViewport({ width, height: 1000 });
+    check(`${width}: memory approval text stays beside the checkbox without overflowing`, await page.eval(() => {
+      const input = document.querySelector('[aria-label="샘플 기록함"] form input[type="checkbox"]');
+      const box = input.getBoundingClientRect();
+      const text = input.nextElementSibling.getBoundingClientRect();
+      return text.left > box.right && Math.abs(text.top - box.top) < 8 && document.documentElement.scrollWidth <= innerWidth;
+    }));
+    await wait(page, () => !document.getAnimations().some(animation => animation.playState === 'running' && Number.isFinite(animation.effect?.getComputedTiming().duration)));
+    await page.screenshot({ path: `${output}/memory-editor-${width}.png`, fullPage: true, format: 'png' });
+  }
+  await page.eval(() => [...document.querySelectorAll('[aria-label="샘플 기록함"] form button')].find(button => button.textContent === '편집 취소').click());
+  await close(page);
   await click(page, '[data-tour="task-chat"]');
   check('the input shows a multiline example without autofilling', await page.eval(() => document.getElementById('message-draft').placeholder.includes('\n예: 보고서') && !document.getElementById('message-draft').value));
   check('composer context omits repeated quota, history and invite cautions', await page.eval(() => {
@@ -61,19 +87,30 @@ try {
   check('local find still uses no AI action', await page.eval(() => paidDemo.answers.length === 3 && paidDemo.store.getSnapshot().state.findings.length === 42));
   await close(page); await choose(page, 'grounded');
   await wait(page, () => document.getElementById('conversation-materials')?.open);
+  check('grounded starts with the website documents while folder selection stays empty', await page.eval(() => paidDemo.store.getSnapshot().state.questionSelected.length === 2 && paidDemo.store.getSnapshot().state.selected.length === 0));
+  await page.eval(() => [...document.querySelectorAll('[role="group"][aria-label="파일 선택"] button')].find(button => button.textContent === '전체 선택 해제').click());
+  check('the user can clear every preset question document without it being selected again', await page.eval(() => paidDemo.store.getSnapshot().state.questionSelected.length === 0 && document.querySelector('[data-grounded-selection-done]').disabled));
   await click(page, '[data-previewing] input[type="checkbox"]');
   await click(page, '[data-grounded-selection-done]');
   await wait(page, () => !document.getElementById('conversation-materials')?.open);
   await fill(page, '선택 자료의 핵심을 알려줘');
   check('grounded transmission requires explicit source consent', await page.eval(() => document.querySelector('[data-action="organization-send"]').disabled));
+  check('unchecked actionable consent is outlined and explains the disabled send button', await page.eval(() => {
+    const input = document.querySelector('[data-demo-ai-consent]');
+    const group = input.closest('[data-consent-required="true"]');
+    const hint = document.getElementById(input.getAttribute('aria-describedby'));
+    return !!group && parseFloat(getComputedStyle(group).outlineWidth) > 0 && hint?.textContent.includes('전송에 동의');
+  }));
+  await click(page, '[data-demo-ai-consent]');
+  check('accepting consent clears the required hint and enables sending', await page.eval(() => !document.querySelector('[data-consent-required="true"]') && !document.getElementById('sample-ai-consent-help') && !document.querySelector('[data-action="organization-send"]').disabled));
+  await fill(page, '선택 자료의 핵심을 다시 알려줘');
+  check('changing the question invalidates consent and restores the hint', await page.eval(() => !!document.querySelector('[data-consent-required="true"]') && !document.querySelector('[data-demo-ai-consent]').checked && document.querySelector('[data-action="organization-send"]').disabled));
   await click(page, '[data-demo-ai-consent]'); await send(page);
   await wait(page, () => paidDemo.store.getSnapshot().state.citations.length === 1);
   check('grounded sends document IDs and receives an AI answer with selected-source citations', await page.eval(() => paidDemo.answers.length === 4 && paidDemo.answers[3].documentIds.length === 1 && !('excerpt' in paidDemo.answers[3])));
   await close(page);
-  await page.eval(() => paidDemo.store.dispatch({ type: 'select', ids: Array.from({ length: 41 }, (_, index) => `doc-${index + 1}`) }));
-  await fill(page, '너무 많은 자료');
-  check('oversized selection is explained and cannot be sent', await page.eval(() => document.body.textContent.includes('최대 40개') && document.querySelector('[data-action="organization-send"]').disabled));
-  await page.eval(() => paidDemo.store.dispatch({ type: 'select', ids: ['doc-1'] }));
+  check('an oversized question selection is rejected without replacing the current selection', await page.eval(() => !paidDemo.store.dispatch({ type: 'select-question', ids: Array.from({ length: 41 }, (_, index) => `doc-${index + 1}`) }) && paidDemo.store.getSnapshot().state.questionSelected.length === 1));
+  await page.eval(() => paidDemo.store.dispatch({ type: 'select-question', ids: ['doc-1'] }));
   await fill(page, '취소할 질문');
   await click(page, '[data-demo-ai-consent]');
   await page.eval(() => { paidDemo.hold = true; }); await send(page);
@@ -85,6 +122,7 @@ try {
   check('cancelled late answers are not stored', await page.eval(before => paidDemo.store.getSnapshot().state.messages.length === before, messagesBeforeCancel));
   await page.eval(() => { paidDemo.hold = false; });
   await choose(page, 'organize'); await fill(page, '회의 자료를 정리해줘');
+  check('organize shows the same required-consent outline', await page.eval(() => !!document.querySelector('[data-consent-required="true"]')));
   await click(page, '[data-demo-ai-consent]'); await send(page);
   await wait(page, () => paidDemo.store.getSnapshot().state.phase === 'review');
   check('organize send uses the AI action and waits for explicit plan application', await page.eval(() => paidDemo.organizations === 1 && paidDemo.store.getSnapshot().state.lastApplied === null));
@@ -93,8 +131,8 @@ try {
   await close(page); await choose(page, 'grounded');
   await page.eval(() => document.querySelector('[data-conversation-context] button').click());
   await wait(page, () => document.getElementById('conversation-materials')?.open);
-  await click(page, '[data-previewing] input[type="checkbox"]');
-  check('explicit source changes after an applied plan keep the undo journal and unlock selection', await page.eval(() => paidDemo.store.getSnapshot().state.phase === 'select' && !!paidDemo.store.getSnapshot().state.lastApplied));
+  await page.eval(() => paidDemo.store.dispatch({ type: 'select-question', ids: ['doc-2'] }));
+  check('question selection after an applied plan preserves the plan, selection and undo journal', await page.eval(() => paidDemo.store.getSnapshot().state.phase === 'result' && !!paidDemo.store.getSnapshot().state.lastApplied && paidDemo.store.getSnapshot().state.questionSelected[0] === 'doc-2'));
   await close(page);
   await click(page, '[data-tour="settings"]');
   await wait(page, () => document.querySelector('[aria-label="대화 설정 내용"]')?.checkVisibility());

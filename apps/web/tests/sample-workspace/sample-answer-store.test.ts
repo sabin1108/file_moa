@@ -32,6 +32,24 @@ it("calls only once on explicit send and restores the real answer without replay
   expect(action).toHaveBeenCalledOnce();
   close(); off();
 });
+it("sends and restores only the separate question selection without changing a reviewed organization result", async () => {
+  const { store, off, storage, session } = fixture();
+  store.dispatch({ type: "select", ids: ["one"] });
+  store.dispatch({ type: "select-question", ids: [] });
+  store.dispatch({ type: "draft", value: "자료 질문" });
+  const action = vi.fn().mockResolvedValue(success);
+  await store.requestAnswer(action, "grounded");
+  expect(action).not.toHaveBeenCalled();
+  store.dispatch({ type: "select-question", ids: ["one"] });
+  await store.requestAnswer(action, "grounded");
+  expect(action.mock.calls[0][0].documentIds).toEqual(["one"]);
+  store.dispatch({ type: "select-question", ids: [] });
+  const restored = new SampleWorkspaceStore(catalog, session, () => storage);
+  const close = restored.subscribe(() => {});
+  expect(restored.getSnapshot().state.questionSelected).toEqual([]);
+  expect(restored.getSnapshot().state.selected).toEqual(["one"]);
+  close(); off();
+});
 it.each(["cancel", "unmount", "expire"])("discards a late API answer after %s", async reason => {
   vi.useFakeTimers();
   const { store, off } = fixture();
