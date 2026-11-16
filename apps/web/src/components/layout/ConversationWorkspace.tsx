@@ -101,7 +101,7 @@ export function ConversationWorkspace({
   }, [scrollMemoryRef]);
 
   useEffect(() => {
-    if (hasInteraction) return;
+    if (hasInteraction || !messages.length) return;
 
     if (follow.current && thread.current)
       thread.current.scrollTo({

@@ -10,11 +10,12 @@ import { RecordEditor } from "../editing/RecordEditor";
 import { AiStorageSettings } from "./AiStorageSettings";
 import styles from "./ai-library.module.css";
 import { isWiki } from "../wiki/wiki";
+import { recordKinds as kinds } from "../../../shared/record-kinds";
 import { StatusNotice } from "../../../components/ui/feedback/StatusNotice";
+import { RecordKindTabs } from "./RecordKindTabs";
 
 type Editable = Exclude<AiRecordPayload, ConversationPayload>;
 
-const kinds = [["conversation", "대화", "chat"], ["artifact", "결과물", "file"], ["wiki", "위키", "file"], ["memory", "기억", "leaf"], ["profile", "프로필", "person"]] as const;
 const category = (payload: AiRecordPayload) => isWiki(payload) ? "wiki" : payload.type;
 const statusLabels = { draft: "초안", final: "확정본", proposed: "검토 중", approved: "사용 중", inactive: "사용 안 함" } as const;
 
@@ -200,26 +201,8 @@ export function AiLibraryPanel({ controller, conversation, editor, onEditorChang
         {notice || library.notice}
       </p>}
       <div hidden={!previewKind && (!!editor || !!deletion)}>
-        <nav className={styles.tabs} aria-label="보관 기록 종류">
-          {kinds.map(([type, label, icon]) => <button
-            type="button"
-            key={type}
-            data-tour={`record-${type}`}
-            aria-pressed={tab === type}
-            onClick={() => {
-              setTab(type);
-              setQuery("");
-            }}
-          >
-            <Icon name={icon} />
-            <span>
-              {label}
-            </span>
-            {ready && <small>
-              {library.records.filter(item => category(item.payload) === type).length}
-            </small>}
-          </button>)}
-        </nav>
+        <RecordKindTabs selected={tab} onChange={type => { setTab(type); setQuery(""); }}
+          counts={ready ? Object.fromEntries(kinds.map(([type]) => [type, library.records.filter(item => category(item.payload) === type).length])) : undefined} />
         <section aria-label="저장 기록" className={styles.browser}>
           <div className={styles.listHeading}>
             <h3 ref={listHeading} tabIndex={-1}>

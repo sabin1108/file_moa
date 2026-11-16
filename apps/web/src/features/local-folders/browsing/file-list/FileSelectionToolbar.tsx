@@ -16,7 +16,7 @@ type Props = {
   onClearVisible: () => void;
   onClear: () => void;
   onExit?: () => void;
-  onReviewPlan: (operation: "copy" | "move") => void;
+  onReviewPlan?: (operation: "copy" | "move") => void;
   onTrash?: () => void;
 };
 
@@ -68,9 +68,9 @@ export function FileSelectionToolbar({
       >
         전체 선택 해제
       </button>
-      <div className={styles.fileActions}>
+      {(onExit || onReviewPlan || onTrash) && <div className={styles.fileActions}>
         {onExit && <button type="button" className={actionClasses("ghost")} disabled={disabled} onClick={onExit}>선택 모드 끝내기</button>}
-        <button
+        {onReviewPlan && <><button
           type="button"
           className={actionClasses("primary")}
           disabled={disabled || !selectedCount}
@@ -89,7 +89,7 @@ export function FileSelectionToolbar({
         >
           <Icon name="arrow" className={styles.moveIcon} />
           이동
-        </button>
+        </button></>}
         {onTrash
           && (
             <button
@@ -102,7 +102,7 @@ export function FileSelectionToolbar({
               휴지통으로 보내기
             </button>
           )}
-      </div>
+      </div>}
       {selectedFolderCount > 0
         && (
           <p className={styles.selectionHint}>

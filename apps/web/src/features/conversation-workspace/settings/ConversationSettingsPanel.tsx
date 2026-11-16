@@ -6,7 +6,7 @@ import { UsageView } from "./UsageView";
 import type { UsageSummary } from "../../../shared/ai-usage";
 import styles from "../conversation-options.module.css";
 
-export function ConversationSettingsPanel({ includeMemory, onIncludeMemory, projectId, onProjectId, canUseMemory, disabled, provider, temporary, onStorage, onReplayTour, readUsage }: {
+export function ConversationSettingsPanel({ includeMemory, onIncludeMemory, projectId, onProjectId, canUseMemory, disabled, provider, temporary, onStorage, onReplayTour, readUsage, storageDescription }: {
   includeMemory: boolean;
   onIncludeMemory: (enabled: boolean) => void;
   projectId: string;
@@ -18,12 +18,13 @@ export function ConversationSettingsPanel({ includeMemory, onIncludeMemory, proj
   onStorage: () => void;
   onReplayTour?: () => void;
   readUsage?: () => Promise<UsageSummary | null>;
+  storageDescription?: string;
 }) {
   return <div className={styles.settings} aria-label="대화 설정 내용">
     <section>
       <SettingRow
         title={temporary ? "대화 저장 꺼짐" : "대화 저장 켜짐"}
-        description={temporary ? "새로고침하면 이 대화는 사라집니다." : "연결한 저장 폴더에서 다시 열 수 있어요."}
+        description={storageDescription ?? (temporary ? "새로고침하면 이 대화는 사라집니다." : "연결한 저장 폴더에서 다시 열 수 있어요.")}
       >
         <button type="button" className={actionClasses("secondary")} onClick={onStorage}>저장 설정</button>
       </SettingRow>

@@ -30,8 +30,8 @@ import type { SearchQueryAction } from "../../shared/search-query";
 import type { GroundedEvidence } from "../../shared/grounded-evidence";
 import type { UsageSummary } from "../../shared/ai-usage";
 import { makeWikiDraft } from "../ai-records/wiki/wiki";
-import { ConversationStart, conversationActions } from "./material-work/ConversationStart";
-import type { WorkspaceRequestKind } from "./material-work/workspace-request";
+import { ConversationTaskControls, ConversationTaskIntro } from "./material-work/ConversationTaskControls";
+import { ConversationPanelNavigation } from "./ConversationPanelNavigation";
 import { replayWorkspaceTour } from "../onboarding/workspace-tour";
 import { useWorkspaceTourRecordView } from "../onboarding/workspace-tour-view";
 
@@ -125,17 +125,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
       inputPlaceholder="질문하거나 찾고 정리할 자료를 적어 주세요"
       submitLabel="보내기"
       panel={<>
-        <nav className={options.panelNavigation} aria-label="대화 도구">
-          {([["records", "기록", "folder"], ["sources", "자료", "attach"], ["settings", "설정", "settings"]] as const).map(([view, text, icon]) => <button
-            type="button"
-            key={view}
-            aria-pressed={view === panelView || view === "records" && panelView === "storage"}
-            onClick={event => openPanel(view, event.currentTarget)}
-          >
-            <Icon name={icon} />
-            {text}
-          </button>)}
-        </nav>
+        <ConversationPanelNavigation selected={panelView} onOpen={openPanel} />
         <div hidden={!tourRecordKind && panelView !== "records" && panelView !== "storage"}>
           <AiLibraryPanel
             controller={local.records}
@@ -276,19 +266,9 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
             </>}
           </div>
           : null}
-      intro={<>
-        <h2 tabIndex={-1} data-conversation-title>{workflow.mode ? `${conversationActions.find(action => action.kind === workflow.mode)?.label} 시작하기` : "어떤 작업을 시작할까요?"}</h2>
-        {workflow.mode
-          ? <p>{conversationActions.find(action => action.kind === workflow.mode)?.description}. 아래에 요청을 입력해 주세요.</p>
-          : <ConversationStart onChoose={workflow.selectMode} disabled={workflow.blocked} />}
-      </>}
+      intro={<ConversationTaskIntro mode={workflow.mode} onChoose={workflow.selectMode} disabled={workflow.blocked} />}
       scope={<div>
-        {(workflow.mode || chat.state.turns.length > 0) && <label className={options.modeChoice}>작업
-          <select aria-label="대화 작업" value={workflow.mode ?? ""} disabled={workflow.blocked} onChange={event => workflow.selectMode(event.target.value as WorkspaceRequestKind)}>
-            {!workflow.mode && <option value="">자동 선택</option>}
-            {conversationActions.map(action => <option key={action.kind} value={action.kind}>{action.label}</option>)}
-          </select>
-        </label>}
+        {(workflow.mode || chat.state.turns.length > 0) && <ConversationTaskControls mode={workflow.mode} disabled={workflow.blocked} onChoose={workflow.selectMode} onExample={chat.updateDraft} />}
         <ConversationContextBar
           temporary={conversation.temporary}
           status={conversation.status}

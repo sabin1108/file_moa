@@ -10,6 +10,7 @@ import styles from "../library/ai-library.module.css";
 import controls from "../../../styles/controls.module.css";
 import { acceptWikiUpdate, isWiki, wikiMarkdown } from "../wiki/wiki";
 import { WikiSources } from "../wiki/WikiSources";
+import { RecordTitleField, RecordBodyField } from "./RecordFields";
 
 export function RecordEditor({ initial, controller, onClose, onReveal }: {
   initial: Exclude<AiRecordPayload, { type: "conversation" }>;
@@ -146,25 +147,9 @@ export function RecordEditor({ initial, controller, onClose, onReveal }: {
         void save();
       }}
     >
-      <label>
-        제목
-        <input
-          value={value.title}
-          maxLength={120}
-          required
-          onChange={event => setValue({ ...value, title: event.target.value })}
-        />
-      </label>
+      <RecordTitleField value={value.title} onChange={title => setValue({ ...value, title })} />
       {value.type === "artifact" && <>
-        <label>
-          본문
-          <textarea
-            data-document
-            value={value.markdown}
-            maxLength={500000}
-            onChange={event => setValue({ ...value, markdown: event.target.value })}
-          />
-        </label>
+        <RecordBodyField label="본문" document value={value.markdown} maxLength={500000} onChange={markdown => setValue({ ...value, markdown })} />
         {value.wiki && <p>
           {value.markdown === value.wiki.generatedMarkdown ? "AI가 만든 초안입니다. 본문과 출처를 확인해 주세요." : "사용자가 편집한 본문입니다. AI 초안과 구분해 보존합니다."}
         </p>}
@@ -186,15 +171,7 @@ export function RecordEditor({ initial, controller, onClose, onReveal }: {
         </details>
       </>}
       {value.type === "memory" && <>
-        <label>
-          내용
-          <textarea
-            value={value.content}
-            maxLength={4000}
-            required
-            onChange={event => setValue({ ...value, content: event.target.value })}
-          />
-        </label>
+        <RecordBodyField value={value.content} maxLength={4000} required onChange={content => setValue({ ...value, content })} />
         <label>
           AI가 이 기억을 사용해도 될까요?
           <select

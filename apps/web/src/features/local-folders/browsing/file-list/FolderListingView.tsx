@@ -49,8 +49,11 @@ type Props = {
   onQueryChange: (query: string) => void;
   onClearSelection: () => void;
   onExitSelection?: () => void;
-  onReviewPlan: (operation: "copy" | "move") => void;
+  onReviewPlan?: (operation: "copy" | "move") => void;
   onTrash?: () => void;
+  selectionLocked?: boolean;
+  allowFolderSelection?: boolean;
+  previewSupported?: (name: string) => boolean;
 };
 /** Display values and actions only: no handle, storage, permission or API access. */
 
@@ -60,6 +63,7 @@ export function FolderListingView({
   onSearchCancel, onSearchRetry, onSelectSearch, onSearchOpen, onQueryChange,
   onOpen, onOpenFile, onRefresh, onRetry, onCancel,
   onToggleSelection, onSelectAll, onClearVisibleSelection, onClearSelection, onExitSelection, onReviewPlan, onTrash,
+  selectionLocked = false, allowFolderSelection = true, previewSupported,
 }: Props) {
 
   const searchId = useId();
@@ -73,7 +77,7 @@ export function FolderListingView({
   const path = result?.path ?? [];
   const currentName = path.at(-1) ?? folderName ?? "폴더 목록";
   const selected = new Set(state.selectedNames);
-  const selectionDisabled = disabled || state.stale || state.phase !== "ready";
+  const selectionDisabled = disabled || state.stale || state.phase !== "ready" || selectionLocked;
   const visibleEntries = filterFolderEntries(result?.entries ?? [], state.query);
   const visibleFiles = visibleEntries.filter(entry => entry.kind === "file");
   const visibleSelectedCount = visibleFiles.filter(entry => selected.has(entry.name)).length;
@@ -277,9 +281,9 @@ export function FolderListingView({
                       <SourceFolderRow
                         name={entry.name}
                         selected={selected.has(entry.name)}
-                        selecting={state.selectionOpen}
+                        selecting={state.selectionOpen && allowFolderSelection}
                         disabled={disabled}
-                        selectionDisabled={selectionDisabled}
+                        selectionDisabled={selectionDisabled || !allowFolderSelection}
                         onOpen={() => onOpen([...path, entry.name])}
                         onToggle={() => onToggleSelection(entry.name)}
                         onLongSelect={() => longSelect(entry.name)}
@@ -288,6 +292,7 @@ export function FolderListingView({
                     : (
                       <SourceFileRow
                         name={entry.name}
+                        previewSupported={previewSupported?.(entry.name)}
                         selected={selected.has(entry.name)}
                         previewing={entry.name === previewName}
                         selecting={state.selectionOpen}
@@ -303,7 +308,7 @@ export function FolderListingView({
             </ul>
           )}
       </div>
-      {state.selectionOpen
+      {state.selectionOpen && (onReviewPlan || onTrash)
         && (
           <p className={styles.footnote}>
             복사·이동·휴지통 작업은 범위 검사와 최종 확인 후 실행합니다.

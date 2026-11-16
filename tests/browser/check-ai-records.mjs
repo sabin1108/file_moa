@@ -20,6 +20,7 @@ const server = await createServer({
   cacheDir: resolve(".omx/browser-cache/records"),
   server: { host: "127.0.0.1", port: 0, fs: { allow: [resolve(".")] } },
   resolve: {
+    dedupe: ["react", "react-dom"],
     alias: {
       "next/link": resolve("tests/fixtures/navigation-next-shim.tsx"),
       "next/navigation": resolve("tests/fixtures/navigation-next-shim.tsx"),
@@ -140,6 +141,7 @@ try {
   const url = `http://127.0.0.1:${server.httpServer.address().port}/__records?general`;
 
   await page.goto(url, { settleMs: 500 });
+  await until(() => document.querySelector('[aria-label="시작할 작업 선택"] button'));
   await click("일반 대화");
   await until(() => document.getElementById("message-draft"));
   check(
