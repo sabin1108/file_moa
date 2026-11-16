@@ -1,5 +1,6 @@
 import "server-only";
 import { cache } from "react";
+import { getSessionCookie } from "better-auth/cookies";
 import { getAuth } from "./auth";
 import { getDatabase } from "../database/client";
 import { socialProviders } from "../../shared/social-auth";
@@ -7,6 +8,9 @@ import { socialProviders } from "../../shared/social-auth";
 // React memoizes only within one server render; subsequent requests read the session again.
 
 export const getAuthenticatedSession = cache(async (headers: Headers) => {
+  // No bearer plugin or custom cookie names are configured; only the SDK cookie can identify a session.
+  if (!getSessionCookie(headers)) return null;
+
   const session = await getAuth().api.getSession({ headers, query: { disableCookieCache: true, disableRefresh: true } });
 
   if (!session || session.user.emailVerified) return session;

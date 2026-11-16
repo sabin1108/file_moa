@@ -10,7 +10,7 @@ const calls = vi.hoisted(() => ({
   account: vi.fn(),
   guest: vi.fn(),
   deletion: vi.fn(),
-  headers: new Headers({ origin: "https://app.example.invalid" })
+  headers: new Headers({ origin: "https://app.example.invalid", cookie: "better-auth.session_token=fixture" })
 }));
 
 vi.mock("../../../src/server/auth/auth-forms", () => ({ submitAuthForm: calls.submit }));

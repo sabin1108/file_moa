@@ -20,7 +20,7 @@ import { requireGuest, requireWorkspace } from "../../../src/server/auth/session
 
 beforeEach(() => {
   vi.resetAllMocks();
-  calls.headers.mockResolvedValue(new Headers());
+  calls.headers.mockResolvedValue(new Headers({ cookie: "better-auth.session_token=fixture" }));
   calls.social.mockResolvedValue(null);
   calls.redirect.mockImplementation((path: string) => {
     throw new Error(`fixture-redirect:${path}`);

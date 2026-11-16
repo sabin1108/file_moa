@@ -31,7 +31,7 @@ describe("account request boundary", () => {
   });
 
   it("keeps runtime authentication configuration failures visible", async () => {
-    calls.headers.mockResolvedValue(new Headers());
+    calls.headers.mockResolvedValue(new Headers({ cookie: "better-auth.session_token=fixture" }));
     calls.auth.mockImplementation(() => {
       throw new Error("fixture-configuration-error");
     });
@@ -41,7 +41,7 @@ describe("account request boundary", () => {
   });
 
   it("redirects a request without a session and disables cached or refreshed session writes", async () => {
-    const requestHeaders = new Headers();
+    const requestHeaders = new Headers({ cookie: "better-auth.session_token=fixture" });
 
     calls.headers.mockResolvedValue(requestHeaders);
     calls.session.mockResolvedValue(null);
