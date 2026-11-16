@@ -153,6 +153,7 @@ export function SampleWorkspace({ catalog: sourceCatalog, session, remainingMs, 
           >
             처음부터 다시
           </button>
+          <a href="/demo?guide=1" className={actionClasses("ghost")}>데모 사용 안내</a>
           {expired
             && (
               <StatusNotice
@@ -181,11 +182,10 @@ export function SampleWorkspace({ catalog: sourceCatalog, session, remainingMs, 
           disabled={disabled}
           onToggle={id => {
             setConsent(null);
+            const selected = store.getSnapshot().state.selected;
             store.dispatch({
               type: "select",
-              ids: state.selected.includes(id)
-                ? state.selected.filter(selected => selected !== id)
-                : [...state.selected, id],
+              ids: selected.includes(id) ? selected.filter(selected => selected !== id) : [...selected, id],
             });
           }}
         />

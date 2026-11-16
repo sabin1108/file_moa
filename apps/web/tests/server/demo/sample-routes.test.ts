@@ -23,6 +23,14 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllEnvs());
 
 describe("public sample routes keep their own scope", () => {
+  it("requests the existing tour on explicit entry without replacing an existing sample session", () => {
+    const { token } = createSampleSession();
+    const response = start(new NextRequest("https://fixture.invalid/demo/start?intro=done", {
+      headers: { cookie: `${SAMPLE_COOKIE}=${token}` },
+    }));
+    expect(response.headers.get("location")).toBe("/demo?guide=1");
+    expect(response.headers.get("set-cookie")).toBeNull();
+  });
   it("shows the introduction before creating a sample session", () => {
     const response = start(new NextRequest("https://fixture.invalid/demo/start"));
 
@@ -37,7 +45,7 @@ describe("public sample routes keep their own scope", () => {
     const entry = start(new NextRequest("https://fixture.invalid/demo/start?intro=done&view=files"));
 
     expect(introduction.headers.get("location")).toBe("/demo/intro?view=files");
-    expect(entry.headers.get("location")).toBe("/demo/files");
+    expect(entry.headers.get("location")).toBe("/demo/files?guide=1");
     expect(entry.headers.get("set-cookie")).toContain(SAMPLE_COOKIE);
   });
 
@@ -48,7 +56,7 @@ describe("public sample routes keep their own scope", () => {
     ));
 
     expect(response.status).toBe(303);
-    expect(response.headers.get("location")).toBe("/demo");
+    expect(response.headers.get("location")).toBe("/demo?guide=1");
 
     const saved = response.headers.get("set-cookie")!;
 

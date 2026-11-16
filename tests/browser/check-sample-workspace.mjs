@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { Browser } from "../../.agents/skills/design-taste-frontend/scripts/lib/cdp.mjs";
 import { probe, layout, app } from "../../.agents/skills/design-taste-frontend/scripts/lib/probe.mjs";
 import { judge, judgeLayout, judgeApp, APP_SKIP } from "../../.agents/skills/design-taste-frontend/scripts/lib/rules.mjs";
 
 const base = process.argv[2] ?? "http://127.0.0.1:3034";
 const output = process.argv[3] ?? "docs/verification/conversation-organization/files";
+const fixture = JSON.parse(readFileSync(new URL('../../apps/web/src/server/demo/sample-data/catalog.json', import.meta.url), 'utf8'));
+const sampleNames = Object.fromEntries(fixture.documents.map(document => [document.id, document.name]));
+const sampleInput = id => `[aria-label="${sampleNames[id]} 선택"]`;
+const samplePreview = id => `[aria-label="${sampleNames[id]} 미리보기"]`;
 
 mkdirSync(output, { recursive: true });
 
@@ -78,6 +82,10 @@ try {
   );
   await click(page, 'a[href="/demo/start?intro=done&view=files"]');
   await waitFor(page, () => document.querySelector('[data-sample-ready="true"]'));
+  await waitFor(page, () => !!document.querySelector('#workspace-tour-title'));
+  await click(page, 'dialog[aria-labelledby="workspace-tour-title"] section > div:last-child button:first-child');
+  check('fresh sample files are not preselected', await page.eval(() => !document.querySelector('[data-tour="folder-list"] input:checked')));
+  for (const id of ['text-001', 'sample-pdf', 'sample-xlsx']) await click(page, sampleInput(id));
   check(
     "public entry reaches sample workspace without production login",
     await page.eval(() => location.pathname === "/demo/files" && !!document.querySelector('[data-workspace="sample"]')
@@ -89,22 +97,23 @@ try {
   );
   check(
     "84 nested samples with ten root files and separate prepared/AI actions",
-    await page.eval(() => document.querySelectorAll('[data-sample-id]').length === 10 && document.body.innerText.includes('84개 파일')
+    await page.eval(() => document.querySelectorAll('[data-tour="folder-list"] input[aria-label$=" 선택"]:not([aria-label$="폴더 선택"])').length === 10 && document.body.innerText.includes('84개 파일')
       && document.querySelector('[data-action="sample-propose"]').textContent.includes('준비된')
       && document.querySelector('[data-action="sample-ai"]').disabled)
   );
+  const aiAvailable = await page.eval(() => !document.querySelector('[class*="aiConsent"] input').disabled);
   await click(page, '[class*="aiConsent"] input');
   check(
-    "explicit sample consent enables AI",
-    await page.eval(() => !document.querySelector('[data-action="sample-ai"]').disabled)
+    aiAvailable ? "explicit sample consent enables AI" : "unavailable provider stays disabled after attempted consent",
+    await page.eval(available => document.querySelector('[data-action="sample-ai"]').disabled === !available, aiAvailable)
   );
-  await click(page, '[data-sample-id="text-003"] input');
+  await click(page, sampleInput('text-003'));
   check(
     "changing the selection invalidates consent",
     await page.eval(() => document.querySelector('[data-action="sample-ai"]').disabled
       && !document.querySelector('[class*="aiConsent"] input').checked)
   );
-  await click(page, '[data-sample-id="text-003"] input');
+  await click(page, sampleInput('text-003'));
   check(
     "restoring the old selection still requires fresh consent",
     await page.eval(() => document.querySelector('[data-action="sample-ai"]').disabled)
@@ -129,7 +138,7 @@ try {
   }
 
   await page.setViewport({ width: 1440, height: 1000 });
-  await click(page, '[data-sample-id="sample-pdf"] button');
+  await click(page, samplePreview('sample-pdf'));
   await waitFor(page, () => [...document.querySelectorAll('[aria-label$="PDF 페이지 미리보기"] img')].length === 2
     && [...document.querySelectorAll('[aria-label$="PDF 페이지 미리보기"] img')].every(image => image.complete && image.naturalWidth > 0));
   check(
@@ -142,7 +151,7 @@ try {
     return response.ok && response.headers.get('content-type') === 'application/pdf' && (await response.text()).startsWith('%PDF-');
   }));
   await page.screenshot({ path: `${output}/pdf-1440.png`, format: "png", fullPage: true });
-  await click(page, '[data-sample-id="sample-xlsx"] button');
+  await click(page, samplePreview('sample-xlsx'));
   check(
     "Excel preview shows checked cells and total",
     await page.eval(() => document.querySelector('table')?.innerText.includes('10.5')
@@ -275,7 +284,7 @@ try {
       && !document.querySelector('[data-action="sample-undo"]'))
   );
 
-  await click(page, '[data-sample-id="text-015"] input');
+  await click(page, sampleInput('text-015'));
   await click(page, '[data-action="sample-propose"]');
   check(
     "ambiguous sample blocks application until destination chosen",
@@ -291,7 +300,7 @@ try {
     "choosing ambiguous destination enables application",
     await page.eval(() => !document.querySelector('[data-action="sample-apply"]').disabled)
   );
-  await click(page, '[data-sample-id="sample-pdf"] button');
+  await click(page, samplePreview('sample-pdf'));
   check(
     "document preview remains available during review",
     await page.eval(() => !!document.querySelector('details[open] [aria-label$="PDF 페이지 미리보기"]'))

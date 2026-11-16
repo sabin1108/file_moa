@@ -19,7 +19,15 @@ import { SampleDocumentPreview } from "../files/SampleDocumentPreview";
 import { SampleFolderPanel } from "../files/SampleFolderPanel";
 import styles from "../sample-workspace.module.css";
 import { SampleFolderTree } from "../files/SampleFolderTree";
-import { ConversationStart } from "../../conversation-workspace/material-work/ConversationStart";
+import { ConversationTaskControls, ConversationTaskIntro } from "../../conversation-workspace/material-work/ConversationTaskControls";
+import type { ConversationKind } from "../../../shared/ai-records";
+import { SampleLibraryPanel } from "./SampleLibraryPanel";
+import { ConversationContextBar, type ConversationPanelView } from "../../conversation-workspace/ConversationContextBar";
+import { ConversationSettingsPanel } from "../../conversation-workspace/settings/ConversationSettingsPanel";
+import { replayWorkspaceTour } from "../../onboarding/workspace-tour";
+import { useWorkspaceTourRecordView } from "../../onboarding/workspace-tour-view";
+import { ConversationPanelNavigation } from "../../conversation-workspace/ConversationPanelNavigation";
+import options from "../../conversation-workspace/conversation-options.module.css";
 
 const steps = [{ id: "select", label: "대화로 요청" }, { id: "review", label: "근거·계획 검토" }, { id: "result", label: "정리 결과" }];
 
@@ -31,7 +39,7 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
 }) {
   const { state, ready, expired, notice, aiPending } = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
   const activeCatalog = sampleActiveCatalog(catalog, state);
-  const [scope, setScope] = useState<"all" | "selected" | "folder">("all");
+  const scope = state.scope;
   const [consent, setConsent] = useState<string | null>(null);
   const [consentProvider, setConsentProvider] = useState(aiProvider);
 
@@ -40,11 +48,20 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
     setConsent(null);
   }
 
-  const [path, setPath] = useState<string[]>(["받은 자료"]);
+  const path = state.path;
   const [previewId, setPreviewId] = useState<string | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
-  const [started, setStarted] = useState(false);
+  const started = state.mode !== null || state.messages.length > 0;
+  const mode = state.mode ?? "organize";
+  const [recordsOpen, setRecordsOpen] = useState(false);
+  const [panelView, setPanelView] = useState<ConversationPanelView>("records");
+  const tourRecordKind = useWorkspaceTourRecordView();
+  const showingRecords = !!tourRecordKind || recordsOpen;
+  const [resetting, setResetting] = useState(false);
+  const [resetVersion, setResetVersion] = useState(0);
+  const [projectId, setProjectId] = useState("");
   const heading = useRef<HTMLHeadingElement>(null);
+  const panelTrigger = useRef<HTMLElement | null>(null);
   const scopedDocuments = catalog.documents.filter(document => scope === "all"
     || (scope === "selected"
       ? state.selected.includes(document.id)
@@ -54,7 +71,7 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
   const consented = !!aiProvider && consent === consentKey;
   const providerLabel = aiProvider ? AI_PROVIDER_LABELS[aiProvider] : "설정되지 않은 외부 AI";
   const disabled = !ready || expired || aiPending;
-  const document = catalog.documents.find(document => document.id === previewId);
+  const previewDocument = catalog.documents.find(document => document.id === previewId);
 
   useEffect(() => {
     if (previewId) heading.current?.focus({ preventScroll: false });
@@ -65,8 +82,40 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
     setConsent(null);
   };
   const openPreview = (id: string) => {
+    panelTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setPreviewId(id);
     setPanelOpen(true);
+    setRecordsOpen(false);
+    setPanelView("sources");
+  };
+  const openPanel = (view: ConversationPanelView, trigger?: HTMLElement) => {
+    if (trigger) panelTrigger.current = trigger;
+    setPanelView(view);
+    setRecordsOpen(view === "records" || view === "storage");
+    setPanelOpen(true);
+  };
+  const chooseTask = (kind: ConversationKind) => {
+    store.dispatch({ type: "mode", mode: kind });
+    setConsent(null);
+    if (kind === "grounded" && !state.selected.length) {
+      openPanel("sources", document.activeElement instanceof HTMLElement ? document.activeElement : undefined);
+    }
+  };
+  const offlineSend = () => {
+    panelTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    if (mode !== "chat") setPanelView("sources");
+    setConsent(null);
+    if (mode === "organize") {
+      store.dispatch({ type: "intent", instruction: state.draft.trim() });
+      store.dispatch({ type: "select", ids: documentIds });
+      store.dispatch({ type: "propose" });
+      setRecordsOpen(false);
+      setPanelOpen(true);
+      return;
+    }
+    store.dispatch({ type: "sample-reply", mode, question: state.draft,
+      selectedIds: mode === "grounded" ? state.selected : scopedDocuments.map(document => document.id), referenceYear: new Date().getFullYear() });
+    if (mode !== "chat") { setRecordsOpen(false); setPanelOpen(true); }
   };
 
   return (
@@ -79,8 +128,7 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
           catalog={activeCatalog}
           path={path}
           onOpen={value => {
-            setPath([...value]);
-            setScope("folder");
+            store.dispatch({ type: "scope", scope: "folder", path: value });
             setConsent(null);
           }}
         />
@@ -92,12 +140,7 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
             className={actionClasses("ghost")}
             disabled={disabled}
             onClick={() => {
-              store.dispatch({ type: "reset" });
-              setConsent(null);
-              setPreviewId(null);
-              setPath(["받은 자료"]);
-              setScope("all");
-              setStarted(false);
+              setResetting(true);
             }}
           >
             처음부터 다시
@@ -109,43 +152,38 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
       }
     >
       <ConversationWorkspace
-        messages={state.messages}
+        messages={state.messages.map(message => message.id.startsWith("reply-") ? { ...message, status: "샘플 응답 · 외부 AI 호출 없음" } : message)}
         showComposer={started || state.messages.length > 0}
         draft={state.draft}
         onDraftChange={fill}
         pending={aiPending}
+        inputLabel="AI에게 질문하기"
+        inputPlaceholder="질문하거나 찾고 정리할 자료를 적어 주세요"
         onCancel={store.cancelAi}
-        panelOpen={panelOpen}
-        onPanelChange={setPanelOpen}
-        planReady={state.phase === "review" || state.phase === "result"}
-        canSend={!disabled && consented && documentIds.length > 0}
-        onSend={() => {
-          setConsent(null);
-          setPreviewId(null);
-          void store.requestOrganization(organizeAction, state.draft.trim(), documentIds);
+        panelOpen={panelOpen || !!tourRecordKind}
+        panelModal={!tourRecordKind}
+        panelTrigger={panelTrigger}
+        panelLabel="기록함"
+        panelTitle={showingRecords ? "기록함" : panelView === "settings" ? "대화 설정" : "참고 자료"}
+        onPanelChange={open => {
+          if (open) {
+            const plan = panelTrigger.current?.dataset.action === "open-plan";
+            setPanelView(plan ? "sources" : "records");
+            setRecordsOpen(!plan);
+          }
+          setPanelOpen(open);
         }}
-        intro={
-          <>
-            <h2>어떤 작업을 시작할까요?</h2>
-            <p>샘플에서는 가상 자료로 정리 과정을 체험합니다.</p>
-            <ConversationStart disabled={disabled} modes={["organize"]} onChoose={() => setStarted(true)} />
-            {started && [
-              "10월달 보고서를 본문 작성일 기준으로 날짜별로 정리해 줘",
-              "웹사이트 성능 테스트 자료만 내용으로 찾아 성능 테스트 폴더에 모아 줘",
-            ].map(example => (
-              <button
-                type="button"
-                className={actionClasses("secondary")}
-                key={example}
-                onClick={() => fill(example)}
-              >
-                {example}
-              </button>
-            ))}
-          </>
-        }
+        planReady={mode === "organize" && (state.phase === "review" || state.phase === "result")}
+        canSend={!disabled && state.phase !== "review" && !!state.draft.trim() && (mode === "chat" || mode === "find" || (mode === "grounded" ? state.selected.length > 0 : documentIds.length > 0))}
+        onSend={offlineSend}
+        submitLabel="보내기"
+        intro={<ConversationTaskIntro mode={state.mode} disabled={disabled || state.phase === "review"} onChoose={chooseTask} />}
         notice={
           <>
+            {resetting && <section role="group" aria-label="샘플 초기화 확인"><p>이 세션의 대화·정리 내역·임시 기록을 처음으로 돌릴까요?</p>
+              <button type="button" className={actionClasses("primary")} disabled={disabled} onClick={() => {
+                store.dispatch({ type: "reset" }); setConsent(null); setPreviewId(null); setResetVersion(value => value + 1); setResetting(false); setRecordsOpen(false);
+              }}>초기화 확인</button><button type="button" className={actionClasses("ghost")} onClick={() => setResetting(false)}>취소</button></section>}
             {notice && <StatusNotice state="attention" title="요청 안내" detail={notice} />}
             {expired
               && (
@@ -158,17 +196,24 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
           </>
         }
         scope={
-          <details className={styles.conversationScope} open={started || state.messages.length > 0}>
-            <summary>샘플 자료 · 범위와 AI 전송 설정</summary>
-            {!aiProvider && <p>이 샘플에서는 AI 전송을 사용할 수 없습니다.</p>}
-            <label>
+          <div>
+            {started && <ConversationTaskControls mode={state.mode} disabled={disabled || state.phase === "review"} onChoose={chooseTask} onExample={fill} />}
+            <ConversationContextBar temporary status="임시 대화" sourceName="예시 자료" provider={null} onOpen={openPanel} />
+            {mode === "grounded" && <p role="status">질문에 사용할 자료 {state.selected.length}개 선택 · 선택한 발췌로 사용 흐름을 확인하며 외부 AI에는 전송하지 않아요.
+              <button type="button" className={actionClasses("secondary")} disabled={disabled || state.phase === "review"}
+                onClick={event => openPanel("sources", event.currentTarget)}>질문할 자료 선택</button>
+            </p>}
+          {mode === "chat" ? null : <details className={styles.conversationScope}>
+            <summary>샘플 자료 · {mode === "grounded" ? `선택 ${state.selected.length}개` : `범위 ${scopedDocuments.length}개`}</summary>
+            {mode === "grounded" && <p>자료 보기에서 체크한 {state.selected.length}개를 인용해요. 선택한 발췌만 사용하며 생성형 답변은 아닙니다.</p>}
+            <label className={options.modeChoice}>
               {"자료 범위 "}
               <select
                 aria-label="대화 자료 범위"
-                disabled={disabled}
+                disabled={disabled || state.phase === "review"}
                 value={scope}
                 onChange={event => {
-                  setScope(event.target.value as typeof scope);
+                  store.dispatch({ type: "scope", scope: event.target.value as typeof scope });
                   setConsent(null);
                 }}
               >
@@ -187,12 +232,11 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
               {scope === "folder" && `${path.join(" / ")} · `}
               {"범위 "}
               {scopedDocuments.length}
-              {"개 중 이번 분석 "}
-              {documentIds.length}개
-              {scopedDocuments.length > documentIds.length &&
+              개{mode === "organize" && ` 중 이번 제안 ${documentIds.length}개`}
+              {mode === "organize" && scopedDocuments.length > documentIds.length &&
                 " · 요청과 본문으로 후보를 먼저 추립니다. 폴더를 좁히면 빠짐을 줄일 수 있어요."}
             </p>
-            <label>
+            {mode === "organize" && aiProvider && <><label>
               <input
                 type="checkbox"
                 data-organization-consent
@@ -206,15 +250,38 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
               선택한 공급자의 데이터 처리 정책이 적용돼요. 개인 파일은 전송하지
               않아요.
             </p>
-          </details>
+            {aiProvider && <button type="button" disabled={disabled || state.phase === "review" || !consented || !documentIds.length}
+              onClick={() => { setConsent(null); void store.requestOrganization(organizeAction, state.draft.trim(), documentIds); }}>외부 AI로 정리 제안 받기</button>}
+            </>}
+          </details>}
+          </div>
         }
         panel={
           <>
-            <WorkflowStepper steps={steps} current={state.phase} />
+            <ConversationPanelNavigation selected={tourRecordKind ? "records" : panelView} onOpen={openPanel} />
+            <div hidden={!showingRecords}><SampleLibraryPanel key={resetVersion} previewKind={tourRecordKind ?? undefined} state={state} catalog={catalog} disabled={disabled} dispatch={store.dispatch} onPreview={openPreview}
+              onReveal={() => { setRecordsOpen(true); setPanelOpen(true); }} /></div>
+            <div hidden={!!tourRecordKind || panelView !== "settings"}><ConversationSettingsPanel includeMemory={false} onIncludeMemory={() => {}} projectId={projectId} onProjectId={setProjectId}
+              canUseMemory={false} disabled={disabled} provider={null} temporary storageDescription="이 탭의 샘플 세션 동안 임시 보관합니다. 새로고침해도 복원되며 실제 폴더에는 저장하지 않아요." onStorage={() => openPanel("storage")}
+              onReplayTour={() => { setPanelOpen(false); requestAnimationFrame(replayWorkspaceTour); }} /></div>
+            <div hidden={showingRecords || panelView === "settings"}>
+            {mode === "grounded" && <section aria-label="질문할 예시 자료 선택">
+              <p>아래 파일을 체크한 뒤 질문을 입력하세요. 선택한 발췌와 출처를 보여주는 체험이며 생성형 답변은 아닙니다.</p>
+              <button type="button" data-grounded-selection-done className={actionClasses("secondary")} disabled={disabled || !state.selected.length}
+                onClick={() => {
+                  panelTrigger.current = document.getElementById("message-draft");
+                  setPanelOpen(false);
+                }}>선택한 {state.selected.length}개로 질문하기</button>
+            </section>}
+            {mode === "find" && state.findings.length > 0 && <section aria-label="샘플 검색 결과"><h2>검색 결과 {state.findings.length}개</h2>{state.findings.map(id => <p key={id}>
+              <button type="button" onClick={() => openPreview(id)}>{catalog.documents.find(document => document.id === id)?.name}</button></p>)}</section>}
+            {mode === "grounded" && state.citations.length > 0 && <section aria-label="답변 출처"><h2>확인한 출처</h2>{state.citations.map(id => <p key={id}><button type="button" onClick={() => openPreview(id)}>{catalog.documents.find(document => document.id === id)?.name}</button></p>)}</section>}
+            {mode === "organize" && <WorkflowStepper steps={steps} current={state.phase} />}
             <WorkflowTransition step={`${state.phase}:${aiPending}`}>
-              {state.phase === "review"
+              {mode === "organize" && state.phase === "review"
                 && (
                   <>
+                    {!state.organization && !state.ai && <p>자료별로 준비된 목적지를 사용한 계획입니다. 입력한 요청을 AI로 해석한 결과가 아니며, 적용 전 목적지와 충돌을 확인해 주세요.</p>}
                     {state.organization
                       && (
                         <div className={styles.evidence}>
@@ -249,7 +316,7 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
                     />
                   </>
                 )}
-              {state.organization?.response.held.length
+              {mode === "organize" && state.organization?.response.held.length
                 ? (
                   <StatusNotice
                     state="attention"
@@ -263,7 +330,7 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
                   />
                 )
                 : null}
-              {state.phase === "result"
+              {mode === "organize" && state.phase === "result"
                 && (
                   <StatusNotice
                     state="success"
@@ -271,7 +338,7 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
                     detail="검토한 계획만 샘플에 적용했어요."
                   />
                 )}
-              {state.lastApplied && state.phase !== "review"
+              {mode === "organize" && state.lastApplied && state.phase !== "review"
                 && (
                   <button
                     type="button"
@@ -284,23 +351,24 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
                   </button>
                 )}
               <SampleFolderPanel
+                selecting={mode === "grounded"}
                 catalog={activeCatalog}
                 state={state}
                 path={path}
-                onOpen={setPath}
+                onOpen={path => store.dispatch({ type: "scope", scope, path })}
                 onPreview={openPreview}
                 disabled={disabled}
                 onToggle={id => {
                   setConsent(null);
+                  const selected = store.getSnapshot().state.selected;
                   store.dispatch({
                     type: "select",
-                    ids: state.selected.includes(id)
-                      ? state.selected.filter(selected => selected !== id)
-                      : [...state.selected, id],
+                    ids: selected.includes(id) ? selected.filter(selected => selected !== id) : [...selected, id],
                   });
                 }}
               />
-              {document
+              {state.phase === "review" && <button type="button" className={actionClasses("ghost")} disabled={disabled} onClick={() => store.dispatch({ type: "back" })}>계획 취소하고 작업 선택</button>}
+              {previewDocument
                 && (
                   <div className={styles.conversationPreview}>
                     <button
@@ -310,10 +378,11 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
                     >
                       미리보기 닫기
                     </button>
-                    <SampleDocumentPreview document={document} headingRef={heading} />
+                    <SampleDocumentPreview document={previewDocument} headingRef={heading} />
                   </div>
                 )}
             </WorkflowTransition>
+            </div>
           </>
         }
       />

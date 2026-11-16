@@ -65,3 +65,5 @@
 @media (min-width: 1700px) { .columns { grid-template-columns: minmax(360px, .75fr) minmax(0, 1.25fr); } }
 @media (max-width: 1150px) { .columns { grid-template-columns: minmax(0, 1fr); } .fileList { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 650px) { .canvas { padding: var(--ui-space-4); } .fileList { display: block; } .sectionHeading { flex-wrap: wrap; } .documentText { padding: var(--ui-space-4); } .pdf { max-height: 460px; } }
+.sampleRecord { padding-block: 12px; border-block-end: 1px solid var(--border, #d9dfd7); }
+.sampleRecord pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; max-height: 280px; overflow: auto; }

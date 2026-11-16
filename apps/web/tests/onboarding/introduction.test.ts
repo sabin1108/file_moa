@@ -1,6 +1,7 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+vi.mock("server-only", () => ({}));
 import { OnboardingPage } from "../../src/features/onboarding/OnboardingPage";
 import { metadata as demoMetadata } from "../../src/app/demo/layout";
 

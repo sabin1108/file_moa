@@ -55,7 +55,10 @@ export class SampleWorkspaceStore {
       try {
         const saved = this.storage().getItem(this.storageKey);
 
-        if (saved) state = restoreSampleState(this.catalog, saved);
+        if (saved) {
+          state = restoreSampleState(this.catalog, saved);
+          if (state.selected.length) notice = `이 탭에서 보관한 파일 선택 ${state.selected.length}개를 복원했어요. 파일 선택의 ‘전체 선택 해제’로 비울 수 있습니다.`;
+        }
       } catch {
         notice = "보관된 샘플 상태를 읽지 못해 처음 상태로 열었습니다. 이 탭에서 계속 체험할 수 있어요.";
       }
@@ -83,7 +86,7 @@ export class SampleWorkspaceStore {
   };
 
   dispatch = (action: SampleAction) => {
-    if (!this.snapshot.ready) return;
+    if (!this.snapshot.ready) return false;
 
     this.generation++;
 
@@ -91,25 +94,33 @@ export class SampleWorkspaceStore {
       this.snapshot = { ...this.snapshot, expired: true, aiPending: false };
       this.emit();
 
-      return;
+      return false;
     }
 
     try {
       const state = transitionSampleState(this.catalog, this.snapshot.state, action);
+      const serialized = JSON.stringify(state);
+      if (serialized.length > 128_000) throw Error("sample-state-limit");
       let notice: string | null = null;
 
       try {
-        this.storage().setItem(this.storageKey, JSON.stringify(state));
+        this.storage().setItem(this.storageKey, serialized);
       } catch {
         notice = "샘플 변경은 이 탭에 적용했지만 임시 보관하지 못했습니다. 새로고침하면 변경이 사라질 수 있어요.";
       }
 
       this.snapshot = { state, ready: true, expired: false, notice, aiPending: false };
-    } catch {
-      this.snapshot = { ...this.snapshot, aiPending: false, notice: "샘플 작업을 진행하지 못했습니다. 선택한 자료와 목적지를 확인해 주세요." };
+    } catch (error) {
+      const period = error instanceof Error && ["unconfirmed-find-period", "unsupported-find-period"].includes(error.message);
+      this.snapshot = { ...this.snapshot, aiPending: false, notice: period
+        ? "검색 기간과 날짜 기준을 확인해 주세요. 예: ‘2026년 10월 작성일 기준 성능 찾아줘’. 기간을 넓히려면 날짜 표현을 지우고 다시 입력하세요."
+        : "샘플 작업을 진행하지 못했습니다. 선택한 자료와 목적지 또는 임시 기록 한도를 확인해 주세요." };
+      this.emit();
+      return false;
     }
 
     this.emit();
+    return true;
   };
 
   cancelAi = () => {

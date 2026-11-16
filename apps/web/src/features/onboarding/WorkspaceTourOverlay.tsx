@@ -7,7 +7,7 @@ import type { TourStep } from "./workspace-tour-steps";
 import ui from "../../styles/workspace-ui.module.css";
 import styles from "./workspace-tour.module.css";
 
-export function WorkspaceTourOverlay({ dialog, current, step, total, ready, onClose, onMove }: {
+export function WorkspaceTourOverlay({ dialog, current, step, total, ready, onClose, onMove, contextNote }: {
   dialog: RefObject<HTMLDialogElement | null>;
   current: TourStep;
   step: number;
@@ -15,6 +15,7 @@ export function WorkspaceTourOverlay({ dialog, current, step, total, ready, onCl
   ready: boolean;
   onClose: () => void;
   onMove: (next: number) => void;
+  contextNote?: string;
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   const explanation = useRef<HTMLElement>(null);
@@ -46,6 +47,7 @@ export function WorkspaceTourOverlay({ dialog, current, step, total, ready, onCl
         <p className={styles.progress}>모아 사용 방법 · {step + 1} / {total}</p>
         <h2 id="workspace-tour-title" ref={heading} tabIndex={-1}>{current.title}</h2>
         <p>{current.text}</p>
+        {contextNote && <p>{contextNote}</p>}
         {!ready && <p role="status">화면을 불러오고 있어요.</p>}
       </div>
       <div className={styles.actions}>

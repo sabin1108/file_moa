@@ -15,7 +15,7 @@ export function GET(request: NextRequest) {
   const destination = request.nextUrl.searchParams.get("view") === "files" ? "/demo/files" : "/demo";
   const response = new NextResponse(
     null,
-    { status: 303, headers: { Location: destination, "Cache-Control": "no-store" } }
+    { status: 303, headers: { Location: `${destination}?guide=1`, "Cache-Control": "no-store" } }
   );
 
   if (readSampleSession(request.cookies.get(SAMPLE_COOKIE)?.value)) return response;

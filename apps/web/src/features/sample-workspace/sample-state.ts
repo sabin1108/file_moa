@@ -5,6 +5,19 @@ import { classificationResponseSchema, parseClassificationRequest, parseClassifi
 import type { SampleAiResult } from "../../shared/sample-ai";
 import { organizationPathSchema, organizationResponseSchema, parseOrganizationResponse } from "../../shared/organization";
 import type { SampleOrganizationResult } from "../../shared/sample-organization";
+import { conversationKinds } from "../../shared/ai-records";
+import { prepareSampleReply } from "./sample-experience";
+import { recordKinds } from "../../shared/record-kinds";
+
+export const sampleRecordSchema = z.strictObject({
+  id: z.string().min(1).max(80),
+  kind: z.enum(recordKinds.map(([kind]) => kind)),
+  title: z.string().trim().min(1).max(120),
+  content: z.string().max(8000),
+  approved: z.boolean(),
+  sources: z.array(z.string()).max(5),
+});
+export type SampleRecord = z.infer<typeof sampleRecordSchema>;
 
 const locationsSchema = z.record(z.string(), z.string().nullable());
 const createdFoldersSchema = z.array(z.strictObject({ id: z.string().regex(/^custom-\d+$/), label: z.string().min(1).max(120) })).max(80);
@@ -15,6 +28,15 @@ const usageSchema = z.strictObject({
 });
 const stateSchema = z.strictObject({
   version: z.literal("1"),
+  mode: z.enum(conversationKinds).nullable().default(null),
+  findings: z.array(z.string()).max(200).default([]),
+  citations: z.array(z.string()).max(5).default([]),
+  sourceReply: z.string().max(1500).default(""),
+  records: z.array(sampleRecordSchema).max(20).default([]),
+  guideStep: z.number().int().min(0).max(5).default(0),
+  guideDismissed: z.boolean().default(false),
+  scope: z.enum(["all", "selected", "folder"]).default("all"),
+  path: z.array(z.string().min(1).max(120)).min(1).max(20).default(["받은 자료"]),
   phase: z.enum(["select", "review", "result"]),
   selected: z.array(z.string()).max(200),
   createdFolders: createdFoldersSchema.default([]),
@@ -47,6 +69,12 @@ const stateSchema = z.strictObject({
 export type SampleState = z.infer<typeof stateSchema>;
 
 export type SampleAction =
+  | Readonly<{ type: "mode"; mode: typeof conversationKinds[number] }>
+  | Readonly<{ type: "guide"; step: number; dismissed: boolean }>
+  | Readonly<{ type: "sample-reply"; mode: "chat" | "find" | "grounded"; question: string; selectedIds: readonly string[]; referenceYear: number }>
+  | Readonly<{ type: "save-record"; record: SampleRecord }>
+  | Readonly<{ type: "remove-record"; id: string }>
+  | Readonly<{ type: "scope"; scope: SampleState["scope"]; path?: readonly string[] }>
   | Readonly<{
     type: "select";
     ids: readonly string[]
@@ -79,11 +107,10 @@ export type SampleAction =
 export function createSampleState(catalog: SampleCatalog): SampleState {
   return {
     version: "1",
+    mode: null, findings: [], citations: [], sourceReply: "", records: [], guideStep: 0, guideDismissed: false,
+    scope: "all", path: ["받은 자료"],
     phase: "select",
-    selected: catalog.documents.filter((document, index) => index === 0 || document.format === "pdf" || document.format === "xlsx").slice(
-      0,
-      3
-    ).map(document => document.id),
+    selected: [],
     locations: Object.fromEntries(catalog.documents.map(document => [document.id, document.sourceFolderId ?? null])),
     targets: {},
     ai: null,
@@ -124,6 +151,9 @@ export function restoreSampleState(catalog: SampleCatalog, serialized: string): 
   const documents = new Set(catalog.documents.map(document => document.id));
   const folders = new Set(catalog.folders.map(folder => folder.id));
   const validIds = (ids: readonly string[]) => new Set(ids).size === ids.length && ids.every(id => documents.has(id));
+  if (!validIds(state.findings) || !validIds(state.citations)
+    || new Set(state.records.map(record => record.id)).size !== state.records.length
+    || state.records.some(record => !validIds(record.sources))) throw Error("invalid-sample-experience");
   const validLocations = (locations: SampleState["locations"]) => Object.keys(locations).length === documents.size
     && Object.entries(locations).every(([id, folder]) => documents.has(id) && (folder === null || folders.has(folder)));
 
@@ -314,6 +344,40 @@ export function sampleChangePlan(catalog: SampleCatalog, state: SampleState): Fi
 
 export function transitionSampleState(catalog: SampleCatalog, state: SampleState, action: SampleAction): SampleState {
   if (action.type === "reset") return createSampleState(catalog);
+  if (action.type === "scope") {
+    const scope = stateSchema.shape.scope.parse(action.scope);
+    const path = stateSchema.shape.path.parse(action.path ?? state.path);
+    if (state.phase === "review") throw Error("sample-review-required");
+    return { ...state, scope, path };
+  }
+
+  if (action.type === "mode") {
+    if (state.phase === "review" || !conversationKinds.includes(action.mode)) throw Error("sample-review-required");
+    return { ...state, mode: action.mode };
+  }
+  if (action.type === "guide") {
+    if (!Number.isInteger(action.step) || action.step < 0 || action.step > 5) throw Error("invalid-sample-guide");
+    return { ...state, guideStep: action.step, guideDismissed: action.dismissed };
+  }
+  if (action.type === "sample-reply") {
+    if (state.phase === "review") throw Error("sample-review-required");
+    const result = prepareSampleReply(catalog, state, action);
+    const id = crypto.randomUUID();
+    return { ...state, mode: action.mode, draft: "",
+      findings: action.mode === "find" ? result.findings : state.findings,
+      citations: action.mode === "grounded" ? result.citations : state.citations,
+      sourceReply: action.mode === "grounded" ? result.answer : state.sourceReply,
+      messages: [...state.messages, { id: `question-${id}`, author: "user" as const, text: action.question.trim() },
+        { id: `reply-${id}`, author: "assistant" as const, text: result.answer }].slice(-40) };
+  }
+  if (action.type === "save-record") {
+    const record = sampleRecordSchema.parse(action.record);
+    if (record.sources.some(id => !catalog.documents.some(document => document.id === id))) throw Error("invalid-sample-record");
+    const records = [record, ...state.records.filter(item => item.id !== record.id)];
+    if (records.length > 20 || JSON.stringify(records).length > 60_000) throw Error("sample-record-limit");
+    return { ...state, records };
+  }
+  if (action.type === "remove-record") return { ...state, records: state.records.filter(record => record.id !== action.id) };
 
   if (action.type === "draft") {
     if (action.value.length > 800) throw new Error("invalid-sample-draft");
@@ -327,6 +391,7 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
     return {
       ...state,
       phase: "select",
+      mode: "organize",
       targets: {},
       ai: null,
       organization: null,
@@ -367,6 +432,7 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
     return {
       ...state,
       phase: response.matches.length ? "review" : "select",
+      mode: "organize",
       selected: response.matches.map(match => match.documentId),
       targets,
       createdFolders,
@@ -408,7 +474,7 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
   };
 
   if (action.type === "propose" || action.type === "ai-propose") {
-    if (state.phase !== "select") throw new Error("sample-review-required");
+    if (state.phase !== "select" || !state.selected.length) throw new Error("sample-review-required");
 
     const documents = catalog.documents.filter(document => state.selected.includes(document.id));
     const proposals = action.type === "ai-propose"
@@ -437,6 +503,7 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
     return {
       ...state,
       phase: "review",
+      mode: "organize",
       ai,
       targets: Object.fromEntries(response.proposals.map(proposal => [proposal.documentId, proposal.folderId]))
     };

@@ -5,6 +5,8 @@ import { WorkspaceShell } from "../../../components/layout/WorkspaceShell";
 import styles from "../../../styles/workspace-layout.module.css";
 import { QuickSwitchSettings } from "../../../features/quick-switch/QuickSwitchSettings";
 import { SettingsTabs } from "../../../components/layout/SettingsTabs";
+import { SettingRow } from "../../../components/ui/SettingRow";
+import { ActionLink } from "../../../components/ui/ActionLink";
 
 export default async function SampleSettingsPage() {
   if (!readSampleAccess((await cookies()).get(SAMPLE_COOKIE)?.value)) redirect("/demo/start");
@@ -20,7 +22,9 @@ export default async function SampleSettingsPage() {
               <a href="/demo">대화로 돌아가기</a>
             </>,
             editor: <p>샘플 문서는 미리보기로 확인할 수 있어요. 실제 문서 편집 설정은 정식 사용에서 관리합니다.</p>,
-            controls: <QuickSwitchSettings />,
+            controls: <><SettingRow title="사용 안내" description="실제 화면을 따라 폴더·채팅·기록함 사용 방법을 다시 확인합니다.">
+              <ActionLink href="/demo?guide=1" variant="secondary">데모 사용 안내 다시 보기</ActionLink>
+            </SettingRow><QuickSwitchSettings /></>,
           }}
         />
       </div>

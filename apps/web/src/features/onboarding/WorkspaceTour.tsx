@@ -4,11 +4,13 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useNavigationGuard } from "../../components/navigation/NavigationGuard";
 import { WORKSPACE_TOUR_EVENT } from "./workspace-tour";
-import { tourRouteMatches, workspaceTourSteps as steps } from "./workspace-tour-steps";
+import { tourRouteMatches, workspaceStepsFor } from "./workspace-tour-steps";
+import type { WorkspaceMode } from "../../shared/workspace-navigation";
 import { WorkspaceTourRecordView } from "./workspace-tour-view";
 import { WorkspaceTourOverlay } from "./WorkspaceTourOverlay";
 
-export function WorkspaceTour({ claim, children }: { claim: () => Promise<boolean>; children?: ReactNode }) {
+export function WorkspaceTour({ claim, children, mode = "live" }: { claim: () => Promise<boolean>; children?: ReactNode; mode?: WorkspaceMode }) {
+  const steps = workspaceStepsFor(mode);
   const [open, setOpen] = useState(false);
   const [paused, setPaused] = useState(false);
   const [step, setStep] = useState(0);
@@ -96,6 +98,7 @@ export function WorkspaceTour({ claim, children }: { claim: () => Promise<boolea
 
   return <WorkspaceTourRecordView.Provider value={open && !paused && ready ? current.recordKind ?? null : null}>
     {children}
-    {open && !paused && <WorkspaceTourOverlay dialog={dialog} current={current} step={step} total={steps.length} ready={ready} onClose={close} onMove={move} />}
+    {open && !paused && <WorkspaceTourOverlay dialog={dialog} current={current} step={step} total={steps.length} ready={ready} onClose={close} onMove={move}
+      contextNote={mode === "sample" ? "데모는 준비된 예시 폴더를 사용합니다. 개인 폴더 연결과 영구 저장 대신 이 탭의 자료로 사용 흐름을 확인해요." : undefined} />}
   </WorkspaceTourRecordView.Provider>;
 }

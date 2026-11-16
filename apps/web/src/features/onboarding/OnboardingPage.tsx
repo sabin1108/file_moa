@@ -17,6 +17,8 @@ export function OnboardingPage({ mode = "live", initialView }: OnboardingPagePro
   const sample = mode === "sample";
   const destination = sample ? `/demo/start?intro=done${initialView === "files" ? "&view=files" : ""}` : "/welcome";
   const action = sample ? "체험 시작하기" : "모아 시작하기";
+  // A document entry refreshes the shared layout after the sample cookie is issued.
+  const StartLink = sample ? "a" : Link;
   const image = { alt: "", sizes: "100vw" };
   const { props: desktopImage } = getImageProps({ ...image, src: "/onboarding/reading-room-desktop-v1.png", width: 1774, height: 887 });
   const { props: mobileImage } = getImageProps({ ...image, src: "/onboarding/reading-room-mobile-v1.png", width: 863, height: 1823 });
@@ -34,13 +36,12 @@ export function OnboardingPage({ mode = "live", initialView }: OnboardingPagePro
           <a href="#organize">파일 정리</a>
           <a href="#records">기록</a>
         </nav>
-        <Link
+        <StartLink
           href={sample ? destination : "/login"}
           className={styles.headerAction}
-          prefetch={sample ? false : undefined}
         >
           {sample ? action : "로그인"}
-        </Link>
+        </StartLink>
       </header>
 
       <main id="introduction">
@@ -57,10 +58,10 @@ export function OnboardingPage({ mode = "live", initialView }: OnboardingPagePro
             <div className={`${styles.heroCopy} ${motion.heroCopy}`}>
               <h1 id="intro-heading">흩어진 자료가<br />생각으로 모이는 곳</h1>
               <p>내 폴더의 자료를 찾고, AI와 정리하고,<br className={styles.desktopBreak} /> 필요한 순간 다시 꺼내 쓰세요.</p>
-              <Link href={destination} className={styles.primaryAction} prefetch={sample ? false : undefined}>
+              <StartLink href={destination} className={styles.primaryAction}>
                 {action}
                 <Icon name="chevron" size={18} />
-              </Link>
+              </StartLink>
               {sample && <p className={styles.invitationNote}>로그인 없이, 준비된 샘플 자료로 둘러보세요.</p>}
               <a className={`${styles.scrollLink} ${motion.scrollCue}`} href="#find">스크롤하며 모아 알아보기<Icon name="down" size={18} /></a>
             </div>
@@ -105,10 +106,10 @@ export function OnboardingPage({ mode = "live", initialView }: OnboardingPagePro
           <p>
             {sample ? "직접 연결할 폴더가 없어도 괜찮아요. 샘플 자료로 모아를 만나보세요." : "익숙한 폴더에서 시작하는 새로운 작업 공간."}
           </p>
-          <Link href={destination} className={styles.primaryAction} prefetch={sample ? false : undefined}>
+          <StartLink href={destination} className={styles.primaryAction}>
             {action}
             <Icon name="chevron" size={18} />
-          </Link>
+          </StartLink>
           {sample && <p className={styles.sampleScope}>체험의 파일 변경은 가상 자료에만 적용돼요. AI 기능은 체험 환경의 제공 범위와 사용 한도를 따라요.</p>}
         </section>
       </main>

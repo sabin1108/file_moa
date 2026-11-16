@@ -1,4 +1,5 @@
 import type { TourRecordKind } from "./workspace-tour-view";
+import type { WorkspaceMode } from "../../shared/workspace-navigation";
 
 export type TourStep = { route: string | null; selector: string; title: string; text: string; recordKind?: TourRecordKind };
 
@@ -21,6 +22,17 @@ export const workspaceTourSteps: readonly TourStep[] = [
   { route: "/settings?tab=account", selector: '[data-tour="settings-tabs"]', title: "전체 설정은 기능별로 나뉘어요", text: "계정과 로그인, 폴더 연결, 문서 편집, 화면과 조작을 각각 관리합니다. 폴더 연결을 해제해도 원본 파일이 삭제되지는 않아요." },
   { route: "/settings?tab=controls", selector: '[data-tour="quick-settings"]', title: "퀵메뉴로 화면을 빠르게 바꿔요", text: "빈 작업 영역을 길게 누르거나 설정한 단축키로 폴더·채팅·설정을 오갈 수 있어요. 호출 방식과 키는 여기서 바꿉니다. ‘사용 방법 다시 보기’로 이 안내를 언제든 다시 열 수 있어요." },
 ] as const;
+
+export function workspaceStepsFor(mode: WorkspaceMode): readonly TourStep[] {
+  if (mode === "live") return workspaceTourSteps;
+  return workspaceTourSteps.map(step => ({
+    ...step,
+    text: step.selector.includes("folder-connection")
+      ? "정식 사용에서는 ‘폴더 연결 관리’에서 내 컴퓨터의 폴더를 선택합니다. 데모에는 준비된 예시 폴더가 연결돼 있어 바로 살펴볼 수 있어요. 안내가 개인 폴더를 열거나 권한을 요청하지는 않아요."
+      : step.text,
+    route: step.route === null ? null : step.route === "/" ? "/demo" : `/demo${step.route}`,
+  }));
+}
 
 export function tourRouteMatches(route: string | null, pathname: string, tab: string | null) {
   if (!route) return true;

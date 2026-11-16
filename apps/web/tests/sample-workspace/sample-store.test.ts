@@ -37,6 +37,7 @@ describe("sample session storage boundary", () => {
     const contentCatalog: SampleCatalog = { ...catalog, documents: [{ ...catalog.documents[0], excerpt: "회의 기록과 다음 일정입니다." }] };
     const store = new SampleWorkspaceStore(contentCatalog, session("content-late"), () => storage);
     const off = store.subscribe(() => { });
+    store.dispatch({ type: "select", ids: ["one"] });
     let finish!: (result: SampleOrganizationResult) => void;
     const action = vi.fn().mockImplementation(() => new Promise<SampleOrganizationResult>(resolve => {
       finish = resolve;
@@ -83,6 +84,7 @@ describe("sample session storage boundary", () => {
     const storage = memory();
     const store = new SampleWorkspaceStore(catalog, session("ai"), () => storage);
     const off = store.subscribe(() => { });
+    store.dispatch({ type: "select", ids: ["one"] });
     const request = vi.fn().mockResolvedValue(aiResult);
 
     await store.requestAi(request);
@@ -109,6 +111,7 @@ describe("sample session storage boundary", () => {
 
     const store = new SampleWorkspaceStore(catalog, session("late"), () => memory(), 1000);
     const off = store.subscribe(() => { });
+    store.dispatch({ type: "select", ids: ["one"] });
     let finish!: (result: SampleAiResult) => void;
     const request = vi.fn().mockImplementation(() => new Promise<SampleAiResult>(resolve => {
       finish = resolve;
@@ -135,6 +138,7 @@ describe("sample session storage boundary", () => {
   it("shows quota/network failures without silently substituting a prepared proposal", async () => {
     const store = new SampleWorkspaceStore(catalog, session("failed"), () => memory());
     const off = store.subscribe(() => { });
+    store.dispatch({ type: "select", ids: ["one"] });
 
     await store.requestAi(async () => ({ ok: false, code: "limit", retryAfter: 30 }));
     expect(store.getSnapshot()).toMatchObject({ aiPending: false, state: { phase: "select" } });
@@ -153,6 +157,7 @@ describe("sample session storage boundary", () => {
     const second = new SampleWorkspaceStore(catalog, session("second"), () => storage);
     const offFirst = first.subscribe(() => { }), offSecond = second.subscribe(() => { });
 
+    first.dispatch({ type: "select", ids: ["one"] });
     first.dispatch({ type: "propose" });
     first.dispatch({ type: "apply" });
     expect(first.getSnapshot().state.locations.one).toBe("meeting");
@@ -172,6 +177,7 @@ describe("sample session storage boundary", () => {
 
     const store = new SampleWorkspaceStore(catalog, session("expires"), () => memory());
     const off = store.subscribe(() => { });
+    store.dispatch({ type: "select", ids: ["one"] });
 
     vi.advanceTimersByTime(3600000);
     expect(store.getSnapshot().expired).toBe(true);
@@ -188,6 +194,7 @@ describe("sample session storage boundary", () => {
     vi.setSystemTime(Date.now() + 7 * 3600000);
 
     const off = store.subscribe(() => { });
+    store.dispatch({ type: "select", ids: ["one"] });
 
     store.dispatch({ type: "propose" });
     expect(store.getSnapshot().state.phase).toBe("review");
@@ -208,8 +215,8 @@ describe("sample session storage boundary", () => {
       })
     );
     const off = store.subscribe(() => { });
-
     expect(store.getSnapshot().notice).toContain("처음 상태");
+    store.dispatch({ type: "select", ids: ["one"] });
     store.dispatch({ type: "propose" });
     store.dispatch({ type: "apply" });
     expect(store.getSnapshot().state.locations.one).toBe("meeting");

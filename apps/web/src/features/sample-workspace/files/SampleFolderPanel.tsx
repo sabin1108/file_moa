@@ -1,89 +1,87 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import type { SampleCatalog } from "../../../shared/sample-contract";
 import type { SampleState } from "../sample-state";
 import { sampleFolderPath } from "../sample-state";
-import { SourceFileRow } from "../../local-folders/browsing/file-list/SourceFileRow";
-import { SourceFolderRow } from "../../local-folders/browsing/file-list/SourceFolderRow";
-import { actionClasses } from "../../../components/ui/action-classes";
-import styles from "../sample-workspace.module.css";
+import { FolderListingView } from "../../local-folders/browsing/file-list/FolderListingView";
+import type { SourceListingState } from "../../local-folders/browsing/file-list/source-listing-controller";
+import type { FolderListing } from "../../local-folders/browsing/source-folder-listing";
+import type { FolderSearchState } from "../../local-folders/browsing/search/folder-search-controller";
+import { searchFolderTree } from "../../local-folders/browsing/search/folder-tree-search";
 
-export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onToggle, disabled }: {
-  catalog: SampleCatalog;
-  state: SampleState;
-  path: readonly string[];
-  onOpen: (path: string[]) => void;
-  onPreview: (id: string) => void;
-  onToggle: (id: string) => void;
-  disabled: boolean;
+export function sampleFolderListing(catalog: SampleCatalog, state: SampleState, path: readonly string[]): FolderListing {
+  const items = catalog.documents.map(document => ({ document, path: sampleFolderPath(catalog, state.locations[document.id]) }));
+  const descendants = items.filter(item => path.every((part, index) => item.path[index] === part));
+  const folders = [...new Set(descendants.filter(item => item.path.length > path.length).map(item => item.path[path.length]))].sort();
+  return { path, truncated: false, entries: [
+    ...folders.map(name => ({ name, kind: "directory" as const })),
+    ...descendants.filter(item => item.path.length === path.length).map(({ document }) => ({ name: document.name, kind: "file" as const })),
+  ] };
+}
+
+export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onToggle, disabled, selecting = false }: {
+  catalog: SampleCatalog; state: SampleState; path: readonly string[];
+  onOpen: (path: string[]) => void; onPreview: (id: string) => void; onToggle: (id: string) => void; disabled: boolean; selecting?: boolean;
 }) {
-  const paths = catalog.documents.map(document => ({ document, path: sampleFolderPath(catalog, state.locations[document.id]) }));
-  const descendant = paths.filter(item => path.every((part, index) => item.path[index] === part));
-  const folders = [...new Set(descendant.filter(item => item.path.length > path.length).map(item => item.path[path.length]))].sort();
-  const documents = descendant.filter(item => item.path.length === path.length).map(item => item.document);
-
-  return (
-    <section aria-label="샘플 폴더 탐색" data-sample-folder={JSON.stringify(path)}>
-      <div className={styles.sectionHeading}>
-        <div>
-          <h2>
-            {path.at(-1) ?? "샘플 자료"}
-          </h2>
-          <p>
-            {catalog.documents.length}개 파일 · {catalog.folders.length}개 분류 폴더
-          </p>
-        </div>
-        {path.length > 0
-          && (
-            <button
-              type="button"
-              className={actionClasses("ghost")}
-              onClick={() => onOpen(path.slice(0, -1))}
-            >
-              상위 폴더
-            </button>
-          )}
-      </div>
-      <ul className={styles.folderList}>
-        {folders.map(name => (
-          <li key={name}>
-            <SourceFolderRow
-              name={name}
-              selected={false}
-              selecting={false}
-              disabled={false}
-              selectionDisabled
-              onOpen={() => onOpen([...path, name])}
-              onToggle={() => { }}
-              onLongSelect={() => { }}
-            />
-          </li>
-        ))}
-        {documents.map(document => (
-          <li key={document.id} data-sample-id={document.id}>
-            <SourceFileRow
-              name={document.name}
-              selected={state.selected.includes(document.id)}
-              selecting
-              previewing={false}
-              selectionDisabled={disabled || state.phase !== "select"}
-              previewDisabled={false}
-              previewSupported
-              onToggle={() => onToggle(document.id)}
-              onLongSelect={() => {
-                if (!state.selected.includes(document.id)) onToggle(document.id);
-              }}
-              onPreview={() => onPreview(document.id)}
-            />
-            <p className={styles.location} data-location-for={document.id}>
-              {sampleFolderPath(catalog, state.locations[document.id]).join(" / ")}
-            </p>
-          </li>
-        ))}
-      </ul>
-      {!documents.length && !folders.length && (
-        <p className={styles.muted}>이 폴더에는 자료가 없어요.</p>
-      )}
-    </section>
-  );
+  const heading = useRef<HTMLHeadingElement>(null);
+  const [query, setQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [search, setSearch] = useState<FolderSearchState>({ phase: "idle", result: null });
+  const [searchRevision, setSearchRevision] = useState(0);
+  const searchAbort = useRef<AbortController | null>(null);
+  const result = sampleFolderListing(catalog, state, path);
+  const documents = catalog.documents.filter(document => JSON.stringify(sampleFolderPath(catalog, state.locations[document.id])) === JSON.stringify(path));
+  const selectedNames = documents.filter(document => state.selected.includes(document.id)).map(document => document.name);
+  const toggle = (name: string) => {
+    const document = documents.find(document => document.name === name);
+    if (document) onToggle(document.id);
+    else setNotice("샘플에서는 폴더를 열어 필요한 파일을 선택해 주세요.");
+  };
+  const listing: SourceListingState = {
+    available: !disabled, phase: "ready", result, requestedPath: path, stale: false, issue: null,
+    selectedNames, query, searchOpen, selectionOpen: selecting || selectedNames.length > 0,
+  };
+  useEffect(() => {
+    if (!query.trim()) return;
+    const abort = new AbortController();
+    searchAbort.current = abort;
+    void searchFolderTree(path, query, async path => sampleFolderListing(catalog, state, path), () => abort.signal.throwIfAborted()).then(
+      result => { if (!abort.signal.aborted) setSearch({ phase: "ready", result }); },
+      () => { if (!abort.signal.aborted) setSearch({ phase: "error", result: null }); },
+    );
+    return () => abort.abort();
+  }, [catalog, state, path, query, searchRevision]);
+  return <>
+    {notice && <p role="status">{notice}</p>}
+    <FolderListingView state={listing} folderName="예시 자료" headingRef={heading}
+      allowFolderSelection={!selecting}
+      selectionLocked={state.phase !== "select"} previewSupported={() => true}
+      connectionControls={<span data-tour="folder-connection">예시 자료 · 연결됨</span>}
+      historyControls={null} creation={null} previewName={null} searchState={search}
+      onOpen={path => { setQuery(""); onOpen([...path]); }}
+      onOpenFile={path => {
+        const document = catalog.documents.find(document => document.name === path.at(-1) && JSON.stringify(sampleFolderPath(catalog, state.locations[document.id])) === JSON.stringify(path.slice(0, -1)));
+        if (document) onPreview(document.id);
+      }}
+      onSearchOpen={setSearchOpen}
+      onSearchCancel={() => { searchAbort.current?.abort(); setSearch(current => ({ phase: "cancelled", result: current.result })); }}
+      onSearchRetry={() => { setSearch({ phase: "loading", result: null }); setSearchRevision(value => value + 1); }}
+      onSelectSearch={(parentPath, name, kind) => {
+        const document = catalog.documents.find(document => document.name === name && JSON.stringify(sampleFolderPath(catalog, state.locations[document.id])) === JSON.stringify(parentPath));
+        if (kind === "file" && document) {
+          setQuery("");
+          onOpen([...parentPath]);
+          if (!state.selected.includes(document.id)) onToggle(document.id);
+        }
+      }}
+      onRefresh={() => setNotice("준비된 예시 자료의 현재 상태입니다.")} onRetry={() => setNotice("")} onCancel={() => {}}
+      onToggleSelection={toggle}
+      onSelectAll={() => documents.filter(document => !state.selected.includes(document.id)).forEach(document => onToggle(document.id))}
+      onClearVisibleSelection={() => documents.filter(document => state.selected.includes(document.id)).forEach(document => onToggle(document.id))}
+      onQueryChange={value => { setSearch({ phase: "loading", result: null }); setQuery(value); }} onClearSelection={() => state.selected.forEach(onToggle)}
+      onReviewPlan={selecting ? undefined : () => setNotice("이 샘플의 정리 제안에서 목적지와 계획을 검토할 수 있어요. 실제 복사·이동은 정식 사용의 파일 작업입니다.")}
+    />
+  </>;
 }
