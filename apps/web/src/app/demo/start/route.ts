@@ -1,7 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createSampleSession, readSampleSession, SAMPLE_COOKIE, SAMPLE_SESSION_SECONDS } from "../../../server/demo/sample-session";
+import { readDemoVisitor, DEMO_VISITOR_COOKIE, demoAccessDenied } from "../../../server/demo/demo-access";
 
 export function GET(request: NextRequest) {
+  if (!readDemoVisitor(request.cookies.get(DEMO_VISITOR_COOKIE)?.value)) return demoAccessDenied();
   if (request.nextUrl.searchParams.get("intro") !== "done") {
     const view = request.nextUrl.searchParams.get("view") === "files" ? "?view=files" : "";
 

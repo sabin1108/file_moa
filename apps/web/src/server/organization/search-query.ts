@@ -1,4 +1,5 @@
 import "server-only";
+import { liveAiRules } from "../ai/ai-quota";
 import { buildSearchQueryRequest } from "./search-query-request";
 import { searchQueryRequestSchema, compileSearchQuerySuggestion, type SearchQueryResult } from "../../shared/search-query";
 import type { AiProvider } from "../../shared/ai-provider";
@@ -35,15 +36,9 @@ export async function interpretSearchQuery(value: unknown, requestHeaders: Heade
 
     quota ??= createAuthRateLimiter(getDatabase, process.env.BETTER_AUTH_SECRET!);
 
-    const reserved = await quota.consumeAll([
-      { key: `live-ai-v1:request:${session.workspaceId}:${input.requestId}`, max: 1, window: 3600 },
-      { key: `live-ai-v1:workspace:${session.workspaceId}`, max: 10, window: 3600 },
-      { key: `live-ai-v1:user:${session.sessionUserId}`, max: 10, window: 3600 },
-      { key: "sample-ai-v1:global-minute", max: 1, window: 60 },
-      { key: "sample-ai-v1:global-hour", max: 12, window: 3600 },
-    ]);
+    const reserved = await quota.consumeAll(liveAiRules(session, input.requestId, Date.now()));
 
-    if (!reserved.allowed) return { ok: false, code: "limit" };
+    if (!reserved.allowed) return { ok: false, code: "limit", retryAfter: reserved.retryAfter ?? 60 };
 
     await startUsage(session, input.requestId, provider, "query");
     tracked = { session, requestId: input.requestId, model: null, usage: null };

@@ -16,7 +16,7 @@ export const searchQuerySuggestionSchema = z.strictObject({
 
 export type SearchQuerySuggestion = z.infer<typeof searchQuerySuggestionSchema>;
 export type SearchQueryResult = Readonly<{ ok: true; question: string; suggestion: SearchQuerySuggestion; model: string }>
-  | Readonly<{ ok: false; code: "origin" | "session" | "input" | "limit" | "timeout" | "unavailable" }>;
+  | Readonly<{ ok: false; code: "origin" | "session" | "input" | "limit" | "timeout" | "unavailable"; retryAfter?: number }>;
 export type SearchQueryAction = (input: unknown) => Promise<SearchQueryResult>;
 
 export function compileSearchQuerySuggestion(value: unknown, question: string): SearchQuerySuggestion {

@@ -5,6 +5,8 @@ import type { SampleAiUsage } from "../../shared/sample-ai";
 import type { UsageSummary } from "../../shared/ai-usage";
 import { getDatabase } from "../database/client";
 import { readChatSession } from "../chat/chat-session";
+import { dailyAiRules } from "./ai-quota";
+import { aiUsageDay, AI_DAILY_LIMITS } from "../../shared/ai-daily-limits";
 
 type UsageOwner = {
   workspaceId: string;
@@ -60,12 +62,9 @@ export async function readUsage(requestHeaders: Headers): Promise<UsageSummary |
 
   if (!session) return null;
 
-  const rules = [
-    { key: `live-ai-v1:user:${session.sessionUserId}`, maximum: 10, window: 3600000 },
-    { key: `live-ai-v1:workspace:${session.workspaceId}`, maximum: 10, window: 3600000 },
-    { key: "sample-ai-v1:global-minute", maximum: 1, window: 60000 },
-    { key: "sample-ai-v1:global-hour", maximum: 12, window: 3600000 },
-  ];
+  const now = Date.now();
+  const day = aiUsageDay(now);
+  const rules = dailyAiRules("live", session.sessionUserId, now);
   const hash = (key: string) => createHmac("sha256", process.env.BETTER_AUTH_SECRET!).update("moa-rate-limit-v1\0").update(key).digest("hex");
   const counters = await getDatabase().rateLimit.findMany({
     where: { key: { in: rules.map(rule => hash(rule.key)) } },
@@ -76,16 +75,16 @@ export async function readUsage(requestHeaders: Headers): Promise<UsageSummary |
 
   for (const [index, rule] of rules.entries()) {
     const counter = counters.find(item => item.key === hash(rule.key));
-    const remaining = counter ? Number(counter.lastRequest) + rule.window - Date.now() : 0;
+    const remaining = counter ? day.resetsAt - now : 0;
 
     if (remaining <= 0) continue;
 
-    if (index < 2) used = Math.max(used, counter!.count);
+    if (index === 0) used = counter!.count;
 
-    if (counter!.count >= rule.maximum) retryAfter = Math.max(retryAfter, Math.ceil(remaining / 1000));
+    if (counter!.count >= rule.max) retryAfter = Math.max(retryAfter, Math.ceil(remaining / 1000));
   }
 
-  const base: UsageSummary = { ledger: enabled() ? "enabled" : "not-enabled", entries: [], used, limit: 10, retryAfter };
+  const base: UsageSummary = { ledger: enabled() ? "enabled" : "not-enabled", entries: [], used, limit: AI_DAILY_LIMITS.live, retryAfter };
 
   if (!enabled()) return base;
 

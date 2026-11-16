@@ -98,7 +98,7 @@ export function useGroundedConversation(question: string, action?: GroundedActio
       if (!response || operation.signal.aborted) return null;
 
       if (!response.ok) {
-        setNotice(LIVE_AI_MESSAGES[response.code]);
+        setNotice(LIVE_AI_MESSAGES[response.code] + (response.retryAfter ? ` 약 ${response.retryAfter}초 뒤 다시 시도할 수 있어요.` : ""));
 
         return null;
       }

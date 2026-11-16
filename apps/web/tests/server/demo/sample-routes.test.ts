@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { NextRequest } from "next/server";
+import { createDemoVisitor, DEMO_VISITOR_COOKIE } from "../../../src/server/demo/demo-access";
 import { createSampleSession, SAMPLE_COOKIE } from "../../../src/server/demo/sample-session";
 import { getSampleCatalog, getSampleAsset, getSamplePageAsset } from "../../../src/server/demo/sample-catalog";
 import { GET as start } from "../../../src/app/demo/start/route";
@@ -10,29 +11,49 @@ import { createSampleState, sampleChangePlan, transitionSampleState } from "../.
 
 vi.mock("server-only", () => ({}));
 
-const { cookie } = vi.hoisted(() => ({ cookie: { value: undefined as string | undefined } }));
+const { cookie } = vi.hoisted(() => ({ cookie: { value: undefined as string | undefined, visitor: undefined as string | undefined } }));
 
 vi.mock(
   "next/headers",
-  () => ({ cookies: async () => ({ get: () => cookie.value ? { value: cookie.value } : undefined }) })
+  () => ({ cookies: async () => ({ get: (name: string) => {
+    const value = name === DEMO_VISITOR_COOKIE ? cookie.visitor : cookie.value;
+    return value ? { value } : undefined;
+  } }) })
 );
 beforeEach(() => {
   vi.stubEnv("BETTER_AUTH_SECRET", "sample-route-fixture-secret-with-at-least-32-characters");
+  vi.stubEnv("DEMO_ACCESS_TOKEN", "a".repeat(64));
+  cookie.visitor = createDemoVisitor().token;
   cookie.value = undefined;
 });
 afterEach(() => vi.unstubAllEnvs());
 
+function sampleRequest(url: string, options?: { headers: Record<string, string> }) {
+  const headers = new Headers(options?.headers);
+  headers.set("cookie", `${DEMO_VISITOR_COOKIE}=${cookie.visitor}; ${headers.get("cookie") ?? ""}`);
+  return new NextRequest(url, { headers });
+}
+
 describe("public sample routes keep their own scope", () => {
+  it("independently denies start and assets without an invitation, even with a valid sample session", async () => {
+    cookie.value = createSampleSession().token;
+    cookie.visitor = undefined;
+    const headers = { cookie: `${SAMPLE_COOKIE}=${cookie.value}` };
+    expect(start(new NextRequest("https://fixture.invalid/demo/start?intro=done", { headers })).status).toBe(404);
+    const response = await asset(new Request("https://fixture.invalid/demo/assets/sample-pdf"), { params: Promise.resolve({ documentId: "sample-pdf" }) });
+    expect(response.status).toBe(404);
+    expect(response.headers.get("content-type")).not.toBe("application/pdf");
+  });
   it("requests the existing tour on explicit entry without replacing an existing sample session", () => {
     const { token } = createSampleSession();
-    const response = start(new NextRequest("https://fixture.invalid/demo/start?intro=done", {
+    const response = start(sampleRequest("https://fixture.invalid/demo/start?intro=done", {
       headers: { cookie: `${SAMPLE_COOKIE}=${token}` },
     }));
     expect(response.headers.get("location")).toBe("/demo?guide=1");
     expect(response.headers.get("set-cookie")).toBeNull();
   });
   it("shows the introduction before creating a sample session", () => {
-    const response = start(new NextRequest("https://fixture.invalid/demo/start"));
+    const response = start(sampleRequest("https://fixture.invalid/demo/start"));
 
     expect(response.status).toBe(303);
     expect(response.headers.get("location")).toBe("/demo/intro");
@@ -41,8 +62,8 @@ describe("public sample routes keep their own scope", () => {
   });
 
   it("preserves the files destination through the introduction", () => {
-    const introduction = start(new NextRequest("https://fixture.invalid/demo/start?view=files"));
-    const entry = start(new NextRequest("https://fixture.invalid/demo/start?intro=done&view=files"));
+    const introduction = start(sampleRequest("https://fixture.invalid/demo/start?view=files"));
+    const entry = start(sampleRequest("https://fixture.invalid/demo/start?intro=done&view=files"));
 
     expect(introduction.headers.get("location")).toBe("/demo/intro?view=files");
     expect(entry.headers.get("location")).toBe("/demo/files?guide=1");
@@ -50,7 +71,7 @@ describe("public sample routes keep their own scope", () => {
   });
 
   it("SAMPLE-001 starts a sample cookie without replacing production authentication", () => {
-    const response = start(new NextRequest(
+    const response = start(sampleRequest(
       "https://fixture.invalid/demo/start?intro=done",
       { headers: { cookie: "better-auth.session_token=production-sentinel" } }
     ));
@@ -72,12 +93,12 @@ describe("public sample routes keep their own scope", () => {
   it("SAMPLE-001 retains a valid sample identity and fails closed without configuration", () => {
     const { token } = createSampleSession();
 
-    expect(start(new NextRequest(
+    expect(start(sampleRequest(
       "https://fixture.invalid/demo/start?intro=done",
       { headers: { cookie: `${SAMPLE_COOKIE}=${token}` } }
     )).headers.get("set-cookie")).toBeNull();
     vi.stubEnv("BETTER_AUTH_SECRET", "");
-    expect(start(new NextRequest("https://fixture.invalid/demo/start?intro=done")).status).toBe(503);
+    expect(start(sampleRequest("https://fixture.invalid/demo/start?intro=done")).status).toBe(404);
   });
 
   it("SAMPLE-006 serves only registered assets in a valid sample session", async () => {

@@ -234,10 +234,8 @@ describe("GC-002/003 authenticated chat boundary", () => {
     expect(reserve).toHaveBeenCalledOnce();
     expect(reserve.mock.calls[0][0]).toEqual(expect.arrayContaining([
       expect.objectContaining({ key: `live-ai-v1:request:workspace-A:${value.requestId}`, max: 1 }),
-      expect.objectContaining({ key: "live-ai-v1:workspace:workspace-A", max: 10, window: 3600 }),
-      expect.objectContaining({ key: "live-ai-v1:user:A", max: 10, window: 3600 }),
-      expect.objectContaining({ key: "sample-ai-v1:global-minute", max: 1 }),
-      expect.objectContaining({ key: "sample-ai-v1:global-hour", max: 12 }),
+      expect.objectContaining({ key: expect.stringMatching(/^live-ai-v2:day:\d{4}-\d{2}-\d{2}:A$/), max: 10, window: 86400, retryAt: expect.any(Number) }),
+      expect.objectContaining({ key: expect.stringContaining("live-ai-v2:global-day:"), max: 300, window: 86400 }),
     ]));
     expect(generate.mock.calls[0][0]).toEqual(value.messages);
     expect(session).toHaveBeenCalledOnce();

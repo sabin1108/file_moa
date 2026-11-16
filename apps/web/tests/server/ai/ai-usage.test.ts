@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createHmac } from "node:crypto";
+import { dailyAiRules } from "../../../src/server/ai/ai-quota";
 
 vi.mock("server-only", () => ({}));
 
@@ -123,6 +125,23 @@ describe("AI usage ledger write boundaries", () => {
 });
 
 describe("AI usage ledger reads", () => {
+  it("reads the account's KST daily counter across workspaces and resets the displayed day at midnight", async () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date("2026-11-16T23:59:59+09:00"));
+      vi.stubEnv("AI_USAGE_LEDGER_ENABLED", "false");
+      const fixture = ledgerFixture();
+      const key = dailyAiRules("live", owner.sessionUserId, Date.now())[0].key;
+      const hashed = createHmac("sha256", "fixture-usage-secret").update("moa-rate-limit-v1\0").update(key).digest("hex");
+      fixture.rateLimitFind.mockResolvedValue([{ key: hashed, count: 10, lastRequest: BigInt(Date.now()) }]);
+      calls.session.mockResolvedValue(owner);
+      expect(await readUsage(new Headers())).toMatchObject({ used: 10, limit: 10, retryAfter: 1 });
+      calls.session.mockResolvedValue({ ...owner, workspaceId: "other-workspace" });
+      expect(await readUsage(new Headers())).toMatchObject({ used: 10, limit: 10, retryAfter: 1 });
+      vi.setSystemTime(new Date("2026-11-17T00:00:00+09:00"));
+      expect(await readUsage(new Headers())).toMatchObject({ used: 0, limit: 10, retryAfter: 0 });
+    } finally { vi.useRealTimers(); }
+  });
   it("marks only this workspace's reservations older than ten minutes as unknown before listing", async () => {
     const fixture = ledgerFixture();
 

@@ -31,7 +31,7 @@ async function example(page, mode) {
   await page.eval(() => { document.querySelector('[aria-label="현재 대화 작업"] details').open = true; });
   await click(page, `[data-task-example="${mode}"]`);
   await wait(page, () => document.getElementById('message-draft')?.value.trim().length > 0
-    && !document.querySelector('[data-action="organization-send"]').disabled);
+    );
 }
 
 let page;
@@ -47,7 +47,7 @@ try {
     window.showDirectoryPicker=()=>{window.demoIO.push('picker');throw Error('no personal folder')};
     window.showOpenFilePicker=()=>{window.demoIO.push('file');throw Error('no personal file')};
   ` });
-  await page.goto(base + '/demo/intro', { settleMs: 300 });
+  await page.goto(base + (process.env.MOA_DEMO_INVITE_PATH ?? '/demo/intro'), { settleMs: 300 });
   check('introduction does not consume or display the workspace guide', await page.eval(() => !document.querySelector('#workspace-tour-title') && !Object.keys(sessionStorage).some(key => key.startsWith('moa.sample.guide.'))));
   await page.goto(base + '/demo/start?intro=done', { settleMs: 300 });
   const steps = workspaceStepsFor('sample');
@@ -103,11 +103,8 @@ try {
   await wait(page, () => document.getElementById('conversation-materials')?.dataset.drawerState === 'closed');
   await choose(page, 'grounded');
   await example(page, 'grounded');
-  await click(page, '[data-action="organization-send"]');
-  await wait(page, () => document.querySelector('[aria-label="답변 출처"]'));
-  check('source answers respect explicit file selection', (await saved(page)).citations.length === 1);
-  await click(page, '[data-drawer-close]');
-  await wait(page, () => document.getElementById('conversation-materials')?.dataset.drawerState === 'closed');
+  check('offline verification cannot send a grounded request or substitute a prepared answer', await page.eval(() =>
+    document.querySelector('[data-action="organization-send"]').disabled && !document.querySelector('[aria-label="답변 출처"]')));
   await click(page, '[data-tour="records"]');
   await click(page, '[data-tour="record-wiki"]');
   check('demo records use the same category tabs as the product', await page.eval(() => !!document.querySelector('nav[aria-label="보관 기록 종류"] [data-tour="record-wiki"] svg')));

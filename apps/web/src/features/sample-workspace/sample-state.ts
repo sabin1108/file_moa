@@ -7,6 +7,7 @@ import { organizationPathSchema, organizationResponseSchema, parseOrganizationRe
 import type { SampleOrganizationResult } from "../../shared/sample-organization";
 import { conversationKinds } from "../../shared/ai-records";
 import { prepareSampleReply } from "./sample-experience";
+import { sampleAnswerSchema, type SampleAnswerResult } from "../../shared/sample-answer";
 import { recordKinds } from "../../shared/record-kinds";
 
 export const sampleRecordSchema = z.strictObject({
@@ -20,6 +21,7 @@ export const sampleRecordSchema = z.strictObject({
 export type SampleRecord = z.infer<typeof sampleRecordSchema>;
 
 const locationsSchema = z.record(z.string(), z.string().nullable());
+export const SAMPLE_STATE_CHARACTER_LIMIT = 512000;
 const createdFoldersSchema = z.array(z.strictObject({ id: z.string().regex(/^custom-\d+$/), label: z.string().min(1).max(120) })).max(80);
 const usageSchema = z.strictObject({
   inputTokens: z.number().int().nonnegative(),
@@ -31,7 +33,7 @@ const stateSchema = z.strictObject({
   mode: z.enum(conversationKinds).nullable().default(null),
   findings: z.array(z.string()).max(200).default([]),
   citations: z.array(z.string()).max(5).default([]),
-  sourceReply: z.string().max(1500).default(""),
+  sourceReply: z.string().max(8000).default(""),
   records: z.array(sampleRecordSchema).max(20).default([]),
   guideStep: z.number().int().min(0).max(5).default(0),
   guideDismissed: z.boolean().default(false),
@@ -41,7 +43,7 @@ const stateSchema = z.strictObject({
   selected: z.array(z.string()).max(200),
   createdFolders: createdFoldersSchema.default([]),
   draft: z.string().max(800).default(""),
-  messages: z.array(z.strictObject({ id: z.string(), author: z.enum(["user", "assistant"]), text: z.string().max(1500) })).max(40).default([]),
+  messages: z.array(z.strictObject({ id: z.string(), author: z.enum(["user", "assistant"]), text: z.string().max(8000), model: z.string().min(1).max(200).optional() })).max(40).default([]),
   organization: z.strictObject({
     instruction: z.string().max(800),
     candidateIds: z.array(z.string()).max(40),
@@ -69,6 +71,7 @@ const stateSchema = z.strictObject({
 export type SampleState = z.infer<typeof stateSchema>;
 
 export type SampleAction =
+  | Readonly<{ type: "ai-answer"; requestId: string; mode: "chat" | "grounded"; question: string; result: Extract<SampleAnswerResult, { ok: true }> }>
   | Readonly<{ type: "mode"; mode: typeof conversationKinds[number] }>
   | Readonly<{ type: "guide"; step: number; dismissed: boolean }>
   | Readonly<{ type: "sample-reply"; mode: "chat" | "find" | "grounded"; question: string; selectedIds: readonly string[]; referenceYear: number }>
@@ -127,7 +130,7 @@ function equalLocations(first: SampleState["locations"], second: SampleState["lo
 }
 
 export function restoreSampleState(catalog: SampleCatalog, serialized: string): SampleState {
-  if (serialized.length > 128_000) throw new Error("invalid-sample-state");
+  if (serialized.length > SAMPLE_STATE_CHARACTER_LIMIT) throw new Error("invalid-sample-state");
 
   const state = stateSchema.parse(JSON.parse(serialized));
 
@@ -358,6 +361,16 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
   if (action.type === "guide") {
     if (!Number.isInteger(action.step) || action.step < 0 || action.step > 5) throw Error("invalid-sample-guide");
     return { ...state, guideStep: action.step, guideDismissed: action.dismissed };
+  }
+  if (action.type === "ai-answer") {
+    const id = action.requestId;
+    const answer = sampleAnswerSchema.parse(action.result.answer);
+    const citations = answer.citations.map(citation => citation.documentId);
+    if (citations.some(id => !state.selected.includes(id))) throw Error("invalid-sample-citation");
+    return { ...state, mode: action.mode, draft: "", citations: action.mode === "grounded" ? [...new Set(citations)] : state.citations,
+      sourceReply: action.mode === "grounded" ? answer.answer : state.sourceReply,
+      messages: [...state.messages, { id: `ai-question-${id}`, author: "user" as const, text: action.question.trim() },
+        { id: `ai-answer-${id}`, author: "assistant" as const, text: answer.answer, model: action.result.model }].slice(-40) };
   }
   if (action.type === "sample-reply") {
     if (state.phase === "review") throw Error("sample-review-required");

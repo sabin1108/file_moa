@@ -35,10 +35,11 @@ export function UsageView({ read }: { read: () => Promise<UsageSummary | null> }
           {summary.used}
           <small> / {summary.limit}회</small>
         </strong>
-        <span>최근 1시간 사용</span>
+        <span>오늘 사용 · 한국 시간</span>
       </div>
-      <progress aria-label="최근 1시간 사용량" value={summary.used} max={summary.limit} />
-      <p>남은 요청 {Math.max(0, summary.limit - summary.used)}회 · 실패·중지 포함</p>
+      <progress aria-label="오늘 AI 사용량" value={summary.used} max={summary.limit} />
+      <p>남은 요청 {Math.max(0, summary.limit - summary.used)}회 · AI 요청 예약 뒤 실패·중지 포함</p>
+      <p>매일 한국 시간 자정에 초기화합니다. 로그인 계정의 횟수이며, 아래 상세 내역은 현재 작업 공간 기준입니다.</p>
       <p>
         {summary.retryAfter ? `다시 요청할 수 있을 때까지 약 ${summary.retryAfter}초` : "서버 공유 한도에 따라 더 일찍 제한될 수 있어요."}
       </p>

@@ -1,4 +1,5 @@
 import "server-only";
+import { liveAiRules } from "../ai/ai-quota";
 import {
   chatRequestSchema,
   ChatError,
@@ -107,13 +108,7 @@ export async function handleChat(request: Request, waitUntil?: (work: Promise<vo
     quota ??= createAuthRateLimiter(getDatabase, process.env.BETTER_AUTH_SECRET!);
 
     const quotaStarted = performance.now();
-    const reserved = await quota.consumeAll([
-      { key: `live-ai-v1:request:${session.workspaceId}:${input.requestId}`, max: 1, window: 3600 },
-      { key: `live-ai-v1:workspace:${session.workspaceId}`, max: 10, window: 3600 },
-      { key: `live-ai-v1:user:${session.sessionUserId}`, max: 10, window: 3600 },
-      { key: "sample-ai-v1:global-minute", max: 1, window: 60 },
-      { key: "sample-ai-v1:global-hour", max: 12, window: 3600 },
-    ]);
+    const reserved = await quota.consumeAll(liveAiRules(session, input.requestId, Date.now()));
     const quotaMs = Math.round(performance.now() - quotaStarted);
 
     if (!reserved.allowed) return failure("limit", reserved.retryAfter ?? 60);

@@ -57,7 +57,7 @@ export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onT
     {notice && <p role="status">{notice}</p>}
     <FolderListingView state={listing} folderName="예시 자료" headingRef={heading}
       allowFolderSelection={!selecting}
-      selectionLocked={state.phase !== "select"} previewSupported={() => true}
+      selectionLocked={state.phase === "review" || (!selecting && state.phase !== "select")} previewSupported={() => true}
       connectionControls={<span data-tour="folder-connection">예시 자료 · 연결됨</span>}
       historyControls={null} creation={null} previewName={null} searchState={search}
       onOpen={path => { setQuery(""); onOpen([...path]); }}

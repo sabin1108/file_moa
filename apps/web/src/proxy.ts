@@ -1,10 +1,22 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { configuredCanonicalDestination } from "./server/auth/canonical-origin";
+import { readDemoVisitor, DEMO_VISITOR_COOKIE, demoAccessDenied } from "./server/demo/demo-access";
 
 export function proxy(request: NextRequest) {
   const destination = configuredCanonicalDestination(request.url);
 
-  if (!destination) return NextResponse.next();
+  if (!destination) {
+    if (request.nextUrl.pathname === "/demo" || request.nextUrl.pathname.startsWith("/demo/")) {
+      const inviteEntry = /^\/demo\/access\/[A-Za-z0-9_-]{43,128}$/.test(request.nextUrl.pathname);
+      if (!inviteEntry && !readDemoVisitor(request.cookies.get(DEMO_VISITOR_COOKIE)?.value)) return demoAccessDenied();
+      const response = NextResponse.next();
+      response.headers.set("referrer-policy", "no-referrer");
+      response.headers.set("cache-control", "no-store");
+      response.headers.set("x-robots-tag", "noindex, nofollow, noarchive");
+      return response;
+    }
+    return NextResponse.next();
+  }
 
   if (request.method === "GET" || request.method === "HEAD") return NextResponse.redirect(destination, 307);
 

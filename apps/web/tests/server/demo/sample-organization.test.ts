@@ -16,6 +16,7 @@ vi.mock(
 
 import { organizeSample } from "../../../src/server/demo/sample-organization";
 import { createSampleSession } from "../../../src/server/demo/sample-session";
+import { createDemoVisitor } from "../../../src/server/demo/demo-access";
 
 const input = () => ({
   requestId: crypto.randomUUID(),
@@ -23,9 +24,10 @@ const input = () => ({
   instruction: "10월 보고서 날짜별로 정리",
   consent: true
 });
-const context = () => ({ token: createSampleSession().token, origin: "http://127.0.0.1:3034" });
+const context = () => ({ token: createSampleSession().token, visitorToken: createDemoVisitor().token, origin: "http://127.0.0.1:3034" });
 
 beforeEach(() => {
+  vi.stubEnv("DEMO_ACCESS_TOKEN", "a".repeat(64));
   vi.stubEnv("AI_PROVIDER", "gemini");
   vi.stubEnv("GEMINI_API_KEY", "fixture-key");
   vi.stubEnv("BETTER_AUTH_SECRET", "fixture-organization-secret-at-least-32-characters");

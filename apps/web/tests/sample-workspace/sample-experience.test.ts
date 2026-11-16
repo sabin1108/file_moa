@@ -10,13 +10,17 @@ const catalog: SampleCatalog = {
   ],
 };
 const reply = (mode: "chat" | "find" | "grounded", question: string, selectedIds = ["meeting", "other"]) => ({ type: "sample-reply" as const, mode, question, selectedIds, referenceYear: 2026 });
+const generated = (mode: "chat" | "grounded", citations = mode === "grounded" ? [{ documentId: "meeting", quote: "성능 테스트에서 응답 시간을 줄이기로 결정했다." }] : []) => ({
+  type: "ai-answer" as const, requestId: crypto.randomUUID(), mode, question: "질문", result: { ok: true as const, answer: { answer: "응답 시간을 줄이기로 했습니다.", citations }, model: "gpt-6-luna", usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } },
+});
 
-describe("offline demo experience", () => {
+describe("demo state and local search experience", () => {
   it("retains prior source results when switching tasks and keeps the source answer with citations", () => {
     let state = transitionSampleState(catalog, createSampleState(catalog), reply("find", "성능 찾아줘"));
-    state = transitionSampleState(catalog, state, reply("grounded", "요약해줘", ["meeting"]));
+    state = transitionSampleState(catalog, state, { type: "select", ids: ["meeting"] });
+    state = transitionSampleState(catalog, state, generated("grounded"));
     const sourceReply = state.sourceReply;
-    state = transitionSampleState(catalog, state, reply("chat", "보고서 작성법"));
+    state = transitionSampleState(catalog, state, generated("chat"));
     expect(state.findings).toEqual(["meeting", "other"]);
     expect(state.citations).toEqual(["meeting"]);
     expect(state.sourceReply).toBe(sourceReply);
@@ -52,10 +56,16 @@ describe("offline demo experience", () => {
     const state = createSampleState(catalog);
     expect(() => transitionSampleState(catalog, state, reply("grounded", "요약해줘", []))).toThrow();
     expect(() => transitionSampleState(catalog, state, reply("grounded", "요약해줘", ["forged"]))).toThrow();
-    const answer = transitionSampleState(catalog, state, reply("grounded", "요약해줘", ["meeting"]));
+    expect(() => transitionSampleState(catalog, state, generated("grounded"))).toThrow();
+    const selected = transitionSampleState(catalog, state, { type: "select", ids: ["meeting"] });
+    const answer = transitionSampleState(catalog, selected, generated("grounded"));
     expect(answer.citations).toEqual(["meeting"]);
     expect(answer.messages.at(-1)?.text).toContain("응답 시간");
     expect(answer.messages.at(-1)?.text).not.toContain("개인.txt");
+  });
+  it("does not retain a prepared reply path for general or grounded questions", () => {
+    expect(() => transitionSampleState(catalog, createSampleState(catalog), reply("chat", "질문"))).toThrow("sample-api-required");
+    expect(() => transitionSampleState(catalog, createSampleState(catalog), reply("grounded", "질문"))).toThrow("sample-api-required");
   });
   it("protects reviewed plans from mode changes and preserves drafts on normal switching", () => {
     const state = transitionSampleState(catalog, createSampleState(catalog), { type: "draft", value: "보존" });

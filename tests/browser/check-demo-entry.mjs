@@ -32,7 +32,7 @@ try {
   let posts = 0;
   await page.send('Network.enable');
   browser.on(page.sessionId, 'Network.requestWillBeSent', event => { if (event.request.method === 'POST') posts++; });
-  await page.goto(base + '/demo/intro', { settleMs: 400 });
+  await page.goto(base + (process.env.MOA_DEMO_INVITE_PATH ?? '/demo/intro'), { settleMs: 400 });
   await click(page, 'a[href="/demo/start?intro=done"]');
   await dismiss(page);
   await click(page, '[data-tour="task-grounded"]');
@@ -52,12 +52,8 @@ try {
   await wait(page, () => !document.getElementById('conversation-materials')?.open);
   check('finishing selection focuses the question input', await page.eval(() => document.activeElement === document.getElementById('message-draft')));
   await page.send('Input.insertText', { text: '선택한 자료를 요약해줘' });
-  await wait(page, () => !document.querySelector('[data-action="organization-send"]').disabled);
-  await click(page, '[data-action="organization-send"]');
-  await wait(page, () => document.querySelector('[aria-label="답변 출처"]'));
-  check('grounded sample answers cite only explicit sources', (await state(page)).citations.length === 1);
-  await click(page, '[data-drawer-close]');
-  await wait(page, () => !document.getElementById('conversation-materials')?.open);
+  check('offline source selection keeps explicit files without a prepared answer', (await state(page)).selected.length === 1
+    && await page.eval(() => document.querySelector('[data-action="organization-send"]').disabled && !document.querySelector('[aria-label="답변 출처"]')));
   const previous = await state(page);
   await page.goto(base + '/demo/start?intro=done', { settleMs: 400 });
   await wait(page, () => document.querySelector('#workspace-tour-title'));

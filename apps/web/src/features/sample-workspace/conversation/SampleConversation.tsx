@@ -28,13 +28,15 @@ import { replayWorkspaceTour } from "../../onboarding/workspace-tour";
 import { useWorkspaceTourRecordView } from "../../onboarding/workspace-tour-view";
 import { ConversationPanelNavigation } from "../../conversation-workspace/ConversationPanelNavigation";
 import options from "../../conversation-workspace/conversation-options.module.css";
+import { SAMPLE_ANSWER_LIMITS, type SampleAnswerAction } from "../../../shared/sample-answer";
 
 const steps = [{ id: "select", label: "대화로 요청" }, { id: "review", label: "근거·계획 검토" }, { id: "result", label: "정리 결과" }];
 
-export function SampleConversation({ catalog, store, organizeAction, aiProvider = "gemini" }: {
+export function SampleConversation({ catalog, store, organizeAction, answerAction, aiProvider = "gemini" }: {
   catalog: SampleCatalog;
   store: SampleWorkspaceStore;
   organizeAction: SampleOrganizationAction;
+  answerAction: SampleAnswerAction;
   aiProvider?: AiProvider | null
 }) {
   const { state, ready, expired, notice, aiPending } = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
@@ -67,8 +69,13 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
       ? state.selected.includes(document.id)
       : path.every((part, index) => sampleFolderPath(activeCatalog, state.locations[document.id])[index] === part)));
   const documentIds = selectOrganizationCandidates(scopedDocuments, state.draft).map(document => document.id);
-  const consentKey = JSON.stringify([aiProvider, state.draft.trim(), [...documentIds].sort()]);
-  const consented = !!aiProvider && consent === consentKey;
+  const consentKey = JSON.stringify([aiProvider, mode, state.draft.trim(), [...(mode === "grounded" ? state.selected : mode === "organize" ? documentIds : [])].sort()]);
+  const consented = !!aiProvider && (mode === "chat" || consent === consentKey);
+  const questionDocuments = catalog.documents.filter(document => state.selected.includes(document.id));
+  const questionScopeIssue = questionDocuments.length > SAMPLE_ANSWER_LIMITS.documents
+    ? `질문 자료는 최대 ${SAMPLE_ANSWER_LIMITS.documents}개까지 선택해 주세요.`
+    : questionDocuments.reduce((sum, document) => sum + document.excerpt.length, 0) > SAMPLE_ANSWER_LIMITS.excerptCharacters
+      ? `질문 자료의 발췌는 합계 ${SAMPLE_ANSWER_LIMITS.excerptCharacters}자까지입니다. 선택을 줄여 주세요.` : null;
   const providerLabel = aiProvider ? AI_PROVIDER_LABELS[aiProvider] : "설정되지 않은 외부 AI";
   const disabled = !ready || expired || aiPending;
   const previewDocument = catalog.documents.find(document => document.id === previewId);
@@ -97,24 +104,24 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
   const chooseTask = (kind: ConversationKind) => {
     store.dispatch({ type: "mode", mode: kind });
     setConsent(null);
-    if (kind === "grounded" && !state.selected.length) {
+    if (kind === "grounded" && (!state.selected.length || questionScopeIssue)) {
       openPanel("sources", document.activeElement instanceof HTMLElement ? document.activeElement : undefined);
     }
   };
-  const offlineSend = () => {
+  const send = () => {
     panelTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     if (mode !== "chat") setPanelView("sources");
+    if (mode !== "find" && !consented) return;
     setConsent(null);
     if (mode === "organize") {
-      store.dispatch({ type: "intent", instruction: state.draft.trim() });
-      store.dispatch({ type: "select", ids: documentIds });
-      store.dispatch({ type: "propose" });
+      void store.requestOrganization(organizeAction, state.draft.trim(), documentIds);
       setRecordsOpen(false);
       setPanelOpen(true);
       return;
     }
-    store.dispatch({ type: "sample-reply", mode, question: state.draft,
-      selectedIds: mode === "grounded" ? state.selected : scopedDocuments.map(document => document.id), referenceYear: new Date().getFullYear() });
+    if (mode === "find") store.dispatch({ type: "sample-reply", mode, question: state.draft,
+      selectedIds: scopedDocuments.map(document => document.id), referenceYear: new Date().getFullYear() });
+    else void store.requestAnswer(answerAction, mode);
     if (mode !== "chat") { setRecordsOpen(false); setPanelOpen(true); }
   };
 
@@ -152,7 +159,7 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
       }
     >
       <ConversationWorkspace
-        messages={state.messages.map(message => message.id.startsWith("reply-") ? { ...message, status: "샘플 응답 · 외부 AI 호출 없음" } : message)}
+        messages={state.messages.map(message => message.model ? { ...message, status: `${message.model} · AI 응답` } : message)}
         showComposer={started || state.messages.length > 0}
         draft={state.draft}
         onDraftChange={fill}
@@ -174,8 +181,8 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
           setPanelOpen(open);
         }}
         planReady={mode === "organize" && (state.phase === "review" || state.phase === "result")}
-        canSend={!disabled && state.phase !== "review" && !!state.draft.trim() && (mode === "chat" || mode === "find" || (mode === "grounded" ? state.selected.length > 0 : documentIds.length > 0))}
-        onSend={offlineSend}
+        canSend={!disabled && state.phase !== "review" && !!state.draft.trim() && (mode === "find" || (!!aiProvider && consented)) && (mode === "chat" || mode === "find" || (mode === "grounded" ? state.selected.length > 0 && !questionScopeIssue : documentIds.length > 0))}
+        onSend={send}
         submitLabel="보내기"
         intro={<ConversationTaskIntro mode={state.mode} disabled={disabled || state.phase === "review"} onChoose={chooseTask} />}
         notice={
@@ -198,14 +205,28 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
         scope={
           <div>
             {started && <ConversationTaskControls mode={state.mode} disabled={disabled || state.phase === "review"} onChoose={chooseTask} onExample={fill} />}
-            <ConversationContextBar temporary status="임시 대화" sourceName="예시 자료" provider={null} onOpen={openPanel} />
-            {mode === "grounded" && <p role="status">질문에 사용할 자료 {state.selected.length}개 선택 · 선택한 발췌로 사용 흐름을 확인하며 외부 AI에는 전송하지 않아요.
+            <ConversationContextBar temporary status="임시 대화" sourceName="예시 자료" provider={mode === "find" || !aiProvider ? null : providerLabel} onOpen={openPanel} />
+            <p>데모 AI는 하루 30회 · 한국 시간 자정 초기화</p>
+            <details className={styles.conversationScope}><summary>체험 범위와 정보 보관</summary>
+              <p>질문·답변·기록은 이 탭에 평문으로 임시 보관합니다. 민감한 내용은 입력하지 마세요.</p>
+              <p>초대 링크를 전달받은 사람도 로그인 없이 사용할 수 있습니다. 브라우저별로 횟수를 집계하며, 브라우저 데이터를 지우거나 다른 브라우저를 사용하면 새 방문자로 집계될 수 있습니다.</p>
+            </details>
+            {started && mode !== "find" && <>
+              {mode === "chat" && <p>보내기를 누르면 이 질문과 최근 완료된 AI 대화 최대 3회를 {providerLabel}로 전송합니다.</p>}
+              {!aiProvider && <StatusNotice state="attention" title="AI 연결을 사용할 수 없어요." detail="서버 연결 설정을 확인해야 합니다. 준비된 답변으로 대체하지 않습니다." />}
+              {mode !== "chat" && <label><input type="checkbox" data-demo-ai-consent checked={consented} disabled={disabled || !aiProvider || !state.draft.trim()}
+                onChange={event => setConsent(event.target.checked ? consentKey : null)} />
+                이 질문과 최근 대화{mode === "grounded" ? `, 선택한 예시 자료 ${state.selected.length}개의 발췌` : mode === "organize" ? `, 이번 범위의 예시 자료 ${documentIds.length}개` : ""}를 {providerLabel}로 전송하는 데 동의해요.
+              </label>}
+            </>}
+            {mode === "grounded" && <p role="status">질문에 사용할 자료 {state.selected.length}개 선택 · 선택한 자료의 발췌를 AI에 보내고 답변 출처를 확인합니다.
               <button type="button" className={actionClasses("secondary")} disabled={disabled || state.phase === "review"}
                 onClick={event => openPanel("sources", event.currentTarget)}>질문할 자료 선택</button>
             </p>}
+            {mode === "grounded" && questionScopeIssue && <p role="alert">{questionScopeIssue}</p>}
           {mode === "chat" ? null : <details className={styles.conversationScope}>
             <summary>샘플 자료 · {mode === "grounded" ? `선택 ${state.selected.length}개` : `범위 ${scopedDocuments.length}개`}</summary>
-            {mode === "grounded" && <p>자료 보기에서 체크한 {state.selected.length}개를 인용해요. 선택한 발췌만 사용하며 생성형 답변은 아닙니다.</p>}
+            {mode === "grounded" && <p>자료 보기에서 체크한 {state.selected.length}개의 발췌만 전송하며, AI가 근거를 확인할 수 없는 내용은 답하지 않도록 요청합니다.</p>}
             <label className={options.modeChoice}>
               {"자료 범위 "}
               <select
@@ -236,23 +257,6 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
               {mode === "organize" && scopedDocuments.length > documentIds.length &&
                 " · 요청과 본문으로 후보를 먼저 추립니다. 폴더를 좁히면 빠짐을 줄일 수 있어요."}
             </p>
-            {mode === "organize" && aiProvider && <><label>
-              <input
-                type="checkbox"
-                data-organization-consent
-                checked={consented}
-                disabled={disabled || !state.draft.trim() || !aiProvider}
-                onChange={event => setConsent(event.target.checked ? consentKey : null)}
-              />
-              이 요청과 범위의 가상 자료 내용을 {providerLabel}에 전송하는 데 동의해요.
-            </label>
-            <p>
-              선택한 공급자의 데이터 처리 정책이 적용돼요. 개인 파일은 전송하지
-              않아요.
-            </p>
-            {aiProvider && <button type="button" disabled={disabled || state.phase === "review" || !consented || !documentIds.length}
-              onClick={() => { setConsent(null); void store.requestOrganization(organizeAction, state.draft.trim(), documentIds); }}>외부 AI로 정리 제안 받기</button>}
-            </>}
           </details>}
           </div>
         }
@@ -262,12 +266,13 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
             <div hidden={!showingRecords}><SampleLibraryPanel key={resetVersion} previewKind={tourRecordKind ?? undefined} state={state} catalog={catalog} disabled={disabled} dispatch={store.dispatch} onPreview={openPreview}
               onReveal={() => { setRecordsOpen(true); setPanelOpen(true); }} /></div>
             <div hidden={!!tourRecordKind || panelView !== "settings"}><ConversationSettingsPanel includeMemory={false} onIncludeMemory={() => {}} projectId={projectId} onProjectId={setProjectId}
-              canUseMemory={false} disabled={disabled} provider={null} temporary storageDescription="이 탭의 샘플 세션 동안 임시 보관합니다. 새로고침해도 복원되며 실제 폴더에는 저장하지 않아요." onStorage={() => openPanel("storage")}
+              canUseMemory={false} disabled={disabled} provider={aiProvider ? providerLabel : null} temporary storageDescription="이 탭의 샘플 세션 동안 임시 보관합니다. 새로고침해도 복원되며 실제 폴더에는 저장하지 않아요." onStorage={() => openPanel("storage")}
               onReplayTour={() => { setPanelOpen(false); requestAnimationFrame(replayWorkspaceTour); }} /></div>
             <div hidden={showingRecords || panelView === "settings"}>
             {mode === "grounded" && <section aria-label="질문할 예시 자료 선택">
-              <p>아래 파일을 체크한 뒤 질문을 입력하세요. 선택한 발췌와 출처를 보여주는 체험이며 생성형 답변은 아닙니다.</p>
-              <button type="button" data-grounded-selection-done className={actionClasses("secondary")} disabled={disabled || !state.selected.length}
+              <p>아래 파일을 최대 {SAMPLE_ANSWER_LIMITS.documents}개, 발췌 합계 {SAMPLE_ANSWER_LIMITS.excerptCharacters}자까지 선택하세요. 전송에 동의하고 보내면 AI가 답변하며 출처는 최대 {SAMPLE_ANSWER_LIMITS.citations}개 확인할 수 있습니다.</p>
+              {questionScopeIssue && <p role="alert">{questionScopeIssue}</p>}
+              <button type="button" data-grounded-selection-done className={actionClasses("secondary")} disabled={disabled || !state.selected.length || !!questionScopeIssue}
                 onClick={() => {
                   panelTrigger.current = document.getElementById("message-draft");
                   setPanelOpen(false);
@@ -360,6 +365,7 @@ export function SampleConversation({ catalog, store, organizeAction, aiProvider 
                 disabled={disabled}
                 onToggle={id => {
                   setConsent(null);
+                  if (mode === "grounded" && store.getSnapshot().state.phase === "result") store.dispatch({ type: "back" });
                   const selected = store.getSnapshot().state.selected;
                   store.dispatch({
                     type: "select",

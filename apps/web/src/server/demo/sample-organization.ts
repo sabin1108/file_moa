@@ -3,7 +3,7 @@ import { z } from "zod";
 import { generateOrganization } from "../organization/organization-generation";
 import { getSampleCatalog } from "./sample-catalog";
 import { readSampleSession } from "./sample-session";
-import { reserveSampleAi, sampleAiFailure, type SampleAiContext } from "./sample-ai";
+import { reserveSampleAi, sampleAiFailure, requireSampleContext, type SampleAiContext } from "./sample-ai";
 import { SampleAiError } from "../ai/ai-provider";
 import type { AiProvider } from "../../shared/ai-provider";
 import { parseOrganizationResponse, type OrganizationRequest } from "../../shared/organization";
@@ -18,6 +18,7 @@ const inputSchema = z.strictObject({
 
 export async function organizeSample(value: unknown, context: SampleAiContext, expectedProvider?: AiProvider | null): Promise<SampleOrganizationResult> {
   try {
+    requireSampleContext(context);
     if (!readSampleSession(context.token)) return { ok: false, code: "session" };
 
     if (context.origin !== new URL(process.env.BETTER_AUTH_URL ?? "").origin) return { ok: false, code: "origin" };
@@ -51,7 +52,7 @@ export async function organizeSample(value: unknown, context: SampleAiContext, e
 
     const result = await generateOrganization(request, reservation.signal, reservation.provider);
 
-    if (!readSampleSession(context.token)) throw new SampleAiError("session");
+    requireSampleContext(context);
 
     return {
       ok: true,

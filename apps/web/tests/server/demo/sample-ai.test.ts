@@ -19,6 +19,7 @@ vi.mock(
 );
 
 import { createSampleSession } from "../../../src/server/demo/sample-session";
+import { createDemoVisitor } from "../../../src/server/demo/demo-access";
 import { getSampleCatalog } from "../../../src/server/demo/sample-catalog";
 import { classifySample } from "../../../src/server/demo/sample-ai";
 
@@ -29,9 +30,10 @@ const input = () => ({
   documentIds: selected.map(document => document.id),
   consent: true
 });
-const context = () => ({ token: createSampleSession().token, origin: "http://127.0.0.1:3034" });
+const context = () => ({ token: createSampleSession().token, visitorToken: createDemoVisitor().token, origin: "http://127.0.0.1:3034" });
 
 beforeEach(() => {
+  vi.stubEnv("DEMO_ACCESS_TOKEN", "a".repeat(64));
   vi.stubEnv("AI_PROVIDER", "gemini");
   vi.stubEnv("GEMINI_API_KEY", "fixture-key");
   vi.stubEnv("BETTER_AUTH_SECRET", "fixture-sample-ai-secret-at-least-32-characters");
@@ -77,7 +79,11 @@ describe("sample Gemini boundary", () => {
 
     expect(response).toMatchObject({ ok: true, model: "gemini-3.5-flash-lite", usage: { totalTokens: 130 } });
     expect(consume).toHaveBeenCalledTimes(1);
-    expect(consume.mock.calls[0][0]).toHaveLength(4);
+    expect(consume.mock.calls[0][0]).toHaveLength(3);
+    expect(consume.mock.calls[0][0]).toEqual(expect.arrayContaining([
+      expect.objectContaining({ key: expect.stringMatching(/^demo-ai-v2:day:/), max: 30, window: 86400, retryAt: expect.any(Number) }),
+      expect.objectContaining({ key: expect.stringMatching(/^demo-ai-v2:global-day:/), max: 300, window: 86400 }),
+    ]));
     expect(generate.mock.calls[0][0]).toEqual({
       documents: selected.map(({ id, name, excerpt }) => ({ id, name, excerpt })),
       folders: catalog.folders

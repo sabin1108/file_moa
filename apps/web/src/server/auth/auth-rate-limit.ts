@@ -4,7 +4,8 @@ import type { PrismaClient } from "../../../generated/prisma/client";
 
 type LimitRule = Readonly<{
   max: number;
-  window: number
+  window: number;
+  retryAt?: number
 }>;
 
 class ReservationDenied extends Error {
@@ -14,9 +15,11 @@ class ReservationDenied extends Error {
 }
 
 function validateRule(rule: LimitRule) {
+  const daily = rule.window === 86400 && Number.isSafeInteger(rule.retryAt) && rule.retryAt! > 0;
   if (!Number.isSafeInteger(rule.max) || rule.max < 1 || rule.max > 2_147_483_647 || !Number.isSafeInteger(rule.window)
     || rule.window < 1
-    || rule.window > 3600) throw new Error("Invalid authentication rate-limit rule.");
+    || (rule.window > 3600 && !daily)
+    || (rule.retryAt !== undefined && !daily)) throw new Error("Invalid authentication rate-limit rule.");
 }
 
 export function createAuthRateLimiter(database: () => PrismaClient, secret: string) {
@@ -44,7 +47,7 @@ export function createAuthRateLimiter(database: () => PrismaClient, secret: stri
         SELECT greatest(1, ceil(("lastRequest" + ${window} - (extract(epoch FROM statement_timestamp()) * 1000)::bigint) / 1000.0))::int AS "retryAfter"
         FROM moa_auth.rate_limit WHERE key = ${key}`;
 
-    return { allowed: false, retryAfter: retry[0]?.retryAfter ?? rule.window };
+    return { allowed: false, retryAfter: rule.retryAt === undefined ? retry[0]?.retryAfter ?? rule.window : Math.max(1, Math.ceil((rule.retryAt - Date.now()) / 1000)) };
   }
 
   async function cleanup() {
@@ -75,6 +78,7 @@ export function createAuthRateLimiter(database: () => PrismaClient, secret: stri
           key: hashKey(rule.key),
           maximum: rule.max,
           window_ms: rule.window * 1000,
+          retryAt: rule.retryAt,
           position
         };
       });
@@ -112,7 +116,7 @@ export function createAuthRateLimiter(database: () => PrismaClient, secret: stri
                 (extract(epoch FROM statement_timestamp()) * 1000)::bigint) / 1000.0))::int AS "retryAfter"
               FROM moa_auth.rate_limit WHERE key = ${denied.key}`;
 
-            throw new ReservationDenied(retry[0]?.retryAfter ?? denied.window_ms / 1000);
+            throw new ReservationDenied(denied.retryAt === undefined ? retry[0]?.retryAfter ?? denied.window_ms / 1000 : Math.max(1, Math.ceil((denied.retryAt - Date.now()) / 1000)));
           }
         });
         await cleanup();

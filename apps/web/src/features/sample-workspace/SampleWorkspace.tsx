@@ -21,15 +21,17 @@ import ui from "../../styles/workspace-ui.module.css";
 import folderStyles from "../local-folders/browsing/folder-workspace.module.css";
 import styles from "./sample-workspace.module.css";
 import { AI_PROVIDER_LABELS, type AiProvider } from "../../shared/ai-provider";
+import type { SampleAnswerAction } from "../../shared/sample-answer";
 
 const steps = [{ id: "select", label: "자료 선택" }, { id: "review", label: "계획 검토" }, { id: "result", label: "적용 결과" }];
 
-export function SampleWorkspace({ catalog: sourceCatalog, session, remainingMs, classifyAction, organizeAction, view = "chat", aiProvider = "gemini" }: {
+export function SampleWorkspace({ catalog: sourceCatalog, session, remainingMs, classifyAction, organizeAction, answerAction, view = "chat", aiProvider = "gemini" }: {
   catalog: SampleCatalog;
   session: SampleSession;
   remainingMs: number;
   classifyAction: SampleAiAction;
   organizeAction: SampleOrganizationAction;
+  answerAction: SampleAnswerAction;
   view?: "chat" | "files";
   aiProvider?: AiProvider | null;
 }) {
@@ -63,6 +65,7 @@ export function SampleWorkspace({ catalog: sourceCatalog, session, remainingMs, 
     catalog={sourceCatalog}
     store={store}
     organizeAction={organizeAction}
+    answerAction={answerAction}
     aiProvider={aiProvider}
   />;
 
@@ -213,7 +216,7 @@ export function SampleWorkspace({ catalog: sourceCatalog, session, remainingMs, 
                 </button>
               </div>
               <div className={styles.aiConsent}>
-                {!aiProvider && <p>이 샘플에서는 AI 전송을 사용할 수 없습니다. 준비된 제안과 파일 작업을 살펴보세요.</p>}
+                {!aiProvider && <p>AI 연결을 사용할 수 없어 분류 제안을 받을 수 없습니다. 자료 보기와 직접 선택은 계속 사용할 수 있어요.</p>}
                 <label>
                   <input
                     type="checkbox"
@@ -229,15 +232,6 @@ export function SampleWorkspace({ catalog: sourceCatalog, session, remainingMs, 
                 </p>
               </div>
               <div className={styles.actions}>
-                <button
-                  type="button"
-                  data-action="sample-propose"
-                  className={actionClasses("secondary")}
-                  disabled={disabled || !state.selected.length}
-                  onClick={() => store.dispatch({ type: "propose" })}
-                >
-                  준비된 제안 보기
-                </button>
                 <button
                   type="button"
                   data-action="sample-ai"

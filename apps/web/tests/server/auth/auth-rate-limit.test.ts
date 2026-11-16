@@ -17,6 +17,13 @@ function fixture(rows: unknown[][]) {
 }
 
 describe("shared authentication limiter", () => {
+  it("accepts a date-scoped daily AI rule without widening other authentication windows", async () => {
+    const { store, query } = fixture([[{ lastRequest: 1n }]]);
+    expect(await store.consume("demo-ai:2026-11-16:visitor", { max: 30, window: 86400, retryAt: Date.now() + 86400000 })).toMatchObject({ allowed: true });
+    expect(query).toHaveBeenCalledOnce();
+    await expect(store.consume("bad", { max: 30, window: 7200 })).rejects.toThrow("Invalid authentication rate-limit rule.");
+    await expect(store.consume("bad", { max: 30, window: 86400 })).rejects.toThrow("Invalid authentication rate-limit rule.");
+  });
   it("reserves five rules with one bound SQL statement and hashed keys only", async () => {
     const query = vi.fn(async (_sql: TemplateStringsArray, json: string) => {
       return (JSON.parse(json) as { key: string }[]).map(rule => ({ key: rule.key }));

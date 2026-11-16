@@ -19,8 +19,10 @@ import { getAiProvider, getSampleAiProvider } from "../../../src/server/ai/ai-pr
 import { classifySample } from "../../../src/server/demo/sample-ai";
 import { organizeSample } from "../../../src/server/demo/sample-organization";
 import { createSampleSession } from "../../../src/server/demo/sample-session";
+import { createDemoVisitor } from "../../../src/server/demo/demo-access";
 
 beforeEach(() => {
+  vi.stubEnv("DEMO_ACCESS_TOKEN", "a".repeat(64));
   vi.stubEnv("AI_PROVIDER", "openai");
   vi.stubEnv("OPENAI_API_KEY", "fixture-openai-key");
   vi.stubEnv("BETTER_AUTH_SECRET", "fixture-sample-secret-at-least-32-characters");
@@ -40,7 +42,7 @@ describe("public sample cost boundary", () => {
   });
 
   it("rejects both direct sample actions before quota or provider access", async () => {
-    const context = { token: createSampleSession().token, origin: "https://workspace.example.invalid" };
+    const context = { token: createSampleSession().token, visitorToken: createDemoVisitor().token, origin: "https://workspace.example.invalid" };
     const input = { requestId: crypto.randomUUID(), documentIds: ["report-1014"], consent: true };
 
     expect(await classifySample(input, context, "openai")).toMatchObject({ ok: false, code: "unavailable" });

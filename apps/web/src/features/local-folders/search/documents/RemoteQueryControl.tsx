@@ -6,6 +6,7 @@ import type { ConnectionOwner } from "../../types";
 import type { FindFilters } from "./document-find";
 import { applySearchQuerySuggestion } from "./remote-query-suggestion";
 import { actionClasses } from "../../../../components/ui/action-classes";
+import { LIVE_AI_MESSAGES } from "../../../../shared/live-organization";
 
 export function RemoteQueryControl({ action, owner, question, filters, onApply }: {
   action: SearchQueryAction; owner: ConnectionOwner; question: string; filters: FindFilters; onApply: (filters: Partial<FindFilters>) => void;
@@ -33,7 +34,8 @@ export function RemoteQueryControl({ action, owner, question, filters, onApply }
 
       if (current !== generation.current) return;
 
-      if (!result.ok || result.question !== question) setNotice("조건 해석을 받지 못했어요. 현재 로컬 검색 조건을 그대로 사용합니다.");
+      if (!result.ok) setNotice(LIVE_AI_MESSAGES[result.code] + (result.retryAfter ? ` 약 ${result.retryAfter}초 뒤 다시 시도할 수 있어요.` : ""));
+      else if (result.question !== question) setNotice("조건 해석을 받지 못했어요. 현재 로컬 검색 조건을 그대로 사용합니다.");
       else {
         applySearchQuerySuggestion(question, result.suggestion, filters);
         setProposal({ result, key });

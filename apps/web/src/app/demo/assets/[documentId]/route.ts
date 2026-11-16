@@ -1,8 +1,10 @@
 import { cookies } from "next/headers";
 import { getSampleAsset, getSamplePageAsset } from "../../../../server/demo/sample-catalog";
 import { readSampleSession, SAMPLE_COOKIE } from "../../../../server/demo/sample-session";
+import { readDemoVisitor, DEMO_VISITOR_COOKIE, demoAccessDenied } from "../../../../server/demo/demo-access";
 
 export async function GET(_request: Request, context: { params: Promise<{ documentId: string }> }) {
+  if (!readDemoVisitor((await cookies()).get(DEMO_VISITOR_COOKIE)?.value)) return demoAccessDenied();
   const session = readSampleSession((await cookies()).get(SAMPLE_COOKIE)?.value);
   const headers = {
     "Cache-Control": "no-store",

@@ -1,6 +1,7 @@
 import { SAMPLE_LIFETIME_MS, type SampleCatalog, type SampleSession } from "../../shared/sample-contract";
 import {
   createSampleState,
+  SAMPLE_STATE_CHARACTER_LIMIT,
   restoreSampleState,
   transitionSampleState,
   type SampleAction,
@@ -8,6 +9,8 @@ import {
 } from "./sample-state";
 import { SAMPLE_AI_MESSAGES, type SampleAiAction } from "../../shared/sample-ai";
 import type { SampleOrganizationAction } from "../../shared/sample-organization";
+import type { SampleAnswerAction } from "../../shared/sample-answer";
+import type { ChatMessageInput } from "../../shared/general-chat";
 
 type SampleStorage = Pick<Storage, "getItem" | "setItem">;
 
@@ -100,7 +103,7 @@ export class SampleWorkspaceStore {
     try {
       const state = transitionSampleState(this.catalog, this.snapshot.state, action);
       const serialized = JSON.stringify(state);
-      if (serialized.length > 128_000) throw Error("sample-state-limit");
+      if (serialized.length > SAMPLE_STATE_CHARACTER_LIMIT) throw Error("sample-state-limit");
       let notice: string | null = null;
 
       try {
@@ -130,6 +133,38 @@ export class SampleWorkspaceStore {
       aiPending: false,
       notice: "응답 대기를 취소했어요. 이미 전송한 요청은 서버에서 끝날 수 있으며 요청 한도는 복원되지 않아요."
     };
+    this.emit();
+  };
+
+  requestAnswer = async (request: SampleAnswerAction, mode: "chat" | "grounded") => {
+    const state = this.snapshot.state;
+    if (!this.snapshot.ready || this.snapshot.aiPending || performance.now() >= this.deadline || state.phase === "review" || !state.draft.trim()
+      || (mode === "grounded" && !state.selected.length)) return;
+    const history: ChatMessageInput[][] = [];
+    for (let index = 0; index < state.messages.length - 1; index++) {
+      const question = state.messages[index];
+      const answer = state.messages[index + 1];
+      if (question.author === "user" && question.id.startsWith("ai-question-") && answer.author === "assistant"
+        && answer.id === `ai-answer-${question.id.slice("ai-question-".length)}`) {
+        history.push([{ role: "user", content: question.text }, { role: "assistant", content: answer.text }]);
+        index++;
+      }
+    }
+    let messages: ChatMessageInput[] = [...history.slice(-3).flat(), { role: "user", content: state.draft }];
+    while (messages.length > 1 && messages.reduce((sum, message) => sum + message.content.length, 0) > 12000) messages = messages.slice(2);
+    const generation = ++this.generation;
+    const requestId = crypto.randomUUID();
+    this.snapshot = { ...this.snapshot, aiPending: true, notice: null };
+    this.emit();
+    try {
+      const result = await request({ requestId, mode, messages, documentIds: mode === "grounded" ? [...state.selected] : [], consent: true });
+      if (generation !== this.generation || performance.now() >= this.deadline) return;
+      if (result.ok) { this.dispatch({ type: "ai-answer", requestId, mode, question: state.draft, result }); return; }
+      this.snapshot = { ...this.snapshot, aiPending: false, notice: SAMPLE_AI_MESSAGES[result.code] + (result.retryAfter ? ` 약 ${result.retryAfter}초 뒤 다시 시도할 수 있어요.` : "") };
+    } catch {
+      if (generation !== this.generation || performance.now() >= this.deadline) return;
+      this.snapshot = { ...this.snapshot, aiPending: false, notice: SAMPLE_AI_MESSAGES.unavailable };
+    }
     this.emit();
   };
 

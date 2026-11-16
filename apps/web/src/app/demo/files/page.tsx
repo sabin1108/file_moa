@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getSampleCatalog } from "../../../server/demo/sample-catalog";
 import { readSampleAccess, SAMPLE_COOKIE } from "../../../server/demo/sample-session";
 import { SampleWorkspace } from "../../../features/sample-workspace/SampleWorkspace";
-import { sampleClassificationAction, sampleOrganizationAction } from "../../actions/sample-ai";
+import { sampleClassificationAction, sampleOrganizationAction, sampleAnswerAction } from "../../actions/sample-ai";
 import { getSampleAiProvider } from "../../../server/ai/ai-provider";
 
 export const metadata = { title: "내 파일 · 모아 샘플" };
@@ -22,6 +22,7 @@ export default async function SampleFilesPage() {
       session={access.session}
       remainingMs={access.remainingMs}
       aiProvider={provider}
+      answerAction={sampleAnswerAction.bind(null, provider)}
       classifyAction={sampleClassificationAction.bind(null, provider)}
       organizeAction={sampleOrganizationAction.bind(null, provider)}
       view="files"

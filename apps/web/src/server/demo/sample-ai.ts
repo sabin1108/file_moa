@@ -9,6 +9,8 @@ import { getDatabase } from "../database/client";
 import { generateClassification } from "../ai/ai-generation";
 import { AI_LIMITS, requireSampleAiProvider, SampleAiError } from "../ai/ai-provider";
 import type { AiProvider } from "../../shared/ai-provider";
+import { readDemoVisitor } from "./demo-access";
+import { dailyAiRules } from "../ai/ai-quota";
 
 const inputSchema = z.strictObject({
   requestId: z.uuid(),
@@ -19,28 +21,32 @@ let quota: ReturnType<typeof createAuthRateLimiter> | undefined;
 
 export type SampleAiContext = {
   token: string | undefined;
+  visitorToken?: string;
   origin: string | null
 };
 
-export async function reserveSampleAi(requestId: string, context: SampleAiContext, expectedProvider?: AiProvider | null) {
+export function requireSampleContext(context: SampleAiContext) {
   const session = readSampleSession(context.token);
-
-  if (!session) throw new SampleAiError("session");
-
+  const visitor = readDemoVisitor(context.visitorToken);
+  if (!session || !visitor) throw new SampleAiError("session");
   if (context.origin !== new URL(process.env.BETTER_AUTH_URL ?? "").origin) throw new SampleAiError("origin");
+  return { session, visitor };
+}
 
+export async function reserveSampleAi(requestId: string, context: SampleAiContext, expectedProvider?: AiProvider | null) {
+  const { session, visitor } = requireSampleContext(context);
   const provider = requireSampleAiProvider(expectedProvider);
 
   quota ??= createAuthRateLimiter(getDatabase, process.env.BETTER_AUTH_SECRET!);
 
-  const reservation = await quota.consumeAll(([
-    [`request:${session.id}:${requestId}`, 1, 3600], [`session:${session.id}`, 3, 3600],
-    ["global-minute", 1, 60], ["global-hour", 12, 3600],
-  ] as const).map(([key, max, window]) => ({ key: `sample-ai-v1:${key}`, max, window })));
+  const reservation = await quota.consumeAll([
+    { key: `sample-ai-v1:request:${session.id}:${requestId}`, max: 1, window: 3600 },
+    ...dailyAiRules("demo", visitor.id, Date.now()),
+  ]);
 
   if (!reservation.allowed) return { allowed: false as const, retryAfter: reservation.retryAfter ?? 60 };
 
-  if (!readSampleSession(context.token)) throw new SampleAiError("session");
+  requireSampleContext(context);
 
   return {
     allowed: true as const,
@@ -59,6 +65,7 @@ export function sampleAiFailure(error: unknown): Extract<SampleAiResult, { ok: f
 
 export async function classifySample(value: unknown, context: SampleAiContext, expectedProvider?: AiProvider | null): Promise<SampleAiResult> {
   try {
+    requireSampleContext(context);
     const session = readSampleSession(context.token);
 
     if (!session) return { ok: false, code: "session" };
@@ -94,11 +101,11 @@ export async function classifySample(value: unknown, context: SampleAiContext, e
 
     if (!reservation.allowed) return { ok: false, code: "limit", retryAfter: reservation.retryAfter ?? 60 };
 
-    if (!readSampleSession(context.token)) return { ok: false, code: "session" };
+    requireSampleContext(context);
 
     const result = await generateClassification(request, reservation.signal, reservation.provider);
 
-    if (!readSampleSession(context.token)) return { ok: false, code: "session" };
+    requireSampleContext(context);
 
     return { ok: true, ...result, ...parseClassificationResponse({ proposals: result.proposals }, request) };
   } catch (error) {

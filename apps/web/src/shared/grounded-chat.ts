@@ -41,12 +41,13 @@ export type GroundedResult = {
   model: string
 } | {
   ok: false;
-  code: "session" | "origin" | "input" | "limit" | "timeout" | "unavailable"
+  code: "session" | "origin" | "input" | "limit" | "timeout" | "unavailable";
+  retryAfter?: number
 };
 
 export type GroundedAction = (input: unknown) => Promise<GroundedResult>;
 
-export function validateGroundedAnswer(value: unknown, documents: GroundedRequest["documents"]): GroundedAnswer {
+export function validateGroundedAnswer(value: unknown, documents: readonly { id: string; excerpt: string }[]): GroundedAnswer {
   const result = groundedAnswerSchema.parse(value);
 
   for (const citation of result.citations) {
