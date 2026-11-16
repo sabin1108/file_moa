@@ -106,7 +106,7 @@ export function inferFindRequest(request: string, referenceYear?: number): FindF
   };
 }
 
-export function confirmFindQuery(filters: FindFilters, allowEmptyTerms = false): FindQuery {
+export function confirmFindQuery(filters: FindFilters, allowEmptyTerms: boolean, referenceYear: number): FindQuery {
   const input = [filters.terms,
     ...(filters.preferred?.trim().split(/\s+/u).filter(Boolean).map(term => `~${term}`) ?? []),
     ...(filters.excluded?.match(/"[^"]+"|[^\s]+/gu)?.map(term => `-${term}`) ?? []),
@@ -123,7 +123,7 @@ export function confirmFindQuery(filters: FindFilters, allowEmptyTerms = false):
   if (plan.issues.length || !allowEmptyTerms && !terms.length || terms.length > 8) throw Error("invalid-find-terms");
 
   const withPeriod = (from: string | null, to: string | null, basis: FindQuery["basis"]) => {
-    const inferred = filters.originalRequest ? inferFindRequest(filters.originalRequest, new Date().getFullYear()) : null;
+    const inferred = filters.originalRequest ? inferFindRequest(filters.originalRequest, referenceYear) : null;
     const unchanged = inferred && (["year", "month", "basis", "window", "endMonth"] as const).every(key => (inferred[key] ?? "") === (filters[key] ?? ""));
     const text = unchanged ? filters.originalRequest! : [filters.year, filters.month, filters.endMonth, filters.basis, filters.window].join(" ");
 

@@ -159,6 +159,7 @@ export class SourceConnectionController {
     );
     this.finding = new DocumentFindController(session.findSourceDocuments, () =>
       this.permissionLost(),
+      () => new Date().getFullYear(),
     );
   }
 

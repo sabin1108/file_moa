@@ -14,7 +14,7 @@ const filters = {
   basis: "meeting",
   window: "month",
 };
-const query = () => confirmFindQuery(filters);
+const query = () => confirmFindQuery(filters, false, 2026);
 
 describe("FIND-001: explicit search conditions", () => {
   it("routes find-only requests without turning organization or negation into search", () => {
@@ -41,19 +41,19 @@ describe("FIND-001: explicit search conditions", () => {
       window: "",
     });
     expect(() =>
-      confirmFindQuery(inferFindRequest("10월쯤 한 회의자료 찾아줘")),
+      confirmFindQuery(inferFindRequest("10월쯤 한 회의자료 찾아줘"), false, 2026),
     ).toThrow();
-    expect(confirmFindQuery({ ...filters, window: "around" })).toMatchObject({
+    expect(confirmFindQuery({ ...filters, window: "around" }, false, 2026)).toMatchObject({
       from: "2026-09-24",
       to: "2026-11-07",
     });
   });
   it("handles year rollover and explicit no-period search without inventing dates", () => {
     expect(
-      confirmFindQuery({ ...filters, month: "1", window: "around" }),
+      confirmFindQuery({ ...filters, month: "1", window: "around" }, false, 2026),
     ).toMatchObject({ from: "2025-12-25", to: "2026-02-07" });
     expect(
-      confirmFindQuery({ ...filters, month: "all", year: "", basis: "" }),
+      confirmFindQuery({ ...filters, month: "all", year: "", basis: "" }, false, 2026),
     ).toMatchObject({ from: null, to: null });
   });
   it("does not pick a negated month or choose between conflicting date bases", () => {
@@ -74,13 +74,13 @@ describe("FIND-001: explicit search conditions", () => {
     { ...filters, basis: "" },
     { ...filters, window: "" },
   ])("refuses incomplete or invalid conditions", (value) =>
-    expect(() => confirmFindQuery(value)).toThrow(),
+    expect(() => confirmFindQuery(value, false, 2026)).toThrow(),
   );
 });
 
 describe("FIND-003/004: full body evidence, not an excerpt/date guess", () => {
   it("uses the file modification date independently of dates in the body", () => {
-    const modified = confirmFindQuery({ ...filters, basis: "modified" });
+    const modified = confirmFindQuery({ ...filters, basis: "modified" }, false, 2026);
     const timestamp = new Date(2026, 9, 15, 0, 30).getTime();
 
     expect(findTextEvidence("회의 자료\n작성일: 2025-01-01", modified, timestamp))
@@ -119,7 +119,7 @@ describe("FIND-003/004: full body evidence, not an excerpt/date guess", () => {
     expect(
       findTextEvidence(
         "회의 자료\n작성일: 2026-10-15",
-        confirmFindQuery({ ...filters, basis: "written" }),
+        confirmFindQuery({ ...filters, basis: "written" }, false, 2026),
       )?.kind,
     ).toBe("matched");
   });
@@ -140,7 +140,7 @@ describe("FIND-003/004: full body evidence, not an excerpt/date guess", () => {
     );
   });
   it("uses confirmed inclusive boundaries and can search without a date filter", () => {
-    const around = confirmFindQuery({ ...filters, window: "around" });
+    const around = confirmFindQuery({ ...filters, window: "around" }, false, 2026);
 
     expect(findTextEvidence("회의\n회의일: 2026-09-24", around)?.kind).toBe(
       "matched",
@@ -150,7 +150,7 @@ describe("FIND-003/004: full body evidence, not an excerpt/date guess", () => {
     );
     expect(findTextEvidence("회의\n회의일: 2026-11-08", around)).toBeNull();
     expect(
-      findTextEvidence("회의", confirmFindQuery({ ...filters, month: "all" }))
+      findTextEvidence("회의", confirmFindQuery({ ...filters, month: "all" }, false, 2026))
         ?.kind,
     ).toBe("matched");
   });
@@ -183,7 +183,7 @@ describe("FIND-002/005: read-only search lifecycle", () => {
       discoveredFiles: 0,
     };
     const read = vi.fn(async () => result);
-    const c = new DocumentFindController(read);
+    const c = new DocumentFindController(read, undefined, () => 2026);
 
     c.start("10월쯤 한 회의자료 찾아줘");
     await c.search();
@@ -215,6 +215,8 @@ describe("FIND-002/005: read-only search lifecycle", () => {
           new Promise((resolve) => {
             finish = resolve;
           }),
+        undefined,
+        () => 2026,
       );
 
       c.start("2026년 10월 회의 자료 찾아줘");

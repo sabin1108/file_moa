@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { confirmFindQuery, findTextEvidence, inferFindRequest } from "../../../../src/features/local-folders/search/documents/document-find";
 
-const query = (request: string) => confirmFindQuery({ ...inferFindRequest(request), month: "all" });
+const query = (request: string) => confirmFindQuery({ ...inferFindRequest(request), month: "all" }, false, 2026);
 const source = (name: string, folder = "자료") => ({ name, path: [folder, name] });
 
 describe("RAG-S01~04: preserved query conditions and bounded related candidates", () => {
   it("keeps a named target mandatory while retaining a document type as an explained preference", () => {
     const request = "가온센터 이력서 찾아줘";
     const filters = inferFindRequest(request);
-    const q = confirmFindQuery({ ...filters, month: "all" });
+    const q = confirmFindQuery({ ...filters, month: "all" }, false, 2026);
 
     expect(filters.terms).toBe("가온센터");
     expect(filters.preferred).toBe("이력서");
@@ -61,8 +61,8 @@ describe("RAG-S01~04: preserved query conditions and bounded related candidates"
 
   it("keeps unchanged raw spans and marks edited conditions as confirmed", () => {
     const filters = inferFindRequest("가온센터 이력서 찾아줘");
-    const original = confirmFindQuery(filters);
-    const edited = confirmFindQuery({ ...filters, terms: "해솔센터" });
+    const original = confirmFindQuery(filters, false, 2026);
+    const edited = confirmFindQuery({ ...filters, terms: "해솔센터" }, false, 2026);
 
     expect(original.plan?.clauses.every(clause => clause.source.kind === "request")).toBe(true);
     expect(original.plan?.period?.source.kind).toBe("request");

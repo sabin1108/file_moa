@@ -17,14 +17,14 @@ export async function evaluateSemantic(model: SemanticModelController) {
   const rows: (typeof fixture.queries[number] & { local: string[]; optional: string[]; elapsedMs: number })[] = [];
   for (const item of fixture.queries) {
     const filters = inferFindRequest(item.raw, 2026);
-    const baselineQuery = confirmFindQuery(filters);
+    const baselineQuery = confirmFindQuery(filters, false, 2026);
     const literal = (query: typeof baselineQuery) => docs.flatMap(doc => {
       const finding = findTextEvidence(doc.metadataOnly ? "" : doc.text, query, 1, { name: doc.name, path: doc.path });
       return finding ? [{ name: doc.name, path: doc.path, finding, contentAvailable: !doc.metadataOnly }] : [];
     });
     // Authored confirmation choices are frozen by scenario ID, not learned from holdout scores.
     const meaningOnly = item.id === "dev-semantic" || item.id.includes("-meaning") || item.id === "dev-empty" || item.id === "holdout-unrelated";
-    const query = confirmSemanticQuery({ ...filters, ...(meaningOnly ? { terms: "" } : {}) }, item.raw, true);
+    const query = confirmSemanticQuery({ ...filters, ...(meaningOnly ? { terms: "" } : {}) }, item.raw, true, 2026);
     const base: FindDocument[] = query.semantic.lexical ? literal(query.semantic.lexical) : [];
     const begin = performance.now();
     const scores = await model.score(item.raw, passages.map(value => value.chunks), abort.signal);

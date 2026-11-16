@@ -5,10 +5,10 @@ import type {
 } from "./source-snapshot-rules";
 import { copyFolderPath } from "../folder-path";
 import type { FolderHandle } from "../types";
-import { createCopyHasher, type TextIndexContext } from "../content/copy-hash";
+import type { createCopyHasher, TextIndexContext } from "../content/copy-hash";
 import { readSourceFolderListing } from "../browsing/source-folder-listing";
 import { openSourceDirectory } from "../source-directory";
-import { LocalTextIndex, LOCAL_TEXT_INDEX_VERSION, type CatalogFile } from "../search/documents/local-text-index";
+import type { LocalTextIndex, CatalogFile } from "../search/documents/local-text-index";
 import type {
   FindDocument,
   FindQuery,
@@ -21,7 +21,17 @@ import { isLocalIndexScan, type LocalIndexScan } from "../search/documents/local
 
 /** Bounded source snapshot. Optional extracted-text cache stays in this browser. */
 
+type SnapshotReader = Pick<ReturnType<typeof createCopyHasher>, "readText" | "dispose">;
+export type SnapshotIndex = Pick<LocalTextIndex, "observe" | "readPath" | "put" | "retain" | "retainCatalog" | "retainSemantic">;
+export type SnapshotRuntime = {
+  createReader: (signal?: AbortSignal) => SnapshotReader;
+  createIndex: () => SnapshotIndex;
+  now: () => number;
+  parserVersion: number;
+};
+
 export async function readSourceSnapshot(
+  runtime: SnapshotRuntime,
   root: FolderHandle,
   scope: OrganizationScope,
   instruction: string,
@@ -60,15 +70,15 @@ export async function readSourceSnapshot(
     bytes = 0,
     scanned = previous?.scanned ?? 0,
     failed = previous?.failed ?? false;
-  const started = Date.now();
+  const started = runtime.now();
   const check = () => {
     assertCurrent();
 
     if (signal?.aborted)
       throw new DOMException("Snapshot cancelled", "AbortError");
   };
-  const reader = createCopyHasher(signal);
-  const indexStore = indexContext ? new LocalTextIndex() : null;
+  const reader = runtime.createReader(signal);
+  let indexStore: SnapshotIndex | null = null;
   const observedPaths: (readonly string[])[] = [...(previous?.observed ?? [])];
   let catalogHealthy = true;
   const observe = async (file: CatalogFile) => {
@@ -90,16 +100,17 @@ export async function readSourceSnapshot(
   };
 
   try {
+    indexStore = indexContext ? runtime.createIndex() : null;
     let batchEntries = 0;
     for (; cursor < queue.length; cursor++) {
       check();
 
-      if (options?.checkpointed && (batchEntries >= 250 || Date.now() - started > 1000)) break;
+      if (options?.checkpointed && (batchEntries >= 250 || runtime.now() - started > 1000)) break;
 
       if (
         scanned >= 20000 ||
         directories >= 1000 ||
-        Date.now() - started > 15000
+        runtime.now() - started > 15000
       ) {
         limits.add("scan-limit");
 
@@ -277,7 +288,7 @@ export async function readSourceSnapshot(
 
         if (indexContext && typeof content.fullText === "string" && !content.cacheHit) {
           await indexStore?.put(
-            { ...indexContext, path: entry.path, hash: content.sha256, parserVersion: LOCAL_TEXT_INDEX_VERSION },
+            { ...indexContext, path: entry.path, hash: content.sha256, parserVersion: runtime.parserVersion },
             content.fullText,
             check,
             content.cacheMetadata,
@@ -349,7 +360,7 @@ export async function readSourceSnapshot(
     let checkpoint: LocalIndexScan | undefined;
 
     if (options?.checkpointed && cursor < queue.length && scanned < 20000 && directories < 1000) {
-      const candidate: LocalIndexScan = { version: 1, queue, cursor, observed: observedPaths, discoveredFiles, directories, scanned, failed, limits: [...limits], createdAt: previous?.createdAt ?? started, updatedAt: Date.now() };
+      const candidate: LocalIndexScan = { version: 1, queue, cursor, observed: observedPaths, discoveredFiles, directories, scanned, failed, limits: [...limits], createdAt: previous?.createdAt ?? started, updatedAt: runtime.now() };
       if (isLocalIndexScan(candidate)) checkpoint = candidate;
       else limits.add("scan-limit");
     }

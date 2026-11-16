@@ -146,7 +146,7 @@ describe("RQ-003: reuse existing cancellation and consent boundaries", () => {
   it("revokes prepared transfer consent before moving to search without sending", async () => {
     const read = vi.fn(async () => snapshot);
     const organization = new OrganizationPreparationController(read, vi.fn());
-    const finding = new DocumentFindController(vi.fn(async () => findResult));
+    const finding = new DocumentFindController(vi.fn(async () => findResult), undefined, () => 2026);
 
     organization.update({ request: "성능 보고", scope: { kind: "all" } });
     await organization.prepare();
@@ -164,7 +164,7 @@ describe("RQ-003: reuse existing cancellation and consent boundaries", () => {
 
   it("keeps the original request but excludes an organization command from chosen search terms", () => {
     const read = vi.fn(async () => findResult);
-    const finding = new DocumentFindController(read);
+    const finding = new DocumentFindController(read, undefined, () => 2026);
     const organization = new OrganizationPreparationController(vi.fn(async () => snapshot), vi.fn());
 
     for (const [request, terms] of [["회의 자료를 찾아서 정리해줘", "회의"], ["정리 방법 자료 찾아줘", "정리 방법"]]) {
@@ -185,7 +185,7 @@ describe("RQ-003: reuse existing cancellation and consent boundaries", () => {
     let finish!: (value: typeof findResult) => void;
     const finding = new DocumentFindController(() => new Promise(resolve => {
       finish = resolve;
-    }));
+    }), undefined, () => 2026);
 
     finding.start("회의 자료 찾아줘");
     finding.configure({ terms: "회의", month: "all", basis: "body" });
@@ -205,7 +205,7 @@ describe("RQ-003: reuse existing cancellation and consent boundaries", () => {
     const organization = new OrganizationPreparationController(() => new Promise(resolve => {
       finish = resolve;
     }), vi.fn());
-    const finding = new DocumentFindController(vi.fn(async () => findResult));
+    const finding = new DocumentFindController(vi.fn(async () => findResult), undefined, () => 2026);
 
     organization.update({ request: "성능 보고", scope: { kind: "all" } });
 

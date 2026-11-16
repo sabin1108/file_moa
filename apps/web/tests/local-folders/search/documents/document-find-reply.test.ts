@@ -4,6 +4,57 @@ import { confirmFindQuery, inferFindRequest } from "../../../../src/features/loc
 import { DocumentFindController } from "../../../../src/features/local-folders/search/documents/document-find-controller";
 
 describe("FIND-006: explicit conversation conditions", () => {
+  it("keeps one reference year across replies and searches until a new flow", async () => {
+    const read = vi.fn<ConstructorParameters<typeof DocumentFindController>[0]>(async () => ({ documents: [], complete: true, excluded: [], limits: [], discoveredFiles: 0 }));
+    const year = vi.fn().mockReturnValueOnce(2026).mockReturnValue(2027);
+    const controller = new DocumentFindController(read, undefined, year);
+
+    controller.start("올해 10월 회의일 기준 회의 자료 찾아줘");
+    controller.submitReply("올해 10월 회의일 기준 해당 월만");
+    controller.setScope(null);
+    controller.configureSemantic({ enabled: true, meaning: "회의", confirmed: true });
+    await controller.search();
+    expect(year).toHaveBeenCalledTimes(1);
+    expect(controller.getSnapshot()).toMatchObject({ referenceYear: 2026, filters: { year: "2026" }, phase: "ready" });
+    expect(read.mock.calls[0][1]).toMatchObject({ from: "2026-10-01", plan: { period: { source: { kind: "request" } } } });
+    expect(read.mock.calls[0][1].semantic?.lexical?.from).toBe("2026-10-01");
+
+    controller.start("올해 10월 회의일 기준 회의 자료 찾아줘");
+    expect(controller.getSnapshot()).toMatchObject({ referenceYear: 2027, filters: { year: "2027" } });
+    expect(year).toHaveBeenCalledTimes(2);
+    controller.reset();
+    expect(controller.getSnapshot().referenceYear).toBeNull();
+  });
+  it.each(["configure", "setScope", "configureSemantic", "submitReply", "search"] as const)("captures a year on %s without start", async method => {
+    const year = vi.fn(() => 2026);
+    const controller = new DocumentFindController(vi.fn(), undefined, year);
+    if (method === "configure") controller.configure({ terms: "회의" });
+    else if (method === "setScope") controller.setScope(null);
+    else if (method === "configureSemantic") controller.configureSemantic({ enabled: true });
+    else if (method === "submitReply") controller.submitReply("2026년이고 분기별로");
+    else await controller.search();
+    expect(year).toHaveBeenCalledTimes(1);
+    expect(controller.getSnapshot().referenceYear).toBe(2026);
+  });
+  it("does not replace or notify the public snapshot for an unrelated reply", () => {
+    const year = vi.fn(() => 2026);
+    const controller = new DocumentFindController(vi.fn(), undefined, year);
+    const listener = vi.fn();
+    controller.subscribe(listener);
+    const before = controller.getSnapshot();
+    expect(controller.submitReply("다른 문서 정리해줘")).toBe(false);
+    expect(controller.getSnapshot()).toBe(before);
+    expect(listener).not.toHaveBeenCalled();
+    expect(year).toHaveBeenCalledTimes(1);
+    controller.configure({ terms: "회의" });
+    expect(year).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+  it("uses the supplied year for original period provenance independently of wall time", () => {
+    const filters = inferFindRequest("올해 10월 회의일 기준 회의 자료 찾아줘", 2026);
+    expect(confirmFindQuery(filters, false, 2026).plan?.period?.source.kind).toBe("request");
+    expect(confirmFindQuery(filters, false, 2027).plan?.period?.source.kind).toBe("confirmed");
+  });
   it.each(["수정일", "마지막 수정 날짜", "파일 수정 날짜", "파일을 마지막으로 수정한 날짜", "마지막 수정된 파일 날짜"])("recognizes %s in the initial request and a follow-up without adding search words", basis => {
     expect(inferFindRequest(`2026년 10월 ${basis} 기준으로 회의 자료 찾아줘`)).toMatchObject({ terms: "회의", basis: "modified" });
     expect(parseFindReply(`2026년 10월 ${basis} 기준 해당 월만`, 2026)).toMatchObject({ kind: "apply", filters: { year: "2026", month: "10", basis: "modified", window: "month" } });
@@ -30,21 +81,21 @@ describe("FIND-006: explicit conversation conditions", () => {
     const initial = inferFindRequest("작년 10월말 회의 자료 찾아줘", 2026);
 
     expect(initial).toMatchObject({ year: "2025", month: "10", window: "late", terms: "회의" });
-    expect(confirmFindQuery({ ...initial, basis: "meeting" })).toMatchObject({ from: "2025-10-21", to: "2025-10-31" });
+    expect(confirmFindQuery({ ...initial, basis: "meeting" }, false, 2026)).toMatchObject({ from: "2025-10-21", to: "2025-10-31" });
 
     const parsed = parseFindReply("2026년 9월부터 10월까지 회의일 기준", 2026);
 
     expect(parsed.kind).toBe("apply");
 
-    if (parsed.kind === "apply") expect(confirmFindQuery({ terms: "회의", year: "", month: "", basis: "", window: "", ...parsed.filters })).toMatchObject({ from: "2026-09-01", to: "2026-10-31" });
+    if (parsed.kind === "apply") expect(confirmFindQuery({ terms: "회의", year: "", month: "", basis: "", window: "", ...parsed.filters }, false, 2026)).toMatchObject({ from: "2026-09-01", to: "2026-10-31" });
 
     expect(inferFindRequest("10월 회의 자료 찾아줘").year).toBe("");
-    expect(() => confirmFindQuery(inferFindRequest("작년과 올해 회의 자료 찾아줘", 2026))).toThrow();
+    expect(() => confirmFindQuery(inferFindRequest("작년과 올해 회의 자료 찾아줘", 2026), false, 2026)).toThrow();
     expect(inferFindRequest("작년과 올해 회의 자료 찾아줘", 2026)).toMatchObject({ year: "", month: "" });
   });
   it("applies replies atomically and waits for a separate search action", async () => {
     const read = vi.fn(async () => ({ documents: [], complete: true, excluded: [], limits: [], discoveredFiles: 0 }));
-    const controller = new DocumentFindController(read);
+    const controller = new DocumentFindController(read, undefined, () => 2026);
 
     controller.start("10월쯤 회의 자료 찾아줘");
 

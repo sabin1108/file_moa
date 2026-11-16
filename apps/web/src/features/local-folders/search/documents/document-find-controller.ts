@@ -27,6 +27,7 @@ const initial = {
   submittedReply: "",
   selectedPaths: [] as readonly (readonly string[])[],
   semantic: { enabled: false, meaning: "", confirmed: false },
+  referenceYear: null as number | null,
 };
 
 export type DocumentFindState = typeof initial;
@@ -38,6 +39,7 @@ export class DocumentFindController {
   private listeners = new Set<() => void>();
   private generation = 0;
   private abort: AbortController | null = null;
+  private referenceYear: number | null = null;
   constructor(
     private readonly read: (
       scope: OrganizationScope,
@@ -45,6 +47,7 @@ export class DocumentFindController {
       signal: AbortSignal,
     ) => Promise<FindResult>,
     private readonly permissionLost: () => void = () => { },
+    private readonly getReferenceYear: () => number,
   ) { }
   getSnapshot = () => this.state;
   getServerSnapshot = () => initial;
@@ -56,7 +59,7 @@ export class DocumentFindController {
     };
   };
   private publish(state: DocumentFindState) {
-    this.state = state;
+    this.state = { ...state, referenceYear: this.referenceYear };
     this.listeners.forEach((listener) => listener());
   }
   private stop() {
@@ -64,20 +67,24 @@ export class DocumentFindController {
     this.abort?.abort();
     this.abort = null;
   }
+  private ensureReferenceYear() {
+    return this.referenceYear ??= this.getReferenceYear();
+  }
   start = (request: string) => {
     this.stop();
+    this.referenceYear = this.getReferenceYear();
     this.publish({
       ...initial,
       phase: "confirm",
       request: request.trim(),
       draft: request,
-      filters: inferFindRequest(request, new Date().getFullYear()),
+      filters: inferFindRequest(request, this.referenceYear),
       semantic: { enabled: false, meaning: request.trim(), confirmed: false },
     });
   };
   updateDraft = (draft: string) => this.publish({ ...this.state, draft });
   submitReply = (reply: string) => {
-    const parsed = parseFindReply(reply, new Date().getFullYear());
+    const parsed = parseFindReply(reply, this.ensureReferenceYear());
 
     if (parsed.kind === "none") return false;
 
@@ -94,6 +101,7 @@ export class DocumentFindController {
   };
   configure = (filters: Partial<FindFilters>) => {
     this.stop();
+    this.ensureReferenceYear();
     this.publish({
       ...this.state,
       filters: { ...this.state.filters, ...filters },
@@ -106,6 +114,7 @@ export class DocumentFindController {
   };
   setScope = (path: readonly string[] | null) => {
     this.stop();
+    this.ensureReferenceYear();
     this.publish({
       ...this.state,
       scope:
@@ -122,12 +131,14 @@ export class DocumentFindController {
   search = async () => {
     if (this.state.phase === "searching") return;
 
+    const year = this.ensureReferenceYear();
+
     let query: FindQuery;
 
     try {
       query = this.state.semantic.enabled
-        ? confirmSemanticQuery(this.state.filters, this.state.semantic.meaning, this.state.semantic.confirmed)
-        : confirmFindQuery(this.state.filters);
+        ? confirmSemanticQuery(this.state.filters, this.state.semantic.meaning, this.state.semantic.confirmed, year)
+        : confirmFindQuery(this.state.filters, false, year);
     } catch {
       this.publish({
         ...this.state,
@@ -179,6 +190,7 @@ export class DocumentFindController {
   };
   configureSemantic = (patch: Partial<DocumentFindState["semantic"]>) => {
     this.stop();
+    this.ensureReferenceYear();
     this.publish({ ...this.state, semantic: { ...this.state.semantic, confirmed: false, ...patch }, phase: "confirm", result: null, selectedPaths: [], issue: null });
   };
   cancel = () => {
@@ -193,6 +205,7 @@ export class DocumentFindController {
   };
   reset = () => {
     this.stop();
+    this.referenceYear = null;
     this.publish(initial);
   };
   toggle = (path: readonly string[]) => {

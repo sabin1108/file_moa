@@ -92,7 +92,7 @@ import { InlineEditorSession } from "./documents/editing/inline-editor-session";
 import { readSourceSnapshot } from "./organization/source-snapshot";
 import { readOrganizationFolders } from "./organization/organization-reference";
 import { inferOrganizationConditions } from "./organization/organization-intent";
-import { LocalTextIndex, withLocalIndexLock, tryWithLocalIndexLock } from "./search/documents/local-text-index";
+import { LocalTextIndex, LOCAL_TEXT_INDEX_VERSION, withLocalIndexLock, tryWithLocalIndexLock } from "./search/documents/local-text-index";
 import { assertOrganizationBaseline } from "./organization/organization-operation";
 import type {
   OrganizationScope,
@@ -104,6 +104,13 @@ import type {
   FindResult,
   FindableSnapshot,
 } from "./search/documents/document-find";
+
+const snapshotRuntime = {
+  createReader: createCopyHasher,
+  createIndex: () => new LocalTextIndex(),
+  now: Date.now,
+  parserVersion: LOCAL_TEXT_INDEX_VERSION,
+};
 
 type Slot = {
   handle?: FolderHandle;
@@ -153,6 +160,8 @@ export class FolderConnectionSession {
     (value) => {
       this.backingUp = value;
     },
+    () => typeof navigator === "undefined" || !navigator.userActivation || navigator.userActivation.isActive,
+    async work => { await navigator.locks.request("moa-folder-creation", work); },
   );
   private restoreSequence = 0;
   private preparedRestore: PreparedRestore | null = null;
@@ -933,7 +942,7 @@ export class FolderConnectionSession {
         const saved = await index.readScan(scope);
         check();
         const checkpoint = saved && Date.now() - saved.updatedAt < 24 * 60 * 60 * 1000 && saved.updatedAt <= Date.now() ? saved : undefined;
-        const result = await readSourceSnapshot(handle, { kind: "all" }, "", check, signal, undefined, scope, { metadataOnly: true, checkpointed: true, checkpoint });
+        const result = await readSourceSnapshot(snapshotRuntime, handle, { kind: "all" }, "", check, signal, undefined, scope, { metadataOnly: true, checkpointed: true, checkpoint });
 
         check();
         try { await index.saveScan(scope, result.checkpoint ?? null, check); }
@@ -1020,14 +1029,15 @@ export class FolderConnectionSession {
         check();
         await this.assertStoredSourceConnection(scopeKey.connection, check);
         return readSourceSnapshot(
-        handle,
-        scope,
-        instruction,
-        check,
-        signal,
-        find,
-        { owner: owner.userId, workspace: owner.workspaceId, connection: this.sourceConnectionId },
-      );
+          snapshotRuntime,
+          handle,
+          scope,
+          instruction,
+          check,
+          signal,
+          find,
+          { owner: owner.userId, workspace: owner.workspaceId, connection: this.sourceConnectionId },
+        );
       }, signal);
 
       check();
@@ -1082,7 +1092,7 @@ export class FolderConnectionSession {
     if (query.semantic) {
       const { scope: key, check } = this.currentSourceIndex();
       try {
-        const semantic = await semanticSourceMatches(key, result, { ...query, semantic: query.semantic }, this.semanticModel, signal, check);
+        const semantic = await semanticSourceMatches({ createIndex: () => new LocalTextIndex() }, key, result, { ...query, semantic: query.semantic }, this.semanticModel, signal, check);
         check();
         documents = mergeFindDocuments(documents, semantic.documents);
         notice = semantic.notice;
@@ -1117,9 +1127,11 @@ export class FolderConnectionSession {
     try {
       check();
       await this.assertStoredSourceConnection(key.connection, check);
-      const result = await prepareSemanticSource(key, snapshot, epoch, this.semanticModel, signal, check, progress);
-      if ((await readInstalledModel(location.origin))?.stamp !== installed.stamp) throw new Error("semantic-model-changed");
+      const result = await prepareSemanticSource({ createIndex: () => new LocalTextIndex(), now: Date.now }, key, snapshot, epoch, this.semanticModel, signal, check, progress);
+      const currentInstalled = await readInstalledModel(location.origin);
       check();
+      signal.throwIfAborted();
+      if (currentInstalled?.stamp !== installed.stamp) throw new Error("semantic-model-changed");
       return result;
     } finally { this.sourceIndexPending--; }
   };

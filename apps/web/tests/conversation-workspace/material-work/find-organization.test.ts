@@ -8,7 +8,7 @@ const path = ["archive", "meeting.md"];
 const found = { name: "meeting.md", path, finding: { kind: "matched" as const, dates: [], evidence: ["회의 기록"] } };
 
 async function setup() {
-  const finding = new DocumentFindController(vi.fn(async () => ({ documents: [found], complete: true, excluded: [], limits: [], discoveredFiles: 1 })));
+  const finding = new DocumentFindController(vi.fn(async () => ({ documents: [found], complete: true, excluded: [], limits: [], discoveredFiles: 1 })), undefined, () => 2026);
 
   finding.start("회의 자료 찾아줘");
   await finding.search();
@@ -42,7 +42,7 @@ describe("FIND-007: selected results use existing fresh preparation", () => {
   it("rejects metadata-only selection both at the controller and the final preparation boundary", async () => {
     const actions = await setup();
     const result = { ...actions.finding.getSnapshot().result!, documents: [{ ...found, contentAvailable: false }] };
-    const finding = new DocumentFindController(vi.fn(async () => result));
+    const finding = new DocumentFindController(vi.fn(async () => result), undefined, () => 2026);
 
     finding.start("회의 자료 찾아줘");
     await finding.search();

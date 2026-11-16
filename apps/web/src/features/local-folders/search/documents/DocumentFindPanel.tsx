@@ -46,7 +46,9 @@ export function DocumentFindPanel({
   let range = "기간 제한 없음";
 
   try {
-    const q = confirmFindQuery(state.filters, state.semantic.enabled);
+    if (state.referenceYear === null) throw new Error("find-year-unconfirmed");
+
+    const q = confirmFindQuery(state.filters, state.semantic.enabled, state.referenceYear);
 
     if (q.from) range = `${q.from} ~ ${q.to}`;
   } catch {

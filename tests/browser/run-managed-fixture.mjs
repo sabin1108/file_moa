@@ -8,6 +8,7 @@ const mode = process.argv[3] ?? "managed";
 const script = {
   copy: "tests/browser/check-copy-execution.mjs",
   managed: "tests/browser/check-managed-files-ui.mjs",
+  workflow: "tests/browser/check-workflow-ux.mjs",
   restore: "tests/browser/check-recovery-restore-ui.mjs",
   "restore-resume": "tests/browser/check-restore-resume.mjs",
 }[mode];
@@ -22,6 +23,7 @@ const server = await createServer({
   cacheDir: resolve(".omx/browser-cache/managed-completion"),
   server: { host: "127.0.0.1", port: 0, fs: { allow: [resolve(".")] } },
   resolve: {
+    dedupe: ["react", "react-dom"],
     alias: {
       "next/link": resolve("tests/fixtures/navigation-next-shim.tsx"),
       "next/navigation": resolve("tests/fixtures/navigation-next-shim.tsx"),
@@ -35,6 +37,10 @@ const server = await createServer({
   plugins: [{
     name: "managed-fixture",
     configureServer(server) {
+      server.middlewares.use("/settings", (_req, res) => {
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
+        res.end('<html lang="ko"><meta name="viewport" content="width=device-width,initial-scale=1"><div id="fixture"></div><script type="module" src="/tests/browser-fixtures/editor-settings.tsx"></script></html>');
+      });
       server.middlewares.use("/files", (_req, res) => {
         res.setHeader("Content-Type", "text/html; charset=utf-8");
         res.end('<html lang="ko"><meta name="viewport" content="width=device-width,initial-scale=1"><div id="fixture"></div><script type="module" src="/tests/browser-fixtures/local-organization.tsx"></script></html>');

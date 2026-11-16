@@ -23,6 +23,7 @@ const server = await createServer({
   logLevel: "error",
   server: { host: "127.0.0.1", port: 0, fs: { allow: [resolve(".")] } },
   resolve: {
+    dedupe: ["react", "react-dom"],
     alias: {
       "next/link": resolve("tests/fixtures/navigation-next-shim.tsx"),
       "next/navigation": resolve("tests/fixtures/navigation-next-shim.tsx"),
@@ -62,9 +63,9 @@ const browser = await Browser.launch({
 });
 const checks = [];
 const tasteChecks = [];
-const check = (name, passed) => {
+const check = (name, passed, immediate = true) => {
   checks.push({ name, passed: !!passed });
-  assert.ok(passed, name);
+  if (immediate) assert.ok(passed, name);
 };
 let page;
 
@@ -182,6 +183,7 @@ try {
   const generalPage = await browser.newPage({ width: 1440, height: 1000 });
 
   await generalPage.goto(base + "/__find?general", { settleMs: 400 });
+  await generalPage.eval(() => document.querySelector('[aria-label="시작할 작업 선택"] button')?.click());
 
   for (let n = 0; n < 500 && !await generalPage.eval(() => !!document.getElementById("message-draft")); n++) await new Promise(resolve => setTimeout(resolve, 30));
 
@@ -214,6 +216,7 @@ try {
     source: `(${installFolderBrowserFixture.toString()})();`,
   });
   await page.goto(base + "/__find?transfer", { settleMs: 400 });
+  await click('[aria-label="시작할 작업 선택"] button:nth-child(2)');
   await until(
     () =>
       typeof liveTransferProbe !== "undefined"
@@ -290,6 +293,8 @@ try {
   );
   await click('[data-action="organization-send"]');
   await until(() => document.querySelector("[data-document-find]"));
+  // Existing conversations can retain automatic routing after the first task.
+  await page.eval(() => conversationFixtureStore.select({ mode: null }));
   check(
     "find intent asks year, date basis and around period before reading",
     await page.eval(
@@ -340,6 +345,7 @@ try {
 
   for (const width of [390, 768, 1440, 1920]) {
     await page.setViewport({ width, height: 1000 });
+    await page.eval(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done))));
 
     const general = generalSizes.get(width);
     const finding = await composerSize(page);
@@ -376,6 +382,7 @@ try {
             document.querySelector("[data-find-search]").getBoundingClientRect()
               .bottom <= innerHeight,
         ),
+        false,
       );
 
     await page.screenshot({
@@ -409,9 +416,9 @@ try {
       return (
         text.includes("written-only.txt") &&
         text.includes("conflict.md") &&
-        text.includes("날짜 기준 확인 필요")
+        text.includes("날짜 확인 필요")
         &&
-        text.includes("기간 안팎")
+        text.includes("여러 날짜가 있어 확인 필요 · 2026-10-15, 2026-11-15")
         &&
         !text.includes("outside.md")
       );
@@ -423,7 +430,7 @@ try {
       const text = document.querySelector("[data-find-results]").textContent;
 
       return (
-        text.includes("검색 범위 일부") &&
+        text.includes("일부 자료는 확인하지 못했어요") &&
         text.includes("bad.txt") &&
         text.includes("TXT·MD·PDF·PNG·JPEG가 아닌 형식")
       );
@@ -709,6 +716,7 @@ try {
     ),
   );
   writeFileSync(`${output}/taste-checks.json`, JSON.stringify(tasteChecks, null, 2));
+  assert.ok(checks.every(check => check.passed), "All document find checks must pass; see browser-checks.json for deferred layout failures");
   assert.equal(
     tasteChecks.flatMap(entry => entry.findings).filter(finding => finding.level === 'FAIL').length,
     0,

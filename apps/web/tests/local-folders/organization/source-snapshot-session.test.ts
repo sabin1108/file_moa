@@ -83,7 +83,8 @@ describe("organization snapshot owning connection", () => {
     scan.mockResolvedValueOnce({ ...result, documents: [{ ...document, id: "document-1" }] });
     expect(await current.session.recheckSourceSnapshot([document], "abc", new AbortController().signal))
       .toEqual({ userId: "A", workspaceId: "test" });
-    expect(scan.mock.calls.at(-1)?.[1]).toEqual({ kind: "selected", entries: [{ path: ["a.md"], kind: "file" }] });
+    expect(scan.mock.calls.at(-1)?.[0]).toEqual({ createReader: expect.any(Function), createIndex: expect.any(Function), now: expect.any(Function), parserVersion: 2 });
+    expect(scan.mock.calls.at(-1)?.[2]).toEqual({ kind: "selected", entries: [{ path: ["a.md"], kind: "file" }] });
   });
 
   it.each(["sha256", "excerptHash", "excerpt", "lastModified", "missing", "partial"])("rejects changed %s even with the same size", async change => {

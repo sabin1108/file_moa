@@ -20,7 +20,7 @@ export async function evaluateSemanticFixture(model: SemanticModelController, da
     const filters = inferFindRequest(item.raw, 2026);
     let baseline: FindQuery | null = null;
     let localError = "";
-    try { baseline = confirmFindQuery(filters); }
+    try { baseline = confirmFindQuery(filters, false, 2026); }
     catch (error) {
       if (!(error instanceof Error) || error.message !== "invalid-find-terms") throw error;
       localError = error.message;
@@ -29,7 +29,7 @@ export async function evaluateSemanticFixture(model: SemanticModelController, da
       const finding = findTextEvidence(doc.metadataOnly ? "" : doc.text, query, 1, { name: doc.name, path: doc.path });
       return finding ? [{ name: doc.name, path: doc.path, finding, contentAvailable: !doc.metadataOnly }] : [];
     });
-    const query = confirmSemanticQuery({ ...filters, ...(item.meaningOnly ? { terms: "" } : {}) }, item.raw, true);
+    const query = confirmSemanticQuery({ ...filters, ...(item.meaningOnly ? { terms: "" } : {}) }, item.raw, true, 2026);
     const lexical = query.semantic.lexical ? literal(query.semantic.lexical) : [];
     const semantic: FindDocument[] = [];
     const begin = performance.now();

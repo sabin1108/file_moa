@@ -7,17 +7,18 @@ import { queryDateRanges } from "../../../../shared/search-query-dates";
 export const SEMANTIC_MIN_SCORE = 0.85;
 export type SemanticFindQuery = FindQuery & { semantic: NonNullable<FindQuery["semantic"]> };
 
-export function confirmSemanticQuery(filters: FindFilters, meaning: string, confirmed: boolean): SemanticFindQuery {
+export function confirmSemanticQuery(filters: FindFilters, meaning: string, confirmed: boolean, referenceYear: number): SemanticFindQuery {
   if (!confirmed || !meaning.trim() || meaning.length > 300) throw new Error("semantic-conditions-unconfirmed");
 
-  const hard = confirmFindQuery(filters, true);
+  const hard = confirmFindQuery(filters, true, referenceYear);
   const original = parseDocumentQueryPlan(filters.originalRequest ?? "");
   const protectedClauses = original.clauses.filter(clause => clause.explicit || ["phrase", "exclude", "format", "folder"].includes(clause.role));
 
   if (protectedClauses.some(clause => !hard.plan?.clauses.some(current => current.role === clause.role && current.value === clause.value))) throw new Error("semantic-protected-condition");
 
   if (queryDateRanges(filters.originalRequest ?? "").length) {
-    const inferred = inferFindRequest(filters.originalRequest!);
+    const inferred = inferFindRequest(filters.originalRequest!, referenceYear);
+    if (inferred.year && (!hard.from || !hard.to)) throw new Error("semantic-protected-period");
     if ((["year", "month", "basis", "window", "endMonth"] as const).some(key => inferred[key] && inferred[key] !== filters[key])) throw new Error("semantic-protected-period");
   }
 
@@ -26,7 +27,7 @@ export function confirmSemanticQuery(filters: FindFilters, meaning: string, conf
 
   if (!description.issues.length) {
     const terms = queryPlanInput(description);
-    try { lexical = confirmFindQuery({ ...filters, terms: `${filters.terms} ${terms.terms} ${terms.preferred}`.trim() }); }
+    try { lexical = confirmFindQuery({ ...filters, terms: `${filters.terms} ${terms.terms} ${terms.preferred}`.trim() }, false, referenceYear); }
     catch { /* A long description can still use semantic retrieval without a literal companion. */ }
   }
 

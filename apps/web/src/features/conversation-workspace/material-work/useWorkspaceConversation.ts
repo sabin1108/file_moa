@@ -130,7 +130,7 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
       const answer = organization.issue ?? (organization.result
         ? "정리 제안을 확인해 주세요. 원본 변경은 계획 검토 뒤 별도로 실행합니다."
         : organization.phase === "scope"
-          ? "어디에서 자료를 찾을까요? 범위를 확인해 주세요."
+          ? "정리할 자료의 범위를 확인해 주세요."
           : organization.snapshot
             ? `자료 ${organization.snapshot.documents.length}개를 준비했어요. 범위와 발췌·전송 동의를 확인해 주세요.`
             : "자료의 범위와 정리 조건을 확인해 주세요.");

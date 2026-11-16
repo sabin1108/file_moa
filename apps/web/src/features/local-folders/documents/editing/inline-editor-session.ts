@@ -19,7 +19,9 @@ export class InlineEditorSession {
   private proof: Proof | null = null;
   private sequence = 0;
   constructor(private readonly context: () => ManagedContext, private readonly busy: () => boolean,
-    private readonly setBusy: (value: boolean) => void) { }
+    private readonly setBusy: (value: boolean) => void,
+    private readonly isUserActionActive: () => boolean,
+    private readonly withWriteLock: (work: () => Promise<void>) => Promise<void>) { }
   invalidate() {
     this.sequence++;
     this.proof = null;
@@ -104,7 +106,7 @@ export class InlineEditorSession {
 
     proof.context.check();
 
-    if (manual && typeof navigator !== "undefined" && navigator.userActivation && !navigator.userActivation.isActive) throw Error("managed-user-action-required");
+    if (manual && !this.isUserActionActive()) throw Error("managed-user-action-required");
 
     const permissions = manual
       ? [proof.context.root.requestPermission({ mode: "readwrite" }), proof.context.vault.requestPermission({ mode: "readwrite" })]
@@ -139,7 +141,7 @@ export class InlineEditorSession {
         }, hasher.hash, proof.baseline);
         const result = await executeManagedOperation(prepared, signal, hasher.hash, value => {
           if (value.status !== "not-run") attempted = true;
-        }, undefined, permissions);
+        }, this.withWriteLock, permissions);
 
         check();
 
@@ -151,8 +153,13 @@ export class InlineEditorSession {
         const handle = proof.baseline.node.handle as FileSystemFileHandle;
         const current = await handle.getFile();
         const digest = await hasher.hash(current);
+        const expected = prepared.edited!;
+        const expectedDigest = await hasher.hash(expected);
 
         check();
+
+        if (current.size !== expected.size || digest !== expectedDigest) throw Error("managed-changed");
+
         proof.baseline = {
           ...proof.baseline,
           text,
@@ -167,7 +174,7 @@ export class InlineEditorSession {
           }
         };
       } else {
-        await navigator.locks.request("moa-folder-creation", async () => {
+        await this.withWriteLock(async () => {
           const archive = await openManagedArchive({ ...proof.context, check }, proof.backupId!, hasher.hash);
           const source = proof.baseline.node;
           const original = archive.manifest.nodes.find(node => node.payload === proof.payload);

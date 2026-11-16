@@ -38,7 +38,7 @@ try {
   const memoryBytes = process.memoryUsage().heapUsed - beforeMemory;
   const rows = [];
   for (const item of fixture.queries) {
-    const queryFor = module => module.confirmFindQuery(module.inferFindRequest(item.raw, 2026));
+    const queryFor = module => module.confirmFindQuery(module.inferFindRequest(item.raw, 2026), false, 2026);
     const retrieve = (module, query) => ranking.rankFindDocuments(docs.flatMap(doc => {
       const finding = module.findTextEvidence(doc.metadataOnly ? "" : doc.text, query, undefined, doc);
       return finding ? [{ name: doc.name, path: doc.path, finding, id: doc.id }] : [];
@@ -104,7 +104,7 @@ try {
       row.semantic = scored.slice(0, 5).map(doc => doc.id);
       row.semanticScores = scored.slice(0, 5);
       // A semantic score never removes the mandatory lexical targets or explicit conditions.
-      const confirmed = current.confirmFindQuery(current.inferFindRequest(row.raw, 2026));
+      const confirmed = current.confirmFindQuery(current.inferFindRequest(row.raw, 2026), false, 2026);
       row.guardedSemantic = row.semantic.filter(id => {
         const doc = docs.find(doc => doc.id === id);
 

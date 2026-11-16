@@ -28,7 +28,7 @@ afterEach(() => {
 describe("copy hash Worker lifetime", () => {
   it("RAG-S04 refuses missing or invented plan relevance in Worker responses", async () => {
     vi.stubGlobal("Worker", TestWorker);
-    const find = confirmFindQuery(inferFindRequest("가온센터 이력서 찾아줘"));
+    const find = confirmFindQuery(inferFindRequest("가온센터 이력서 찾아줘"), false, 2026);
 
     for (const relevance of [undefined, { kind: "all", missing: [], phraseBoost: 7 }, { kind: "related", missing: ["invented"], phraseBoost: 0 }]) {
       const hasher = createCopyHasher();
@@ -60,7 +60,7 @@ describe("copy hash Worker lifetime", () => {
     const filters = inferFindRequest("가온센터 찾아줘");
 
     for (const dated of [false, true]) {
-      const find = confirmFindQuery(dated ? { ...filters, month: "3", year: "2026", basis: "body" } : filters);
+      const find = confirmFindQuery(dated ? { ...filters, month: "3", year: "2026", basis: "body" } : filters, false, 2026);
       const hasher = createCopyHasher();
       const pending = hasher.readText(new File(["abc"], "a.md"), "가온센터", find);
       const rejection = expect(pending).rejects.toThrow("hash-read-failed");

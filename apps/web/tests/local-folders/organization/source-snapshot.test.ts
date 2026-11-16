@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { DOCUMENT_LIMITS } from "@personal-ai/domain";
-import { readSourceSnapshot } from "../../../src/features/local-folders/organization/source-snapshot";
+import { readSourceSnapshot as scanWithRuntime, type SnapshotRuntime, type SnapshotIndex } from "../../../src/features/local-folders/organization/source-snapshot";
 import type { FolderHandle } from "../../../src/features/local-folders/types";
 import { withAbsentVaultMarker } from "../fixtures/absent-vault-marker";
 import { LocalTextIndex, LOCAL_TEXT_INDEX_VERSION } from "../../../src/features/local-folders/search/documents/local-text-index";
@@ -8,9 +8,31 @@ import { LocalTextIndex, LOCAL_TEXT_INDEX_VERSION } from "../../../src/features/
 const readText = vi.hoisted(() => vi.fn());
 const dispose = vi.hoisted(() => vi.fn());
 
-vi.mock("../../../src/features/local-folders/content/copy-hash", () => ({
-  createCopyHasher: () => ({ readText, dispose })
-}));
+const runtime: SnapshotRuntime = {
+  createReader: () => ({ readText, dispose }),
+  createIndex: () => new LocalTextIndex(),
+  now: Date.now,
+  parserVersion: LOCAL_TEXT_INDEX_VERSION,
+};
+type SnapshotArgs = Parameters<typeof scanWithRuntime> extends [unknown, ...infer Rest] ? Rest : never;
+const readSourceSnapshot = (...args: SnapshotArgs) => scanWithRuntime(runtime, ...args);
+
+function fakeRuntime() {
+  const reader = {
+    readText: vi.fn<ReturnType<SnapshotRuntime["createReader"]>["readText"]>(async file => ({ sha256: "a".repeat(64), excerptHash: "b".repeat(64), size: file.size, excerpt: "abc", fullText: "abc" })),
+    dispose: vi.fn(),
+  };
+  const index = {
+    observe: vi.fn<SnapshotIndex["observe"]>(async () => {}),
+    readPath: vi.fn<SnapshotIndex["readPath"]>(async () => undefined),
+    put: vi.fn<SnapshotIndex["put"]>(async () => {}),
+    retain: vi.fn<SnapshotIndex["retain"]>(async () => {}),
+    retainCatalog: vi.fn<SnapshotIndex["retainCatalog"]>(async () => {}),
+    retainSemantic: vi.fn<SnapshotIndex["retainSemantic"]>(async () => {}),
+  };
+  const runtime = { createReader: vi.fn(() => reader), createIndex: vi.fn(() => index), now: vi.fn(() => 100), parserVersion: 2 };
+  return { runtime, reader, index };
+}
 
 // The real listing/path/permission code runs; this fake replaces the disk and Worker only.
 
@@ -55,6 +77,88 @@ function directory(name: string, entries: Record<string, File | FolderHandle>): 
 afterEach(() => { vi.restoreAllMocks(); vi.clearAllMocks(); });
 
 describe("read-only TXT/MD organization snapshot", () => {
+  it.each(["retain", "retainSemantic"] as const)("runtime keeps a complete result after %s fails", async method => {
+    const f = fakeRuntime();
+    f.index[method].mockRejectedValue(new Error("storage"));
+    const root = directory("자료", { "a.md": new File(["abc"], "a.md") });
+    const result = await scanWithRuntime(f.runtime, root, { kind: "all" }, "", () => {}, undefined, undefined, { owner: "a", workspace: "w", connection: "c" });
+    expect(result).toMatchObject({ complete: true, documents: [{ sha256: "a".repeat(64), excerpt: "abc" }] });
+    expect(f.reader.dispose).toHaveBeenCalledTimes(1);
+    expect(f.index.retainSemantic).toHaveBeenCalledTimes(1);
+  });
+  it("runtime creates only the needed resources and disposes after index factory failure", async () => {
+    const f = fakeRuntime();
+    const root = directory("자료", { "note.md": new File(["abc"], "note.md") });
+    await scanWithRuntime(f.runtime, root, { kind: "all" }, "", () => {});
+    expect(f.runtime.createIndex).not.toHaveBeenCalled();
+    expect(f.runtime.createReader).toHaveBeenCalledExactlyOnceWith(undefined);
+    expect(f.reader.dispose).toHaveBeenCalledTimes(1);
+    f.runtime.createIndex.mockImplementation(() => { throw Error("index-factory"); });
+    await expect(scanWithRuntime(f.runtime, root, { kind: "all" }, "", () => {}, undefined, undefined, { owner: "a", workspace: "w", connection: "c" })).rejects.toThrow("index-factory");
+    expect(f.reader.dispose).toHaveBeenCalledTimes(2);
+    f.runtime.createReader.mockImplementation(() => { throw Error("reader-factory"); });
+    await expect(scanWithRuntime(f.runtime, root, { kind: "all" }, "", () => {})).rejects.toThrow("reader-factory");
+    expect(f.reader.dispose).toHaveBeenCalledTimes(2);
+  });
+  it("runtime preserves empty text writes, cache hits and storage error fallback", async () => {
+    const f = fakeRuntime();
+    const root = directory("자료", { "note.md": new File(["abc"], "note.md") });
+    const context = { owner: "a", workspace: "w", connection: "c" };
+    f.reader.readText.mockResolvedValue({ sha256: "a".repeat(64), excerptHash: "b".repeat(64), size: 3, excerpt: "", fullText: "" });
+    f.index.readPath.mockRejectedValue(new Error("cache-read"));
+    const first = await scanWithRuntime(f.runtime, root, { kind: "all" }, "", () => {}, undefined, undefined, context);
+    expect(first.complete).toBe(true);
+    expect(f.index.put).toHaveBeenCalledWith(expect.objectContaining({ parserVersion: 2 }), "", expect.any(Function), undefined);
+    f.index.put.mockClear();
+    f.reader.readText.mockResolvedValue({ sha256: "a".repeat(64), excerptHash: "b".repeat(64), size: 3, excerpt: "", fullText: "", cacheHit: true });
+    expect((await scanWithRuntime(f.runtime, root, { kind: "all" }, "", () => {}, undefined, undefined, context)).documents).toEqual(first.documents);
+    expect(f.index.put).not.toHaveBeenCalled();
+    f.reader.readText.mockResolvedValue({ sha256: "a".repeat(64), excerptHash: "b".repeat(64), size: 3, excerpt: "", fullText: "" });
+    f.index.put.mockRejectedValue(new Error("cache-write"));
+    expect((await scanWithRuntime(f.runtime, root, { kind: "all" }, "", () => {}, undefined, undefined, context)).documents).toEqual(first.documents);
+    expect(f.runtime.createIndex).toHaveBeenCalledTimes(3);
+    expect(f.reader.dispose).toHaveBeenCalledTimes(3);
+  });
+  it("runtime reads fresh slice timestamps and preserves createdAt across partial resumes", async () => {
+    const f = fakeRuntime();
+    const root = directory("자료", { "a.md": new File(["a"], "a.md"), "b.md": new File(["b"], "b.md") });
+    const context = { owner: "a", workspace: "w", connection: "c" };
+    f.runtime.now.mockReturnValueOnce(100).mockReturnValueOnce(100).mockReturnValueOnce(100).mockReturnValueOnce(1201).mockReturnValue(1300);
+    const first = await scanWithRuntime(f.runtime, root, { kind: "all" }, "", () => {}, undefined, undefined, context, { metadataOnly: true, checkpointed: true });
+    expect(first.checkpoint).toMatchObject({ cursor: 1, createdAt: 100, updatedAt: 1300 });
+    expect(f.runtime.now).toHaveBeenCalledTimes(5);
+    f.runtime.now.mockReset().mockReturnValueOnce(2000).mockReturnValueOnce(2000).mockReturnValueOnce(2000).mockReturnValueOnce(3101).mockReturnValue(3200);
+    const second = await scanWithRuntime(f.runtime, root, { kind: "all" }, "", () => {}, undefined, undefined, context, { metadataOnly: true, checkpointed: true, checkpoint: first.checkpoint });
+    expect(second.checkpoint).toMatchObject({ cursor: 2, createdAt: 100, updatedAt: 3200 });
+    expect(f.index.retain).not.toHaveBeenCalled();
+    expect(f.index.retainCatalog).not.toHaveBeenCalled();
+    expect(f.index.retainSemantic).not.toHaveBeenCalled();
+    f.runtime.now.mockReset().mockReturnValue(4000);
+    const last = await scanWithRuntime(f.runtime, root, { kind: "all" }, "", () => {}, undefined, undefined, context, { metadataOnly: true, checkpointed: true, checkpoint: second.checkpoint });
+    expect(last.complete).toBe(true);
+    expect(last.checkpoint).toBeUndefined();
+    for (const retain of [f.index.retain, f.index.retainCatalog, f.index.retainSemantic]) expect(retain).toHaveBeenCalledExactlyOnceWith(context, [["a.md"], ["b.md"]], expect.any(Function));
+  });
+  it("runtime enforces the total time budget without retaining missing paths", async () => {
+    const f = fakeRuntime();
+    f.runtime.now.mockReturnValueOnce(100).mockReturnValue(15101);
+    const root = directory("자료", {});
+    const result = await scanWithRuntime(f.runtime, root, { kind: "all" }, "", () => {}, undefined, undefined, { owner: "a", workspace: "w", connection: "c" });
+    expect(result).toMatchObject({ complete: false, limits: ["scan-limit"], directories: 0 });
+    expect(f.runtime.now).toHaveBeenCalledTimes(2);
+    expect(f.index.retain).not.toHaveBeenCalled();
+    expect(f.index.retainCatalog).not.toHaveBeenCalled();
+    expect(f.index.retainSemantic).not.toHaveBeenCalled();
+    expect(f.reader.dispose).toHaveBeenCalledTimes(1);
+  });
+  it.each(["observe", "retainCatalog"] as const)("runtime surfaces metadata catalog failure in %s and still disposes", async method => {
+    const f = fakeRuntime();
+    f.index[method].mockRejectedValue(new Error("storage"));
+    const root = directory("자료", { "a.md": new File(["a"], "a.md") });
+    await expect(scanWithRuntime(f.runtime, root, { kind: "all" }, "", () => {}, undefined, undefined, { owner: "a", workspace: "w", connection: "c" }, { metadataOnly: true })).rejects.toThrow("index-storage-unavailable");
+    if (method === "observe") expect(f.index.retainCatalog).not.toHaveBeenCalled();
+    expect(f.reader.dispose).toHaveBeenCalledTimes(1);
+  });
   it("persists a metadata batch and resumes from its cursor without reading earlier files again", async () => {
     const files = Object.fromEntries(Array.from({ length: 300 }, (_, index) => [`${index}.md`, new File(["abc"], `${index}.md`)]));
     const root = directory("자료", files);

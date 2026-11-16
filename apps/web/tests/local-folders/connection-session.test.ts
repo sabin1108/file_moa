@@ -4,11 +4,12 @@ import { connectionKey } from "../../src/features/local-folders/connection/conne
 import { LocalTextIndex } from "../../src/features/local-folders/search/documents/local-text-index";
 import type { ConnectionOwner, FolderHandle, HandleRepository, SourceFolderRepository, SourceFolderConnection } from "../../src/features/local-folders/types";
 import * as semanticSource from "../../src/features/local-folders/search/semantic/semantic-source";
+import * as modelAssets from "../../src/features/local-folders/search/semantic/model-assets";
 import type { FindDocument, FindQuery } from "../../src/features/local-folders/search/documents/document-find";
 
 const a = { userId: "a", workspaceId: "work" };
 const b = { userId: "b", workspaceId: "work" };
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 function handle(name = "notes"): FolderHandle {
   const folder = {
@@ -75,13 +76,35 @@ function sourceRepository() {
 }
 
 describe("account-scoped folder connections", () => {
+  it.each([false, true])("checks cancellation after the final model stamp read: %s", async cancel => {
+    vi.stubGlobal("location", { origin: "https://semantic-fixture.invalid" });
+    const session = new FolderConnectionSession(sourceRepository());
+    await session.switchOwner(a);
+    await session.select("source", async () => handle("A"));
+    const abort = new AbortController();
+    const installed = { stamp: "fixture-installed", bytes: 1 };
+    const read = vi.spyOn(modelAssets, "readInstalledModel")
+      .mockResolvedValueOnce(installed)
+      .mockResolvedValueOnce(installed)
+      .mockImplementationOnce(async () => {
+        if (cancel) abort.abort();
+        return installed;
+      });
+    vi.spyOn(LocalTextIndex.prototype, "semanticEpoch").mockResolvedValue({ scope: "s", model: "m" });
+    vi.spyOn(session, "inspectSourceSnapshot").mockResolvedValue({ documents: [], complete: true, excluded: [], limits: [], discoveredFiles: 0, directories: 1, bytes: 0 });
+    vi.spyOn(semanticSource, "prepareSemanticSource").mockResolvedValue({ prepared: 0, scanned: 0, partial: false });
+    const pending = session.prepareSourceSemantic({ kind: "all" }, abort.signal, () => {});
+    if (cancel) await expect(pending).rejects.toMatchObject({ name: "AbortError" });
+    else await expect(pending).resolves.toEqual({ prepared: 0, scanned: 0, partial: false });
+    expect(read).toHaveBeenCalledTimes(3);
+  });
   it("keeps lexical and semantic evidence when the session finds the same current path", async () => {
     const session = new FolderConnectionSession(sourceRepository());
     await session.switchOwner(a);
     await session.select("source", async () => handle("A"));
     const literal: FindDocument = { name: "release.md", path: ["release.md"], contentAvailable: true, finding: { kind: "matched", dates: [], evidence: ["literal"] } };
     vi.spyOn(session, "inspectSourceSnapshot").mockResolvedValue({ documents: [], findings: [literal], complete: true, excluded: [], limits: [], discoveredFiles: 1, directories: 1, bytes: 10 });
-    vi.spyOn(semanticSource, "semanticSourceMatches").mockResolvedValue({ documents: [{ ...literal, finding: { ...literal.finding, evidence: ["semantic"] }, retrieval: { kind: "semantic", score: 0.93, start: 0, end: 10, partial: false } }], notice: "synthetic" });
+    const semantic = vi.spyOn(semanticSource, "semanticSourceMatches").mockResolvedValue({ documents: [{ ...literal, finding: { ...literal.finding, evidence: ["semantic"] }, retrieval: { kind: "semantic", score: 0.93, start: 0, end: 10, partial: false } }], notice: "synthetic" });
     const companion: FindQuery = { terms: ["release"], from: null, to: null, basis: "body" };
     const query: FindQuery = { ...companion, semantic: { meaning: "합성 질문", confirmed: true, lexical: companion } };
     const signal = new AbortController().signal;
@@ -90,6 +113,8 @@ describe("account-scoped folder connections", () => {
     expect(result.documents).toHaveLength(1);
     expect(result.documents[0].finding.evidence).toEqual(["literal", "semantic"]);
     expect(result.documents[0].retrieval?.lexical).toBe(true);
+    expect(semantic.mock.calls[0][0]).toEqual({ createIndex: expect.any(Function) });
+    expect(semantic.mock.calls[0][1]).toMatchObject({ owner: a.userId, workspace: a.workspaceId });
   });
   it("stores multiple source roots, switches active root, and removes only the selected root", async () => {
     // Persistence is exercised separately in the real IndexedDB browser check.
