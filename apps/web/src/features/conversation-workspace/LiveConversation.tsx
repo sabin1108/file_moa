@@ -34,6 +34,7 @@ import { ConversationTaskControls, ConversationTaskIntro, conversationInputPlace
 import { ConversationPanelNavigation } from "./ConversationPanelNavigation";
 import { replayWorkspaceTour } from "../onboarding/workspace-tour";
 import { useWorkspaceTourRecordView } from "../onboarding/workspace-tour-view";
+import { FolderSetupNotice } from "../local-folders/connection/FolderSetupNotice";
 
 export function LiveConversation({ organizeAction, groundedAction, readUsage, queryAction, aiProvider = "gemini" }: {
   organizeAction?: LiveOrganizationAction;
@@ -269,7 +270,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
             </>}
           </div>
           : null}
-      intro={<ConversationTaskIntro mode={workflow.choosingTask ? null : workflow.mode} onChoose={workflow.selectMode} disabled={workflow.blocked} />}
+      intro={<><FolderSetupNotice /><ConversationTaskIntro mode={workflow.choosingTask ? null : workflow.mode} onChoose={workflow.selectMode} disabled={workflow.blocked} /></>}
       scope={workflow.choosingTask ? undefined : <div>
         {(workflow.mode || chat.state.turns.length > 0) && <ConversationTaskControls mode={workflow.mode} disabled={workflow.blocked} onChoose={workflow.selectMode} />}
         <ConversationContextBar

@@ -84,7 +84,7 @@ export class DestinationPickerController {
 
     await this.load([...this.state.result.path, name]);
   };
-  parent = () => this.state.open ? this.load(this.state.result?.path.slice(0, -1) ?? []) : Promise.resolve();
+  parent = () => this.state.open ? this.load(this.state.requestedPath.slice(0, -1)) : Promise.resolve();
   root = () => this.state.open ? this.load([]) : Promise.resolve();
   retry = () => this.state.open ? this.load(this.state.requestedPath) : Promise.resolve();
   selectedPath = (): readonly string[] | null => this.state.open && this.state.phase === "ready" && this.state.result ? [...this.state.result.path] : null;

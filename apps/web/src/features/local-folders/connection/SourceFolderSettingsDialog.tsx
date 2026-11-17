@@ -14,11 +14,17 @@ import styles from "./source-folder-settings-dialog.module.css";
 
 /** 연결 설정의 팝업 수명만 담당한다. focus trap과 배경 inert는 native dialog에 맡긴다. */
 
-export function SourceFolderSettingsDialog({ compact = false }: { compact?: boolean }) {
+export function SourceFolderSettingsDialog({ compact = false, label = "폴더 연결 관리", preparationOnly = false, onOpenChange }: {
+  compact?: boolean;
+  label?: string;
+  preparationOnly?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}) {
   const { state } = useSharedSourceFolderConnection();
   const [open, setOpen] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
   const title = useRef<HTMLHeadingElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
   const titleId = useId();
   const dialogId = useId();
 
@@ -30,10 +36,17 @@ export function SourceFolderSettingsDialog({ compact = false }: { compact?: bool
     if (!dialog.current?.open) dialog.current?.showModal();
 
     setOpen(true);
+    onOpenChange?.(true);
   };
   const close = () => {
     dialog.current?.close();
     setOpen(false);
+    onOpenChange?.(false);
+    requestAnimationFrame(() => {
+      const target = trigger.current?.isConnected ? trigger.current : document.getElementById("message-draft") ?? document.querySelector<HTMLElement>("[data-conversation-title]");
+
+      target?.focus({ preventScroll: true });
+    });
   };
   const notice = state.phase === "disconnect-error"
     ? "연결 해제를 다시 시도해 주세요."
@@ -50,18 +63,19 @@ export function SourceFolderSettingsDialog({ compact = false }: { compact?: bool
       {notice}
     </p>}
     <button
+      ref={trigger}
       type="button"
       className={actionClasses(compact ? "ghost" : "secondary")}
       aria-haspopup="dialog"
-      aria-label="폴더 연결 관리"
+      aria-label={label}
       data-tour="folder-connection"
-      title="폴더 연결 관리"
+      title={label}
       aria-controls={dialogId}
       aria-expanded={open}
       onClick={show}
     >
       <Icon name="settings" />
-      {!compact && "폴더 연결 관리"}
+      {!compact && label}
     </button>
     <dialog
       ref={dialog}
@@ -74,7 +88,10 @@ export function SourceFolderSettingsDialog({ compact = false }: { compact?: bool
       }}
       onClose={() => {
         // close 이벤트는 뒤늦게 전달된다. 그 사이 다시 연 팝업의 내용을 지우지 않는다.
-        if (!dialog.current?.open) setOpen(false);
+        if (!dialog.current?.open) {
+          setOpen(false);
+          onOpenChange?.(false);
+        }
       }}
     >
       {open && <>
@@ -90,7 +107,7 @@ export function SourceFolderSettingsDialog({ compact = false }: { compact?: bool
             <span>닫기</span>
           </button>
         </header>
-        <SourceFolderSettings onConnected={close} />
+        <SourceFolderSettings onConnected={close} preparationOnly={preparationOnly} />
       </>}
     </dialog>
   </div>;

@@ -1,13 +1,13 @@
 import type { TourRecordKind } from "./workspace-tour-view";
 import type { WorkspaceMode } from "../../shared/workspace-navigation";
 
-export type TourStep = { route: string | null; selector: string; title: string; text: string; recordKind?: TourRecordKind };
+export type TourStep = { route: string | null; selector: string; title: string; text: string; recordKind?: TourRecordKind; setup?: boolean };
 
 export const workspaceTourSteps: readonly TourStep[] = [
   { route: null, selector: 'nav[aria-label="주 메뉴"], nav[aria-label="모바일 주 메뉴"], nav[aria-label="모바일 작업 공간"]', title: "폴더, 채팅, 설정을 둘러볼까요?", text: "폴더에서 자료를 보고, 채팅에서 질문하고 정리합니다. 설정에서는 계정과 사용 방식을 바꿀 수 있어요. 실제 화면을 함께 둘러볼게요." },
   { route: null, selector: 'nav[aria-label="주 메뉴"], nav[aria-label="모바일 주 메뉴"], nav[aria-label="모바일 작업 공간"]', title: "AI 답변은 확인하고, 남길 내용은 저장해요", text: "AI도 틀릴 수 있어요. 자료로 질문할 때는 보낼 발췌를 확인하고 동의한 뒤 전송하며, 답변은 출처의 원문과 비교하세요. 정식 사용에서는 저장 위치를 고르고 대화 저장을 켜 질문과 답변을 보관해요. 결과물·위키의 AI 초안과 편집 본문, 이전 버전도 구분해 확인할 수 있어요. 저장 파일은 암호화되지 않아요." },
   { route: null, selector: 'nav[aria-label="주 메뉴"], nav[aria-label="모바일 주 메뉴"], nav[aria-label="모바일 작업 공간"]', title: "파일 변경은 보존본과 복구 경로부터 확인해요", text: "폴더 연결만으로 원본을 바꾸지는 않아요. 정식 사용에서 편집은 첫 저장 전 원본 사본을 남기고, 이동·휴지통·덮어쓰기는 보존본 검증과 직접 실행을 거쳐요. 작업 기록과 보존본에서 복구할 항목을 확인하세요. 기기 고장에 대비한 별도 백업도 필요해요. 데모의 개인 파일 변경·로컬 영구 저장은 연결되지 않아요." },
-  { route: "/files", selector: '[data-tour="folder-connection"]', title: "먼저 자료 폴더를 연결해요", text: "‘폴더 연결 관리’에서 내 컴퓨터의 폴더를 선택합니다. 안내를 보는 동안에는 폴더를 열거나 권한을 요청하지 않아요. 연결한 자료는 이 기기에서 읽습니다." },
+  { route: "/files", selector: '[data-tour="folder-connection"]', setup: true, title: "채팅 전에 파일 작업을 준비해요", text: "자료 폴더를 고른 뒤 복구 보관함을 연결하세요. 위치 선택과 생성은 아래 버튼을 눌러 진행해요. 건너뛰어도 채팅에서 이어서 준비할 수 있어요." },
   { route: "/files", selector: '[data-tour="folder-list"] > div:first-child', title: "자료를 보고, 필요한 파일을 골라요", text: "폴더를 열어 이동하고 파일을 선택해 내용을 확인합니다. 여러 항목을 선택하면 복사·이동·정리 계획을 검토할 수 있어요. 원본 변경은 내용을 확인하고 직접 실행합니다." },
   { route: "/", selector: '[data-tour="task-chat"], select[aria-label="대화 작업"]', title: "일반 대화 · 자료 없이 바로 질문해요", text: "설명, 아이디어, 글 초안이 필요할 때 사용해요. ‘일반 대화’를 고르고 질문을 입력한 뒤 보내세요. 연결한 폴더 내용이 자동으로 전송되지는 않아요. Shift+Enter로 줄을 바꿀 수 있어요." },
   { route: "/", selector: '[data-tour="task-find"], select[aria-label="대화 작업"]', title: "자료 찾기 · 단어와 날짜로 찾아요", text: "‘자료 찾기’를 고르고 찾을 단어나 시기를 입력해요. 폴더가 연결돼 있어야 합니다. 날짜 기준과 범위를 고른 뒤 아래의 ‘검색 시작’을 누르세요. 후보의 일치 근거를 펼쳐 보고 원문을 확인할 수 있어요." },
@@ -29,6 +29,7 @@ export function workspaceStepsFor(mode: WorkspaceMode): readonly TourStep[] {
   if (mode === "live") return workspaceTourSteps;
   return workspaceTourSteps.map(step => ({
     ...step,
+    setup: false,
     text: step.selector.includes("folder-connection")
       ? "정식 사용에서는 ‘폴더 연결 관리’에서 내 컴퓨터의 폴더를 선택합니다. 데모에는 준비된 예시 폴더가 연결돼 있어 바로 살펴볼 수 있어요. 안내가 개인 폴더를 열거나 권한을 요청하지는 않아요."
       : step.text,

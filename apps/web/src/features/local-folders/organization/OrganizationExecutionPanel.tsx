@@ -37,6 +37,7 @@ export function OrganizationExecutionPanel({
   );
   const folderName = connection.state.view?.folderName ?? "내 폴더";
   const running = managed.phase === "running" || ["reading", "checking", "sending"].includes(preparation.phase);
+  const readyForChanges = connection.state.view?.status === "connected" && connection.recoveryView.status === "connected";
   const step = managedWorkflowStep(managed);
   const settingsSummary = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -117,6 +118,7 @@ export function OrganizationExecutionPanel({
                       className={actionClasses("primary")}
                       disabled={
                         running ||
+                        !readyForChanges ||
                         state.stale ||
                         !state.operation
                         ||
@@ -124,7 +126,7 @@ export function OrganizationExecutionPanel({
                       }
                       onClick={controller.review}
                     >
-                      작업 계획 검토
+                      {readyForChanges ? "작업 계획 검토" : "연결 준비 후 계획 검토"}
                     </button>
                   </div>
                   </details>
@@ -194,6 +196,7 @@ export function OrganizationExecutionPanel({
                             className={actionClasses("secondary")}
                             disabled={
                               running ||
+                              !readyForChanges ||
                               state.stale
                               ||
                               outcome?.result.phase === "completed"

@@ -24,7 +24,7 @@ const pendingTitles = {
   disconnect: "연결 정보를 지우고 있어요.",
 };
 
-export function SourceFolderSettings({ onConnected }: { onConnected?: () => void } = {}) {
+export function SourceFolderSettings({ onConnected, preparationOnly = false }: { onConnected?: () => void; preparationOnly?: boolean } = {}) {
   const { state, connect, reconnect, disconnect, reload, recoveryState, recoveryView, sources, activateSource, disconnectSource, readSourceIndexStatus, refreshSourceIndex, clearSourceIndex, indexWatch, semanticModel, prepareSourceSemantic, readSourceSemanticStatus } = useSharedSourceFolderConnection();
   const router = useRouter();
   const pathname = usePathname();
@@ -50,7 +50,7 @@ export function SourceFolderSettings({ onConnected }: { onConnected?: () => void
   const finish = () => {
     onConnected?.();
 
-    if (pathname !== "/files") router.push("/files");
+    if (!preparationOnly && pathname !== "/files") router.push("/files");
   };
   const region = useRef<HTMLDivElement>(null);
   const previousPending = useRef(state.pending);
@@ -91,9 +91,9 @@ export function SourceFolderSettings({ onConnected }: { onConnected?: () => void
 
   return <div className={styles.settings} ref={region} tabIndex={-1} aria-label="자료 폴더 연결 설정">
     <p className={styles.scope}>
-      로그인한 계정의 연결 · 이 브라우저에만 저장합니다.
+      {preparationOnly ? "연결 정보는 이 브라우저에만 저장합니다." : "로그인한 계정의 연결 · 이 브라우저에만 저장합니다."}
     </p>
-    {state.view?.status !== "connected" && <FolderPermissionGuide />}
+    {!preparationOnly && state.view?.status !== "connected" && <FolderPermissionGuide />}
     {state.phase === "loading" && (
       <StatusNotice state="pending" title="저장된 연결 정보를 확인하고 있어요." />
     )}
@@ -136,11 +136,14 @@ export function SourceFolderSettings({ onConnected }: { onConnected?: () => void
         >연결 해제</button>
       </div>)}
     </div>}
-    <OcrControl disabled={!!state.pending} />
-    {state.view?.status === "connected" && <SearchIndexSettings key={sources.find(source => source.active)?.connectionId ?? "active"} readStatus={readSourceIndexStatus} refresh={refreshSourceIndex} clear={clearSourceIndex} watch={indexWatch} />}
-    <SemanticModelPanel key={`semantic:${sources.find(source => source.active)?.connectionId ?? "none"}`} tools={{ model: semanticModel, prepare: prepareSourceSemantic, readStatus: readSourceSemanticStatus }} scope={{ kind: "all" }} connected={state.view?.status === "connected"} scopeName={state.view?.folderName ?? "연결한 자료 폴더"} />
-    <RecoveryVaultSettings titleRef={vaultTitle} />
-    {state.view?.status === "connected" && <div className={styles.finish}>
+    {!preparationOnly && <>
+      <OcrControl disabled={!!state.pending} />
+      {state.view?.status === "connected" && <SearchIndexSettings key={sources.find(source => source.active)?.connectionId ?? "active"} readStatus={readSourceIndexStatus} refresh={refreshSourceIndex} clear={clearSourceIndex} watch={indexWatch} />}
+      <SemanticModelPanel key={`semantic:${sources.find(source => source.active)?.connectionId ?? "none"}`} tools={{ model: semanticModel, prepare: prepareSourceSemantic, readStatus: readSourceSemanticStatus }} scope={{ kind: "all" }} connected={state.view?.status === "connected"} scopeName={state.view?.folderName ?? "연결한 자료 폴더"} />
+    </>}
+    {(!preparationOnly || state.view?.status === "connected") && <RecoveryVaultSettings titleRef={vaultTitle} />}
+    {preparationOnly && recoveryView.status !== "connected" && <p className={styles.scope}>보관함 연결은 나중에 할 수 있어요. 파일 변경 계획을 검사하고 실행하기 전에 연결이 필요합니다. 일반 대화는 바로 시작할 수 있어요.</p>}
+    {state.view?.status === "connected" && (!preparationOnly || onConnected) && <div className={styles.finish}>
       <button
         type="button"
         className={actionClasses(recoveryView.status === "connected" ? "primary" : "secondary")}

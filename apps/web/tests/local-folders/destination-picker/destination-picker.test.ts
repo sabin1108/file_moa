@@ -28,6 +28,21 @@ async function setup() {
 }
 
 describe("plan destination folder picker", () => {
+  it("recovers from a missing proposed folder to its actual parent, even with a previous listing", async () => {
+    for (const previous of [false, true]) {
+      const { picker, read } = await setup();
+
+      if (previous) await picker.show(["다른 위치"]);
+      read.mockRejectedValueOnce(new DOMException("missing", "NotFoundError"));
+      await picker.show(["자료", "영어"]);
+      expect(picker.selectedPath()).toBeNull();
+      await picker.parent();
+      expect(picker.selectedPath()).toEqual(["자료"]);
+      expect(read.mock.calls.at(-1)?.[0]).toEqual(["자료"]);
+      await picker.root();
+      expect(picker.selectedPath()).toEqual([]);
+    }
+  });
   it("NAV-019 keeps the picker and last listing open during direct/ancestor navigation, including failure", async () => {
     const { plan, picker, read } = await setup();
 

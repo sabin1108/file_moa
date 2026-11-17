@@ -42,3 +42,4 @@
 @media (min-width: 760px) { .contents:has(.files) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (prefers-reduced-motion: reduce) { .choose { transition: none; } .contents { animation: none; } }
 .pathConfirmation { grid-column: 1 / -1; padding: 12px 0; border-top: 1px solid var(--border); overflow-wrap: anywhere; }
+.recoveryActions { display: flex; flex-wrap: wrap; gap: 8px; }

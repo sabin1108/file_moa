@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useRef, type ReactNode, type RefObject } from "react";
 import { actionClasses } from "../../components/ui/action-classes";
 import { useTourCardPosition, useTourSpotlight } from "./useTourSpotlight";
 import type { TourStep } from "./workspace-tour-steps";
 import ui from "../../styles/workspace-ui.module.css";
 import styles from "./workspace-tour.module.css";
 
-export function WorkspaceTourOverlay({ dialog, current, step, total, ready, onClose, onMove, contextNote }: {
+export function WorkspaceTourOverlay({ dialog, current, step, total, ready, onClose, onMove, contextNote, children }: {
   dialog: RefObject<HTMLDialogElement | null>;
   current: TourStep;
   step: number;
@@ -16,6 +16,7 @@ export function WorkspaceTourOverlay({ dialog, current, step, total, ready, onCl
   onClose: () => void;
   onMove: (next: number) => void;
   contextNote?: string;
+  children?: ReactNode;
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   const explanation = useRef<HTMLElement>(null);
@@ -48,6 +49,7 @@ export function WorkspaceTourOverlay({ dialog, current, step, total, ready, onCl
         <h2 id="workspace-tour-title" ref={heading} tabIndex={-1}>{current.title}</h2>
         <p>{current.text}</p>
         {contextNote && <p>{contextNote}</p>}
+        {ready && children}
         {!ready && <p role="status">화면을 불러오고 있어요.</p>}
       </div>
       <div className={styles.actions}>

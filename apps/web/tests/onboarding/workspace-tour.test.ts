@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { tourRouteMatches, workspaceTourSteps } from "../../src/features/onboarding/workspace-tour-steps";
+import { tourRouteMatches, workspaceTourSteps, workspaceStepsFor } from "../../src/features/onboarding/workspace-tour-steps";
 
 it("covers folders, conversation, settings and quick controls using real workspace routes", () => {
   const routes = new Set(workspaceTourSteps.map(step => step.route));
@@ -33,4 +33,14 @@ it("explains each conversation task and each record kind separately", () => {
   for (const kind of ["conversation", "artifact", "wiki", "memory", "profile"]) {
     expect(workspaceTourSteps.some(step => step.selector.includes(`record-${kind}`))).toBe(true);
   }
+});
+
+it("provides live folder preparation before chat and keeps native setup out of the demo", () => {
+  const setupIndex = workspaceTourSteps.findIndex(step => step.setup);
+  const chatIndex = workspaceTourSteps.findIndex(step => step.selector.includes("task-chat"));
+  expect(setupIndex).toBeGreaterThan(-1);
+  expect(setupIndex).toBeLessThan(chatIndex);
+  expect(workspaceTourSteps[setupIndex].text).toContain("복구 보관함");
+  expect(workspaceTourSteps[setupIndex].text).toContain("건너뛰어도");
+  expect(workspaceStepsFor("sample").every(step => !step.setup)).toBe(true);
 });

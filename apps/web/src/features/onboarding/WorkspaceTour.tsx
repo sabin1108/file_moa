@@ -8,6 +8,7 @@ import { tourRouteMatches, workspaceStepsFor } from "./workspace-tour-steps";
 import type { WorkspaceMode } from "../../shared/workspace-navigation";
 import { WorkspaceTourRecordView } from "./workspace-tour-view";
 import { WorkspaceTourOverlay } from "./WorkspaceTourOverlay";
+import { SourceFolderSettings } from "../local-folders/connection/SourceFolderSettings";
 
 export function WorkspaceTour({ claim, children, mode = "live" }: { claim: () => Promise<boolean>; children?: ReactNode; mode?: WorkspaceMode }) {
   const steps = workspaceStepsFor(mode);
@@ -99,6 +100,8 @@ export function WorkspaceTour({ claim, children, mode = "live" }: { claim: () =>
   return <WorkspaceTourRecordView.Provider value={open && !paused && ready ? current.recordKind ?? null : null}>
     {children}
     {open && !paused && <WorkspaceTourOverlay dialog={dialog} current={current} step={step} total={steps.length} ready={ready} onClose={close} onMove={move}
-      contextNote={mode === "sample" ? "데모는 준비된 예시 폴더를 사용합니다. 개인 폴더 연결과 영구 저장 대신 이 탭의 자료로 사용 흐름을 확인해요." : undefined} />}
+      contextNote={mode === "sample" ? "데모는 준비된 예시 폴더를 사용합니다. 개인 폴더 연결과 영구 저장 대신 이 탭의 자료로 사용 흐름을 확인해요." : undefined}>
+      {mode === "live" && current.setup && <SourceFolderSettings preparationOnly onConnected={() => move(step + 1)} />}
+    </WorkspaceTourOverlay>}
   </WorkspaceTourRecordView.Provider>;
 }

@@ -55,7 +55,7 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
   const pending = state.phase === "loading";
   const folders = state.result?.entries.filter(entry => entry.kind === "directory") ?? [];
   const files = showFiles ? state.result?.entries.filter(entry => entry.kind === "file") ?? [] : [];
-  const path = state.result?.path ?? state.requestedPath;
+  const path = state.requestedPath;
   const currentName = path.at(-1) ?? folderName;
 
   return (
@@ -124,7 +124,7 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
           ))}
         </p>
       </div>
-      {state.result && path.length > 0
+      {path.length > 0
         && (
           <FolderUpButton
             parentName={path.at(-2) ?? folderName}
@@ -132,7 +132,7 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
             onClick={() => void controller.parent()}
           />
         )}
-      <div className={styles.chooseRow}>
+      {state.phase === "ready" && <div className={styles.chooseRow}>
         <p>
           <Icon name="folder" size={22} />
           <span>
@@ -152,8 +152,8 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
           이 폴더 선택
           <Icon name="chevron" />
         </button>
-      </div>
-      {allowCreation
+      </div>}
+      {allowCreation && state.phase === "ready"
         && (
           <section className={styles.creationSection} aria-label="현재 위치에 새 항목 만들기">
             <NewEntryForm
@@ -175,15 +175,19 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
                   ? `${purpose} 폴더를 찾지 못했어요.`
                   : `${purpose} 폴더를 읽지 못했어요.`
               }
-              detail={`요청 위치: ${[folderName, ...state.requestedPath].join(" / ")}. 다시 시도하거나 연결 폴더부터 선택해 주세요.`}
+              detail={`요청 위치: ${[folderName, ...state.requestedPath].join(" / ")}. ${state.issue === "missing" ? `상위 폴더로 돌아가 다른 폴더를 선택하세요.${allowCreation ? " 새 폴더가 필요하면 상위 폴더에서 ‘새로 만들기’를 누르세요." : ""}` : "접근 권한과 연결 상태를 확인하고 다시 시도해 주세요."}`}
               action={
+                <div className={styles.recoveryActions}>
+                {path.length > 0 && <button type="button" className={actionClasses("secondary")} onClick={() => void controller.parent()}>상위 폴더에서 선택</button>}
+                <button type="button" className={actionClasses("secondary")} onClick={() => void controller.root()}>연결 폴더로 이동</button>
                 <button
                   type="button"
                   className={actionClasses("secondary")}
                   onClick={() => void controller.retry()}
                 >
-                  목적지 다시 시도
+                  {purpose} 다시 시도
                 </button>
+                </div>
               }
             />
           )}

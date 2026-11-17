@@ -10,6 +10,7 @@ import type { LiveOrganizationAction } from "../../../shared/live-organization";
 import type { AiProvider } from "../../../shared/ai-provider";
 import { actionClasses } from "../../../components/ui/action-classes";
 import type { SearchQueryAction } from "../../../shared/search-query";
+import { FolderSetupNotice } from "../../local-folders/connection/FolderSetupNotice";
 
 function FindWorkPanel({ onPrepare, onQuestion, canStart, queryAction }: {
   onPrepare: () => void;
@@ -95,7 +96,7 @@ export function MaterialWorkPanel({ kind, onPrepare, onQuestion, canStart, organ
 }) {
   const local = useSharedSourceFolderConnection();
 
-  if (local.state.view?.status !== "connected") return <SourceConnectionControl />;
+  if (local.state.view?.status !== "connected") return kind === "organize" ? <FolderSetupNotice /> : <SourceConnectionControl />;
 
   if (waitingForSource) return <button
     type="button"

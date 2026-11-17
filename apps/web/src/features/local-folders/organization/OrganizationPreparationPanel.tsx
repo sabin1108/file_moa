@@ -16,6 +16,7 @@ import { SelectionWorkspaceDialog } from "../destination-picker/SelectionWorkspa
 import type { AiProvider } from "../../../shared/ai-provider";
 import { hasUnansweredReview } from "../../../shared/live-organization-review";
 import { OrganizationConversationView } from "./OrganizationConversationView";
+import { FolderSetupNotice } from "../connection/FolderSetupNotice";
 
 export function OrganizationPreparationPanel({
   organizeAction,
@@ -96,6 +97,7 @@ export function OrganizationPreparationPanel({
 
   return (
     <div className={styles.preparation} data-local-preparation>
+      <FolderSetupNotice />
       <header>
         <h2 ref={heading} tabIndex={-1} className="sr-only">{questioning ? "확인이 필요한 자료 지정" : planning ? "변경 계획 확인" : "정리 내용 확인"}</h2>
         <Link href="/files">내 파일 열기</Link>
