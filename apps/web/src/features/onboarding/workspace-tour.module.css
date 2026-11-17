@@ -1,5 +1,7 @@
 .tour { position: fixed; inset: 0; width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: var(--text); overflow: hidden; }
 .tour::backdrop { background: transparent; }
+/* 공용 테마의 배경색이 늦게 로드되어도 실제 작업 화면을 가리지 않는다. */
+.tour[open] { background: transparent; }
 .shade { position: fixed; inset: 0; background: #12251f9c; pointer-events: none; }
 .spotlight { position: fixed; border-radius: 8px; box-shadow: 0 0 0 9999px #12251f9c; outline: 2px solid #d9ece3; pointer-events: none; transition: top 180ms ease-out, left 180ms ease-out, width 180ms ease-out, height 180ms ease-out; }
 .spotlight[data-pending="true"] { background: #12251f9c; outline-color: transparent; }
