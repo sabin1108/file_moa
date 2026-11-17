@@ -300,7 +300,7 @@ describe("authenticated local excerpt boundary", () => {
     expect(await organizeLive(input(), "http://127.0.0.1:3034")).toEqual({
       ok: false,
       code: "unavailable",
-      reason: "invalid-response"
+      reason: "invalid-evidence"
     });
     generate.mockRejectedValueOnce(new DOMException("sensitive body", "TimeoutError"));
     expect(await organizeLive(input(), "http://127.0.0.1:3034")).toEqual({

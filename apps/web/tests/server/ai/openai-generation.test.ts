@@ -42,6 +42,13 @@ afterEach(() => {
 });
 
 describe("OpenAI provider boundary", () => {
+  it("distinguishes invalid JSON from a grounded-plan validation failure without retrying", async () => {
+    fetchMock.mockReset().mockResolvedValueOnce(Response.json({ input_tokens: 100 })).mockResolvedValueOnce(completed({
+      output: [{ type: "message", status: "completed", content: [{ type: "output_text", text: "읽을 수 없는 합성 응답" }] }]
+    }));
+    await expect(generateOpenAiJson(request, AbortSignal.timeout(1000))).rejects.toMatchObject({ code: "unavailable", reason: "invalid-json" });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
   it("distinguishes incomplete token-limited output without retrying or parsing it", async () => {
     fetchMock.mockReset().mockResolvedValueOnce(Response.json({ input_tokens: 100 })).mockResolvedValueOnce(Response.json({ status: "incomplete", incomplete_details: { reason: "max_output_tokens" }, output: [] }));
     await expect(generateOpenAiJson(request, AbortSignal.timeout(1000))).rejects.toMatchObject({ code: "unavailable", reason: "output-limit" });

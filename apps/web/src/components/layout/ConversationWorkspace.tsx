@@ -100,7 +100,6 @@ export function ConversationWorkspace({
   const hasInteraction = interaction != null;
   const latestTextLength = messages.at(-1)?.text.length;
   const focusIndex = focusMessageId ? messages.findIndex(message => message.id === focusMessageId) : -1;
-  const recentStart = focusIndex >= 0 ? Math.max(0, focusIndex - 1) : 0;
 
   useEffect(() => {
     if (!scrollMemoryRef || !thread.current) return;
@@ -115,7 +114,7 @@ export function ConversationWorkspace({
     if (!current) return;
     const top = current.getBoundingClientRect().top - thread.current.getBoundingClientRect().top + thread.current.scrollTop - 16;
     thread.current.scrollTo({ top, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
-  }, [focusMessageId, latestTextLength]);
+  }, [focusMessageId]);
 
   useEffect(() => {
     if (hasInteraction || !messages.length) return;
@@ -140,14 +139,15 @@ export function ConversationWorkspace({
     onSend();
   };
   const renderMessage = (message: ConversationMessage) => <article key={message.id}
+    data-message-author={message.author}
     data-current-reply={message.id === focusMessageId || undefined}
     className={message.author === "user" ? styles.userMessage : styles.assistantMessage}
     aria-label={message.author === "user" ? "나의 메시지" : "모아의 답변"}>
-    {message.author === "assistant" && <div className={styles.identity}><MoaMark size={22} />모아
+    <div className={styles.identity}>{message.author === "assistant" ? <><MoaMark size={22} />모아</> : "나"}
       {message.id === focusMessageId && <span className={styles.replyStatus} role="status" data-reply-pending={pending}>
         {pending && <MoaLoader size={24} />}{pending ? pendingLabel : replyLabel}
       </span>}
-    </div>}
+    </div>
     <p>{message.text}</p>
     {message.status && <small>{message.status}</small>}
     {messageActions?.(message)}
@@ -221,8 +221,7 @@ export function ConversationWorkspace({
           }}
         >
           <div className={styles.threadInner}>
-            {recentStart > 0 && <details className={styles.history}><summary>이전 메시지 {recentStart}개</summary>{messages.slice(0, recentStart).map(renderMessage)}</details>}
-            {messages.length ? messages.slice(recentStart).map(renderMessage) : intro}
+            {messages.length ? messages.map(renderMessage) : intro}
             {pending && <p role="status">
               {pendingLabel}
             </p>}

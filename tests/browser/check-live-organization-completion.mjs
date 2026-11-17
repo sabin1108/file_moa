@@ -345,7 +345,7 @@ try {
   await until(() => document.querySelector('#message-draft').placeholder.includes('정리 폴더로 또는 나중에'));
   await reply('정리 폴더로');
   await reply('참고는 참고');
-  check('chat conditions preserve actual folders and keep earlier history collapsed', await page.eval(() => document.body.textContent.includes('검증 자료 A / 정리') && [...document.querySelectorAll('details')].some(node => node.querySelector(':scope > summary')?.textContent.includes('이전 메시지') && !node.open) && liveTransferProbe.calls.length === 0));
+  check('chat conditions preserve actual folders and show earlier messages in the thread', await page.eval(() => document.body.textContent.includes('검증 자료 A / 정리') && document.querySelectorAll('[data-message-author]').length >= 8 && ![...document.querySelectorAll('details')].some(node => node.querySelector(':scope > summary')?.textContent.includes('이전 메시지')) && liveTransferProbe.calls.length === 0));
   await reply('이대로 자료 확인해줘');
   await until(() => document.querySelector("[data-local-snapshot]"));
   await click('[data-organization-select-documents]');

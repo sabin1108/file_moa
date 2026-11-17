@@ -90,6 +90,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
   const chatNotice = last && (!last.kind || last.kind === "chat") ? last : null;
   const savedEvidence = new Map<string, GroundedEvidence>(chat.state.turns.flatMap(turn => turn.evidence ? [[`${turn.id}:answer`, turn.evidence] as const] : []));
   const savedModels = new Map(chat.state.turns.map(turn => [`${turn.id}:answer`, turn.model ?? null]));
+  const materialMessages = new Set(chat.state.turns.filter(turn => turn.kind === "organize" || turn.kind === "find").map(turn => `${turn.id}:answer`));
   const messages = chat.state.turns.flatMap(turn => {
     const messages: ConversationMessage[] = [{ id: `${turn.id}:question`, author: "user", text: turn.question }];
     const answer = turn.answer.slice(0, turn.visibleLength);
@@ -202,7 +203,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
               onReply={text => { void workflow.submit(undefined, text); }}
             />
         )
-        : message.author === "assistant"
+        : message.author === "assistant" && !materialMessages.has(message.id)
           ? <div className={options.messageActions}>
             {savedEvidence.has(message.id) && <SavedGroundedAnswer
               evidence={savedEvidence.get(message.id)!}

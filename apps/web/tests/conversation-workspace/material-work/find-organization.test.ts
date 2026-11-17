@@ -61,12 +61,18 @@ describe("FIND-007: selected results use existing fresh preparation", () => {
     expect(prepareFoundDocuments(actions, true)).toBe(false);
     expect(actions.read).not.toHaveBeenCalled();
   });
-  it("reads only selected paths again and never grants transfer consent", async () => {
+  it("asks conditions before rereading only selected paths and never grants transfer consent", async () => {
     const actions = await setup();
 
     actions.organization.update({ basis: "old", reference: ["old"], destination: ["old"] });
     actions.finding.toggle(path);
     expect(prepareFoundDocuments(actions, true)).toBe(true);
+    await vi.waitFor(() => expect(actions.organization.getSnapshot().conversationStep).toBe("basis"));
+    expect(actions.read).not.toHaveBeenCalled();
+    expect(actions.organization.getSnapshot()).toMatchObject({ basis: "", reference: null, destination: null });
+    await actions.organization.replyToConversation("주제별로");
+    await actions.organization.replyToConversation("나중에 정할게");
+    await actions.organization.replyToConversation("자료 확인 실행");
     await vi.waitFor(() => expect(actions.organization.getSnapshot().phase).toBe("ready"));
     expect(actions.read).toHaveBeenCalledWith(
       { kind: "selected", entries: [{ kind: "file", path }] },
@@ -76,7 +82,7 @@ describe("FIND-007: selected results use existing fresh preparation", () => {
     expect(actions.finding.getSnapshot()).toMatchObject({ phase: "idle", selectedPaths: [] });
     expect(actions.organization.getSnapshot()).toMatchObject({
       request: "회의 자료 정리",
-      basis: "",
+      basis: "본문 내용을 보고 주제별로 정리",
       reference: null,
       destination: null,
       consentKey: null,

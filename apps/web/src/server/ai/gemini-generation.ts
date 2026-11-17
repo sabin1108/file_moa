@@ -67,7 +67,7 @@ export async function generateGeminiJson(request: AiJsonRequest, signal: AbortSi
 
   let value: unknown;
   try { value = JSON.parse(text); }
-  catch { throw new SampleAiError("unavailable", "invalid-response"); }
+  catch { throw new SampleAiError("unavailable", "invalid-json"); }
   return {
     value,
     model: SAMPLE_GEMINI_MODEL,

@@ -6,6 +6,17 @@ import type { AiProvider } from "../../shared/ai-provider";
 import { generateOrganization } from "./organization-generation";
 import { SampleAiError } from "../ai/ai-provider";
 import type { SampleAiUsage } from "../../shared/sample-ai";
+import type { AiFailureReason } from "../../shared/ai-provider";
+import { ZodError } from "zod";
+
+function validationReason(error: unknown): AiFailureReason {
+  if (error instanceof ZodError) return error.issues.some(issue => issue.path.includes("evidence")) ? "invalid-evidence" : "invalid-plan";
+  const message = error instanceof Error ? error.message : "";
+  if (message === "ungrounded-organization-evidence") return "invalid-evidence";
+  if (["unconfirmed-organization-date", "mismatched-organization-date-folder", "ignored-review-date"].includes(message)) return "invalid-date";
+  if (/review/u.test(message)) return "invalid-review";
+  return "invalid-plan";
+}
 
 /** 동의한 목록을 계획 분할한다. 실패한 묶음의 자동 재시도나 부분 계획 공개는 하지 않는다. */
 export async function generateLiveOrganizationBatches(request: OrganizationRequest, answers: readonly ReviewAnswer[], signal: AbortSignal, provider: AiProvider, assertSession: () => Promise<void>, onUsage: (model: string, usage: SampleAiUsage) => void) {
@@ -31,7 +42,7 @@ export async function generateLiveOrganizationBatches(request: OrganizationReque
       const result = await generateOrganization(batch, signal, provider, LIVE_ORGANIZATION_LIMITS);
       if (result.usage) onUsage(result.model, result.usage);
       try { return { ...result, ...parseLiveOrganizationResponse(result.value, batch, decisions) }; }
-      catch { throw new SampleAiError("unavailable", "invalid-response"); }
+      catch (error) { throw new SampleAiError("unavailable", validationReason(error)); }
     }));
     const failed = group.find(result => result.status === "rejected");
     if (failed?.status === "rejected") throw failed.reason;

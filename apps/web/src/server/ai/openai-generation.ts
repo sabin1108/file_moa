@@ -81,7 +81,7 @@ export async function generateOpenAiJson(
 
   let value: unknown;
   try { value = JSON.parse(texts.join("")); }
-  catch { throw new SampleAiError("unavailable", "invalid-response"); }
+  catch { throw new SampleAiError("unavailable", "invalid-json"); }
   return {
     value,
     model: response.model,

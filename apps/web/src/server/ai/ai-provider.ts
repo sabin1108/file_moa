@@ -86,7 +86,7 @@ export async function readProviderJson(response: Response, maximumBytes = 65_536
 
     return JSON.parse(Buffer.concat(chunks).toString("utf8")) as unknown;
   } catch (error) {
-    if (error instanceof SyntaxError) throw new SampleAiError("unavailable", "invalid-response");
+    if (error instanceof SyntaxError) throw new SampleAiError("unavailable", "invalid-json");
     throw error;
   } finally {
     await reader.cancel().catch(() => undefined);

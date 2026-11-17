@@ -52,13 +52,19 @@
   white-space: normal;
 }
 .userMessage {
-  margin: 0 0 28px 40px;
-  padding: 12px 18px;
+  max-width: 720px;
+  margin: 0 0 24px 40px;
+  padding: 16px 20px;
   background: var(--active);
-  border-radius: 18px 18px 4px 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
 }
 .assistantMessage {
   margin-bottom: 32px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
 }
 .identity {
   display: flex;
@@ -72,10 +78,7 @@
 .assistantMessage[data-current-reply="true"] > p { animation: replyArrival 240ms ease-out; }
 @keyframes replyArrival { from { opacity: .55; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .assistantMessage[data-current-reply="true"] > p { animation: none; } }
-.history { margin-bottom: 20px; }
-.history > summary, .taskSettings > summary { min-height: 44px; align-content: center; cursor: pointer; font-size: 13px; color: var(--muted); }
-.history article { margin-top: 16px; }
-.history article > p { font-size: 16px; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
+.taskSettings > summary { min-height: 44px; align-content: center; cursor: pointer; font-size: 13px; color: var(--muted); }
 .workspace[data-focused-task="true"] [data-tour="context"] { margin-bottom: 0; }
 .workspace[data-focused-task="true"] [data-tour="composer"] textarea { min-height: 56px; }
 .workspace[data-focused-task="true"] .threadInner { padding-top: 20px; }
@@ -120,6 +123,8 @@
   }
 }
 @media (max-width: 800px) {
+  .userMessage { margin-left: 20px; padding: 14px 16px; }
+  .assistantMessage { padding: 16px; }
   .workspace {
     height: calc(100dvh - 116px);
   }

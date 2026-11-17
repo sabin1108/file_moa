@@ -17,6 +17,30 @@ const response = (): OrganizationResponse => ({
 });
 
 describe("content-grounded organization", () => {
+  it("keeps importance-only plans in 상/중/하 with literal evidence and no date grouping", () => {
+    const importance = { ...request, instruction: "중요도에 따라 상 중 하로 나뉘어서 분류해줘" };
+    for (const level of ["상", "중", "하"]) {
+      const value = response();
+      value.matches[0].destination = [level];
+      value.matches[0].date = null;
+      expect(parseOrganizationResponse(value, importance).matches[0].destination).toEqual([level]);
+      value.matches[0].date = "2026-10-14";
+      expect(() => parseOrganizationResponse(value, importance)).toThrow("invalid-importance-plan");
+    }
+    const wrong = response();
+    wrong.matches[0].date = null;
+    wrong.matches[0].destination = ["주제"];
+    expect(() => parseOrganizationResponse(wrong, importance)).toThrow("invalid-importance-plan");
+    wrong.matches[0].destination = ["상"];
+    wrong.matches[0].evidence = "원문에는 없는 중요도 설명입니다.";
+    expect(() => parseOrganizationResponse(wrong, importance)).toThrow("ungrounded");
+  });
+  it("does not enforce importance grouping when the user explicitly refuses it", () => {
+    const value = response();
+    value.matches[0].date = null;
+    value.matches[0].destination = ["주제"];
+    expect(parseOrganizationResponse(value, { ...request, instruction: "중요도로 상 중 하 분류하지 말아줘" }).matches[0].destination).toEqual(["주제"]);
+  });
   it("matches by body with confirmed Korean content date and new virtual destinations", () => {
     expect(parseOrganizationResponse(response(), request).matches[0].documentId).toBe("one");
     expect(contentDates("2026-02-30 2026.10.14 2026/10/14")).toEqual(["2026-10-14"]);
