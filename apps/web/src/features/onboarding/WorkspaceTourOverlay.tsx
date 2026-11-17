@@ -20,6 +20,7 @@ export function WorkspaceTourOverlay({ dialog, current, step, total, ready, onCl
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   const explanation = useRef<HTMLElement>(null);
+  const composing = useRef(false);
 
   useLayoutEffect(() => {
     const node = dialog.current;
@@ -37,9 +38,25 @@ export function WorkspaceTourOverlay({ dialog, current, step, total, ready, onCl
   const { rect, settled } = useTourSpotlight(current.selector, true, ready);
   const position = useTourCardPosition(explanation, rect, true);
 
-  useEffect(() => { if (ready) heading.current?.focus({ preventScroll: true }); }, [ready, step]);
+  useEffect(() => { composing.current = false; if (ready) heading.current?.focus({ preventScroll: true }); }, [ready, step]);
 
-  return <dialog ref={dialog} className={`${ui.system} ${styles.tour}`} aria-labelledby="workspace-tour-title" aria-busy={!ready || !settled} onCancel={event => { event.preventDefault(); onClose(); }}>
+  const advance = () => {
+    if (!ready) return;
+    if (step === total - 1) onClose();
+    else onMove(step + 1);
+  };
+
+  return <dialog ref={dialog} className={`${ui.system} ${styles.tour}`} aria-labelledby="workspace-tour-title" aria-busy={!ready || !settled} onCancel={event => { event.preventDefault(); onClose(); }}
+    onCompositionStart={() => { composing.current = true; }} onCompositionEnd={() => { composing.current = false; }}
+    onKeyDown={event => {
+      if (event.key !== "Enter" || event.defaultPrevented || !ready || event.repeat || event.shiftKey || event.ctrlKey || event.altKey || event.metaKey
+        || composing.current || event.nativeEvent.isComposing || event.keyCode === 229) return;
+      const target = event.target;
+      if (target instanceof Element && (target.closest('input, textarea, select, button, a, [role="button"], [role="textbox"], [role="combobox"]')
+        || target instanceof HTMLElement && target.isContentEditable)) return;
+      event.preventDefault();
+      advance();
+    }}>
     {rect && position?.highlight !== false
       ? <div className={styles.spotlight} data-pending={!settled} aria-hidden="true" style={rect} />
       : <div className={styles.shade} aria-hidden="true" />}
@@ -55,7 +72,7 @@ export function WorkspaceTourOverlay({ dialog, current, step, total, ready, onCl
       <div className={styles.actions}>
         <button type="button" className={actionClasses("ghost")} onClick={onClose}>건너뛰기</button>
         {step > 0 && <button type="button" className={actionClasses("secondary")} disabled={!ready} onClick={() => onMove(step - 1)}>이전</button>}
-        <button type="button" className={actionClasses("primary")} disabled={!ready} onClick={() => step === total - 1 ? onClose() : onMove(step + 1)}>{step === total - 1 ? "완료" : "다음"}</button>
+        <button type="button" className={actionClasses("primary")} disabled={!ready} aria-keyshortcuts="Enter" onClick={advance}>{step === total - 1 ? "완료" : "다음"}</button>
       </div>
     </section>
   </dialog>;
