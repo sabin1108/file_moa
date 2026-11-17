@@ -56,7 +56,7 @@ export function SampleOrganizationPanel({ catalog, store, provider, onReply, onT
         controller.confirmReview(); tellPrompt();
       }}>답변 확인 완료</button>
     </>}
-    {state.snapshot && !questioning && !planning && sample.phase !== "result" && <section aria-label="전송 전 예시 자료 확인" className={styles.snapshot}>
+    {state.snapshot && !state.conversationStep && !questioning && !planning && sample.phase !== "result" && <section aria-label="전송 전 예시 자료 확인" className={styles.snapshot}>
       <button type="button" className={actionClasses("secondary")} disabled={busy} onClick={() => setSelecting(true)}>자료 선택 · {state.selectedIds.length} / {state.snapshot.documents.length}개 · 발췌 확인</button>
       <p>{provider ?? "외부 AI"}에 선택한 예시 자료의 이름·경로·발췌와 정리 조건을 보냅니다. 발췌 {characters.toLocaleString()}자.</p>
       {selectionIssue && <p role="alert">최대 {SAMPLE_ORGANIZATION_LIMITS.documents}개·{SAMPLE_ORGANIZATION_LIMITS.excerptCharacters.toLocaleString()}자까지 선택해 주세요.</p>}

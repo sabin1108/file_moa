@@ -25,7 +25,7 @@ const snapshot: SourceSnapshot = {
 };
 const response = {
   ok: true as const,
-  organization: { summary: "검토 제안입니다", matches: [], held: [] },
+  organization: { summary: "검토 제안입니다", matches: [{ documentId: "document-1", destination: ["성능"], evidence: snapshot.documents[0].excerpt, date: null }], held: [] },
   model: "fixture",
   usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }
 };

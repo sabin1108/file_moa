@@ -18,6 +18,23 @@ function fixture() {
 }
 
 describe("shared demo organization preparation", () => {
+  it("turns an empty or unclear proposal into the next basis question without applying or resending", async () => {
+    const { store, controller, off } = fixture();
+    controller.update({ request: "자료 정리", scope: { kind: "all" }, basis: "알아서 보기 편하게 해줘" });
+    await controller.prepare();
+    const action: SampleOrganizationAction = vi.fn().mockResolvedValue({ ok: true, model: "fixture", usage,
+      organization: { summary: "업무별로 나눌까요, 주제별로 나눌까요?", matches: [], held: [] }, questions: [] });
+    controller.consent(true);
+    await controller.sendPrepared(async prepared => await store.requestOrganization(action, prepared.basis, prepared.selectedIds,
+      { reference: null, destination: null, answers: [] }) ?? { ok: false, code: "unavailable" });
+    expect(controller.getSnapshot()).toMatchObject({ phase: "ready", conversationStep: "basis", selectedIds: ["one"], consentKey: null, questions: [], reviewConfirmed: false,
+      issue: "업무별로 나눌까요, 주제별로 나눌까요?" });
+    await controller.replyToConversation("프로젝트별로 나눠줘");
+    expect(controller.getSnapshot().basis).toBe("프로젝트별로 나눠줘");
+    expect(action).toHaveBeenCalledOnce();
+    expect(store.getSnapshot().state.locations.one).toBe("source");
+    off();
+  });
   it("preserves selected materials after malformed output and requires renewed consent after a recovery answer", async () => {
     const { store, controller, off } = fixture();
     controller.update({ request: "자료 정리", scope: { kind: "all" }, basis: "내용별 중요성 별로 정리해줄래" });

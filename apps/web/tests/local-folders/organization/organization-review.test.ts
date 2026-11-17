@@ -20,15 +20,16 @@ const response = {
 };
 
 describe("grounded questions and user answers", () => {
-  it("derives a missing null date only for importance and keeps omitted materials available for review", () => {
+  it("requires explicit date fields and never invents dates or inclusion from importance keywords", () => {
     const importance = { ...request, instruction: "중요도에 따라 상 중 하로 분류해줘", documents: [document, { ...document, id: "second" }] };
     const value = { summary: "검토할 제안", matches: [{ documentId: document.id, destination: ["중"], evidence: "성능 측정 결과 LCP 2.8초입니다." }], held: [], questions: [] };
-    const result = parseLiveOrganizationResponse(value, importance, []);
+    expect(() => parseLiveOrganizationResponse(value, importance, [])).toThrow();
+    const complete = { ...value, matches: [{ ...value.matches[0], date: null }] };
+    const result = parseLiveOrganizationResponse(complete, importance, []);
     expect(result.organization.matches[0].date).toBeNull();
-    expect(result.organization.held.map(item => item.documentId)).toEqual(["second"]);
-    expect(result.questions).toMatchObject([{ documentId: "second", kind: "destination" }]);
+    expect(result.organization.held).toEqual([]);
     expect(() => parseLiveOrganizationResponse(value, request, [])).toThrow();
-    expect(() => parseLiveOrganizationResponse({ ...value, matches: [{ ...value.matches[0], date: "2026-10-01" }] }, importance, [])).toThrow();
+    expect(() => parseLiveOrganizationResponse({ ...value, matches: [{ ...value.matches[0], date: "2099-01-01" }] }, importance, [])).toThrow();
   });
   it("keeps held documents actionable when the provider leaves required questions empty", () => {
     const parsed = parseLiveOrganizationResponse({ ...response, questions: [] }, request, []);

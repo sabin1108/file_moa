@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { contentDates, isImportanceOnlyRequest, parseOrganizationResponse, type OrganizationRequest, type OrganizationResponse } from "../../src/shared/organization";
+import { contentDates, parseOrganizationResponse, type OrganizationRequest, type OrganizationResponse } from "../../src/shared/organization";
 
 const request: OrganizationRequest = {
   instruction: "10월 보고서 날짜별 정리",
@@ -17,31 +17,24 @@ const response = (): OrganizationResponse => ({
 });
 
 describe("content-grounded organization", () => {
-  it.each(["내용별 중요성 별로 정리해줄래", "중요성에 따라 정리해줘", "중요도별로 정리해줘", "우선 순위별로 나눠줘"])("uses the default three importance levels for %s", instruction => {
-    expect(isImportanceOnlyRequest({ ...request, instruction })).toBe(true);
+  it.each([
+    "중요도는 그대로 두고 회사별로 정리해줘",
+    "중요도가 높은 자료만 보안 검토 폴더로 모아줘",
+    "업무별로 나누고 그 안에서 중요도 5단계로 정리해줘",
+  ])("does not impose a three-level taxonomy on another semantic request: %s", instruction => {
+    const value = response();
+    value.matches[0].destination = ["회사", "보안 검토"];
+    value.matches[0].date = null;
+    expect(parseOrganizationResponse(value, { ...request, instruction }).matches[0].destination).toEqual(["회사", "보안 검토"]);
   });
-  it.each(["중요도 5단계로 나눠줘", "중요도를 높은 순으로 정렬해줘", "중요성 말고 주제별로", "중요도와 날짜별로 나눠줘"])("does not replace another explicit organization scheme: %s", instruction => {
-    expect(isImportanceOnlyRequest({ ...request, instruction })).toBe(false);
-  });
-  it("keeps importance grouping after exclusions while honoring explicit replacement destinations", () => {
-    const importance = { ...request, instruction: "중요도 상 중 하로 분류해줘", context: { reference: null, destination: null, answers: [{ documentId: "empty", exclude: true }] } };
-    expect(isImportanceOnlyRequest(importance)).toBe(true);
-    expect(isImportanceOnlyRequest({ ...importance, context: { ...importance.context, answers: [{ documentId: "one", destination: ["기타"] }] } })).toBe(false);
-  });
-  it("keeps importance-only plans in 상/중/하 with literal evidence and no date grouping", () => {
-    const importance = { ...request, instruction: "중요도에 따라 상 중 하로 나뉘어서 분류해줘" };
-    for (const level of ["상", "중", "하"]) {
-      const value = response();
-      value.matches[0].destination = [level];
-      value.matches[0].date = null;
-      expect(parseOrganizationResponse(value, importance).matches[0].destination).toEqual([level]);
-      value.matches[0].date = "2026-10-14";
-      expect(() => parseOrganizationResponse(value, importance)).toThrow("invalid-importance-plan");
-    }
+  it.each(["상", "중", "하", "높음", "보통", "낮음", "1등급", "검토 필요"])("accepts safe proposed categories with literal evidence: %s", level => {
+    const importance = { ...request, instruction: `본문을 ${level} 폴더로 모아줘` };
+    const value = response();
+    value.matches[0].destination = [level];
+    value.matches[0].date = null;
+    expect(parseOrganizationResponse(value, importance).matches[0].destination).toEqual([level]);
     const wrong = response();
     wrong.matches[0].date = null;
-    wrong.matches[0].destination = ["주제"];
-    expect(() => parseOrganizationResponse(wrong, importance)).toThrow("invalid-importance-plan");
     wrong.matches[0].destination = ["상"];
     wrong.matches[0].evidence = "원문에는 없는 중요도 설명입니다.";
     expect(() => parseOrganizationResponse(wrong, importance)).toThrow("ungrounded");

@@ -688,13 +688,21 @@ export class OrganizationPreparationController {
         return;
       }
 
+      const needsBasis = result.ok && !result.organization.matches.length && !result.organization.held.length;
+      let issue: string | null = null;
+      if (result.ok) {
+        if (needsBasis) issue = result.organization.summary;
+      } else {
+        issue = result.questions?.length ? ORGANIZATION_RECOVERY_MESSAGE : result.reason ? LIVE_AI_REASON_MESSAGES[result.reason] : LIVE_AI_MESSAGES[result.code];
+      }
       this.publish({
         ...this.state,
-        phase: result.ok ? "review" : "ready",
-        reviewConfirmed: result.ok && !result.organization.held.length,
+        phase: result.ok && !needsBasis ? "review" : "ready",
+        conversationStep: needsBasis ? "basis" : this.state.conversationStep,
+        reviewConfirmed: result.ok && !needsBasis && !result.organization.held.length,
         consentKey: null,
         result: result.ok ? result : null,
-        questions: result.ok || result.questions?.length
+        questions: needsBasis ? [] : result.ok || result.questions?.length
           ? [
             ...new Map(
               [...this.state.questions, ...(result.questions ?? [])].map(
@@ -703,7 +711,7 @@ export class OrganizationPreparationController {
             ).values(),
           ]
           : this.state.questions,
-        issue: result.ok ? null : result.questions?.length ? ORGANIZATION_RECOVERY_MESSAGE : result.reason ? LIVE_AI_REASON_MESSAGES[result.reason] : LIVE_AI_MESSAGES[result.code],
+        issue,
       });
     } catch (error) {
       if (sequence !== this.sequence || abort.signal.aborted) return;

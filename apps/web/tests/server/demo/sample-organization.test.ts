@@ -19,6 +19,7 @@ import { createSampleSession } from "../../../src/server/demo/sample-session";
 import { createDemoVisitor } from "../../../src/server/demo/demo-access";
 import { getSampleCatalog } from "../../../src/server/demo/sample-catalog";
 import { SampleAiError } from "../../../src/server/ai/ai-provider";
+import { organizationIntentCases } from "./organization-intent-cases";
 
 const input = () => ({
   requestId: crypto.randomUUID(),
@@ -51,6 +52,30 @@ beforeEach(() => {
   });
 });
 describe("sample content intent boundary", () => {
+  it.each(organizationIntentCases)("forwards the owned semantic evaluation case without narrowing it: $id", async ({ instruction, documentIds }) => {
+    generate.mockResolvedValueOnce({ value: { summary: "어떤 기준으로 나눌까요?", matches: [], held: [], questions: [] }, model: "fixture", usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } });
+    expect(await organizeSample({ ...input(), instruction, documentIds: [...documentIds] }, context())).toMatchObject({ ok: true });
+    expect(generate).toHaveBeenCalledOnce();
+    const payload = JSON.parse(generate.mock.calls[0][0].input);
+    expect(payload.instruction).toBe(instruction);
+    expect(payload.documents.map((document: { id: string }) => document.id)).toEqual(documentIds);
+  });
+  it.each([
+    "보고서는 제외하고 주제별로 나눠줘",
+    "성능 테스트 자료는 빼고 학습 노트만 모아줘",
+    "회사별로 나누고 각 회사 안에서는 중요도 5단계로 정리해줘",
+    "내용 언어별로, 제목 언어는 무시해줘",
+    "중요도가 높은 자료만 위험 검토 폴더로",
+    "알아서 보기 편하게 해줘",
+  ])("passes arbitrary instructions unchanged without keyword-imposed restrictions: %s", async instruction => {
+    await organizeSample({ ...input(), instruction }, context());
+    const request = generate.mock.calls[0][0];
+    expect(JSON.parse(request.input).instruction).toBe(instruction);
+    expect(request.instructions).not.toContain("The user asked for REPORTS");
+    expect(request.instructions).not.toContain("The user requests importance grouping");
+    expect(request.instructions).toContain("Only if the user positively requests");
+    expect(request.schema.properties.matches.items.properties.destination.items.enum).toBeUndefined();
+  });
   it("continues a malformed plan as explicit material questions without inventing an AI proposal", async () => {
     generate.mockRejectedValueOnce(new SampleAiError("unavailable", "invalid-json"));
     const result = await organizeSample({ ...input(), instruction: "내용별 중요성 별로 정리해줄래" }, context());

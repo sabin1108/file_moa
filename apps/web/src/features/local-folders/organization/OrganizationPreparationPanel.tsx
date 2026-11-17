@@ -131,7 +131,7 @@ export function OrganizationPreparationPanel({
         <details><summary>제안 근거·모델 정보</summary><OrganizationResultView state={state} /></details>
       </> : <>
         <OrganizationConversationView state={state} files={files} folderName={folderName} onReply={onReply} onChooseFolder={() => void controller.browse(state.conversationStep === "destination" ? "destination" : "scope")} />
-        {state.snapshot && !questioning && <OrganizationSnapshotView folderName={folderName} controller={controller} state={state} organizeAction={organizeAction} aiProvider={aiProvider} />}
+        {state.snapshot && !state.conversationStep && !questioning && <OrganizationSnapshotView folderName={folderName} controller={controller} state={state} organizeAction={organizeAction} aiProvider={aiProvider} />}
         {questioning &&
         <details key={questioning ? "questions" : state.snapshot ? "snapshot" : "conditions"} className={styles.manualReview}>
           <summary>파일별로 직접 지정</summary>

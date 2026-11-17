@@ -76,16 +76,16 @@ afterEach(() => {
 });
 
 describe("OpenAI organization composition with synthetic transport, identity and quota", () => {
-  it("uses an explicit three-level importance contract without inventing date grouping", async () => {
+  it("keeps flexible paths while supplying a conditional importance rubric to the model", async () => {
     const value = input();
     value.request = "중요도에 따라 상 중 하로 나뉘어서 분류해줘";
     const result = await organizeLive(value, "http://127.0.0.1:3034", "openai");
-    expect(result).toMatchObject({ ok: false, reason: "invalid-plan" });
+    expect(result).toMatchObject({ ok: true });
     const body = JSON.parse(fetchMock.mock.calls[1][1].body);
     const match = body.text.format.schema.properties.matches.items.properties;
-    expect(match.destination.items.enum).toEqual(["상", "중", "하"]);
-    expect(match.destination.maxItems).toBe(1);
-    expect(match.date).toEqual({ type: "null" });
+    expect(match.destination.items.enum).toBeUndefined();
+    expect(match.destination.maxItems).toBe(4);
+    expect(match.date).toEqual({ type: ["string", "null"] });
     expect(body.instructions).toContain("Default importance rubric");
     expect(body.instructions).toContain("subjective proposal");
   });

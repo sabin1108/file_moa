@@ -1,0 +1,23 @@
+// 기존 제공 카탈로그의 의미 평가 표본이다. 자동 단위 테스트는 AI 품질을 입증하지 않는다.
+export const organizationIntentCases = [
+  { id: "reports", instruction: "업무 보고서만 모아줘. 날짜별로 나누지는 마.",
+    documentIds: ["report-1002", "report-1014", "receipt-1004", "plan-1010", "meeting-1020"], expectedIds: ["report-1002", "report-1014"] },
+  { id: "exclude-reports", instruction: "보고서는 빼고 회의록과 영수증만 주제별로 모아줘.",
+    documentIds: ["report-1002", "report-1014", "receipt-1004", "meeting-1020", "plan-1010"], expectedIds: ["receipt-1004", "meeting-1020"] },
+  { id: "measurements", instruction: "웹사이트 성능을 실제로 측정한 자료만 성능 폴더로 모아줘. 공부 노트와 하드웨어 시험은 빼줘.",
+    documentIds: ["perf-lcp", "perf-inp", "perf-network", "perf-bundle", "perf-longtask", "perf-titled-only", "perf-hardware", "learning-http", "perf-intent-injection"],
+    expectedIds: ["perf-lcp", "perf-inp", "perf-network", "perf-bundle", "perf-longtask"] },
+  { id: "exclude-measurements", instruction: "성능 테스트 결과는 제외하고 HTTP 공부 노트만 학습 폴더로 모아줘.",
+    documentIds: ["perf-lcp", "perf-inp", "learning-http", "perf-titled-only", "perf-intent-injection"], expectedIds: ["learning-http"] },
+  { id: "body-language", instruction: "파일 제목 말고 본문 언어별로 정리해줘.",
+    documentIds: ["text-001", "text-007", "business-study-3", "learning-http"], expectedIds: ["text-001", "text-007", "business-study-3", "learning-http"] },
+  { id: "nested-custom", instruction: "회사별로 나누고 각 회사 안에서 재무·재고·고객 자료를 다시 나눠줘. 판매 전략은 고객 자료에 넣어줘.",
+    documentIds: ["business-company-1", "business-company-2", "business-company-3", "business-company-4", "business-company-5", "business-company-6"],
+    expectedIds: ["business-company-1", "business-company-2", "business-company-3", "business-company-4", "business-company-5", "business-company-6"] },
+  { id: "no-match", instruction: "2025년 법률 계약 자료만 찾아 정리해줘.",
+    documentIds: ["text-001", "text-007", "recipe", "meeting-1020"], expectedIds: [] },
+  { id: "unavailable-facts", instruction: "내가 마지막으로 파일을 열어본 순서대로 나눠줘. 열람 기록이 없으면 추측하지 말고 물어봐.",
+    documentIds: ["text-005", "text-013", "text-014", "text-007"], expectedIds: [] },
+  { id: "importance", instruction: "내용의 중요도에 따라 상중하로 정리해줘.",
+    documentIds: ["text-005", "text-014", "text-013", "text-011", "text-007"], expectedIds: ["text-005", "text-014", "text-013", "text-011", "text-007"] },
+] as const;

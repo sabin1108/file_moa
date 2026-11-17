@@ -71,14 +71,6 @@ export type OrganizationRequest = Readonly<{
   }>;
 }>;
 
-export function isImportanceOnlyRequest(request: OrganizationRequest): boolean {
-  return /중요(?:도|성)|우선\s*순위/u.test(request.instruction)
-    && !/(?:[124-9]\d*|두|네|다섯|여섯|일곱|여덟|아홉|열)\s*(?:단계|등급)|정렬|순서|순으로|높음|보통|낮음/u.test(request.instruction)
-    && !/말고|하지\s*마|하지\s*않|하지\s*말|아니/u.test(request.instruction)
-    && !/날짜|일자|연도|월별|일별|주제별/u.test(request.instruction)
-    && !request.context?.answers?.some(answer => typeof answer === "object" && answer !== null && ("destination" in answer || "date" in answer));
-}
-
 export function parseOrganizationResponse(
   value: unknown,
   request: OrganizationRequest,
@@ -97,9 +89,6 @@ export function parseOrganizationResponse(
   }
 
   for (const match of response.matches) {
-    if (isImportanceOnlyRequest(request) && (match.destination.length !== 1 || !["상", "중", "하"].includes(match.destination[0]) || match.date !== null)) {
-      throw new Error("invalid-importance-plan");
-    }
     if (match.destination[0] === "정리한 자료")
       match.destination = organizationPathSchema.parse(
         match.destination.slice(1),
