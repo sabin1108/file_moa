@@ -17,6 +17,8 @@ vi.mock(
 import { organizeSample } from "../../../src/server/demo/sample-organization";
 import { createSampleSession } from "../../../src/server/demo/sample-session";
 import { createDemoVisitor } from "../../../src/server/demo/demo-access";
+import { getSampleCatalog } from "../../../src/server/demo/sample-catalog";
+import { SampleAiError } from "../../../src/server/ai/ai-provider";
 
 const input = () => ({
   requestId: crypto.randomUUID(),
@@ -49,6 +51,46 @@ beforeEach(() => {
   });
 });
 describe("sample content intent boundary", () => {
+  it("keeps a verified match while isolating only the document with a changed quote", async () => {
+    const document = getSampleCatalog().documents.find(document => document.id === "perf-lcp")!;
+    generate.mockResolvedValueOnce({ value: { summary: "검토할 제안", matches: [
+      { documentId: "report-1014", destination: ["보고서"], evidence: "본문과 다른 문장입니다.", date: null },
+      { documentId: document.id, destination: ["성능"], evidence: document.excerpt.slice(0, 25), date: null },
+    ], held: [], questions: [] }, model: "fixture", usage: { inputTokens: 2, outputTokens: 2, totalTokens: 4 } });
+    const result = await organizeSample(input(), context());
+    expect(result).toMatchObject({ ok: true, organization: { matches: [{ documentId: "perf-lcp" }], held: [{ documentId: "report-1014" }] } });
+    expect(generate).toHaveBeenCalledOnce();
+  });
+  it("processes all 84 provided excerpts in bounded batches with the common importance contract", async () => {
+    generate.mockImplementation(async (request: { input: string }) => {
+      const payload = JSON.parse(request.input);
+      return { value: { summary: "중요도 제안", matches: payload.documents.filter((document: { excerpt: string }) => document.excerpt.length >= 8).map((document: { id: string; excerpt: string }) => ({
+        documentId: document.id, destination: ["상"], evidence: document.excerpt.slice(0, 30), date: null,
+      })), held: payload.documents.filter((document: { excerpt: string }) => !document.excerpt).map((document: { id: string }) => ({ documentId: document.id, reason: "빈 자료여서 분류 근거가 없어요" })),
+      questions: payload.documents.filter((document: { excerpt: string }) => !document.excerpt).map((document: { id: string }) => ({ documentId: document.id, kind: "destination" })) }, model: "fixture", usage: { inputTokens: 10, outputTokens: 20, totalTokens: 30 } };
+    });
+    const result = await organizeSample({ ...input(), documentIds: getSampleCatalog().documents.map(document => document.id), instruction: "중요도에 따라 상 중 하로 분류해줘" }, context());
+    expect(result).toMatchObject({ ok: true });
+    if (!result.ok) throw Error("expected proposal");
+    expect(result.organization.matches).toHaveLength(83);
+    expect(result.organization.held.map(item => item.documentId)).toEqual(["empty-note"]);
+    expect(reserve).toHaveBeenCalledOnce();
+    expect(generate).toHaveBeenCalledTimes(5);
+    expect(result.usage.totalTokens).toBe(150);
+    expect(generate.mock.calls[0][0].instructions).toContain("Default importance rubric");
+  });
+  it("keeps malformed JSON and ungrounded evidence failures distinct without retrying", async () => {
+    generate.mockRejectedValueOnce(new SampleAiError("unavailable", "invalid-json"));
+    expect(await organizeSample(input(), context())).toMatchObject({ ok: false, reason: "invalid-json" });
+    generate.mockResolvedValueOnce({ value: { summary: "잘못된 근거", matches: [{ documentId: "report-1014", destination: ["보고서"], evidence: "존재하지 않는 원문을 만든 답변입니다", date: null }], held: [] }, usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 }, model: "fixture" });
+    expect(await organizeSample(input(), context())).toMatchObject({ ok: true, organization: { matches: [], held: [{ documentId: "report-1014" }] }, questions: [{ documentId: "report-1014" }] });
+    expect(generate).toHaveBeenCalledTimes(2);
+  });
+  it("validates review answers before quota and rejects client controlled live-review policy", async () => {
+    expect(await organizeSample({ ...input(), context: { reference: null, destination: null, answers: [{ documentId: "forged", destination: ["회의"] }] } }, context())).toMatchObject({ ok: false, code: "input" });
+    expect(await organizeSample({ ...input(), context: { reference: null, destination: null, answers: [], liveReview: false } }, context())).toMatchObject({ ok: false, code: "input" });
+    expect(reserve).not.toHaveBeenCalled();
+  });
   it("sends server-owned excerpts and the explicit instruction, with one bounded reservation", async () => {
     expect(await organizeSample(input(), context())).toMatchObject({ ok: true, organization: { matches: [{ documentId: "report-1014" }] } });
     expect(reserve).toHaveBeenCalledTimes(1);
@@ -74,13 +116,15 @@ describe("sample content intent boundary", () => {
   });
   it("never returns a fabricated citation or silently substitutes a prepared answer", async () => {
     generate.mockResolvedValue({
+      model: "fixture",
+      usage: { inputTokens: 10, outputTokens: 10, totalTokens: 20 },
       value: {
         summary: "잘못된 답",
         matches: [{ documentId: "report-1014", destination: ["보고서"], evidence: "본문에 없는 문장을 만들었습니다.", date: null }],
         held: []
       }
     });
-    expect(await organizeSample(input(), context())).toMatchObject({ ok: false, code: "unavailable" });
+    expect(await organizeSample(input(), context())).toMatchObject({ ok: true, organization: { matches: [], held: [{ documentId: "report-1014" }] } });
     expect(generate).toHaveBeenCalledTimes(1);
   });
   it("does not carry report/date-filter policy into an unrestricted topic request", async () => {

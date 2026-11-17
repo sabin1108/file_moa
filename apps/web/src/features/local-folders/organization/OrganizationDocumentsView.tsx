@@ -13,12 +13,14 @@ export function OrganizationDocumentsView({
   candidateIds,
   pending,
   onToggle,
+  showVersionDetails = true,
 }: {
   documents: readonly SnapshotDocument[];
   selectedIds: readonly string[];
   candidateIds: readonly string[];
   pending: boolean;
   onToggle: (id: string) => void;
+  showVersionDetails?: boolean;
 }) {
   const [previewId, setPreviewId] = useState<string | null>(null);
 
@@ -52,7 +54,7 @@ export function OrganizationDocumentsView({
                 <pre>
                   {document.excerpt || "(빈 문서)"}
                 </pre>
-                <details>
+                {showVersionDetails && <details>
                   <summary>원본 버전 정보</summary>
                   <p>
                     {document.size}바이트 · 수정 시각{" "}
@@ -60,7 +62,7 @@ export function OrganizationDocumentsView({
                   </p>
                   <p>전체 SHA256: {document.sha256}</p>
                   <p>발췌 SHA256: {document.excerptHash}</p>
-                </details>
+                </details>}
               </div>
             )}
         </li>

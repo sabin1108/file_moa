@@ -3,8 +3,8 @@ import type { SampleCatalog } from "../../shared/sample-contract";
 import { buildFileChangePlan, comparableName, type FileChangePlan, type PlanIssue } from "../local-folders/operations/planning/file-change-plan";
 import { classificationResponseSchema, parseClassificationRequest, parseClassificationResponse } from "../../shared/ai-classification";
 import type { SampleAiResult } from "../../shared/sample-ai";
-import { organizationPathSchema, organizationResponseSchema, parseOrganizationResponse } from "../../shared/organization";
-import type { SampleOrganizationResult } from "../../shared/sample-organization";
+import { organizationResponseSchema, parseOrganizationResponse } from "../../shared/organization";
+import { SAMPLE_ORGANIZATION_LIMITS, sampleOrganizationContextSchema, type SampleOrganizationContext, type SampleOrganizationResult } from "../../shared/sample-organization";
 import { conversationKinds } from "../../shared/ai-records";
 import { prepareSampleReply } from "./sample-experience";
 import { SAMPLE_ANSWER_LIMITS, sampleAnswerSchema, type SampleAnswerResult } from "../../shared/sample-answer";
@@ -22,7 +22,8 @@ export type SampleRecord = z.infer<typeof sampleRecordSchema>;
 
 const locationsSchema = z.record(z.string(), z.string().nullable());
 export const SAMPLE_STATE_CHARACTER_LIMIT = 512000;
-const createdFoldersSchema = z.array(z.strictObject({ id: z.string().regex(/^custom-\d+$/), label: z.string().min(1).max(120) })).max(80);
+const createdFolderPathSchema = sampleOrganizationContextSchema.shape.destination.unwrap().min(1);
+const createdFoldersSchema = z.array(z.strictObject({ id: z.string().regex(/^custom-\d+$/), label: z.string().min(1).max(1024) })).max(200);
 const usageSchema = z.strictObject({
   inputTokens: z.number().int().nonnegative(),
   outputTokens: z.number().int().nonnegative(),
@@ -50,7 +51,8 @@ const stateSchema = z.strictObject({
   messages: z.array(z.strictObject({ id: z.string(), author: z.enum(["user", "assistant"]), text: z.string().max(8000), model: z.string().min(1).max(200).optional() })).max(40).default([]),
   organization: z.strictObject({
     instruction: z.string().max(800),
-    candidateIds: z.array(z.string()).max(40),
+    candidateIds: z.array(z.string()).max(SAMPLE_ORGANIZATION_LIMITS.documents),
+    context: sampleOrganizationContextSchema.optional(),
     response: organizationResponseSchema,
     model: z.string().min(1).max(64),
     usage: usageSchema,
@@ -75,11 +77,12 @@ const stateSchema = z.strictObject({
 export type SampleState = z.infer<typeof stateSchema>;
 
 export type SampleAction =
+  | Readonly<{ type: "conversation"; author: "user" | "assistant"; text: string }>
   | Readonly<{ type: "select-file-folders"; paths: readonly (readonly string[])[] }>
   | Readonly<{ type: "select-files"; ids: readonly string[] }>
   | Readonly<{ type: "select-question"; ids: readonly string[] }>
   | Readonly<{ type: "ai-answer"; requestId: string; mode: "chat" | "grounded"; question: string; result: Extract<SampleAnswerResult, { ok: true }> }>
-  | Readonly<{ type: "mode"; mode: typeof conversationKinds[number] }>
+  | Readonly<{ type: "mode"; mode: typeof conversationKinds[number] | null }>
   | Readonly<{ type: "guide"; step: number; dismissed: boolean }>
   | Readonly<{ type: "sample-reply"; mode: "chat" | "find" | "grounded"; question: string; selectedIds: readonly string[]; referenceYear: number }>
   | Readonly<{ type: "save-record"; record: SampleRecord }>
@@ -104,12 +107,14 @@ export type SampleAction =
   }>
   | Readonly<{
     type: "intent";
-    instruction: string
+    instruction: string;
+    recordMessage?: boolean
   }>
   | Readonly<{
     type: "organization-propose";
     instruction: string;
     candidateIds: readonly string[];
+    context?: SampleOrganizationContext;
     result: Extract<SampleOrganizationResult, { ok: true }>
   }>
   | Readonly<{ type: "propose" | "back" | "apply" | "undo" | "reset" }>;
@@ -144,7 +149,7 @@ export function restoreSampleState(catalog: SampleCatalog, serialized: string): 
 
   const state = stateSchema.parse(JSON.parse(serialized));
 
-  for (const folder of state.createdFolders) organizationPathSchema.parse(folder.label.split("/"));
+  for (const folder of state.createdFolders) createdFolderPathSchema.parse(folder.label.split("/"));
 
   if (
     state.createdFolders.some(folder =>
@@ -185,7 +190,7 @@ export function restoreSampleState(catalog: SampleCatalog, serialized: string): 
 
   if (state.lastApplied) {
     for (const list of [state.lastApplied.foldersBefore, state.lastApplied.foldersAfter]) {
-      for (const folder of list) organizationPathSchema.parse(folder.label.split("/"));
+      for (const folder of list) createdFolderPathSchema.parse(folder.label.split("/"));
 
       if (new Set(list.map(folder => folder.id)).size !== list.length) throw new Error("invalid-sample-history");
     }
@@ -228,7 +233,7 @@ export function restoreSampleState(catalog: SampleCatalog, serialized: string): 
 
     parseOrganizationResponse(
       state.organization.response,
-      organizationRequest(catalog, state.organization.instruction, state.organization.candidateIds)
+      organizationRequest(catalog, state.organization.instruction, state.organization.candidateIds, state.organization.context)
     );
 
     if (state.organization.foldersBefore.some(folder => !state.createdFolders.some(current => current.id === folder.id && current.label === folder.label))
@@ -275,11 +280,15 @@ export function sampleQuestionSelection(catalog: SampleCatalog, state: Pick<Samp
   return ids;
 }
 
-export function organizationRequest(catalog: SampleCatalog, instruction: string, candidateIds: readonly string[]) {
-  if (new Set(candidateIds).size !== candidateIds.length || !candidateIds.length || candidateIds.length > 40) throw new Error("invalid-organization-scope");
+export function organizationRequest(catalog: SampleCatalog, instruction: string, candidateIds: readonly string[], context?: SampleOrganizationContext) {
+  if (new Set(candidateIds).size !== candidateIds.length || !candidateIds.length || candidateIds.length > SAMPLE_ORGANIZATION_LIMITS.documents) throw new Error("invalid-organization-scope");
 
   return {
     instruction,
+    ...(context ? { context: { ...context,
+      dateSelections: Object.fromEntries(context.answers.filter(answer => answer.date !== undefined).map(answer => [answer.documentId, answer.date!])),
+      destinationSelections: Object.fromEntries(context.answers.filter(answer => answer.destination).map(answer => [answer.documentId, answer.destination!])),
+    } } : {}),
     documents: candidateIds.map(id => {
       const document = catalog.documents.find(document => document.id === id);
 
@@ -386,6 +395,10 @@ export function sampleChangePlan(catalog: SampleCatalog, state: SampleState): Fi
 
 export function transitionSampleState(catalog: SampleCatalog, state: SampleState, action: SampleAction): SampleState {
   if (action.type === "reset") return createSampleState(catalog);
+  if (action.type === "conversation") {
+    if (!action.text.trim() || action.text.length > 8000) throw Error("invalid-sample-message");
+    return { ...state, draft: "", messages: [...state.messages, { id: `org-${crypto.randomUUID()}`, author: action.author, text: action.text }].slice(-40) };
+  }
   if (action.type === "scope") {
     const scope = stateSchema.shape.scope.parse(action.scope);
     const path = stateSchema.shape.path.parse(action.path ?? state.path);
@@ -394,7 +407,7 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
   }
 
   if (action.type === "mode") {
-    if (state.phase === "review" || !conversationKinds.includes(action.mode)) throw Error("sample-review-required");
+    if (state.phase === "review" || (action.mode !== null && !conversationKinds.includes(action.mode))) throw Error("sample-review-required");
     if (action.mode === "grounded" && state.questionSelected === null) {
       const ids = sampleQuestionSelection(catalog, state);
       const folderId = ids.length ? state.locations[ids[0]] : null;
@@ -465,9 +478,9 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
       targets: {},
       ai: null,
       organization: null,
-      draft: action.instruction,
+      draft: action.recordMessage === false ? state.draft : action.instruction,
       createdFolders: state.phase === "review" && state.organization ? state.organization.foldersBefore : state.createdFolders,
-      messages: [...state.messages, {
+      messages: action.recordMessage === false ? state.messages : [...state.messages, {
         id: `message-${state.messages.length}-${Date.now()}`,
         author: "user" as const,
         text: action.instruction
@@ -478,14 +491,15 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
   if (action.type === "organization-propose") {
     const response = parseOrganizationResponse(
       action.result.organization,
-      organizationRequest(catalog, action.instruction, action.candidateIds)
+      organizationRequest(catalog, action.instruction, action.candidateIds, action.context)
     );
     const createdFolders = [...state.createdFolders];
     const targets: Record<string, string> = {};
 
     for (const match of response.matches) {
-      const label = match.destination.join("/");
-      let folder = [...catalog.folders, ...createdFolders].find(folder => comparableName(folder.label) === comparableName(label));
+      const destination = [...(action.context?.destination ?? ["정리한 자료"]), ...match.destination];
+      const label = (destination[0] === "정리한 자료" ? destination.slice(1) : destination).join("/");
+      let folder = [...catalog.folders, ...createdFolders].find(folder => comparableName(sampleFolderPath({ ...catalog, folders: [...catalog.folders, ...createdFolders] }, folder.id).join("/")) === comparableName(destination.join("/")));
 
       if (!folder) {
         let index = 1;
@@ -511,6 +525,7 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
       organization: {
         instruction: action.instruction,
         candidateIds: [...action.candidateIds],
+        ...(action.context ? { context: action.context } : {}),
         response,
         model: action.result.model,
         usage: action.result.usage,

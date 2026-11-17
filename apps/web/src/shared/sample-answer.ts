@@ -3,7 +3,7 @@ import { chatRequestSchema } from "./general-chat";
 import { groundedAnswerSchema, type GroundedAnswer } from "./grounded-chat";
 import type { SampleAiResult, SampleAiUsage } from "./sample-ai";
 
-export const SAMPLE_ANSWER_LIMITS = { documents: 40, excerptCharacters: 6000, citations: 5 } as const;
+export const SAMPLE_ANSWER_LIMITS = { documents: 100, excerptCharacters: 50_000, citations: 5 } as const;
 export const sampleAnswerSchema = groundedAnswerSchema.extend({ citations: groundedAnswerSchema.shape.citations.max(SAMPLE_ANSWER_LIMITS.citations) });
 export const sampleAnswerRequestSchema = z.strictObject({
   requestId: z.uuid(),

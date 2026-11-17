@@ -41,7 +41,9 @@ export function SamplePlanReview({ catalog, state, disabled, dispatch }: {
           </p>
         </div>
       </div>
-      <div className={styles.destinations}>
+      {plan && <FileChangePlanView plan={plan} folderName="샘플 자료" />}
+      <details className={styles.destinations} open={unresolved > 0}>
+        <summary>자료별 목적지 조정 · {documents.length}개</summary>
         {documents.map(document => (
           <div className={styles.destinationRow} key={document.id}>
             <label htmlFor={`destination-${document.id}`}>
@@ -109,7 +111,7 @@ export function SamplePlanReview({ catalog, state, disabled, dispatch }: {
               )}
           </div>
         ))}
-      </div>
+      </details>
       {unresolved > 0
         && (
           <StatusNotice
@@ -118,7 +120,6 @@ export function SamplePlanReview({ catalog, state, disabled, dispatch }: {
             detail="내용이 섞인 자료의 목적지를 직접 선택해 주세요. 선택 전에는 적용되지 않아요."
           />
         )}
-      {plan && <FileChangePlanView plan={plan} folderName="샘플 자료" />}
       <div className={styles.actions}>
         <button
           type="button"
@@ -126,7 +127,7 @@ export function SamplePlanReview({ catalog, state, disabled, dispatch }: {
           disabled={disabled}
           onClick={() => dispatch({ type: "back" })}
         >
-          선택으로 돌아가기
+          정리 조건으로 돌아가기
         </button>
         <button
           type="button"

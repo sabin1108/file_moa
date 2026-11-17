@@ -53,13 +53,14 @@ describe("demo presents the product UI", () => {
   });
   it("caps the initial question set by document and excerpt limits, and rejects extra selections without changing folders", () => {
     const large: SampleCatalog = { ...catalog, folders: [{ id: "web", label: "받은 자료/개발/웹사이트 문서" }],
-      documents: Array.from({ length: 79 }, (_, index) => ({ ...catalog.documents[0], id: `doc-${index}`, name: `${index}.md`, sourceFolderId: "web", excerpt: "가".repeat(200) })) };
+      documents: Array.from({ length: 101 }, (_, index) => ({ ...catalog.documents[0], id: `doc-${index}`, name: `${index}.md`, sourceFolderId: "web", excerpt: "가".repeat(1000) })) };
     const initial = createSampleState(large);
-    expect(sampleQuestionSelection(large, initial)).toHaveLength(30);
-    expect(() => transitionSampleState(large, initial, { type: "select-question", ids: large.documents.slice(0, 31).map(document => document.id) })).toThrow();
+    expect(sampleQuestionSelection(large, initial)).toHaveLength(50);
+    expect(() => transitionSampleState(large, initial, { type: "select-question", ids: large.documents.slice(0, 51).map(document => document.id) })).toThrow();
     expect(() => transitionSampleState(large, initial, { type: "select-question", ids: ["forged"] })).toThrow();
     const short = { ...large, documents: large.documents.map(document => ({ ...document, excerpt: "짧음" })) };
-    expect(sampleQuestionSelection(short, createSampleState(short))).toHaveLength(40);
+    expect(sampleQuestionSelection(short, createSampleState(short))).toHaveLength(100);
+    expect(() => transitionSampleState(short, initial, { type: "select-question", ids: short.documents.map(document => document.id) })).toThrow();
   });
   it("keeps explicit folder selection from cancelling a reviewed plan or inheriting its checks", () => {
     const selected = transitionSampleState(catalog, createSampleState(catalog), { type: "select", ids: ["one"] });

@@ -7,5 +7,5 @@
 .hint { margin: 0; padding-top: 8px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); }
 .dialog .body button { margin-top: 0; }
 .body > [data-destination-phase] { margin-top: 0; padding-top: 0; border-top: 0; }
-.body :is(ul[aria-label$="하위 폴더"], ul[aria-label$="폴더의 파일"]) { max-height: none; overflow: visible; }
+.body :is(ul[aria-label$="하위 폴더"], ul[aria-label$="폴더의 파일"], ul[aria-label="자료별 발췌와 선택"]) { max-height: none; overflow: visible; }
 @media (max-width: 600px) { .dialog { width: 100vw; height: 100dvh; max-height: 100dvh; max-width: none; margin: 0; padding: 16px; border-radius: 0; } }

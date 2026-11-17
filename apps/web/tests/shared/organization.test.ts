@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { contentDates, parseOrganizationResponse, type OrganizationRequest, type OrganizationResponse } from "../../src/shared/organization";
+import { contentDates, isImportanceOnlyRequest, parseOrganizationResponse, type OrganizationRequest, type OrganizationResponse } from "../../src/shared/organization";
 
 const request: OrganizationRequest = {
   instruction: "10월 보고서 날짜별 정리",
@@ -17,6 +17,11 @@ const response = (): OrganizationResponse => ({
 });
 
 describe("content-grounded organization", () => {
+  it("keeps importance grouping after exclusions while honoring explicit replacement destinations", () => {
+    const importance = { ...request, instruction: "중요도 상 중 하로 분류해줘", context: { reference: null, destination: null, answers: [{ documentId: "empty", exclude: true }] } };
+    expect(isImportanceOnlyRequest(importance)).toBe(true);
+    expect(isImportanceOnlyRequest({ ...importance, context: { ...importance.context, answers: [{ documentId: "one", destination: ["기타"] }] } })).toBe(false);
+  });
   it("keeps importance-only plans in 상/중/하 with literal evidence and no date grouping", () => {
     const importance = { ...request, instruction: "중요도에 따라 상 중 하로 나뉘어서 분류해줘" };
     for (const level of ["상", "중", "하"]) {

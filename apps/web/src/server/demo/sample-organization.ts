@@ -1,19 +1,22 @@
 import "server-only";
 import { z } from "zod";
-import { generateOrganization } from "../organization/organization-generation";
+import { generateLiveOrganizationBatches } from "../organization/live-organization-batches";
 import { getSampleCatalog } from "./sample-catalog";
 import { readSampleSession } from "./sample-session";
 import { reserveSampleAi, sampleAiFailure, requireSampleContext, type SampleAiContext } from "./sample-ai";
 import { SampleAiError } from "../ai/ai-provider";
 import type { AiProvider } from "../../shared/ai-provider";
-import { parseOrganizationResponse, type OrganizationRequest } from "../../shared/organization";
-import type { SampleOrganizationResult } from "../../shared/sample-organization";
+import type { OrganizationRequest } from "../../shared/organization";
+import { validateReviewAnswers } from "../../shared/live-organization-review";
+import { SAMPLE_ORGANIZATION_LIMITS, sampleOrganizationContextSchema, type SampleOrganizationResult } from "../../shared/sample-organization";
+import { LIVE_ORGANIZATION_LIMITS } from "../../shared/live-organization-limits";
 
 const inputSchema = z.strictObject({
   requestId: z.uuid(),
-  documentIds: z.array(z.string().min(1).max(64)).min(1).max(40),
+  documentIds: z.array(z.string().min(1).max(64)).min(1).max(SAMPLE_ORGANIZATION_LIMITS.documents),
   instruction: z.string().trim().min(2).max(800),
-  consent: z.literal(true)
+  consent: z.literal(true),
+  context: sampleOrganizationContextSchema.optional(),
 });
 
 export async function organizeSample(value: unknown, context: SampleAiContext, expectedProvider?: AiProvider | null): Promise<SampleOrganizationResult> {
@@ -46,17 +49,29 @@ export async function organizeSample(value: unknown, context: SampleAiContext, e
         return { id, name: document.name, excerpt: document.excerpt, sourcePath: source?.split("/") ?? ["받은 자료"] };
       })
     };
-    const reservation = await reserveSampleAi(input.requestId, context, expectedProvider);
+    if (request.documents.reduce((sum, document) => sum + document.excerpt.length, 0) > SAMPLE_ORGANIZATION_LIMITS.excerptCharacters) return { ok: false, code: "input" };
+    let answers;
+    try { answers = validateReviewAnswers(input.context?.answers ?? [], request.documents); }
+    catch { return { ok: false, code: "input", reason: "invalid-review" }; }
+    const prepared: OrganizationRequest = { ...request, context: {
+      reference: input.context?.reference ?? null,
+      destination: input.context?.destination ?? null,
+      answers,
+      liveReview: true,
+    } };
+    const reservation = await reserveSampleAi(input.requestId, context, expectedProvider, LIVE_ORGANIZATION_LIMITS.timeoutMs);
 
     if (!reservation.allowed) return { ok: false, code: "limit", retryAfter: reservation.retryAfter };
 
-    const result = await generateOrganization(request, reservation.signal, reservation.provider);
+    const result = await generateLiveOrganizationBatches(prepared, answers, reservation.signal, reservation.provider,
+      async () => { requireSampleContext(context); }, () => {});
 
     requireSampleContext(context);
 
     return {
       ok: true,
-      organization: parseOrganizationResponse(result.value, request),
+      organization: result.organization,
+      questions: result.questions,
       model: result.model,
       usage: result.usage
     };

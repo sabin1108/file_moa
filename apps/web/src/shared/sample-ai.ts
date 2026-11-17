@@ -1,4 +1,5 @@
 import type { ClassificationResponse } from "./ai-classification";
+import type { AiFailureReason } from "./ai-provider";
 
 export type SampleAiErrorCode = "session" | "origin" | "input" | "limit" | "timeout" | "unavailable";
 
@@ -24,7 +25,8 @@ export type SampleAiResult =
   | Readonly<{
     ok: false;
     code: SampleAiErrorCode;
-    retryAfter?: number
+    retryAfter?: number;
+    reason?: AiFailureReason
   }>;
 
 export const SAMPLE_AI_MESSAGES: Record<SampleAiErrorCode, string> = {

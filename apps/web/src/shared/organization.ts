@@ -76,7 +76,7 @@ export function isImportanceOnlyRequest(request: OrganizationRequest): boolean {
     && /상[\s,·/]*중[\s,·/]*하/u.test(request.instruction)
     && !/말고|하지\s*마|하지\s*않|하지\s*말|아니/u.test(request.instruction)
     && !/날짜|일자|연도|월별|일별|주제별/u.test(request.instruction)
-    && !request.context?.answers?.length;
+    && !request.context?.answers?.some(answer => typeof answer === "object" && answer !== null && ("destination" in answer || "date" in answer));
 }
 
 export function parseOrganizationResponse(

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { LIVE_ORGANIZATION_LIMITS } from "./live-organization-limits";
 import {
   contentDates,
+  isImportanceOnlyRequest,
   organizationPathSchema,
   organizationResponseSchema,
   parseOrganizationResponse,
@@ -161,12 +162,19 @@ export function parseLiveOrganizationResponse(
   request: OrganizationRequest,
   answers: readonly ReviewAnswer[]
 ) {
+  const importanceOnly = isImportanceOnlyRequest(request);
   const parsed = z
     .strictObject({
       ...organizationResponseSchema.shape,
+      ...(importanceOnly ? { matches: z.array(organizationResponseSchema.shape.matches.element.extend({ date: z.null().default(null) })).max(LIVE_ORGANIZATION_LIMITS.documents) } : {}),
       questions: z.array(questionSchema).max(LIVE_ORGANIZATION_LIMITS.documents * 2).optional()
     })
     .parse(value);
+  if (importanceOnly) {
+    // 분류가 빠진 자료는 숨기거나 임의로 등급을 매기지 않고 사용자 확인으로 돌린다.
+    const seen = new Set([...parsed.matches, ...parsed.held, ...answers.filter(answer => answer.exclude)].map(item => item.documentId));
+    parsed.held.push(...request.documents.filter(document => !seen.has(document.id)).map(document => ({ documentId: document.id, reason: "AI가 이 자료의 등급을 제시하지 않았어요. 목적지를 정하거나 이번 정리에서 제외해 주세요." })));
+  }
   const dateSelections = Object.fromEntries(
     answers
       .filter(answer => answer.date !== undefined)
@@ -190,11 +198,12 @@ export function parseLiveOrganizationResponse(
       }
     }
   );
+  const definitions = parsed.questions ?? [];
   const questions = buildReviewQuestions(
     organization,
     request,
-    parsed.questions ??
-    organization.held.map(item => ({ documentId: item.documentId, kind: "destination" }))
+    [...definitions, ...organization.held.filter(item => !definitions.some(question => question.documentId === item.documentId))
+      .map(item => ({ documentId: item.documentId, kind: "destination" as const }))]
   );
 
   for (const answer of validateReviewAnswers(answers, request.documents)) {

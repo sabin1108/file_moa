@@ -598,6 +598,38 @@ export class OrganizationPreparationController {
   };
 
   send = async (action: LiveOrganizationAction) => {
+    const recheck = this.recheck;
+    if (!recheck) return;
+    await this.transfer(async (state, documents, signal, transmitting) => {
+      const owner = state.snapshot?.reference
+        ? await recheck(documents, `${state.request}\n${state.basis}`, signal, state.snapshot.reference)
+        : await recheck(documents, `${state.request}\n${state.basis}`, signal);
+      signal.throwIfAborted();
+      transmitting();
+      return action({
+        requestId: `${Date.now()}:${crypto.randomUUID()}`, owner, consent: true,
+        request: state.request, basis: state.basis, scope: state.scope!,
+        reference: state.reference, destination: state.destination, documents,
+        ...(state.answers.length ? { answers: state.answers } : {}),
+        ...(state.snapshot?.reference ? { referenceTree: state.snapshot.reference } : {}),
+      });
+    });
+  };
+
+  /** 서버가 카탈로그 원문과 세션을 확인하는 전송도 같은 동의·검토 상태를 사용한다. */
+  sendPrepared = async (action: (state: OrganizationPreparationState) => Promise<LiveOrganizationResult>) => {
+    await this.transfer(async (state, _documents, _signal, transmitting) => {
+      transmitting();
+      return action(state);
+    });
+  };
+
+  private transfer = async (action: (
+    state: OrganizationPreparationState,
+    documents: readonly SnapshotDocument[],
+    signal: AbortSignal,
+    transmitting: () => void,
+  ) => Promise<LiveOrganizationResult>) => {
     const state = this.state;
     const selectionIssue = organizationSelectionIssue(state.snapshot?.documents.filter(document => state.selectedIds.includes(document.id)) ?? []);
     if (selectionIssue) {
@@ -610,8 +642,6 @@ export class OrganizationPreparationController {
       state.phase !== "ready" ||
       !state.snapshot ||
       !state.scope ||
-      !this.recheck
-      ||
       !state.selectedIds.length
       ||
       (!state.snapshot.complete && !state.partialAccepted)
@@ -638,38 +668,10 @@ export class OrganizationPreparationController {
     let transmitted = false;
 
     try {
-      const owner = state.snapshot.reference
-        ? await this.recheck(
-          documents,
-          `${state.request}\n${state.basis}`,
-          abort.signal,
-          state.snapshot.reference,
-        )
-        : await this.recheck(
-          documents,
-          `${state.request}\n${state.basis}`,
-          abort.signal,
-        );
-
-      if (sequence !== this.sequence || abort.signal.aborted) return;
-
-      this.publish({ ...this.state, phase: "sending", consentKey: null });
-      transmitted = true;
-
-      const result = await action({
-        requestId: `${Date.now()}:${crypto.randomUUID()}`,
-        owner,
-        consent: true,
-        request: state.request,
-        basis: state.basis,
-        scope: state.scope,
-        reference: state.reference,
-        destination: state.destination,
-        documents,
-        ...(state.answers.length ? { answers: state.answers } : {}),
-        ...(state.snapshot.reference
-          ? { referenceTree: state.snapshot.reference }
-          : {}),
+      const result = await action(state, documents, abort.signal, () => {
+        if (sequence !== this.sequence || abort.signal.aborted) throw new DOMException("Cancelled", "AbortError");
+        this.publish({ ...this.state, phase: "sending", consentKey: null });
+        transmitted = true;
       });
 
       if (sequence !== this.sequence || abort.signal.aborted) return;

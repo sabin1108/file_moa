@@ -2,6 +2,7 @@ import "server-only";
 import { z } from "zod";
 import type { AiJsonRequest } from "../../shared/ai-provider";
 import { AI_LIMITS, readProviderJson, SampleAiError } from "./ai-provider";
+import { parseAiJson } from "./parse-ai-json";
 
 export const SAMPLE_GEMINI_MODEL = "gemini-3.5-flash-lite";
 const envelope = z.object({
@@ -65,9 +66,7 @@ export async function generateGeminiJson(request: AiJsonRequest, signal: AbortSi
   const response = parsed.data;
   const text = response.candidates[0].content.parts.filter(part => !part.thought).map(part => part.text).join("");
 
-  let value: unknown;
-  try { value = JSON.parse(text); }
-  catch { throw new SampleAiError("unavailable", "invalid-json"); }
+  const value = parseAiJson(text);
   return {
     value,
     model: SAMPLE_GEMINI_MODEL,

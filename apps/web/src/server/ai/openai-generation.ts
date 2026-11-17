@@ -2,6 +2,7 @@ import "server-only";
 import { z } from "zod";
 import type { AiJsonRequest } from "../../shared/ai-provider";
 import { AI_LIMITS, readProviderJson, SampleAiError } from "./ai-provider";
+import { parseAiJson } from "./parse-ai-json";
 
 export const OPENAI_MODEL = "gpt-6-luna";
 
@@ -79,9 +80,7 @@ export async function generateOpenAiJson(
 
   if (!texts.length) throw new SampleAiError("unavailable");
 
-  let value: unknown;
-  try { value = JSON.parse(texts.join("")); }
-  catch { throw new SampleAiError("unavailable", "invalid-json"); }
+  const value = parseAiJson(texts.join(""));
   return {
     value,
     model: response.model,

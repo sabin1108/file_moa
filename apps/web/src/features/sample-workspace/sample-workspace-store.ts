@@ -12,6 +12,8 @@ import { SAMPLE_AI_MESSAGES, type SampleAiAction } from "../../shared/sample-ai"
 import type { SampleOrganizationAction } from "../../shared/sample-organization";
 import type { SampleAnswerAction } from "../../shared/sample-answer";
 import type { ChatMessageInput } from "../../shared/general-chat";
+import { LIVE_AI_REASON_MESSAGES } from "../../shared/live-organization";
+import { createSamplePreparation } from "./organization/sample-preparation";
 
 type SampleStorage = Pick<Storage, "getItem" | "setItem">;
 
@@ -32,12 +34,14 @@ export class SampleWorkspaceStore {
   private generation = 0;
   private readonly deadline: number;
   readonly storageKey: string;
+  readonly organization;
 
   constructor(private catalog: SampleCatalog, session: SampleSession, private storage: () => SampleStorage = () => sessionStorage, remainingMs = SAMPLE_LIFETIME_MS) {
     this.initial = { state: createSampleState(catalog), ready: false, expired: false, notice: null, aiPending: false };
     this.snapshot = this.initial;
     this.storageKey = `moa.sample.v1.${session.id}`;
     this.deadline = performance.now() + Math.max(0, Math.min(remainingMs, SAMPLE_LIFETIME_MS));
+    this.organization = createSamplePreparation(catalog, () => this.snapshot.state);
   }
 
   getSnapshot = () => this.snapshot;
@@ -104,6 +108,7 @@ export class SampleWorkspaceStore {
 
     try {
       const state = transitionSampleState(this.catalog, this.snapshot.state, action);
+      if (action.type === "reset") this.organization.reset();
       const serialized = JSON.stringify(state);
       if (serialized.length > SAMPLE_STATE_CHARACTER_LIMIT) throw Error("sample-state-limit");
       let notice: string | null = null;
@@ -163,7 +168,7 @@ export class SampleWorkspaceStore {
       const result = await request({ requestId, mode, messages, documentIds: mode === "grounded" ? [...questionIds] : [], consent: true });
       if (generation !== this.generation || performance.now() >= this.deadline) return;
       if (result.ok) { this.dispatch({ type: "ai-answer", requestId, mode, question: state.draft, result }); return; }
-      this.snapshot = { ...this.snapshot, aiPending: false, notice: SAMPLE_AI_MESSAGES[result.code] + (result.retryAfter ? ` 약 ${result.retryAfter}초 뒤 다시 시도할 수 있어요.` : "") };
+      this.snapshot = { ...this.snapshot, aiPending: false, notice: (result.reason ? LIVE_AI_REASON_MESSAGES[result.reason] : SAMPLE_AI_MESSAGES[result.code]) + (result.retryAfter ? ` 약 ${result.retryAfter}초 뒤 다시 시도할 수 있어요.` : "") };
     } catch {
       if (generation !== this.generation || performance.now() >= this.deadline) return;
       this.snapshot = { ...this.snapshot, aiPending: false, notice: SAMPLE_AI_MESSAGES.unavailable };
@@ -195,7 +200,7 @@ export class SampleWorkspaceStore {
       this.snapshot = {
         ...this.snapshot,
         aiPending: false,
-        notice: SAMPLE_AI_MESSAGES[result.code]
+        notice: result.reason ? LIVE_AI_REASON_MESSAGES[result.reason] : SAMPLE_AI_MESSAGES[result.code]
           + (result.retryAfter ? ` 약 ${result.retryAfter}초 뒤 다시 시도할 수 있어요.` : "")
       };
     } catch {
@@ -207,11 +212,11 @@ export class SampleWorkspaceStore {
     this.emit();
   };
 
-  requestOrganization = async (request: SampleOrganizationAction, instruction: string, documentIds: readonly string[]) => {
+  requestOrganization = async (request: SampleOrganizationAction, instruction: string, documentIds: readonly string[], context?: import("../../shared/sample-organization").SampleOrganizationContext) => {
     if (!this.snapshot.ready || this.snapshot.aiPending || performance.now() >= this.deadline || !instruction.trim()
       || !documentIds.length) return;
 
-    this.dispatch({ type: "intent", instruction });
+    if (!this.dispatch({ type: "intent", instruction, recordMessage: !context })) return;
 
     const generation = ++this.generation;
 
@@ -219,22 +224,23 @@ export class SampleWorkspaceStore {
     this.emit();
 
     try {
-      const result = await request({ requestId: crypto.randomUUID(), documentIds: [...documentIds], instruction, consent: true });
+      const result = await request({ requestId: crypto.randomUUID(), documentIds: [...documentIds], instruction, consent: true, ...(context ? { context } : {}) });
 
       if (generation !== this.generation || performance.now() >= this.deadline) return;
 
       if (result.ok) {
-        this.dispatch({ type: "organization-propose", instruction, candidateIds: documentIds, result });
-
-        return;
+        const accepted = this.dispatch({ type: "organization-propose", instruction, candidateIds: documentIds, result, ...(context ? { context } : {}) });
+        return accepted ? result : { ok: false as const, code: "unavailable" as const, reason: "invalid-plan" as const };
       }
 
       this.snapshot = {
         ...this.snapshot,
         aiPending: false,
-        notice: SAMPLE_AI_MESSAGES[result.code]
+        notice: (result.reason ? LIVE_AI_REASON_MESSAGES[result.reason] : SAMPLE_AI_MESSAGES[result.code])
           + (result.retryAfter ? ` 약 ${result.retryAfter}초 뒤 다시 시도할 수 있어요.` : "")
       };
+      this.emit();
+      return result;
     } catch {
       if (generation !== this.generation || performance.now() >= this.deadline) return;
 

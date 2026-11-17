@@ -1,13 +1,33 @@
 import "server-only";
 import { organizationBatches, LIVE_ORGANIZATION_LIMITS } from "../../shared/live-organization-limits";
 import { parseLiveOrganizationResponse, type ReviewAnswer } from "../../shared/live-organization-review";
-import type { OrganizationRequest } from "../../shared/organization";
+import { organizationResponseSchema, type OrganizationRequest } from "../../shared/organization";
 import type { AiProvider } from "../../shared/ai-provider";
 import { generateOrganization } from "./organization-generation";
 import { SampleAiError } from "../ai/ai-provider";
 import type { SampleAiUsage } from "../../shared/sample-ai";
 import type { AiFailureReason } from "../../shared/ai-provider";
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
+
+function parseBatch(value: unknown, request: OrganizationRequest, answers: readonly ReviewAnswer[]) {
+  try { return parseLiveOrganizationResponse(value, request, answers); }
+  catch (error) {
+    if (!(error instanceof Error) || error.message !== "ungrounded-organization-evidence") throw error;
+    const response = z.object({ ...organizationResponseSchema.shape,
+      matches: z.array(organizationResponseSchema.shape.matches.element.extend({ date: organizationResponseSchema.shape.matches.element.shape.date.default(null) })).max(LIVE_ORGANIZATION_LIMITS.documents),
+      questions: z.array(z.object({ documentId: z.string(), kind: z.enum(["date", "destination"]) })).optional(),
+    }).parse(value);
+    const invalid = response.matches.filter(match => !request.documents.find(document => document.id === match.documentId)?.excerpt.includes(match.evidence));
+    const ids = new Set(invalid.map(match => match.documentId));
+    return parseLiveOrganizationResponse({
+      ...response,
+      summary: "일부 AI 인용이 원문과 달라 해당 자료는 확인 대상으로 남겼습니다. 나머지는 검토할 정리 제안입니다.",
+      matches: response.matches.filter(match => !ids.has(match.documentId)),
+      held: [...response.held, ...invalid.map(match => ({ documentId: match.documentId, reason: "AI 인용이 이 자료의 원문과 일치하지 않아 제안에서 뺐어요. 원문을 확인하고 다시 분류하거나 이번 정리에서 제외해 주세요." }))],
+      questions: response.questions?.filter(question => !ids.has(question.documentId)),
+    }, request, answers);
+  }
+}
 
 function validationReason(error: unknown): AiFailureReason {
   if (error instanceof ZodError) return error.issues.some(issue => issue.path.includes("evidence")) ? "invalid-evidence" : "invalid-plan";
@@ -41,7 +61,7 @@ export async function generateLiveOrganizationBatches(request: OrganizationReque
       };
       const result = await generateOrganization(batch, signal, provider, LIVE_ORGANIZATION_LIMITS);
       if (result.usage) onUsage(result.model, result.usage);
-      try { return { ...result, ...parseLiveOrganizationResponse(result.value, batch, decisions) }; }
+      try { return { ...result, ...parseBatch(result.value, batch, decisions) }; }
       catch (error) { throw new SampleAiError("unavailable", validationReason(error)); }
     }));
     const failed = group.find(result => result.status === "rejected");

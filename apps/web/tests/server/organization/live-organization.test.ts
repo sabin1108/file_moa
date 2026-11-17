@@ -284,6 +284,8 @@ describe("authenticated local excerpt boundary", () => {
 
   it("rejects fabricated evidence and maps a provider timeout without leaking a body", async () => {
     generate.mockResolvedValueOnce({
+      model: "fixture",
+      usage: { inputTokens: 10, outputTokens: 10, totalTokens: 20 },
       value: {
         summary: "제안",
         matches: [
@@ -297,10 +299,10 @@ describe("authenticated local excerpt boundary", () => {
         held: []
       }
     });
-    expect(await organizeLive(input(), "http://127.0.0.1:3034")).toEqual({
-      ok: false,
-      code: "unavailable",
-      reason: "invalid-evidence"
+    expect(await organizeLive(input(), "http://127.0.0.1:3034")).toMatchObject({
+      ok: true,
+      organization: { matches: [], held: [{ documentId: "document-1" }] },
+      questions: [{ documentId: "document-1", kind: "destination" }],
     });
     generate.mockRejectedValueOnce(new DOMException("sensitive body", "TimeoutError"));
     expect(await organizeLive(input(), "http://127.0.0.1:3034")).toEqual({

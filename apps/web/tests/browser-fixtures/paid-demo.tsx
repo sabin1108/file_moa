@@ -15,7 +15,7 @@ const catalog: SampleCatalog = {
     ...(index < 2 ? { sourceFolderId: "web" } : {}), excerpt: `합성 회의 자료 ${index + 1}입니다. 다음 작업과 일정을 검토했습니다.`, proposal: { folderId: "work", reason: "회의", reviewRequired: false } })),
 };
 const store = new SampleWorkspaceStore(catalog, { kind: "sample", id: "paid-browser-fixture", expiresAt: Date.now() + 3600000, version: "1" });
-const control = { store, answers: [] as SampleAnswerRequest[], organizations: 0, hold: false, failure: null as SampleAiErrorCode | null, resolve: [] as (() => void)[] };
+const control = { store, answers: [] as SampleAnswerRequest[], organizations: 0, organizationInputs: [] as Parameters<SampleOrganizationAction>[0][], review: false, hold: false, failure: null as SampleAiErrorCode | null, resolve: [] as (() => void)[] };
 const usage = { inputTokens: 10, outputTokens: 10, totalTokens: 20 };
 const answer: SampleAnswerAction = async input => {
   control.answers.push(input);
@@ -27,7 +27,14 @@ const answer: SampleAnswerAction = async input => {
 };
 const organize: SampleOrganizationAction = async input => {
   control.organizations++;
-  return { ok: true, organization: { summary: "합성 API 정리 제안입니다.", matches: input.documentIds.map(id => ({ documentId: id, destination: ["정리한 회의"], evidence: catalog.documents.find(document => document.id === id)!.excerpt.slice(0, 20), date: null })), held: [] }, model: "gpt-6-luna", usage };
+  control.organizationInputs.push(input);
+  const reviewing = control.review && !input.context?.answers.length;
+  const result = { ok: true as const, organization: { summary: "합성 API 정리 제안입니다.", matches: reviewing ? [] : input.documentIds.filter(id => !input.context?.answers.some(answer => answer.documentId === id && answer.exclude)).map(id => ({ documentId: id,
+    destination: input.context?.answers.find(answer => answer.documentId === id)?.destination ?? (/중요도/u.test(input.instruction) ? ["상"] : ["정리한 회의"]),
+    evidence: catalog.documents.find(document => document.id === id)!.excerpt.slice(0, 20), date: null })), held: reviewing ? input.documentIds.map(documentId => ({ documentId, reason: "목적지를 확인해 주세요" })) : [] },
+    questions: reviewing ? input.documentIds.map(documentId => ({ id: `${documentId}-destination`, documentId, kind: "destination" as const, reason: "목적지를 확인해 주세요", dates: [] })) : [], model: "gpt-6-luna", usage };
+  if (control.hold) return new Promise(resolve => control.resolve.push(() => resolve(result)));
+  return result;
 };
 Object.assign(window, { paidDemo: control });
 window.addEventListener("fixture-navigation", event => {

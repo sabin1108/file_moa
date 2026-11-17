@@ -33,7 +33,7 @@ export function requireSampleContext(context: SampleAiContext) {
   return { session, visitor };
 }
 
-export async function reserveSampleAi(requestId: string, context: SampleAiContext, expectedProvider?: AiProvider | null) {
+export async function reserveSampleAi(requestId: string, context: SampleAiContext, expectedProvider?: AiProvider | null, timeoutMs: number = AI_LIMITS.timeoutMs) {
   const { session, visitor } = requireSampleContext(context);
   const provider = requireSampleAiProvider(expectedProvider);
 
@@ -51,12 +51,14 @@ export async function reserveSampleAi(requestId: string, context: SampleAiContex
   return {
     allowed: true as const,
     provider,
-    signal: AbortSignal.timeout(Math.min(AI_LIMITS.timeoutMs, session.expiresAt - Date.now()))
+    signal: AbortSignal.timeout(Math.max(1, Math.min(timeoutMs, 120_000, session.expiresAt - Date.now())))
   };
 }
 
 export function sampleAiFailure(error: unknown): Extract<SampleAiResult, { ok: false }> {
-  if (error instanceof SampleAiError) return { ok: false, code: error.code };
+  if (error instanceof SampleAiError) return { ok: false, code: error.code, ...(error.reason ? { reason: error.reason } : {}) };
+  if (error instanceof z.ZodError) return { ok: false, code: "unavailable", reason: "invalid-response" };
+  if (error instanceof Error && error.message === "invalid-citation") return { ok: false, code: "unavailable", reason: "invalid-evidence" };
 
   if (error instanceof Error && ["TimeoutError", "AbortError"].includes(error.name)) return { ok: false, code: "timeout" };
 

@@ -8,6 +8,7 @@ import { DestinationPickerController } from "../../local-folders/destination-pic
 import { listSampleDestinations } from "./sample-destinations";
 import { sampleFolderPath } from "../sample-state";
 import styles from "../sample-workspace.module.css";
+import { SelectionWorkspaceDialog } from "../../local-folders/destination-picker/SelectionWorkspaceDialog";
 
 export function SampleDestinationPicker({ catalog, initialFolderId, disabled, onChoose, onClose }: {
   catalog: SampleCatalog;
@@ -43,13 +44,15 @@ export function SampleDestinationPicker({ catalog, initialFolderId, disabled, on
     onChoose(folder.id);
   };
 
-  return <fieldset disabled={disabled} className={styles.pickerPanel}>
+  return <SelectionWorkspaceDialog title="목적지 폴더 선택" onClose={onClose}><fieldset disabled={disabled} className={styles.pickerPanel}>
     <legend>샘플 목적지 탐색</legend>
     <DestinationFolderPicker
       controller={controller}
       state={state}
       folderName="샘플 자료"
       allowCreation={false}
+      showFiles
+      hideHeader
       onChoose={choose}
       onCancel={() => {
         controller.close();
@@ -59,7 +62,7 @@ export function SampleDestinationPicker({ catalog, initialFolderId, disabled, on
     {needsFolder && <StatusNotice
       state="attention"
       title="등록된 하위 폴더를 선택해 주세요"
-      detail="샘플에서는 회의·재무·개발·학습·생활·여행 폴더만 목적지로 사용할 수 있어요."
+      detail="목록에서 등록된 목적지 폴더를 열고 ‘이 폴더 선택’을 눌러 주세요."
     />}
-  </fieldset>;
+  </fieldset></SelectionWorkspaceDialog>;
 }
