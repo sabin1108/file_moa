@@ -8,6 +8,7 @@ import { SampleAiError } from "../ai/ai-provider";
 import type { SampleAiUsage } from "../../shared/sample-ai";
 import type { AiFailureReason } from "../../shared/ai-provider";
 import { z, ZodError } from "zod";
+import type { AiGenerationProfile } from "../ai/ai-models";
 
 function parseBatch(value: unknown, request: OrganizationRequest, answers: readonly ReviewAnswer[]) {
   try { return parseLiveOrganizationResponse(value, request, answers); }
@@ -39,7 +40,7 @@ function validationReason(error: unknown): AiFailureReason {
 }
 
 /** 동의한 목록을 계획 분할한다. 실패한 묶음의 자동 재시도나 부분 계획 공개는 하지 않는다. */
-export async function generateLiveOrganizationBatches(request: OrganizationRequest, answers: readonly ReviewAnswer[], signal: AbortSignal, provider: AiProvider, assertSession: () => Promise<void>, onUsage: (model: string, usage: SampleAiUsage) => void) {
+export async function generateLiveOrganizationBatches(request: OrganizationRequest, answers: readonly ReviewAnswer[], signal: AbortSignal, provider: AiProvider, assertSession: () => Promise<void>, onUsage: (model: string, usage: SampleAiUsage) => void, profile: AiGenerationProfile = "default") {
   const batches = organizationBatches(request.documents);
   const results = [];
   for (let start = 0; start < batches.length; start += 2) {
@@ -59,7 +60,7 @@ export async function generateLiveOrganizationBatches(request: OrganizationReque
           dateSelections: Object.fromEntries(decisions.filter(answer => answer.date !== undefined).map(answer => [answer.documentId, answer.date!])),
         },
       };
-      const result = await generateOrganization(batch, signal, provider, LIVE_ORGANIZATION_LIMITS);
+      const result = await generateOrganization(batch, signal, provider, LIVE_ORGANIZATION_LIMITS, profile);
       if (result.usage) onUsage(result.model, result.usage);
       try { return { ...result, ...parseBatch(result.value, batch, decisions) }; }
       catch (error) { throw new SampleAiError("unavailable", validationReason(error)); }

@@ -17,6 +17,7 @@ import { DestinationPickerController } from "../destination-picker/destination-p
 import {
   LIVE_AI_MESSAGES,
   LIVE_AI_REASON_MESSAGES,
+  ORGANIZATION_RECOVERY_MESSAGE,
   type LiveOrganizationAction,
   type LiveOrganizationResult,
 } from "../../../shared/live-organization";
@@ -693,7 +694,7 @@ export class OrganizationPreparationController {
         reviewConfirmed: result.ok && !result.organization.held.length,
         consentKey: null,
         result: result.ok ? result : null,
-        questions: result.ok
+        questions: result.ok || result.questions?.length
           ? [
             ...new Map(
               [...this.state.questions, ...(result.questions ?? [])].map(
@@ -702,7 +703,7 @@ export class OrganizationPreparationController {
             ).values(),
           ]
           : this.state.questions,
-        issue: result.ok ? null : result.reason ? LIVE_AI_REASON_MESSAGES[result.reason] : LIVE_AI_MESSAGES[result.code],
+        issue: result.ok ? null : result.questions?.length ? ORGANIZATION_RECOVERY_MESSAGE : result.reason ? LIVE_AI_REASON_MESSAGES[result.reason] : LIVE_AI_MESSAGES[result.code],
       });
     } catch (error) {
       if (sequence !== this.sequence || abort.signal.aborted) return;

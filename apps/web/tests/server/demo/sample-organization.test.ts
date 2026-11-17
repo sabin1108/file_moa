@@ -51,6 +51,31 @@ beforeEach(() => {
   });
 });
 describe("sample content intent boundary", () => {
+  it("continues a malformed plan as explicit material questions without inventing an AI proposal", async () => {
+    generate.mockRejectedValueOnce(new SampleAiError("unavailable", "invalid-json"));
+    const result = await organizeSample({ ...input(), instruction: "내용별 중요성 별로 정리해줄래" }, context());
+    expect(result).toMatchObject({ ok: false, reason: "invalid-json", questions: [
+      { documentId: "report-1014", kind: "destination" }, { documentId: "perf-lcp", kind: "destination" },
+    ] });
+    expect(result).not.toHaveProperty("organization");
+    expect(generate).toHaveBeenCalledOnce();
+    expect(generate.mock.calls[0][4]).toBe("demo");
+    expect(generate.mock.calls[0][0].instructions).toContain("Default importance rubric");
+  });
+  it("keeps provider and session failures closed without recovery questions or retries", async () => {
+    generate.mockRejectedValueOnce(new SampleAiError("unavailable", "authorization"));
+    expect(await organizeSample(input(), context())).toEqual({ ok: false, code: "unavailable", reason: "authorization" });
+    const active = context();
+    generate.mockImplementationOnce(async () => { active.token = "revoked"; throw new SampleAiError("unavailable", "invalid-json"); });
+    expect(await organizeSample(input(), active)).toEqual({ ok: false, code: "session" });
+    expect(generate).toHaveBeenCalledTimes(2);
+  });
+  it("does not ask recovery questions for explicitly excluded materials", async () => {
+    generate.mockRejectedValueOnce(new SampleAiError("unavailable", "invalid-json"));
+    expect(await organizeSample({ ...input(), context: { reference: null, destination: null, answers: [{ documentId: "perf-lcp", exclude: true }] } }, context()))
+      .toMatchObject({ ok: false, questions: [{ documentId: "report-1014" }] });
+    expect(generate).toHaveBeenCalledOnce();
+  });
   it("keeps a verified match while isolating only the document with a changed quote", async () => {
     const document = getSampleCatalog().documents.find(document => document.id === "perf-lcp")!;
     generate.mockResolvedValueOnce({ value: { summary: "검토할 제안", matches: [

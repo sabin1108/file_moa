@@ -18,6 +18,30 @@ function fixture() {
 }
 
 describe("shared demo organization preparation", () => {
+  it("preserves selected materials after malformed output and requires renewed consent after a recovery answer", async () => {
+    const { store, controller, off } = fixture();
+    controller.update({ request: "자료 정리", scope: { kind: "all" }, basis: "내용별 중요성 별로 정리해줄래" });
+    await controller.prepare();
+    const action: SampleOrganizationAction = vi.fn().mockResolvedValue({ ok: false, code: "unavailable", reason: "invalid-json",
+      questions: [{ id: "one:destination", documentId: "one", kind: "destination", reason: "분류 확인", dates: [] }] });
+    const transfer = () => controller.sendPrepared(async prepared => await store.requestOrganization(action, prepared.basis, prepared.selectedIds,
+      { reference: null, destination: null, answers: [...prepared.answers] }) ?? { ok: false, code: "unavailable" });
+    controller.consent(true);
+    await transfer();
+    expect(controller.getSnapshot()).toMatchObject({ phase: "ready", selectedIds: ["one"], result: null, questions: [{ documentId: "one" }] });
+    expect(store.getSnapshot().notice).toContain("선택한 자료는 유지");
+    expect(action).toHaveBeenCalledOnce();
+    expect(store.getSnapshot().state.locations.one).toBe("source");
+    await controller.replyToConversation("모두 상 폴더로");
+    expect(controller.getSnapshot().answers).toEqual([{ documentId: "one", destination: ["상"] }]);
+    await transfer();
+    expect(action).toHaveBeenCalledOnce();
+    controller.consent(true);
+    await transfer();
+    expect(action).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(action).mock.calls[1][0].context?.answers).toEqual([{ documentId: "one", destination: ["상"] }]);
+    off();
+  });
   it("restores a generated subfolder under a deep chosen base without losing the plan", () => {
     const context = { reference: null, destination: ["받은 자료", "개발", "웹사이트 문서"], answers: [] };
     const proposed = transitionSampleState(catalog, createSampleState(catalog), { type: "organization-propose", instruction: "주제별로", candidateIds: ["one"], context,

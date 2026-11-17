@@ -34,11 +34,14 @@ export type LiveOrganizationResult =
     code: SampleAiErrorCode;
     retryAfter?: number;
     reason?: AiFailureReason;
+    questions?: readonly ReviewQuestion[];
   }>;
 
 export type LiveOrganizationAction = (
   input: LiveOrganizationInput
 ) => Promise<LiveOrganizationResult>;
+
+export const ORGANIZATION_RECOVERY_MESSAGE = "AI 제안을 완성하지 못했어요. 선택한 자료는 유지했습니다. 분류 기준을 바꾸거나 자료별 질문에 답한 뒤 다시 분석해 주세요.";
 
 export const LIVE_AI_MESSAGES: Record<SampleAiErrorCode, string> = {
   session: "로그인 또는 작업 공간이 바뀌었어요. 다시 로그인하고 자료를 준비해 주세요.",

@@ -4,15 +4,17 @@ import type { AiJsonRequest, AiProvider } from "../../shared/ai-provider";
 import { AI_LIMITS, requireAiProvider } from "./ai-provider";
 import { generateGeminiJson } from "./gemini-generation";
 import { generateOpenAiJson } from "./openai-generation";
+import type { AiGenerationProfile } from "./ai-models";
 
 export async function generateAiJson(
   request: AiJsonRequest,
   signal: AbortSignal,
   limits: { inputTokens: number } = AI_LIMITS,
-  provider: AiProvider = requireAiProvider()) {
+  provider: AiProvider = requireAiProvider(),
+  profile: AiGenerationProfile = "default") {
   requireAiProvider(provider);
 
-  if (provider === "openai") return generateOpenAiJson(request, signal, limits);
+  if (provider === "openai") return generateOpenAiJson(request, signal, limits, profile);
 
   return generateGeminiJson(request, signal, limits);
 }

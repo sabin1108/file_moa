@@ -12,7 +12,7 @@ import { SAMPLE_AI_MESSAGES, type SampleAiAction } from "../../shared/sample-ai"
 import type { SampleOrganizationAction } from "../../shared/sample-organization";
 import type { SampleAnswerAction } from "../../shared/sample-answer";
 import type { ChatMessageInput } from "../../shared/general-chat";
-import { LIVE_AI_REASON_MESSAGES } from "../../shared/live-organization";
+import { LIVE_AI_REASON_MESSAGES, ORGANIZATION_RECOVERY_MESSAGE } from "../../shared/live-organization";
 import { createSamplePreparation } from "./organization/sample-preparation";
 
 type SampleStorage = Pick<Storage, "getItem" | "setItem">;
@@ -236,7 +236,7 @@ export class SampleWorkspaceStore {
       this.snapshot = {
         ...this.snapshot,
         aiPending: false,
-        notice: (result.reason ? LIVE_AI_REASON_MESSAGES[result.reason] : SAMPLE_AI_MESSAGES[result.code])
+        notice: (result.questions?.length ? ORGANIZATION_RECOVERY_MESSAGE : result.reason ? LIVE_AI_REASON_MESSAGES[result.reason] : SAMPLE_AI_MESSAGES[result.code])
           + (result.retryAfter ? ` 약 ${result.retryAfter}초 뒤 다시 시도할 수 있어요.` : "")
       };
       this.emit();

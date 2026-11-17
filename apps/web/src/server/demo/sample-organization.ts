@@ -63,8 +63,21 @@ export async function organizeSample(value: unknown, context: SampleAiContext, e
 
     if (!reservation.allowed) return { ok: false, code: "limit", retryAfter: reservation.retryAfter };
 
-    const result = await generateLiveOrganizationBatches(prepared, answers, reservation.signal, reservation.provider,
-      async () => { requireSampleContext(context); }, () => {});
+    let result: Awaited<ReturnType<typeof generateLiveOrganizationBatches>>;
+    try {
+      result = await generateLiveOrganizationBatches(prepared, answers, reservation.signal, reservation.provider,
+        async () => { requireSampleContext(context); }, () => {}, "demo");
+    } catch (error) {
+      requireSampleContext(context);
+      const failure = sampleAiFailure(error);
+      if (failure.reason && ["invalid-json", "invalid-response", "invalid-plan"].includes(failure.reason)) {
+        return { ...failure, questions: request.documents
+          .filter(document => !answers.some(answer => answer.documentId === document.id && answer.exclude))
+          .map(document => ({ id: `${document.id}:destination`, documentId: document.id, kind: "destination" as const, dates: [],
+            reason: "AI 제안을 읽지 못해 분류를 아직 정하지 않았어요. 원문을 확인하고 목적지를 지정하거나 분류 기준을 바꿔 주세요." })) };
+      }
+      throw error;
+    }
 
     requireSampleContext(context);
 

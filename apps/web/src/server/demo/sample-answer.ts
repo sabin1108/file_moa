@@ -34,7 +34,7 @@ export async function answerSample(value: unknown, context: SampleAiContext, exp
           } },
         },
       },
-    }, reservation.signal, { inputTokens: 24000 }, reservation.provider);
+    }, reservation.signal, { inputTokens: 24000 }, reservation.provider, "demo");
     reservation.signal.throwIfAborted();
     requireSampleContext(context);
     const answer = sampleAnswerSchema.parse(validateGroundedAnswer(generated.value, documents));

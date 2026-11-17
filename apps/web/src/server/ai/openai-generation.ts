@@ -3,8 +3,9 @@ import { z } from "zod";
 import type { AiJsonRequest } from "../../shared/ai-provider";
 import { AI_LIMITS, readProviderJson, SampleAiError } from "./ai-provider";
 import { parseAiJson } from "./parse-ai-json";
+import { OPENAI_MODELS, type AiGenerationProfile } from "./ai-models";
 
-export const OPENAI_MODEL = "gpt-6-luna";
+export const OPENAI_MODEL = OPENAI_MODELS.default.model;
 
 const outputMessage = z.object({
   type: z.literal("message"),
@@ -29,6 +30,7 @@ export async function generateOpenAiJson(
   request: AiJsonRequest,
   signal: AbortSignal,
   limits: { inputTokens: number } = AI_LIMITS,
+  profile: AiGenerationProfile = "default",
 ) {
   signal.throwIfAborted();
 
@@ -36,8 +38,10 @@ export async function generateOpenAiJson(
 
   if (!key) throw new SampleAiError("unavailable");
 
+  const selected = OPENAI_MODELS[profile];
   const input = {
-    model: OPENAI_MODEL,
+    model: selected.model,
+    reasoning: { effort: selected.reasoning },
     instructions: request.instructions,
     input: request.input,
     text: { format: { type: "json_schema", name: "file_proposal", strict: true, schema: request.schema } },
@@ -68,7 +72,6 @@ export async function generateOpenAiJson(
   const raw = await call("responses", {
     ...input,
     store: false,
-    reasoning: { effort: "none" },
     max_output_tokens: request.outputTokens,
   });
   const status = z.object({ status: z.string(), incomplete_details: z.object({ reason: z.string() }).nullable().optional() }).safeParse(raw);

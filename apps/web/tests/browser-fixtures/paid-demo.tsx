@@ -15,7 +15,7 @@ const catalog: SampleCatalog = {
     ...(index < 2 ? { sourceFolderId: "web" } : {}), excerpt: `합성 회의 자료 ${index + 1}입니다. 다음 작업과 일정을 검토했습니다.`, proposal: { folderId: "work", reason: "회의", reviewRequired: false } })),
 };
 const store = new SampleWorkspaceStore(catalog, { kind: "sample", id: "paid-browser-fixture", expiresAt: Date.now() + 3600000, version: "1" });
-const control = { store, answers: [] as SampleAnswerRequest[], organizations: 0, organizationInputs: [] as Parameters<SampleOrganizationAction>[0][], review: false, hold: false, failure: null as SampleAiErrorCode | null, resolve: [] as (() => void)[] };
+const control = { store, answers: [] as SampleAnswerRequest[], organizations: 0, organizationInputs: [] as Parameters<SampleOrganizationAction>[0][], review: false, malformedOrganization: false, hold: false, failure: null as SampleAiErrorCode | null, resolve: [] as (() => void)[] };
 const usage = { inputTokens: 10, outputTokens: 10, totalTokens: 20 };
 const answer: SampleAnswerAction = async input => {
   control.answers.push(input);
@@ -28,6 +28,9 @@ const answer: SampleAnswerAction = async input => {
 const organize: SampleOrganizationAction = async input => {
   control.organizations++;
   control.organizationInputs.push(input);
+  if (control.malformedOrganization) return { ok: false, code: "unavailable", reason: "invalid-json", questions: input.documentIds.map(documentId => ({
+    id: `${documentId}:destination`, documentId, kind: "destination", reason: "분류를 확인해 주세요", dates: [],
+  })) };
   const reviewing = control.review && !input.context?.answers.length;
   const result = { ok: true as const, organization: { summary: "합성 API 정리 제안입니다.", matches: reviewing ? [] : input.documentIds.filter(id => !input.context?.answers.some(answer => answer.documentId === id && answer.exclude)).map(id => ({ documentId: id,
     destination: input.context?.answers.find(answer => answer.documentId === id)?.destination ?? (/중요도/u.test(input.instruction) ? ["상"] : ["정리한 회의"]),

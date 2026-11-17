@@ -42,6 +42,14 @@ afterEach(() => {
 });
 
 describe("OpenAI provider boundary", () => {
+  it("uses the server-owned demo quality profile for both token counting and generation", async () => {
+    await generateOpenAiJson(request, AbortSignal.timeout(1000), { inputTokens: 24000 }, "demo");
+    const [count, generation] = fetchMock.mock.calls.map(call => JSON.parse(call[1].body));
+    expect(count.model).toBe("gpt-6-astra");
+    expect(count.reasoning).toEqual({ effort: "medium" });
+    expect(generation).toEqual({ ...count, store: false, max_output_tokens: 3200 });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
   it("distinguishes invalid JSON from a grounded-plan validation failure without retrying", async () => {
     fetchMock.mockReset().mockResolvedValueOnce(Response.json({ input_tokens: 100 })).mockResolvedValueOnce(completed({
       output: [{ type: "message", status: "completed", content: [{ type: "output_text", text: "읽을 수 없는 합성 응답" }] }]

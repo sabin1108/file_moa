@@ -22,6 +22,7 @@ afterEach(() => vi.unstubAllEnvs());
 it("builds selected excerpts on the server and validates actual answer citations", async () => {
   expect(await answerSample(input(), context(), "openai")).toMatchObject({ ok: true, model: "gpt-6-luna" });
   expect(calls.generate).toHaveBeenCalledOnce();
+  expect(calls.generate.mock.calls[0][4]).toBe("demo");
   const payload = JSON.parse(calls.generate.mock.calls[0][0].input);
   expect(payload.documents).toEqual([{ id: document.id, name: document.name, excerpt: document.excerpt }]);
 });

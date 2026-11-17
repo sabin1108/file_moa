@@ -17,6 +17,12 @@ const response = (): OrganizationResponse => ({
 });
 
 describe("content-grounded organization", () => {
+  it.each(["내용별 중요성 별로 정리해줄래", "중요성에 따라 정리해줘", "중요도별로 정리해줘", "우선 순위별로 나눠줘"])("uses the default three importance levels for %s", instruction => {
+    expect(isImportanceOnlyRequest({ ...request, instruction })).toBe(true);
+  });
+  it.each(["중요도 5단계로 나눠줘", "중요도를 높은 순으로 정렬해줘", "중요성 말고 주제별로", "중요도와 날짜별로 나눠줘"])("does not replace another explicit organization scheme: %s", instruction => {
+    expect(isImportanceOnlyRequest({ ...request, instruction })).toBe(false);
+  });
   it("keeps importance grouping after exclusions while honoring explicit replacement destinations", () => {
     const importance = { ...request, instruction: "중요도 상 중 하로 분류해줘", context: { reference: null, destination: null, answers: [{ documentId: "empty", exclude: true }] } };
     expect(isImportanceOnlyRequest(importance)).toBe(true);

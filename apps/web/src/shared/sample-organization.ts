@@ -20,7 +20,7 @@ export type SampleOrganizationResult =
     model: string;
     questions?: readonly ReviewQuestion[]
   }>
-  | Extract<SampleAiResult, { ok: false }>;
+  | (Extract<SampleAiResult, { ok: false }> & Readonly<{ questions?: readonly ReviewQuestion[] }>);
 
 export type SampleOrganizationAction = (input: {
   requestId: string;

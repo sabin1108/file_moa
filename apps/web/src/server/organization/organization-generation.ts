@@ -3,10 +3,11 @@ import { generateAiJson } from "../ai/ai-generation";
 import type { AiProvider } from "../../shared/ai-provider";
 import { requireAiProvider } from "../ai/ai-provider";
 import { isImportanceOnlyRequest, type OrganizationRequest } from "../../shared/organization";
+import type { AiGenerationProfile } from "../ai/ai-models";
 
 /** Same intent/evidence policy for sample and authenticated local excerpts. */
 
-export async function generateOrganization(request: OrganizationRequest, signal: AbortSignal, provider: AiProvider = requireAiProvider(), limits = { inputTokens: 8192, outputTokens: 3200 }) {
+export async function generateOrganization(request: OrganizationRequest, signal: AbortSignal, provider: AiProvider = requireAiProvider(), limits = { inputTokens: 8192, outputTokens: 3200 }, profile: AiGenerationProfile = "default") {
   const reportRequested = /보고서/u.test(request.instruction);
   const importanceOnly = isImportanceOnlyRequest(request);
   const documents = request.documents.map(document => ({ ...document, evidenceOptions: (document.excerpt.match(/[^\r\n]{1,160}/gu) ?? []).map(part => part.trim()).filter(part => part.length >= 8 && part.length <= 180) }));
@@ -106,6 +107,7 @@ export async function generateOrganization(request: OrganizationRequest, signal:
     },
     signal,
     { inputTokens: limits.inputTokens },
-    provider
+    provider,
+    profile
   );
 }
