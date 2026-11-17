@@ -309,7 +309,7 @@
   @media (prefers-reduced-motion: no-preference) and (min-height: 640px) and (min-width: 360px) {
     .hero.hero {
       padding-top: 0;
-      height: 240svh;
+      height: 190svh;
       min-height: 0;
       overflow: visible;
       view-timeline-name: --intro-hero;
@@ -325,8 +325,17 @@
     .hero [data-extracted-document] { transform-origin: 50% 50%; animation: extract-meeting-note linear both; animation-duration: auto; animation-timeline: --intro-hero; animation-range: contain 0% contain 100%; }
     .hero .scrollCue { position: relative; z-index: 3; white-space: nowrap; }
 
+    @media (min-width: 1100px) {
+      .heroArt [data-intro-folder] { width: min(1440px, 100%); height: min(640px, calc(100svh - 160px)); }
+      .hero [data-extracted-document] { width: min(1180px, calc(100% - 80px)); padding: clamp(32px, 3vw, 48px); }
+      .hero [data-extracted-document] > p { font-size: 1.5rem; }
+      .hero [data-extracted-document] h3,
+      .hero [data-extracted-document] ul,
+      .hero [data-extracted-document] > div p { font-size: 1.25rem; }
+    }
+
     @media (max-width: 640px) {
-      .hero.hero { --note-lift: -100px; height: 220svh; }
+      .hero.hero { --note-lift: -100px; height: 190svh; }
       .heroPin { top: 68px; height: calc(100svh - 68px); }
       .hero .heroCopy { top: 0; }
       .heroArt [data-intro-folder] { height: 330px; }

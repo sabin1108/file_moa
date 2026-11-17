@@ -32,6 +32,7 @@ export function OnboardingPage({ mode = "live", initialView }: OnboardingPagePro
           <span>모아.</span>
         </Link>
         <nav aria-label="기능 소개">
+          <a href="#safety">안전한 사용</a>
           <a href="#find">자료 찾기</a>
           <a href="#organize">파일 정리</a>
           <a href="#records">기록</a>
@@ -63,11 +64,44 @@ export function OnboardingPage({ mode = "live", initialView }: OnboardingPagePro
                 <Icon name="chevron" size={18} />
               </StartLink>
               {sample && <p className={styles.invitationNote}>로그인 없이, 준비된 샘플 자료로 둘러보세요.</p>}
-              <a className={`${styles.scrollLink} ${motion.scrollCue}`} href="#find">스크롤하며 모아 알아보기<Icon name="down" size={18} /></a>
+              <a className={`${styles.scrollLink} ${motion.scrollCue}`} href="#safety">스크롤하며 모아 알아보기<Icon name="down" size={18} /></a>
             </div>
             <div className={motion.heroArt}>
               <FolderScene />
             </div>
+          </div>
+        </section>
+
+        <section id="safety" className={`${styles.chapter} ${styles.safety}`} aria-labelledby="safety-heading">
+          <div className={styles.split}>
+            <div className={styles.chapterCopy}>
+              <h2 id="safety-heading">AI에게 내 자료,<br />맡겨도 괜찮을까?</h2>
+              <p>편리할 것 같지만, 망설여지는 마음.<br />이런 걱정부터 하나씩 짚어볼게요.</p>
+              {sample && <p className={styles.detail}>아래는 정식 사용의 보관·복구 방식이에요. 데모에서는 예시 자료와 이 탭의 임시 기록으로 흐름을 살펴봐요. 개인 파일 변경과 로컬 폴더의 영구 저장은 연결되지 않아요.</p>}
+            </div>
+            <dl className={styles.safetyDetails}>
+              <div>
+                <dt>잘못된 답을 믿게 되면?</dt>
+                <dd>
+                  <p>자료 답변은 원문 출처와 함께 확인해요.</p>
+                  <p className={styles.safetyExplanation}>자료로 질문할 때는 보낼 발췌를 확인하고 동의한 뒤 전송해요. 폴더 연결만으로 파일을 보내지는 않아요. AI도 틀릴 수 있으니 답변의 출처를 열어 원문과 비교하세요.</p>
+                </dd>
+              </div>
+              <div>
+                <dt>내 파일이 마음대로 바뀌면?</dt>
+                <dd>
+                  <p>변경은 직접 승인하고, 보존본을 남겨요.</p>
+                  <p className={styles.safetyExplanation}>편집은 첫 저장 전에 원본 사본을 남겨요. 이동·휴지통·덮어쓰기는 보존본 검증과 직접 실행을 거쳐요. 작업 기록과 보존본에서 복구할 항목을 확인할 수 있어요. 기기 고장에 대비한 별도 백업도 함께 준비해 주세요.</p>
+                </dd>
+              </div>
+              <div>
+                <dt>쌓아 둔 대화가 사라지면?</dt>
+                <dd>
+                  <p>저장을 켜고, AI 답변과 이전 버전을 보관해요.</p>
+                  <p className={styles.safetyExplanation}>기록 저장 위치를 고르고 대화 저장을 켜면 질문과 답변을 보관할 수 있어요. 결과물과 위키는 따로 저장하고, AI 초안·내가 편집한 본문·이전 버전을 구분해 확인해요. 저장 파일은 암호화되지 않아요.</p>
+                </dd>
+              </div>
+            </dl>
           </div>
         </section>
 

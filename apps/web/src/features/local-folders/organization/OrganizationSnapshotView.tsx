@@ -74,7 +74,7 @@ export function OrganizationSnapshotView({
       data-local-snapshot
     >
       <details open={state.phase === "ready" && !unanswered}>
-        <summary>전송 자료 {state.selectedIds.length}개 확인</summary>
+        <summary>AI에 보낼 자료 확인 · {state.selectedIds.length}개</summary>
         <p className={styles.note}>
           참고:{" "}
           {state.reference === null
@@ -170,8 +170,8 @@ export function OrganizationSnapshotView({
               검사합니다.
             </p>
           )}
-        <details data-source-excerpts>
-          <summary>자료 {snapshot.documents.length}개 · 선택·발췌 보기</summary>
+        <section data-source-excerpts aria-label="전송할 파일 선택">
+          <h4>자료 선택 · {state.selectedIds.length} / {snapshot.documents.length}개</h4>
           <OrganizationDocumentsView
             documents={snapshot.documents}
             selectedIds={state.selectedIds}
@@ -179,7 +179,7 @@ export function OrganizationSnapshotView({
             pending={pending}
             onToggle={controller.toggleDocument}
           />
-        </details>
+        </section>
         {snapshot.reference
           && (
             <details data-reference-structure>

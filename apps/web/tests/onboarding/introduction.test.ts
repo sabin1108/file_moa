@@ -6,6 +6,23 @@ import { OnboardingPage } from "../../src/features/onboarding/OnboardingPage";
 import { metadata as demoMetadata } from "../../src/app/demo/layout";
 
 describe("introduction entry points", () => {
+  it.each(["live", "sample"] as const)("explains consent, record storage and recovery before features in %s mode", mode => {
+    const html = renderToStaticMarkup(createElement(OnboardingPage, { mode }));
+    const safetyStart = html.indexOf('id="safety"');
+    const featuresStart = html.indexOf('id="find"');
+    const safety = html.slice(safetyStart, featuresStart);
+
+    expect(safetyStart).toBeGreaterThan(html.indexOf('data-scroll-hero'));
+    expect(safetyStart).toBeLessThan(featuresStart);
+    expect(safety).toContain("동의한 뒤 전송");
+    expect(safety).toContain("대화 저장을 켜면");
+    expect(safety).toContain("이전 버전");
+    expect(safety).toContain("보존본 검증과 직접 실행");
+    expect(safety).toContain("별도 백업");
+    expect(safety).not.toContain("<details");
+    if (mode === "sample") expect(safety).toContain("영구 저장은 연결되지 않아요");
+  });
+
   it("shows one meeting note emerging from the hero folder without the gathering cards", () => {
     const html = renderToStaticMarkup(createElement(OnboardingPage));
     const folder = html.indexOf('data-intro-folder');

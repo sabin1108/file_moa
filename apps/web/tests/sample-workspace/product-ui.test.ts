@@ -128,10 +128,10 @@ describe("demo presents the product UI", () => {
     const question = renderToStaticMarkup(createElement(SampleFolderPanel, { ...props, selecting: true }));
     expect(question).not.toMatch(/aria-label="회의.md 선택"[^>]*disabled/);
   });
-  it("uses the same 17 tour steps and selectors, with only workspace routes mapped", () => {
+  it("shares the safety introduction and tour selectors, with workspace routes mapped", () => {
     expect(workspaceStepsFor("live")).toBe(workspaceTourSteps);
     const demo = workspaceStepsFor("sample");
-    expect(demo).toHaveLength(17);
+    expect(demo).toHaveLength(19);
     for (const [index, step] of demo.entries()) {
       expect(step.selector).toBe(workspaceTourSteps[index].selector);
       expect(step.title).toBe(workspaceTourSteps[index].title);

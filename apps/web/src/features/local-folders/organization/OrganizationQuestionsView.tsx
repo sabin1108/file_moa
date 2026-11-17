@@ -10,9 +10,13 @@ import styles from "./organization-preparation.module.css";
 export function OrganizationQuestionsView({
   controller,
   state,
+  assignment,
+  onAssignment,
 }: {
   controller: OrganizationPreparationController;
   state: OrganizationPreparationState;
+  assignment: string;
+  onAssignment: (value: string) => void;
 }) {
   if (!state.questions.length || !state.snapshot) return null;
 
@@ -20,6 +24,10 @@ export function OrganizationQuestionsView({
   const documentIds = [
     ...new Set(state.questions.map((question) => question.documentId)),
   ];
+  const destinationIds = [...new Set(state.questions.filter(question => question.kind === "destination").map(question => question.documentId))]
+    .filter(id => !state.answers.some(answer => answer.documentId === id && answer.exclude));
+  const reasons = [...new Set(state.questions.map(question => question.reason))];
+  const commonReason = reasons.length === 1 ? reasons[0] : null;
 
   return (
     <section
@@ -27,15 +35,19 @@ export function OrganizationQuestionsView({
       aria-label="애매한 자료 묶음 확인"
       data-review-questions
     >
-      <h3>
-        {state.result && !state.result.organization.held.length
-          ? "확인한 기준·답변 수정"
-          : "확인이 필요한 자료를 모았어요"}
-      </h3>
-      <p>
-        실제 날짜 근거와 목적지를 함께 확인해 주세요. 답변을 바꾸면 이전 제안은
-        폐기하며, 다시 확인하고 전송해야 반영됩니다.
-      </p>
+      <h3>확인이 필요한 자료 {documentIds.length}개</h3>
+      <p className={styles.note}>파일 내용을 살펴보고 목적지나 날짜 기준을 정해 주세요. 아직 파일은 바뀌지 않습니다.</p>
+      {commonReason && <p className={styles.note}>{commonReason}</p>}
+      {destinationIds.length > 0 && <fieldset disabled={pending} className={styles.assignment}>
+        <legend>목적지를 어떻게 정할까요?</legend>
+        <div className={styles.actions}>
+          <label><input type="radio" name="organization-assignment" checked={assignment === "same"} onChange={() => onAssignment("same")} /> 같은 폴더로 한 번에</label>
+          <label><input type="radio" name="organization-assignment" checked={assignment === "each"} onChange={() => onAssignment("each")} /> 파일별로 지정</label>
+        </div>
+        {assignment === "same" && <button type="button" className={actionClasses("secondary")} onClick={() => void controller.browseAnswers(destinationIds)}>
+          {destinationIds.length}개 자료의 목적지 폴더 선택
+        </button>}
+      </fieldset>}
       {documentIds.map((documentId) => {
         const document = state.snapshot!.documents.find(
           (document) => document.id === documentId,
@@ -49,21 +61,32 @@ export function OrganizationQuestionsView({
         const base = answer?.exclude
           ? { documentId }
           : (answer ?? { documentId });
+        let status = "기준 확인 필요";
+        if (answer?.exclude) status = "이번 정리에서 제외";
+        else if (answer?.destination) status = `목적지: ${answer.destination.join(" / ")}`;
+        else if (answer?.date !== undefined) status = answer.date === null ? "날짜로 나누지 않음" : `날짜: ${answer.date}`;
 
         return (
-          <fieldset
+          <details
             key={documentId}
-            disabled={pending}
-            className={styles.conditions}
+            className={styles.questionRow}
           >
-            <legend>
-              {document.path.join(" / ")}
-            </legend>
+            <summary>
+              <strong>{document.name}</strong>
+              <span>{status}</span>
+            </summary>
+            <fieldset disabled={pending}>
+            <legend className="sr-only">{document.name}</legend>
+            <p className={styles.note}>{document.path.slice(0, -1).join(" / ") || "연결 폴더"}</p>
+            <details>
+              <summary>파일 내용 확인</summary>
+              <pre className={styles.questionExcerpt}>{document.excerpt || "(빈 문서)"}</pre>
+            </details>
             {questions.map((question) => (
               <div key={question.id}>
-                <p>
+                {!commonReason && <p className={styles.note}>
                   {question.reason}
-                </p>
+                </p>}
                 {question.kind === "date"
                   ? (
                     <label className={styles.basis}>
@@ -124,40 +147,10 @@ export function OrganizationQuestionsView({
                     </label>
                   )
                   : (
-                    <form
-                      className={styles.basis}
-                      onSubmit={(event) => {
-                        event.preventDefault();
-
-                        const value = String(
-                          new FormData(event.currentTarget).get("destination") ??
-                          "",
-                        ).trim();
-
-                        controller.answer({
-                          ...base,
-                          destination: value.split("/"),
-                        });
-                      }}
-                    >
-                      <label>
-                        이 자료의 정리 하위 경로
-                        <input
-                          key={answer?.destination?.join("/") ?? ""}
-                          name="destination"
-                          aria-label={`${document.name} 정리 하위 경로`}
-                          maxLength={120}
-                          defaultValue={answer?.destination?.join("/") ?? ""}
-                          placeholder="주제 폴더/하위 폴더"
-                        />
-                      </label>
-                      <button
-                        type="submit"
-                        className={actionClasses("secondary")}
-                      >
-                        이 목적지로 답변
-                      </button>
-                    </form>
+                    <div className={styles.folderChoice}>
+                      <p>{answer?.exclude ? "이번 정리에서 제외" : answer?.destination ? `목적지: ${answer.destination.join(" / ")}` : "목적지를 선택해 주세요"}</p>
+                      {assignment === "each" && !answer?.exclude && <button type="button" className={actionClasses("secondary")} aria-label={`${document.name} 목적지 폴더 선택`} onClick={() => void controller.browseAnswers([documentId])}>폴더 선택</button>}
+                    </div>
                   )}
               </div>
             ))}
@@ -173,14 +166,8 @@ export function OrganizationQuestionsView({
               />
               이번 정리에서 제외
             </label>
-            {answer
-              && (
-                <p className={styles.note}>
-                  답변을 보관했습니다. 전송 자료 확인에서 새로 확인하고 답변을
-                  반영해 주세요.
-                </p>
-              )}
-          </fieldset>
+            </fieldset>
+          </details>
         );
       })}
     </section>

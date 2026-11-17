@@ -77,6 +77,11 @@
 .chapterIntro { width: min(1180px, 100%); margin: 0 auto 68px; display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
 .chapterIntro > p { max-width: 490px; }
 .split { width: min(1180px, 100%); margin-inline: auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 100px); align-items: center; }
+.safety { min-height: auto; background: var(--intro-white); }
+.safetyDetails { display: grid; gap: 40px; margin: 0; }
+.safetyDetails dt { font-size: clamp(1.375rem, 2vw, 1.75rem); line-height: 1.4; font-weight: 700; word-break: keep-all; text-wrap: balance; }
+.safetyDetails dd { margin: 10px 0 0; font-size: 1rem; line-height: 1.8; word-break: keep-all; overflow-wrap: break-word; }
+.safetyExplanation { margin-top: 12px; color: var(--intro-muted); }
 .find { background: var(--intro-ground); }
 .conversation { background: var(--intro-white); }
 .organize { background: var(--intro-dark); color: var(--intro-light-ink); }

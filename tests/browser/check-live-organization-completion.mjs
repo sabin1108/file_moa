@@ -275,6 +275,7 @@ try {
   await click('[aria-label="자료 폴더 연결"] button');
   await until(() => [...document.querySelectorAll('[aria-label="자료 폴더 연결"] button')].some(button => button.textContent === "다른 폴더 선택" && !button.disabled));
   await click('[data-fixture-view="settings"]');
+  await click('[data-tour="settings-tabs"] a[href*="tab=folders"]');
   await until(() => [...document.querySelectorAll("button")].some(button => button.textContent === "새 보관함 만들기" && !button.disabled));
   await page.eval(() => {
     listingProbe.name = "검증 자료 B";
@@ -286,7 +287,9 @@ try {
   await until(() => document.body.textContent.includes("위치·식별 확인됨"));
   check("actual recovery vault created and verified through existing settings", true);
   await click('[data-fixture-view="chat"]');
-  await until(() => document.getElementById("message-draft"));
+  await until(() => document.querySelector('[data-tour="task-organize"]'));
+  await page.eval(() => document.querySelector('[data-tour="task-organize"]').click());
+  await until(() => document.querySelector('[aria-label="대화 작업"]')?.value === 'organize');
   await fill("#message-draft", '연결한 폴더 전체에서 성능 자료를 날짜 기준으로 정리. "참고" 폴더를 기준으로 "정리" 폴더로 모아 줘');
   await click('[data-action="organization-send"]');
   await until(() => document.querySelector("[data-local-snapshot]"));
@@ -305,7 +308,7 @@ try {
   await page.setViewport({ width: 1440, height: 1000 });
   check(
     "natural language resolves root scope, separate reference and destination without a scope wizard",
-    await page.eval(() => document.querySelector('[aria-label="현재 탐색 범위"]').textContent.includes("전체")
+    await page.eval(() => !document.querySelector('[data-organization-conditions]')
       && document.querySelector("[data-local-preparation]").textContent.includes("참고: 검증 자료 A / 참고 · 목적지: 검증 자료 A / 정리"))
   );
   check(
@@ -333,13 +336,31 @@ try {
     return questions.textContent.includes("작성일") && questions.textContent.includes("검토 기준일")
       && questions.textContent.includes("혼합.txt")
       &&
-      questions.querySelectorAll("fieldset").length === 2
+      questions.querySelectorAll("fieldset > legend").length === 3
       && !document.querySelector("[data-organization-operation]");
   }));
   check(
     "unanswered questions cannot obtain a new transmission consent",
-    await page.eval(() => document.querySelector("[data-local-consent]").disabled)
+    await page.eval(() => !document.querySelector("[data-local-consent]") && document.querySelector('[data-confirm-review]').disabled)
   );
+
+  for (const width of [390, 768, 1440, 1920]) {
+    await page.setViewport({ width, height: 1000 });
+    check(`${width}: current question stage hides earlier conditions and transmission`, await page.eval(() =>
+      !document.querySelector('[data-local-snapshot]') && !document.querySelector('[data-organization-conditions]')
+      && document.documentElement.scrollWidth <= innerWidth));
+    await page.eval(() => document.querySelector('[data-review-questions]').scrollIntoView({ block: 'start', behavior: 'instant' }));
+    await page.screenshot({ path: `${output}/questions-${width}.png`, format: 'png', fullPage: true });
+  }
+  await page.setViewport({ width: 1440, height: 1000 });
+  await click('[data-review-questions] input[name="organization-assignment"]:not(:checked)');
+  await click('[aria-label="혼합.txt 목적지 폴더 선택"]');
+  await until(() => document.querySelector('[data-destination-phase="ready"]'));
+  await clickText('목적지 탐색 취소');
+  check('individual assignment survives picker cancellation without changing answers', await page.eval(() =>
+    !!document.querySelector('[aria-label="혼합.txt 목적지 폴더 선택"]')
+    && document.querySelector('[data-confirm-review]').disabled && liveTransferProbe.calls.length === 1));
+  await click('[data-review-questions] input[name="organization-assignment"]:not(:checked)');
 
   if (process.argv.includes("--reply")) {
     check(
@@ -351,8 +372,8 @@ try {
     await click('[data-action="organization-send"]');
     check(
       "unsupported clause leaves every answer and first proposal intact",
-      await page.eval(() => !!document.querySelector('[data-live-result]') && document.querySelector('[aria-label="날짜보고.md 날짜 기준"]').value === ""
-        && document.querySelector('[data-local-consent]').disabled
+      await page.eval(() => !document.querySelector('[data-local-snapshot]') && document.querySelector('[aria-label="날짜보고.md 날짜 기준"]').value === ""
+        && document.querySelector('[data-confirm-review]').disabled
         && liveTransferProbe.calls.length === 1)
     );
     await fill("#message-draft", "검토 기준일로 하고, 혼합.txt는 혼합자료 폴더로");
@@ -371,7 +392,7 @@ try {
     });
     check(
       "composing Enter cannot submit a reply or transmit",
-      await page.eval(() => !!document.querySelector('[data-live-result]') && document.querySelector('[aria-label="날짜보고.md 날짜 기준"]').value === ""
+      await page.eval(() => !!document.querySelector('[data-review-questions]') && document.querySelector('[aria-label="날짜보고.md 날짜 기준"]').value === ""
         && liveTransferProbe.calls.length === 1)
     );
     await page.eval(() => document.getElementById("message-draft").dispatchEvent(new CompositionEvent("compositionend", { bubbles: true, data: "검토" })));
@@ -379,7 +400,7 @@ try {
     check(
       "one chat reply fills both existing controls and clears its draft",
       await page.eval(() => !!document.querySelector('[aria-label="날짜보고.md 날짜 기준"]').value
-        && document.querySelector('[aria-label="혼합.txt 정리 하위 경로"]').value === "혼합자료"
+        && document.querySelector('[data-review-questions]').textContent.includes("목적지: 혼합자료")
         && document.getElementById('message-draft').value === "")
     );
   } else {
@@ -389,10 +410,15 @@ try {
       select.value = [...select.options].find(option => option.textContent.includes("검토 기준일")).value;
       select.dispatchEvent(new Event("change", { bubbles: true }));
     });
-    await fill('[aria-label="혼합.txt 정리 하위 경로"]', "혼합자료");
-    await click('[data-review-questions] button[type="submit"]');
+    await page.eval(() => [...document.querySelectorAll('[data-review-questions] button')].find(button => button.textContent.includes('개 자료의 목적지')).click());
+    await until(() => document.querySelector('[data-destination-phase="ready"]'));
+    check('folder picker displays files while choosing a review destination', await page.eval(() => !!document.querySelector('[aria-label="목적지 폴더의 파일"]')));
+    await click('[aria-label="혼합자료 목적지 폴더 열기"]');
+    await until(() => document.querySelector('[data-destination-phase="ready"]'));
+    await click('[aria-label="혼합자료 폴더를 목적지로 선택"]');
   }
 
+  await click('[data-confirm-review]');
   await until(() => !document.querySelector("[data-local-consent]").disabled);
   check(
     "answers invalidate old proposal without auto-generation",
@@ -408,9 +434,8 @@ try {
       && liveTransferProbe.calls[1].referenceTree.directories.length === 2)
   );
   check(
-    "answered date criteria remain editable without being asked again",
-    await page.eval(() => document.querySelector("[data-review-questions] h3").textContent.includes("확인한 기준")
-      && !!document.querySelector('[aria-label="날짜보고.md 날짜 기준"]').value)
+    "completed proposal hides prior questions and offers an explicit edit action",
+    await page.eval(() => !document.querySelector("[data-review-questions]") && !!document.querySelector('[data-edit-review]') && !document.querySelector('[data-local-snapshot]'))
   );
   await click('[data-organization-kind="copy"]');
   await click("[data-organization-plan]");

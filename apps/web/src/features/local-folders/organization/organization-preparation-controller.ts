@@ -51,7 +51,8 @@ export type OrganizationPreparationState = Conditions &
     partialAccepted: boolean;
     consentKey: string | null;
     issue: string | null;
-    picking: FolderChoice | null;
+    picking: FolderChoice | "answer" | null;
+    reviewConfirmed: boolean;
     result: Extract<LiveOrganizationResult, { ok: true }> | null;
     answers: readonly ReviewAnswer[];
     questions: readonly ReviewQuestion[];
@@ -75,6 +76,7 @@ const initial: OrganizationPreparationState = {
   consentKey: null,
   issue: null,
   picking: null,
+  reviewConfirmed: false,
   result: null,
   answers: [],
   questions: [],
@@ -90,6 +92,7 @@ export class OrganizationPreparationController {
   private sequence = 0;
   private abort: AbortController | null = null;
   private explicitConditions = new Set<"scope" | "reference" | "destination">();
+  private answerTargets: readonly string[] = [];
   readonly picker: DestinationPickerController;
 
   constructor(
@@ -139,6 +142,8 @@ export class OrganizationPreparationController {
 
   update = (change: Partial<Conditions>) => {
     this.stop();
+    this.answerTargets = [];
+    this.picker.close();
 
     const next = { ...this.state, ...change };
 
@@ -171,6 +176,8 @@ export class OrganizationPreparationController {
 
     this.publish({
       ...next,
+      picking: null,
+      reviewConfirmed: false,
       phase: "draft",
       snapshot: null,
       selectedIds: [],
@@ -505,6 +512,7 @@ export class OrganizationPreparationController {
       this.publish({
         ...this.state,
         phase: result.ok ? "review" : "ready",
+        reviewConfirmed: result.ok && !result.organization.held.length,
         consentKey: null,
         result: result.ok ? result : null,
         questions: result.ok
@@ -638,6 +646,7 @@ export class OrganizationPreparationController {
         phase: "ready",
         result: null,
         consentKey: null,
+        reviewConfirmed: false,
         answers,
         submittedReply: "",
         issue: null,
@@ -665,7 +674,36 @@ export class OrganizationPreparationController {
       answers: this.state.answers.filter(
         (answer) => answer.documentId !== documentId,
       ),
+      reviewConfirmed: false,
     });
+  };
+
+  confirmReview = () => {
+    if (!["ready", "review"].includes(this.state.phase)
+      || hasUnansweredReview(this.state.questions, this.state.answers)) return;
+
+    this.publish({ ...this.state, reviewConfirmed: true });
+  };
+  editReview = () => {
+    if (!["ready", "review"].includes(this.state.phase)) return;
+
+    this.publish({ ...this.state, reviewConfirmed: false, consentKey: null });
+  };
+  browseAnswers = async (documentIds: readonly string[]) => {
+    if (!["ready", "review"].includes(this.state.phase)) return;
+
+    const targets = [...new Set(documentIds)].filter(id =>
+      this.state.questions.some(question => question.documentId === id && question.kind === "destination")
+      && !this.state.answers.some(answer => answer.documentId === id && answer.exclude));
+
+    if (!targets.length || targets.some(id => !this.state.selectedIds.includes(id))) return;
+
+    this.answerTargets = targets;
+    this.publish({ ...this.state, picking: "answer", issue: null });
+    const answer = targets.length === 1
+      ? this.state.answers.find(answer => answer.documentId === targets[0])
+      : undefined;
+    await this.picker.show([...(this.state.destination ?? []), ...(answer?.destination ?? [])]);
   };
 
   browse = async (picking: FolderChoice) => {
@@ -686,6 +724,17 @@ export class OrganizationPreparationController {
 
     if (!picking || !path) return;
 
+    if (picking === "answer") {
+      const base = this.state.destination ?? [];
+      if (!base.every((part, index) => path[index] === part) || path.length <= base.length) {
+        this.publish({ ...this.state, issue: "최종 목적지 안의 하위 폴더를 선택해 주세요." });
+        return;
+      }
+
+      this.chooseAnswerFolder(path.slice(base.length));
+      return;
+    }
+
     this.update(
       picking === "scope"
         ? { scope: { kind: "folder", path } }
@@ -693,7 +742,15 @@ export class OrganizationPreparationController {
     );
     this.closePicker();
   };
+  chooseAnswerFolder = (destination: readonly string[]) => {
+    if (this.state.picking !== "answer" || !["ready", "review"].includes(this.state.phase)) return;
+
+    const targets = this.answerTargets.filter(id => !this.state.answers.some(answer => answer.documentId === id && answer.exclude));
+    if (!targets.length) return;
+    if (this.applyAnswers(targets.map(documentId => ({ documentId, destination: [...destination] })))) this.closePicker();
+  };
   closePicker = () => {
+    this.answerTargets = [];
     this.picker.close();
     this.publish({ ...this.state, picking: null });
   };
@@ -725,6 +782,7 @@ export class OrganizationPreparationController {
   reset = () => {
     this.stop();
     this.explicitConditions.clear();
+    this.answerTargets = [];
     this.picker.close();
     this.publish(initial);
   };

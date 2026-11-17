@@ -11,7 +11,7 @@ import { DestinationPathForm } from "./DestinationPathForm";
 import { FolderUpButton } from "../browsing/navigation/FolderUpButton";
 /** 같은 계획 dialog 안의 탐색 면. 표시/키보드 초점만 관리하고 읽기·취소는 controller에 맡긴다. */
 
-export function DestinationFolderPicker({ controller, state, folderName, onChoose, allowCreation = true, onCancel, purpose = "목적지" }: {
+export function DestinationFolderPicker({ controller, state, folderName, onChoose, allowCreation = true, onCancel, purpose = "목적지", showFiles = false }: {
   controller: DestinationPickerController;
   state: DestinationPickerState;
   folderName: string;
@@ -19,6 +19,7 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
   allowCreation?: boolean;
   onCancel?: () => void;
   purpose?: string;
+  showFiles?: boolean;
 }) {
   const title = useRef<HTMLHeadingElement>(null);
   const previousPhase = useRef(state.phase);
@@ -52,6 +53,7 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
 
   const pending = state.phase === "loading";
   const folders = state.result?.entries.filter(entry => entry.kind === "directory") ?? [];
+  const files = showFiles ? state.result?.entries.filter(entry => entry.kind === "file") ?? [] : [];
   const path = state.result?.path ?? state.requestedPath;
   const currentName = path.at(-1) ?? folderName;
 
@@ -231,6 +233,13 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
               ))}
             </ul>
           )}
+        {showFiles && <>
+          <h4 className={styles.folderListTitle}>이 폴더의 파일 · {files.length}개</h4>
+          {state.phase === "ready" && !files.length && <p className={styles.note}>이 위치에 파일이 없습니다.</p>}
+          <ul className={styles.files} aria-label={`${purpose} 폴더의 파일`}>
+            {files.map(file => <li key={file.name}><Icon name="file" size={18} /><span>{file.name}</span></li>)}
+          </ul>
+        </>}
       </div>
     </section>
   );

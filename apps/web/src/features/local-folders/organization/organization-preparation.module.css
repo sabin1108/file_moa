@@ -17,6 +17,13 @@
 .preparation h3 {
   font-size: 16px;
 }
+.assignment { padding-block: var(--ui-space-3); border-bottom: 1px solid var(--border); }
+.assignment label { display: flex; gap: 8px; align-items: center; min-height: 44px; }
+.questionRow { border-bottom: 1px solid var(--border); }
+.questionRow > summary { min-height: 56px; padding-block: 12px; cursor: pointer; overflow-wrap: anywhere; }
+.questionRow > summary span { display: block; margin-top: 4px; font-size: 13px; color: var(--muted); }
+.questionRow[open] > fieldset { padding-block: var(--ui-space-3); }
+.questionExcerpt { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; font-size: 15px; line-height: 1.8; max-height: 36dvh; overflow-y: auto; padding: var(--ui-space-3); background: var(--surface); }
 .preparation fieldset {
   min-width: 0;
   border: 0;
