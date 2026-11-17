@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { readDemoVisitor, DEMO_VISITOR_COOKIE } from "../../server/demo/demo-access";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
+export const maxDuration = 120;
 
 export default async function DemoLayout({ children }: { children: ReactNode }) {
   if (!readDemoVisitor((await cookies()).get(DEMO_VISITOR_COOKIE)?.value)) notFound();
