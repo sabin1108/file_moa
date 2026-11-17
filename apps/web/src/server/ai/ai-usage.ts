@@ -37,7 +37,7 @@ export async function startUsage(
   });
 }
 
-export async function finishUsage(owner: UsageOwner, requestId: string, model: string | null, usage: SampleAiUsage | null) {
+export async function finishUsage(owner: UsageOwner, requestId: string, model: string | null, usage: SampleAiUsage | null, complete = true) {
   if (!enabled()) return;
 
   await getDatabase().$transaction(async tx => {
@@ -46,7 +46,7 @@ export async function finishUsage(owner: UsageOwner, requestId: string, model: s
     await tx.aiUsageEvent.updateMany({
       where: { workspaceId: owner.workspaceId, requestId, status: "reserved" },
       data: {
-        status: usage ? "completed" : "unknown",
+        status: usage && complete ? "completed" : "unknown",
         model,
         completedAt: new Date(),
         inputTokens: usage?.inputTokens ?? null,

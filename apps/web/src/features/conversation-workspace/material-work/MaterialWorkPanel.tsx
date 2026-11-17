@@ -81,7 +81,7 @@ function FindWorkPanel({ onPrepare, onQuestion, canStart, queryAction }: {
   </>;
 }
 
-export function MaterialWorkPanel({ kind, onPrepare, onQuestion, canStart, organizeAction, aiProvider, waitingForSource, onContinue, queryAction }: {
+export function MaterialWorkPanel({ kind, onPrepare, onQuestion, canStart, organizeAction, aiProvider, waitingForSource, onContinue, queryAction, onReply }: {
   kind: "find" | "organize";
   onPrepare: () => void;
   onQuestion?: () => void;
@@ -91,6 +91,7 @@ export function MaterialWorkPanel({ kind, onPrepare, onQuestion, canStart, organ
   waitingForSource: boolean;
   onContinue: () => void;
   queryAction?: SearchQueryAction;
+  onReply?: (text: string) => void;
 }) {
   const local = useSharedSourceFolderConnection();
 
@@ -105,5 +106,5 @@ export function MaterialWorkPanel({ kind, onPrepare, onQuestion, canStart, organ
 
   return kind === "find"
     ? <FindWorkPanel onPrepare={onPrepare} onQuestion={onQuestion} canStart={canStart} queryAction={queryAction} />
-    : <OrganizationPreparationPanel organizeAction={organizeAction} aiProvider={aiProvider} />;
+    : <OrganizationPreparationPanel organizeAction={organizeAction} aiProvider={aiProvider} onReply={onReply} />;
 }

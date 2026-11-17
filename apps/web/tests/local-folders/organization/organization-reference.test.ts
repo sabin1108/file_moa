@@ -8,6 +8,13 @@ vi.mock("../../../src/features/local-folders/browsing/source-folder-listing", ()
   readSourceFolderListing: listing
 }));
 
+it("can confirm 200 reference folders without the previous 80-folder truncation", async () => {
+  listing.mockImplementation(async (_root, path: string[]) => ({ path, truncated: false, entries: path.length === 0 ? Array.from({ length: 200 }, (_, index) => ({ kind: "directory", name: `folder${index}` })) : [] }));
+  const tree = await readOrganizationFolders({} as FolderHandle, [], () => {}, new AbortController().signal);
+  expect(tree.complete).toBe(true);
+  expect(tree.directories).toHaveLength(201);
+});
+
 it("reads only bounded directory metadata and reports incomplete traversal", async () => {
   listing.mockImplementation(async (_root, path) => ({
     path,

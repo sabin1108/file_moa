@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { classifyConversationRequest, prepareQuestionSelection, reprepareQuestionSources, routeConversationRequest } from "../../../src/features/conversation-workspace/material-work/request-routing";
+import { classifyConversationRequest, prepareFoundDocuments, prepareQuestionSelection, reprepareQuestionSources, routeConversationRequest } from "../../../src/features/conversation-workspace/material-work/request-routing";
+import { findTextEvidence } from "../../../src/features/local-folders/search/documents/document-find";
 import { DocumentFindController } from "../../../src/features/local-folders/search/documents/document-find-controller";
 import { OrganizationPreparationController } from "../../../src/features/local-folders/organization/organization-preparation-controller";
 import type { SourceSnapshot } from "../../../src/features/local-folders/organization/source-snapshot-rules";
@@ -27,7 +28,7 @@ const findResult = { documents: [], complete: true, excluded: [], limits: [], di
 
 function actions() {
   return {
-    organization: { cancel: vi.fn(), reset: vi.fn(), update: vi.fn(), prepare: vi.fn(async () => { }) },
+    organization: { cancel: vi.fn(), reset: vi.fn(), update: vi.fn(), prepare: vi.fn(async () => { }), beginConversation: vi.fn(async () => { }) },
     finding: { start: vi.fn(), reset: vi.fn() },
     preview: { close: vi.fn() },
   };
@@ -61,6 +62,15 @@ describe("explicit question-source preparation", () => {
 });
 
 describe("RQ-001/002: local request choice", () => {
+  it("asks the next organization question for selected search results before reading their bodies", () => {
+    const target = actions();
+    const initial = new DocumentFindController(async () => findResult, undefined, () => 2026).getSnapshot();
+    const document = { name: snapshot.documents[0].name, path: snapshot.documents[0].path, finding: findTextEvidence("성능 보고", { terms: ["성능"], from: null, to: null, basis: "body" })! };
+    const finding = { reset: vi.fn(), getSnapshot: () => ({ ...initial, phase: "ready" as const, result: { ...findResult, documents: [document] }, selectedPaths: [document.path] }) };
+    expect(prepareFoundDocuments({ ...target, finding }, true)).toBe(true);
+    expect(target.organization.beginConversation).toHaveBeenCalledOnce();
+    expect(target.organization.prepare).not.toHaveBeenCalled();
+  });
   it.each([{ kind: "all" as const }, { kind: "folder" as const, path: ["nested"] }])("requires explicit file selection for an incomplete folder scope (%j)", async scope => {
     const organization = new OrganizationPreparationController(vi.fn(async () => ({ ...snapshot, complete: false })), vi.fn());
     organization.update({ request: "이전 정리", scope, reference: null, destination: null });
@@ -128,7 +138,7 @@ describe("RQ-001/002: local request choice", () => {
     } else {
       expect(target.finding.reset).toHaveBeenCalledOnce();
       expect(target.organization.update).toHaveBeenCalledWith({ request: "회의 자료 찾아서 정리해줘" });
-      expect(target.organization.prepare).toHaveBeenCalledOnce();
+      expect(target.organization.beginConversation).toHaveBeenCalledOnce();
     }
   });
 

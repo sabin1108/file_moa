@@ -256,6 +256,15 @@ try {
       const child = await root.getDirectoryHandle("하위 자료");
 
       await write(child, "혼합.txt", "회사 성능 테스트와 개인 학습이 섞여 있습니다. 성능 측정 결과 LCP 2.6초와 학습 노트입니다.");
+      const many = await root.getDirectoryHandle("추가자료", { create: true });
+      for (let index = 0; index < 14; index++) {
+        const folder = await many.getDirectoryHandle(`분류${index}`, { create: true });
+        await write(folder, `성능${index}.md`, "성능 측정 자료입니다. 합성 테스트용 내용입니다.");
+      }
+      for (let index = 0; index < 200; index++) {
+        const folder = await root.getDirectoryHandle(`정리대상${String(index).padStart(3, '0')}`, { create: true });
+        await write(folder, `추가${index}.md`, "합성 자료 내용 ".repeat(50));
+      }
 
       const reference = await root.getDirectoryHandle("참고", { create: true });
 
@@ -290,9 +299,61 @@ try {
   await until(() => document.querySelector('[data-tour="task-organize"]'));
   await page.eval(() => document.querySelector('[data-tour="task-organize"]').click());
   await until(() => document.querySelector('[aria-label="대화 작업"]')?.value === 'organize');
-  await fill("#message-draft", '연결한 폴더 전체에서 성능 자료를 날짜 기준으로 정리. "참고" 폴더를 기준으로 "정리" 폴더로 모아 줘');
-  await click('[data-action="organization-send"]');
+  async function reply(text) {
+    await fill("#message-draft", text);
+    await click('[data-action="organization-send"]');
+    await until(() => !document.querySelector('#message-draft').readOnly);
+  }
+  await until(() => document.querySelector('#message-draft').placeholder.includes('현재 폴더만'));
+  check('organize card immediately asks a single scope question with no typed request, file read or AI send', await page.eval(() => !document.querySelector('[data-local-snapshot]') && liveTransferProbe.calls.length === 0 && document.querySelector('#message-draft').value === ''));
+  await fill('#message-draft', '남겨 둔 초안');
+  await clickText('작업 선택');
+  check('task chooser is reachable without onboarding or clearing draft', await page.eval(() => !!document.querySelector('[data-tour="task-organize"]') && !document.querySelector('#message-draft')));
+  await click('[data-tour="task-organize"]');
+  check('returning to organize resumes the current question and retained draft', await page.eval(() => document.querySelector('#message-draft').value === '남겨 둔 초안' && !document.querySelector('[data-local-snapshot]')));
+  await fill('#message-draft', '');
+  await clickText('폴더 선택');
+  await until(() => document.querySelector('[data-destination-phase="ready"]'));
+  check('folder chooser escapes the narrow chat and keeps full-size rows for 200 folders', await page.eval(() => {
+    const dialog = document.querySelector('[data-selection-workspace]');
+    const list = document.querySelector('[aria-label="탐색 범위 하위 폴더"]');
+    return dialog.matches(':modal') && dialog.clientWidth >= 1000 && list.clientHeight >= 480 && list.children.length >= 200 && list.querySelector('button').getBoundingClientRect().height >= 48;
+  }));
+  check('200 sidebar folders scroll inside the sidebar without stretching the page', await page.eval(() => document.documentElement.scrollHeight <= innerHeight + 100));
+  for (const width of [390, 768, 1440, 1920]) {
+    await page.setViewport({ width, height: 1000 });
+    await pause(150);
+    check(`${width}: large folder chooser remains inside viewport`, await page.eval(() => {
+      const rect = document.querySelector('[data-selection-workspace]').getBoundingClientRect();
+      return rect.left >= 0 && rect.right <= innerWidth + 1 && rect.top >= 0 && rect.bottom <= innerHeight + 1;
+    }));
+    await page.screenshot({ path: `${output}/folder-selector-${width}.png`, format: 'png', fullPage: true });
+  }
+  await page.setViewport({ width: 1440, height: 1000 });
+  await clickText('검증 자료 A 폴더를 탐색 범위로 선택');
+  await until(() => document.querySelector('#message-draft').placeholder.includes('하위 폴더까지'));
+  check('choosing a folder asks only coverage and removes the duplicate criteria form', await page.eval(() => !document.querySelector('[data-organization-conditions]') && !document.querySelector('[data-local-snapshot]') && !document.querySelector('[data-local-preparation] textarea')));
+  await reply('이 폴더 파일만');
+  await until(() => document.querySelector('#message-draft').placeholder.includes('본문 내용을 보고 주제별로'));
+  await clickText('이전 질문');
+  await until(() => document.querySelector('#message-draft').placeholder.includes('하위 폴더까지'));
+  await clickText('이전 질문');
+  await until(() => document.querySelector('#message-draft').placeholder.includes('현재 폴더만'));
+  await reply('전체');
+  await until(() => document.querySelector('#message-draft').placeholder.includes('본문 내용을 보고 주제별로'));
+  await reply('날짜별로');
+  await until(() => document.querySelector('#message-draft').placeholder.includes('정리 폴더로 또는 나중에'));
+  await reply('정리 폴더로');
+  await reply('참고는 참고');
+  check('chat conditions preserve actual folders and keep earlier history collapsed', await page.eval(() => document.body.textContent.includes('검증 자료 A / 정리') && [...document.querySelectorAll('details')].some(node => node.querySelector(':scope > summary')?.textContent.includes('이전 메시지') && !node.open) && liveTransferProbe.calls.length === 0));
+  await reply('이대로 자료 확인해줘');
   await until(() => document.querySelector("[data-local-snapshot]"));
+  await click('[data-organization-select-documents]');
+  await until(() => document.querySelector('[data-source-excerpts]'));
+  check('already-read documents outside suggestions are editable in the selection workspace', await page.eval(() => !document.querySelector('[aria-label="혼합.txt 선택"]').disabled && !!document.querySelector('[data-selection-workspace]:modal')));
+  if (!await page.eval(() => document.querySelector('[aria-label="혼합.txt 선택"]').checked)) await click('[aria-label="혼합.txt 선택"]');
+  check('manual document inclusion preserves local-only preparation and clears consent', await page.eval(() => document.querySelector('[aria-label="혼합.txt 선택"]').checked && !document.querySelector('[data-local-consent]').checked && liveTransferProbe.calls.length === 0));
+  await clickText('선택 완료 · 채팅으로 돌아가기');
 
   for (const width of [390, 768, 1440, 1920]) {
     await page.setViewport({ width, height: 1000 });
@@ -306,10 +367,18 @@ try {
   }
 
   await page.setViewport({ width: 1440, height: 1000 });
+  const expandStructure = await page.eval(() => [...document.querySelectorAll('[data-organization-conversation] button')].find(node => /^전체 \d+개 보기$/u.test(node.textContent))?.textContent);
+  assert.ok(expandStructure, 'many documents offer a bounded preview and explicit expansion');
+  await clickText(expandStructure);
+  check('expanded structure keeps a bounded keyboard-scroll area without sending', await page.eval(() => {
+    const tree = document.querySelector('[aria-label="정리할 자료 구조"]');
+    return tree.querySelectorAll('li').length > 8 && tree.parentElement.tabIndex === 0 && tree.parentElement.clientHeight <= 240 && liveTransferProbe.calls.length === 0;
+  }));
+  await clickText('작게 보기');
   check(
     "natural language resolves root scope, separate reference and destination without a scope wizard",
     await page.eval(() => !document.querySelector('[data-organization-conditions]')
-      && document.querySelector("[data-local-preparation]").textContent.includes("참고: 검증 자료 A / 참고 · 목적지: 검증 자료 A / 정리"))
+      && document.querySelector("[data-local-preparation]").textContent.includes("검증 자료 A / 정리"))
   );
   check(
     "confirmed reference metadata contains directories, not file names or bodies",
@@ -356,7 +425,7 @@ try {
   await click('[data-review-questions] input[name="organization-assignment"]:not(:checked)');
   await click('[aria-label="혼합.txt 목적지 폴더 선택"]');
   await until(() => document.querySelector('[data-destination-phase="ready"]'));
-  await clickText('목적지 탐색 취소');
+  await clickText('선택창 닫기');
   check('individual assignment survives picker cancellation without changing answers', await page.eval(() =>
     !!document.querySelector('[aria-label="혼합.txt 목적지 폴더 선택"]')
     && document.querySelector('[data-confirm-review]').disabled && liveTransferProbe.calls.length === 1));
@@ -377,12 +446,14 @@ try {
         && liveTransferProbe.calls.length === 1)
     );
     await fill("#message-draft", "검토 기준일로 하고, 혼합.txt는 혼합자료 폴더로");
-    await click('[data-fixture-view="files"]');
-    await click('[data-fixture-view="chat"]');
+    for (let repeat = 0; repeat < 5; repeat++) {
+      await click('[data-fixture-view="files"]');
+      await click('[data-fixture-view="chat"]');
+    }
     check(
       "reply draft survives navigation without replacing the original instruction",
       await page.eval(() => document.getElementById("message-draft").value.includes("혼합자료 폴더로")
-        && document.body.textContent.includes('연결한 폴더 전체에서 성능 자료를 날짜 기준으로 정리.'))
+        && document.body.textContent.includes('자료 정리'))
     );
     await page.eval(() => {
       const node = document.getElementById("message-draft");
@@ -399,8 +470,8 @@ try {
     await click('[data-action="organization-send"]');
     check(
       "one chat reply fills both existing controls and clears its draft",
-      await page.eval(() => !!document.querySelector('[aria-label="날짜보고.md 날짜 기준"]').value
-        && document.querySelector('[data-review-questions]').textContent.includes("목적지: 혼합자료")
+      await page.eval(() => !document.querySelector('[data-review-questions]')
+        && document.querySelector('[data-local-snapshot]').textContent.includes("함께 반영할 답변 2개")
         && document.getElementById('message-draft').value === "")
     );
   } else {
@@ -418,7 +489,7 @@ try {
     await click('[aria-label="혼합자료 폴더를 목적지로 선택"]');
   }
 
-  await click('[data-confirm-review]');
+  if (!process.argv.includes('--reply')) await click('[data-confirm-review]');
   await until(() => !document.querySelector("[data-local-consent]").disabled);
   check(
     "answers invalidate old proposal without auto-generation",
@@ -443,6 +514,7 @@ try {
     "projection yields two source/destination batches without file writes",
     await page.eval(() => document.querySelectorAll("[data-organization-batch]").length === 2)
   );
+  check('reviewed plan replaces setup controls with a compact editable summary', await page.eval(() => !document.querySelector('[data-organization-kind="copy"]').checkVisibility() && document.activeElement.tagName === 'SUMMARY' && document.activeElement.textContent.includes('설정 변경')));
 
   for (const width of [390, 768, 1440, 1920]) {
     await page.setViewport({ width, height: 1000 });
@@ -603,8 +675,12 @@ try {
   await closeManaged();
   await closePanel();
   await click('[data-fixture-view="files"]');
-  await until(() => document.querySelector('[aria-label="날짜보고.md 미리보기"]'));
+  await until(() => {
+    const node = document.querySelector('[aria-label="날짜보고.md 미리보기"]');
+    return node?.checkVisibility() && !node.disabled;
+  });
   await page.eval(() => document.querySelector('[aria-label="날짜보고.md 미리보기"]').focus());
+  await until(() => document.activeElement?.getAttribute('aria-label') === '날짜보고.md 미리보기');
 
   for (const type of ["keyDown", "keyUp"]) await page.send("Input.dispatchKeyEvent", { type, key: " ", code: "Space", windowsVirtualKeyCode: 32 });
 

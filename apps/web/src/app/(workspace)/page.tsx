@@ -3,6 +3,8 @@ import { liveOrganizationAction, groundedChatAction, searchQueryAction } from ".
 import { readUsageAction } from "../actions/ai-usage";
 import { getAiProvider, getSearchQueryProvider } from "../../server/ai/ai-provider";
 
+export const maxDuration = 180;
+
 export default function Home() {
   const provider = getAiProvider();
 

@@ -11,7 +11,9 @@ import { useConversationRequests } from "./useConversationRequests";
 import { useGroundedConversation } from "../grounded/useGroundedConversation";
 import { parseFindReply } from "../../local-folders/search/documents/document-find-reply";
 import { subscribeAuthScopeRevoked } from "../../../shared/auth-session-events";
-import { parseOrganizationReply } from "../../local-folders/organization/organization-reply";
+import { isOrganizationFollowup, organizationConversationPrompt } from "../../local-folders/organization/organization-conversation";
+import type { LiveOrganizationAction } from "../../../shared/live-organization";
+import { AI_PROVIDER_LABELS, type AiProvider } from "../../../shared/ai-provider";
 import { useConversationStore } from "../ConversationStateProvider";
 
 type Task = {
@@ -21,7 +23,7 @@ type Task = {
   waitingForSource: boolean
 };
 
-export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>, groundedAction?: GroundedAction) {
+export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>, groundedAction?: GroundedAction, organizeAction?: LiveOrganizationAction, aiProvider: AiProvider | null = null) {
   const local = useSharedSourceFolderConnection();
   const store = useConversationStore();
   const { mode } = useSyncExternalStore(store.subscribe, store.getSelection, store.getServerSelection);
@@ -52,16 +54,18 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
     if (previous?.kind === "grounded" && grounded.result?.taskId === previous.id) return { id: previous.id, kind: "grounded", request: previous.question, waitingForSource: false };
 
     if (!previous || (previous.kind !== "find" && previous.kind !== "organize")
-      || (previous.kind === "find" ? finding.phase === "idle" : organization.phase === "draft")) return null;
+      || (previous.kind === "find" ? finding.phase === "idle" : organization.phase === "draft" && organization.conversationStep === null)) return null;
 
     return { id: previous.id, kind: previous.kind, request: previous.question, waitingForSource: false };
   });
   const [choice, setChoice] = useState<string | null>(null);
+  const [choosingTask, setChoosingTask] = useState(false);
   const [groundedRequest, setGroundedRequest] = useState<string | null>(null);
   const submitting = useRef<symbol | null>(null);
   const connected = local.state.view?.status === "connected";
   const reading = finding.phase === "searching" || ["reading", "checking", "sending"].includes(organization.phase);
   const pending = !!chat.state.active || reading || grounded.pending;
+  const organizationPrompt = organizationConversationPrompt(organization, aiProvider ? AI_PROVIDER_LABELS[aiProvider] : "설정되지 않은 외부 AI");
   const blocked = pending || managed.phase === "running";
   const intent = mode ?? (groundedRequest === chat.state.draft
     ? "grounded"
@@ -95,6 +99,7 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
     resetGrounded();
     submitting.current = null;
     setTask(null);
+    setChoosingTask(false);
     setChoice(null);
     store.select({ mode: null });
     setGroundedRequest(null);
@@ -127,13 +132,8 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
           : finding.phase === "error" ? "error" : finding.phase === "cancelled" ? "stopped" : "completed"
       );
     } else {
-      const answer = organization.issue ?? (organization.result
-        ? "정리 제안을 확인해 주세요. 원본 변경은 계획 검토 뒤 별도로 실행합니다."
-        : organization.phase === "scope"
-          ? "정리할 자료의 범위를 확인해 주세요."
-          : organization.snapshot
-            ? `자료 ${organization.snapshot.documents.length}개를 준비했어요. 범위와 발췌·전송 동의를 확인해 주세요.`
-            : "자료의 범위와 정리 조건을 확인해 주세요.");
+      const prompt = organizationConversationPrompt(organization, aiProvider ? AI_PROVIDER_LABELS[aiProvider] : "설정되지 않은 외부 AI");
+      const answer = [organization.issue, prompt.title, prompt.text].filter(Boolean).join("\n\n");
 
       updateTask(
         task.id,
@@ -143,7 +143,7 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
           : organization.phase === "error" ? "error" : "completed"
       );
     }
-  }, [task, finding, organization, updateTask]);
+  }, [task, finding, organization, updateTask, aiProvider]);
 
   const startMaterial = (kind: "find" | "organize", request: string) => {
     if (blocked || local.organizationExecution.managed.getSnapshot().phase === "running") return;
@@ -160,47 +160,29 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
     if (connected) requests.submitRequest(request, kind);
   };
 
-  const submit = async (selected?: WorkspaceRequestKind) => {
-    const request = chat.getSnapshot().draft.trim();
+  const submit = async (selected?: WorkspaceRequestKind, reply?: string) => {
+    const request = (reply ?? chat.getSnapshot().draft).trim();
 
     if (!request || blocked || submitting.current || chat.getSnapshot().turns.length >= AI_RECORD_LIMITS.conversationTurns
       || local.organizationExecution.managed.getSnapshot().phase === "running") return;
 
     const kind = selected ?? intent;
 
-    if (!selected && task?.kind === "organize" && canContinueWorkspaceTask(mode, "organize") && organization.snapshot && organization.questions.length) {
-      const documents = organization.snapshot.documents.filter(document => organization.selectedIds.includes(document.id)).map(document => ({ ...document, sourcePath: document.path.slice(0, -1) }));
-      let validReply = false;
-
+    if (!selected && connected && task?.kind === "organize" && !task.waitingForSource
+      && canContinueWorkspaceTask(mode, "organize") && isOrganizationFollowup(request)) {
+      const id = chat.recordTask("organize", request, "조건을 확인하고 있어요.", "pending");
+      if (!id) return;
+      setTask({ ...task, id });
+      chat.updateDraft("");
+      setChoice(null);
+      const operation = Symbol();
+      submitting.current = operation;
+      const listing = local.listing.getSnapshot();
+      const currentPath = listing.phase === "ready" && !listing.stale ? listing.result?.path : undefined;
       try {
-        parseOrganizationReply(request, organization.questions, documents);
-        validReply = true;
-      }
-      catch {
-        if (/기준일로|폴더로/u.test(request) || documents.some(document => request.includes(document.name))) {
-          setChoice(request);
-
-          return;
-        }
-      }
-
-      if (validReply) {
-        local.organization.updateReply(request);
-        local.organization.submitReply();
-
-        const id = chat.recordTask(
-          "organize",
-          request,
-          "답변을 정리 기준에 반영했어요. 기준과 발췌를 확인하고 새로 동의한 뒤 전송해 주세요.",
-          "completed"
-        );
-
-        if (id) setTask({ ...task, id });
-
-        chat.updateDraft("");
-
-        return;
-      }
+        await local.organization.replyToConversation(request, { currentPath }, aiProvider ? organizeAction : undefined);
+      } finally { if (submitting.current === operation) submitting.current = null; }
+      return;
     }
 
     if (!selected && (kind === "chat" || kind === "find") && task?.kind === "find" && canContinueWorkspaceTask(mode, "find")
@@ -321,12 +303,19 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
 
   return {
     task,
+    choosingTask,
+    chooseTask: () => {
+      if (!blocked) setChoosingTask(true);
+    },
+    organizationPlaceholder: task?.kind === "organize" && organizationPrompt.example ? `채팅으로 알려 주세요\n예: ${organizationPrompt.example}` : null,
     mode,
     selectMode: (value: WorkspaceRequestKind) => {
       if (blocked) return;
 
       store.select({ mode: value });
       setChoice(null);
+      setChoosingTask(false);
+      if (value === "organize" && task?.kind !== "organize") startMaterial("organize", "자료 정리");
       requestAnimationFrame(() => document.getElementById("message-draft")?.focus());
     },
     intent,

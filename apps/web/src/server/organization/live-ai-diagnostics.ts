@@ -1,5 +1,5 @@
 import "server-only";
-import type { AiProvider } from "../../shared/ai-provider";
+import type { AiProvider, AiFailureReason } from "../../shared/ai-provider";
 import type { SampleAiErrorCode, SampleAiUsage } from "../../shared/sample-ai";
 
 export type LiveAiDiagnostic = {
@@ -7,6 +7,7 @@ export type LiveAiDiagnostic = {
   provider: AiProvider;
   outcome: SampleAiErrorCode | "success";
   usage?: SampleAiUsage;
+  reason?: AiFailureReason;
 };
 
 /** 원문·사용자·경로·오류 객체를 받지 않고 운영에 필요한 숫자만 기록한다. */
@@ -17,6 +18,7 @@ export function reportLiveAi(value: LiveAiDiagnostic & { elapsedMs: number }) {
     provider: value.provider,
     outcome: value.outcome,
     elapsedMs: value.elapsedMs,
+    ...(value.reason ? { reason: value.reason } : {}),
     ...(value.usage
       ? {
         inputTokens: value.usage.inputTokens,

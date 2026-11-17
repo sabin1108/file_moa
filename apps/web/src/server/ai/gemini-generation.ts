@@ -44,21 +44,32 @@ export async function generateGeminiJson(request: AiJsonRequest, signal: AbortSi
       signal,
       cache: "no-store",
       redirect: "error",
+    }).catch(() => {
+      if (signal.aborted) throw signal.reason;
+      throw new SampleAiError("unavailable", "network");
     });
 
-    return readProviderJson(response);
+    return readProviderJson(response, method === "generateContent" ? Math.max(65_536, Math.min(262_144, request.outputTokens * 32)) : 65_536);
   };
   const count = z.object({ totalTokens: z.number().int().positive() }).parse(await call("countTokens", {
     generateContentRequest: { model: `models/${SAMPLE_GEMINI_MODEL}`, ...generation },
   }));
 
-  if (count.totalTokens > limits.inputTokens) throw new SampleAiError("input");
+  if (count.totalTokens > limits.inputTokens) throw new SampleAiError("input", "capacity");
 
-  const response = envelope.parse(await call("generateContent", generation));
+  const raw = await call("generateContent", generation);
+  const status = z.object({ candidates: z.array(z.object({ finishReason: z.string().optional() })) }).safeParse(raw);
+  if (status.success && status.data.candidates.some(candidate => candidate.finishReason === "MAX_TOKENS")) throw new SampleAiError("unavailable", "output-limit");
+  const parsed = envelope.safeParse(raw);
+  if (!parsed.success) throw new SampleAiError("unavailable", "invalid-response");
+  const response = parsed.data;
   const text = response.candidates[0].content.parts.filter(part => !part.thought).map(part => part.text).join("");
 
+  let value: unknown;
+  try { value = JSON.parse(text); }
+  catch { throw new SampleAiError("unavailable", "invalid-response"); }
   return {
-    value: JSON.parse(text) as unknown,
+    value,
     model: SAMPLE_GEMINI_MODEL,
     usage: {
       inputTokens: response.usageMetadata.promptTokenCount,

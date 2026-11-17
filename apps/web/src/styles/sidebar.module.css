@@ -51,6 +51,7 @@
 
 /* Keep navigation and primary controls at their designed height; long history scrolls. */
 .sidebar > * { flex-shrink: 0; }
+.sidebar > .folderTree { flex: 1 1 auto; min-height: 0; overscroll-behavior: contain; }
 .history { flex: 1 1 auto; min-height: 100px; overflow-y: auto; }
 
 .tree { margin-top: 22px; font-size: 13px; }

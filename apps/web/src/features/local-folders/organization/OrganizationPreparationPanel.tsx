@@ -12,19 +12,19 @@ import type { LiveOrganizationAction } from "../../../shared/live-organization";
 import { OrganizationResultView } from "./OrganizationResultView";
 import { OrganizationQuestionsView } from "./OrganizationQuestionsView";
 import { OrganizationExecutionPanel } from "./OrganizationExecutionPanel";
-import { OrganizationConditionsView } from "./OrganizationConditionsView";
+import { SelectionWorkspaceDialog } from "../destination-picker/SelectionWorkspaceDialog";
 import type { AiProvider } from "../../../shared/ai-provider";
-import { WorkflowStepper } from "../../../components/ui/WorkflowStepper";
 import { hasUnansweredReview } from "../../../shared/live-organization-review";
-
-const steps = [{ id: "conditions", label: "정리 범위" }, { id: "review", label: "자료·분류 확인" }, { id: "plan", label: "변경 계획" }];
+import { OrganizationConversationView } from "./OrganizationConversationView";
 
 export function OrganizationPreparationPanel({
   organizeAction,
   aiProvider = "gemini",
+  onReply,
 }: {
   organizeAction?: LiveOrganizationAction;
   aiProvider?: AiProvider | null;
+  onReply?: (text: string) => void;
 }) {
   const [assignment, setAssignment] = useState("same");
   const heading = useRef<HTMLHeadingElement>(null);
@@ -65,10 +65,11 @@ export function OrganizationPreparationPanel({
   if (state.purpose === "grounded") return null;
 
   if (picker.open && state.picking)
-    return (<>
+    return (<SelectionWorkspaceDialog title={`${purpose} 폴더 선택`} onClose={controller.closePicker}>
       {state.issue && <StatusNotice state="attention" title={state.issue} />}
       {state.picking === "answer" && <p className={styles.note}>최종 목적지: {[folderName, ...(state.destination ?? [])].join(" / ")} · 이 안에서 정리할 하위 폴더를 선택하세요.</p>}
       <DestinationFolderPicker
+        hideHeader
         controller={controller.picker}
         state={picker}
         folderName={folderName}
@@ -90,7 +91,7 @@ export function OrganizationPreparationPanel({
           <button type="submit" className={actionClasses("secondary")}>이 경로로 지정</button>
         </form>
       </details>}
-      </>
+      </SelectionWorkspaceDialog>
     );
 
   return (
@@ -98,9 +99,8 @@ export function OrganizationPreparationPanel({
       <header>
         <h2 ref={heading} tabIndex={-1} className="sr-only">{questioning ? "확인이 필요한 자료 지정" : planning ? "변경 계획 확인" : "정리 내용 확인"}</h2>
         <Link href="/files">내 파일 열기</Link>
-        {state.snapshot && !reading && <button type="button" data-edit-organization-conditions className={actionClasses("ghost")} onClick={() => controller.update({ request: state.request })}>정리 조건 바꾸기</button>}
+        {state.conversationStep && state.conversationStep !== "scope" && <button type="button" disabled={reading} className={actionClasses("ghost")} onClick={controller.backConversation}>이전 질문</button>}
       </header>
-      <WorkflowStepper steps={steps} current={!state.snapshot ? "conditions" : planning ? "plan" : "review"} label="자료 정리 진행 단계" />
 
       {reading
         && (
@@ -123,29 +123,20 @@ export function OrganizationPreparationPanel({
             title={state.issue}
           />
         )}
-      {questioning ? <>
-        <OrganizationQuestionsView controller={controller} state={state} assignment={assignment} onAssignment={setAssignment} />
-        <button type="button" data-confirm-review className={actionClasses("primary")} disabled={reading || hasUnansweredReview(state.questions, state.answers)} onClick={controller.confirmReview}>지정 완료 · 전송 확인으로</button>
-      </> : state.snapshot && !planning ? <>
-        {state.questions.length > 0 && !reading && <button type="button" className={actionClasses("ghost")} onClick={controller.editReview}>파일별 지정 다시 보기</button>}
-        <OrganizationSnapshotView
-        key={state.snapshot ? "ready" : "empty"}
-        folderName={folderName}
-        controller={controller}
-        state={state}
-        organizeAction={organizeAction}
-        aiProvider={aiProvider}
-        />
-      </> : planning ? <>
+      {planning ? <>
         {state.questions.length > 0 && <button type="button" data-edit-review className={actionClasses("ghost")} onClick={controller.editReview}>분류 기준 수정</button>}
-        <OrganizationResultView state={state} />
         <OrganizationExecutionPanel preparation={state} />
-      </> : <OrganizationConditionsView
-        controller={controller}
-        state={state}
-        files={files}
-        folderName={folderName}
-      />}
+        <details><summary>제안 근거·모델 정보</summary><OrganizationResultView state={state} /></details>
+      </> : <>
+        <OrganizationConversationView state={state} files={files} folderName={folderName} onReply={onReply} onChooseFolder={() => void controller.browse(state.conversationStep === "destination" ? "destination" : "scope")} />
+        {state.snapshot && !questioning && <OrganizationSnapshotView folderName={folderName} controller={controller} state={state} organizeAction={organizeAction} aiProvider={aiProvider} />}
+        {questioning &&
+        <details key={questioning ? "questions" : state.snapshot ? "snapshot" : "conditions"} className={styles.manualReview}>
+          <summary>파일별로 직접 지정</summary>
+            <OrganizationQuestionsView controller={controller} state={state} assignment={assignment} onAssignment={setAssignment} />
+            <button type="button" data-confirm-review className={actionClasses("secondary")} disabled={reading || hasUnansweredReview(state.questions, state.answers)} onClick={controller.confirmReview}>지정 완료</button>
+        </details>}
+      </>}
     </div>
   );
 }

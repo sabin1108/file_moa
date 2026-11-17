@@ -39,6 +39,12 @@ async function session() {
 afterEach(() => { vi.restoreAllMocks(); vi.clearAllMocks(); });
 
 describe("organization snapshot owning connection", () => {
+  it.each([200, 500])("rechecks %i selected documents without the former 40-document transport cap", async count => {
+    const current = await session();
+    const documents = Array.from({ length: count }, (_, index) => ({ id: `document-${index + 1}`, name: `${index}.md`, path: [`${index}.md`], size: 3, lastModified: 42, sha256: "a".repeat(64), excerpt: "abc", excerptHash: "b".repeat(64) }));
+    scan.mockResolvedValueOnce({ ...result, documents });
+    await expect(current.session.recheckSourceSnapshot(documents, "abc", new AbortController().signal)).resolves.toEqual({ userId: "A", workspaceId: "test" });
+  });
   it("a user scan interrupts an automatic scan as a benign skip and preserves its saved checkpoint", async () => {
     const current = await session();
     vi.spyOn(LocalTextIndex.prototype, "readScan").mockResolvedValue(undefined);

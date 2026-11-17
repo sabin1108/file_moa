@@ -6,6 +6,7 @@ import {
   connectionKey,
   validateFolderHandle,
 } from "./connection/connection-validation";
+import { LIVE_ORGANIZATION_LIMITS } from "../../shared/live-organization-limits";
 import { sourceFileExpectationSchema, type SourceFileExpectation } from "../../shared/grounded-evidence";
 import type {
   ConnectionOwner,
@@ -1151,7 +1152,7 @@ export class FolderConnectionSession {
   ): Promise<ConnectionOwner> => {
     const owner = this.owner;
 
-    if (!owner || documents.length === 0 || documents.length > 40)
+    if (!owner || documents.length === 0 || documents.length > LIVE_ORGANIZATION_LIMITS.documents)
       throw Error("invalid-snapshot-selection");
 
     const current = await this.inspectSourceSnapshot(

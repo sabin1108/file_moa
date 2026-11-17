@@ -23,19 +23,22 @@
 .feedback { display: grid; gap: var(--ui-space-2); }
 .feedback:not(:empty) { margin-top: var(--ui-space-3); }
 .readStatus { min-height: 24px; font-size: 13px; color: var(--muted); }
+.readStatus:empty { display: none; }
 .contents { margin-top: var(--ui-space-2); }
 .creationSection { margin-block: 16px; padding: 4px 12px; border: 1px solid var(--control-border); border-radius: var(--ui-radius-control); background: var(--panel); }
 .creationSection > details { border: 0; margin: 0; }
 .folderListTitle { margin: 0; padding: 12px 8px; border-block: 1px solid var(--border); font-size: 13px; font-weight: 600; color: var(--muted); }
 .folders button:disabled { opacity: 1; cursor: default; }
 .note { color: var(--muted); font-size: 14px; }
-.folders { list-style: none; margin: 0; padding: 0; max-height: 240px; overflow-y: auto; overscroll-behavior: contain; }
+.folders { list-style: none; margin: 0; padding: 0; max-height: min(52dvh, 560px); overflow-y: auto; overscroll-behavior: contain; }
 .folders button { display: flex; align-items: center; gap: var(--ui-space-2); width: 100%; min-height: 48px; padding: var(--ui-space-2); border-bottom: 1px solid var(--border); color: var(--text); }
 .folders button span { flex: 1; text-align: left; overflow-wrap: anywhere; min-width: 0; }
 .folders button:hover:not(:disabled) { background: var(--active); }
-.files { list-style: none; margin: 0; padding: 0; max-height: 240px; overflow-y: auto; }
+.files { list-style: none; margin: 0; padding: 0; max-height: min(52dvh, 560px); overflow-y: auto; }
 .files li { display: flex; align-items: center; gap: var(--ui-space-2); min-height: 44px; padding: var(--ui-space-2); border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
 .files svg { flex: none; color: var(--muted); }
 .files span { min-width: 0; }
+.contents { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 760px) { .contents:has(.files) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (prefers-reduced-motion: reduce) { .choose { transition: none; } .contents { animation: none; } }
 .pathConfirmation { grid-column: 1 / -1; padding: 12px 0; border-top: 1px solid var(--border); overflow-wrap: anywhere; }

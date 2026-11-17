@@ -5,13 +5,13 @@ import { z } from "zod";
 import { requireWorkspace } from "../auth/session-guards";
 import { createAuthRateLimiter } from "../auth/auth-rate-limit";
 import { getDatabase } from "../database/client";
-import { generateOrganization } from "./organization-generation";
-import { SampleAiError, AI_LIMITS, requireAiProvider } from "../ai/ai-provider";
+import { generateLiveOrganizationBatches } from "./live-organization-batches";
+import { SampleAiError, requireAiProvider } from "../ai/ai-provider";
+import { LIVE_ORGANIZATION_LIMITS } from "../../shared/live-organization-limits";
 import type { AiProvider } from "../../shared/ai-provider";
 import {
   reviewAnswerSchema,
   validateReviewAnswers,
-  parseLiveOrganizationResponse
 } from "../../shared/live-organization-review";
 import type { LiveOrganizationResult } from "../../shared/live-organization";
 import { reportLiveAi, type LiveAiDiagnostic } from "./live-ai-diagnostics";
@@ -76,9 +76,9 @@ const inputSchema = z.strictObject({
   scope: scopeSchema,
   reference: path.nullable(),
   destination: path.nullable(),
-  answers: z.array(reviewAnswerSchema).max(40).optional(),
+  answers: z.array(reviewAnswerSchema).max(LIVE_ORGANIZATION_LIMITS.documents).optional(),
   referenceTree: z
-    .strictObject({ root: path, directories: z.array(path).min(1).max(200), complete: z.boolean() })
+    .strictObject({ root: path, directories: z.array(path).min(1).max(LIVE_ORGANIZATION_LIMITS.referenceDirectories), complete: z.boolean() })
     .optional(),
   documents: z
     .array(
@@ -100,7 +100,7 @@ const inputSchema = z.strictObject({
       })
     )
     .min(1)
-    .max(40)
+    .max(LIVE_ORGANIZATION_LIMITS.documents)
 });
 let quota: ReturnType<typeof createAuthRateLimiter> | undefined;
 
@@ -115,7 +115,8 @@ export async function organizeLive(
     session: Awaited<ReturnType<typeof requireWorkspace>>;
     requestId: string;
     model: string | null;
-    usage: SampleAiUsage | null
+    usage: SampleAiUsage | null;
+    usageComplete: boolean;
   } | null = null;
 
   try {
@@ -136,7 +137,7 @@ export async function organizeLive(
 
     const input = parsed.data;
 
-    if (Buffer.byteLength(JSON.stringify(input), "utf8") > 65_536)
+    if (Buffer.byteLength(JSON.stringify(input), "utf8") > LIVE_ORGANIZATION_LIMITS.payloadBytes)
       return { ok: false, code: "input" };
 
     if (
@@ -212,7 +213,7 @@ export async function organizeLive(
       return { ok: false, code: "input" };
     }
 
-    if (input.documents.reduce((sum, document) => sum + document.excerpt.length, 0) > 6000)
+    if (input.documents.reduce((sum, document) => sum + document.excerpt.length, 0) > LIVE_ORGANIZATION_LIMITS.excerptCharacters)
       return { ok: false, code: "input" };
 
     const provider = requireAiProvider(expectedProvider);
@@ -230,7 +231,7 @@ export async function organizeLive(
     }
 
     await startUsage(session, input.requestId, provider, "organize");
-    tracked = { session, requestId: input.requestId, model: null, usage: null };
+    tracked = { session, requestId: input.requestId, model: null, usage: null, usageComplete: false };
 
     const assertSession = async () => {
       let current: typeof session;
@@ -258,7 +259,7 @@ export async function organizeLive(
     await assertSession();
 
     const timeout = Math.min(
-      AI_LIMITS.timeoutMs,
+      LIVE_ORGANIZATION_LIMITS.timeoutMs,
       Date.parse(session.sessionExpiresAt) - Date.now()
     );
 
@@ -288,23 +289,30 @@ export async function organizeLive(
 
     diagnostic.stage = "generation";
 
-    const result = await generateOrganization(request, AbortSignal.timeout(timeout), provider);
+    const result = await generateLiveOrganizationBatches(request, answers, AbortSignal.timeout(timeout), provider, assertSession, (model, usage) => {
+      if (!tracked) return;
+      tracked.model = model;
+      const previous = tracked.usage ?? { inputTokens: 0, outputTokens: 0, totalTokens: 0 };
+      tracked.usage = { inputTokens: previous.inputTokens + usage.inputTokens, outputTokens: previous.outputTokens + usage.outputTokens, totalTokens: previous.totalTokens + usage.totalTokens };
+      diagnostic!.usage = tracked.usage;
+    });
 
     tracked.model = result.model;
     tracked.usage = result.usage;
+    tracked.usageComplete = true;
     diagnostic.usage = result.usage;
     diagnostic.stage = "session";
     await assertSession();
     diagnostic.stage = "response";
 
-    const reviewed = parseLiveOrganizationResponse(result.value, request, answers);
 
     diagnostic.stage = "complete";
     diagnostic.outcome = "success";
 
     return {
       ok: true,
-      ...reviewed,
+      organization: result.organization,
+      questions: result.questions,
       model: result.model,
       usage: result.usage
     };
@@ -314,12 +322,14 @@ export async function organizeLive(
       : error instanceof Error && ["TimeoutError", "AbortError"].includes(error.name) ? "timeout" : "unavailable";
 
     if (diagnostic) diagnostic.outcome = code;
+    if (diagnostic && error instanceof SampleAiError) diagnostic.reason = error.reason;
 
-    return { ok: false, code };
+    return { ok: false, code, ...(error instanceof SampleAiError && error.reason ? { reason: error.reason } : {}) };
   } finally {
     if (tracked) {
       try {
-        await finishUsage(tracked.session, tracked.requestId, tracked.model, tracked.usage);
+        if (tracked.usage && !tracked.usageComplete) await finishUsage(tracked.session, tracked.requestId, tracked.model, tracked.usage, false);
+        else await finishUsage(tracked.session, tracked.requestId, tracked.model, tracked.usage);
       }
       catch {
         console.error("AI usage settlement unavailable.");

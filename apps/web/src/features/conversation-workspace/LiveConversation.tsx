@@ -55,7 +55,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
       conversationStore.getSelection().projectId || null
     );
   });
-  const workflow = useWorkspaceConversation(chat, groundedAction);
+  const workflow = useWorkspaceConversation(chat, groundedAction, organizeAction, aiProvider);
   const conversation = useConversationRecords(
     local.records,
     chat,
@@ -107,10 +107,12 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
 
   return <WorkspaceShell title="채팅" active="chat" folderTree={<SourceFolderTree />}>
     <ConversationWorkspace
-      messages={messages}
+      messages={workflow.choosingTask ? [] : messages}
+      focusMessageId={!workflow.choosingTask && workflow.task?.kind === "organize" ? `${workflow.task.id}:answer` : undefined}
+      onChooseTask={workflow.chooseTask}
       scrollMemoryRef={scrollMemoryRef}
       draft={chat.state.draft}
-      showComposer={workflow.mode !== null || chat.state.turns.length > 0}
+      showComposer={!workflow.choosingTask && (workflow.mode !== null || chat.state.turns.length > 0)}
       onDraftChange={chat.updateDraft}
       onSend={() => {
         void workflow.submit();
@@ -122,7 +124,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
       onCancel={workflow.cancel}
       cancelLabel={chat.state.active ? "답변 중지" : "작업 대기 중지"}
       inputLabel="AI에게 질문하기"
-      inputPlaceholder={conversationInputPlaceholder(workflow.mode)}
+      inputPlaceholder={workflow.organizationPlaceholder ?? conversationInputPlaceholder(workflow.mode)}
       submitLabel="보내기"
       panel={<>
         <ConversationPanelNavigation selected={panelView} onOpen={openPanel} />
@@ -195,6 +197,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
               aiProvider={aiProvider}
               waitingForSource={workflow.task.waitingForSource}
               onContinue={workflow.resume}
+              onReply={text => { void workflow.submit(undefined, text); }}
             />
         )
         : message.author === "assistant"
@@ -266,8 +269,8 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
             </>}
           </div>
           : null}
-      intro={<ConversationTaskIntro mode={workflow.mode} onChoose={workflow.selectMode} disabled={workflow.blocked} />}
-      scope={<div>
+      intro={<ConversationTaskIntro mode={workflow.choosingTask ? null : workflow.mode} onChoose={workflow.selectMode} disabled={workflow.blocked} />}
+      scope={workflow.choosingTask ? undefined : <div>
         {(workflow.mode || chat.state.turns.length > 0) && <ConversationTaskControls mode={workflow.mode} disabled={workflow.blocked} onChoose={workflow.selectMode} />}
         <ConversationContextBar
           temporary={conversation.temporary}
@@ -277,7 +280,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
           onOpen={openPanel}
         />
       </div>}
-      interaction={workflow.intent === "grounded"
+      interaction={workflow.choosingTask ? undefined : workflow.intent === "grounded"
         ? workflow.pending || (workflow.grounded.result && !chat.state.draft.trim()) ? null : <GroundedPreparationPanel conversation={workflow.grounded} question={chat.state.draft} available={!!groundedAction} disabled={workflow.blocked} onPrepare={workflow.prepareQuestionSelection} onReprepare={workflow.reprepareQuestionSources} onFind={() => workflow.selectMode("find")} />
         : workflow.choice
         ? <RequestIntentChoice

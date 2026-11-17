@@ -53,14 +53,14 @@ export function UsageView({ read }: { read: () => Promise<UsageSummary | null> }
             const usage = entry.inputTokens !== null && entry.outputTokens !== null && entry.totalTokens !== null
               ? { inputTokens: entry.inputTokens, outputTokens: entry.outputTokens, totalTokens: entry.totalTokens }
               : null;
-            const cost = entry.provider === "openai" || entry.provider === "gemini"
+            const cost = entry.status === "completed" && (entry.provider === "openai" || entry.provider === "gemini")
               ? estimateUsageCost(entry.provider, entry.model ?? "", usage, REVIEWED_TOKEN_PRICES)
               : null;
 
             return <li key={entry.requestId}>{new Date(entry.createdAt).toLocaleString("ko-KR")} · {entry.operation === "chat" ? "대화" : entry.operation === "grounded" ? "자료 질문" : entry.operation === "query" ? "검색 조건 해석" : "자료 정리"} · {entry.status === "reserved"
               ? "처리 중 또는 결과 확인 안 됨"
               : entry.status === "unknown"
-                ? "사용량 확인 안 됨"
+                ? usage ? `일부 사용량만 확인 · ${usage.totalTokens}토큰 이상 · 전체 사용량 미확정` : "사용량 확인 안 됨"
                 : `${entry.inputTokens} 입력 / ${entry.outputTokens} 출력 / ${entry.totalTokens} 전체 토큰`} · {entry.model ?? entry.provider} · {cost === null ? "비용 확인 안 됨" : `표준 예상 $${cost.toFixed(6)}`}</li>;
           })}
         </ul>

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { LIVE_ORGANIZATION_LIMITS } from "./live-organization-limits";
 import {
   contentDates,
   organizationPathSchema,
@@ -98,7 +99,7 @@ export function validateReviewAnswers(
   value: unknown,
   documents: OrganizationRequest["documents"]
 ): ReviewAnswer[] {
-  const answers = z.array(reviewAnswerSchema).max(40).parse(value);
+  const answers = z.array(reviewAnswerSchema).max(LIVE_ORGANIZATION_LIMITS.documents).parse(value);
   const seen = new Set<string>();
 
   for (const answer of answers) {
@@ -128,7 +129,7 @@ export function buildReviewQuestions(
   request: OrganizationRequest,
   value: unknown
 ): ReviewQuestion[] {
-  const definitions = z.array(questionSchema).max(80).parse(value);
+  const definitions = z.array(questionSchema).max(LIVE_ORGANIZATION_LIMITS.documents * 2).parse(value);
   const seen = new Set<string>();
   const questions = definitions.map(question => {
     const held = response.held.find(item => item.documentId === question.documentId);
@@ -163,7 +164,7 @@ export function parseLiveOrganizationResponse(
   const parsed = z
     .strictObject({
       ...organizationResponseSchema.shape,
-      questions: z.array(questionSchema).max(80).optional()
+      questions: z.array(questionSchema).max(LIVE_ORGANIZATION_LIMITS.documents * 2).optional()
     })
     .parse(value);
   const dateSelections = Object.fromEntries(

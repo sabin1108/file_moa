@@ -20,6 +20,7 @@ vi.mock("../../../src/server/ai/ai-generation", async original => ({
 }));
 
 import { organizeLive } from "../../../src/server/organization/live-organization";
+import { SampleAiError } from "../../../src/server/ai/ai-provider";
 
 const owner = { userId: "A", workspaceId: "workspace-A" };
 const session = () => ({
@@ -104,7 +105,7 @@ describe("authenticated local excerpt boundary", () => {
   it("rejects aggregate excerpts and oversized metadata before reserving usage", async () => {
     const value = input();
 
-    value.documents = Array.from({ length: 7 }, (_, index) => {
+    value.documents = Array.from({ length: 51 }, (_, index) => {
       const excerpt = "가".repeat(1000);
       const name = `memo-${index}.md`;
 
@@ -123,7 +124,7 @@ describe("authenticated local excerpt boundary", () => {
       code: "input"
     });
     value.documents = value.documents
-      .slice(0, 5)
+      .slice(0, 35)
       .map(document => ({
         ...document,
         path: [...Array.from({ length: 64 }, () => "a".repeat(255)), document.name]
@@ -158,7 +159,7 @@ describe("authenticated local excerpt boundary", () => {
     expect(reserve).toHaveBeenCalledOnce();
     expect(reserve.mock.calls[0][0]).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ key: expect.stringMatching(/^live-ai-v2:day:\d{4}-\d{2}-\d{2}:A$/), max: 10, window: 86400, retryAt: expect.any(Number) }),
+        expect.objectContaining({ key: expect.stringMatching(/^live-ai-v2:day:\d{4}-\d{2}-\d{2}:A$/), max: 100, window: 86400, retryAt: expect.any(Number) }),
         expect.objectContaining({ key: expect.stringContaining("live-ai-v2:global-day:"), max: 300, window: 86400 })
       ])
     );
@@ -298,12 +299,47 @@ describe("authenticated local excerpt boundary", () => {
     });
     expect(await organizeLive(input(), "http://127.0.0.1:3034")).toEqual({
       ok: false,
-      code: "unavailable"
+      code: "unavailable",
+      reason: "invalid-response"
     });
     generate.mockRejectedValueOnce(new DOMException("sensitive body", "TimeoutError"));
     expect(await organizeLive(input(), "http://127.0.0.1:3034")).toEqual({
       ok: false,
       code: "timeout"
     });
+  });
+
+  it.each([200, 500])("accepts %i documents and 50,000 excerpt characters through planned batches with aggregate usage", async count => {
+    const value = input();
+    value.documents = Array.from({ length: count }, (_, index) => {
+      const excerpt = "가".repeat(50000 / count);
+      const name = `memo-${index}.md`;
+      return { ...value.documents[0], id: `document-${index + 1}`, name, path: [`분류${index}`, name], excerpt, excerptHash: createHash("sha256").update(excerpt).digest("hex"), size: 750 };
+    });
+    generate.mockImplementation(async (request: { input: string }) => {
+      const batch = JSON.parse(request.input) as { documents: { id: string; excerpt: string }[] };
+      return { value: { summary: "합성 제안", matches: batch.documents.map(document => ({ documentId: document.id, destination: ["주제"], evidence: document.excerpt.slice(0, 16), date: null })), held: [], questions: [] }, model: "fixture", usage: { inputTokens: 100, outputTokens: 100, totalTokens: 200 } };
+    });
+    const result = await organizeLive(value, "http://127.0.0.1:3034");
+    expect(result).toMatchObject({ ok: true, usage: { inputTokens: count * 5, outputTokens: count * 5, totalTokens: count * 10 } });
+    if (!result.ok) throw Error("expected proposal");
+    expect(result.organization.matches).toHaveLength(count);
+    expect(new Set(result.organization.matches.map(match => match.documentId)).size).toBe(count);
+    expect(generate).toHaveBeenCalledTimes(count / 20);
+    expect(reserve).toHaveBeenCalledOnce();
+  });
+
+  it.each(["provider", "session"])("stops later batches after %s failure and preserves only known partial usage", async failure => {
+    const value = input();
+    value.documents = Array.from({ length: 41 }, (_, index) => ({ ...value.documents[0], id: `document-${index + 1}`, name: `memo-${index}.md`, path: [`memo-${index}.md`] }));
+    let calls = 0;
+    generate.mockImplementation(async () => {
+      if (++calls === 2 && failure === "provider") throw new SampleAiError("unavailable", "network");
+      return { value: { summary: "제안", matches: [], held: [], questions: [] }, model: "fixture", usage: { inputTokens: 10, outputTokens: 20, totalTokens: 30 } };
+    });
+    if (failure === "session") guard.mockReset().mockResolvedValueOnce(session()).mockResolvedValueOnce(session()).mockResolvedValue({ ...session(), workspaceId: "changed" });
+    expect(await organizeLive(value, "http://127.0.0.1:3034")).toMatchObject({ ok: false, code: failure === "session" ? "session" : "unavailable" });
+    expect(generate).toHaveBeenCalledTimes(2);
+    expect(finish).toHaveBeenLastCalledWith(expect.objectContaining(owner), expect.any(String), "fixture", { inputTokens: failure === "provider" ? 10 : 20, outputTokens: failure === "provider" ? 20 : 40, totalTokens: failure === "provider" ? 30 : 60 }, false);
   });
 });

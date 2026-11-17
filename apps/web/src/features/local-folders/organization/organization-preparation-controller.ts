@@ -1,4 +1,5 @@
 import { selectOrganizationCandidates } from "../../../shared/organization-candidates";
+import { LIVE_ORGANIZATION_LIMITS, organizationSelectionIssue } from "../../../shared/live-organization-limits";
 import { copyFolderPath } from "../folder-path";
 import type {
   OrganizationScope,
@@ -15,12 +16,14 @@ import type { FolderListing } from "../browsing/source-folder-listing";
 import { DestinationPickerController } from "../destination-picker/destination-picker-controller";
 import {
   LIVE_AI_MESSAGES,
+  LIVE_AI_REASON_MESSAGES,
   type LiveOrganizationAction,
   type LiveOrganizationResult,
 } from "../../../shared/live-organization";
 import type { ConnectionOwner } from "../types";
 import type { SnapshotDocument } from "./source-snapshot-rules";
 import { parseOrganizationReply } from "./organization-reply";
+import type { OrganizationConditionStep, OrganizationReplyContext } from "./organization-conversation";
 
 type Conditions = Readonly<{
   purpose: "organize" | "grounded";
@@ -29,6 +32,7 @@ type Conditions = Readonly<{
   basis: string;
   reference: readonly string[] | null;
   destination: readonly string[] | null;
+  includeSubfolders: boolean | null;
 }>;
 
 type FolderChoice = "scope" | "reference" | "destination";
@@ -53,6 +57,7 @@ export type OrganizationPreparationState = Conditions &
     issue: string | null;
     picking: FolderChoice | "answer" | null;
     reviewConfirmed: boolean;
+    conversationStep: OrganizationConditionStep | null;
     result: Extract<LiveOrganizationResult, { ok: true }> | null;
     answers: readonly ReviewAnswer[];
     questions: readonly ReviewQuestion[];
@@ -67,6 +72,7 @@ const initial: OrganizationPreparationState = {
   basis: "",
   reference: null,
   destination: null,
+  includeSubfolders: null,
   phase: "draft",
   submittedRequest: "",
   snapshot: null,
@@ -77,6 +83,7 @@ const initial: OrganizationPreparationState = {
   issue: null,
   picking: null,
   reviewConfirmed: false,
+  conversationStep: null,
   result: null,
   answers: [],
   questions: [],
@@ -93,6 +100,7 @@ export class OrganizationPreparationController {
   private abort: AbortController | null = null;
   private explicitConditions = new Set<"scope" | "reference" | "destination">();
   private answerTargets: readonly string[] = [];
+  private questionHistory: OrganizationConditionStep[] = [];
   readonly picker: DestinationPickerController;
 
   constructor(
@@ -102,7 +110,7 @@ export class OrganizationPreparationController {
       signal: AbortSignal,
       reference?: readonly string[],
     ) => Promise<SourceSnapshot>,
-    readFolder: (
+    private readonly readFolder: (
       path: readonly string[],
       signal: AbortSignal,
     ) => Promise<FolderListing>,
@@ -146,6 +154,10 @@ export class OrganizationPreparationController {
     this.picker.close();
 
     const next = { ...this.state, ...change };
+    if (Object.hasOwn(change, "scope") && !Object.hasOwn(change, "includeSubfolders")) {
+      next.includeSubfolders = next.scope?.kind === "folder" ? null : next.scope?.kind === "all" ? true : false;
+    }
+    const conversational = this.state.conversationStep !== null && next.purpose === "organize";
 
     for (const key of ["scope", "reference", "destination"] as const)
       if (Object.hasOwn(change, key)) this.explicitConditions.add(key);
@@ -174,11 +186,14 @@ export class OrganizationPreparationController {
 
     if (next.destination) next.destination = copyFolderPath(next.destination);
 
+    const nextStep = conversational ? this.nextConversationStep(next) : null;
+    if (this.state.conversationStep && nextStep && this.state.conversationStep !== nextStep) this.questionHistory.push(this.state.conversationStep);
     this.publish({
       ...next,
       picking: null,
       reviewConfirmed: false,
-      phase: "draft",
+      conversationStep: nextStep,
+      phase: conversational ? "scope" : "draft",
       snapshot: null,
       selectedIds: [],
       candidateIds: [],
@@ -191,6 +206,150 @@ export class OrganizationPreparationController {
       submittedReply: "",
       issue: null,
     });
+  };
+
+  private nextConversationStep(state: Conditions = this.state): OrganizationConditionStep {
+    if (!state.scope) return "scope";
+    if (state.scope.kind === "folder" && state.includeSubfolders === null) return "coverage";
+    if (!state.basis.trim()) return "basis";
+    if (state.destination === null && !this.explicitConditions.has("destination")) return "destination";
+    return "confirm";
+  }
+  beginConversation = async () => {
+    const basis = this.state.basis || (/주제별|내용별|형식별|확장자별|날짜별|언어별|프로젝트별/u.test(this.state.request) ? this.state.request : "");
+    this.publish({ ...this.state, basis, conversationStep: "scope" });
+    await this.prepare();
+  };
+  private changeConversation(change: Partial<Conditions>) {
+    this.update(change);
+    this.publish({ ...this.state, phase: "scope", conversationStep: this.nextConversationStep() });
+  }
+  backConversation = () => {
+    if (["reading", "checking", "sending"].includes(this.state.phase)) return;
+    if (!this.state.conversationStep) {
+      this.update({});
+      this.publish({ ...this.state, conversationStep: "confirm" });
+      return;
+    }
+    const previous = this.questionHistory.pop() ?? "scope";
+    const scope = previous === "coverage" && this.state.scope?.kind === "selected"
+      ? { kind: "folder" as const, path: this.state.scope.entries[0].path.slice(0, -1) }
+      : this.state.scope;
+    this.publish({ ...this.state, scope, conversationStep: previous, issue: null });
+  };
+  replyToConversation = async (text: string, context: OrganizationReplyContext = {}, action?: LiveOrganizationAction) => {
+    if (["reading", "checking", "sending"].includes(this.state.phase)) return;
+    const value = text.trim().replace(/[.!?]+$/u, "");
+    const compact = value.replace(/\s+/gu, "");
+    if (!value || value.length > 800) {
+      this.publish({ ...this.state, issue: "답변은 800자 이내로 적어 주세요." });
+      return;
+    }
+    if (/^(?:이전|뒤로|이전단계|이전질문)(?:으로|로)?$/u.test(compact)) {
+      this.backConversation();
+      return;
+    }
+    if (this.state.conversationStep === "coverage") {
+      if (/^(?:하위(?:폴더)?(?:까지|도)?(?:포함해줘|포함|함께)?|모두포함|네)$/u.test(compact)) this.changeConversation({ includeSubfolders: true });
+      else if (/^(?:이폴더파일만|현재폴더파일만|파일만|하위폴더제외|아니요)$/u.test(compact) && this.state.scope?.kind === "folder") {
+        const path = this.state.scope.path;
+        const sequence = this.sequence;
+        const abort = new AbortController();
+        this.abort = abort;
+        this.publish({ ...this.state, phase: "reading", issue: null });
+        try {
+          const listing = await this.readFolder(path, abort.signal);
+          if (sequence !== this.sequence || abort.signal.aborted) return;
+          const entries = listing.entries.filter(entry => entry.kind === "file").map(entry => ({ path: [...path, entry.name], kind: "file" as const }));
+          if (listing.truncated || !entries.length) this.publish({ ...this.state, phase: "scope", issue: listing.truncated ? "이 폴더의 파일을 모두 확인하지 못했어요. 더 작은 폴더를 선택해 주세요." : "이 폴더 바로 안에는 파일이 없어요. 하위 폴더를 포함하거나 다른 폴더를 선택해 주세요." });
+          else this.changeConversation({ scope: { kind: "selected", entries }, includeSubfolders: false });
+        } catch (error) {
+          if (sequence === this.sequence && !abort.signal.aborted) {
+            this.publish({ ...this.state, phase: "scope", issue: "폴더의 파일을 확인하지 못했어요. 폴더를 다시 선택해 주세요." });
+            if (error instanceof DOMException && ["NotAllowedError", "SecurityError"].includes(error.name)) this.permissionLost();
+          }
+        } finally { if (sequence === this.sequence) this.abort = null; }
+      } else this.publish({ ...this.state, issue: "‘하위 폴더까지 포함해줘’ 또는 ‘이 폴더 파일만’으로 알려 주세요." });
+      return;
+    }
+    const correction = value.match(/^(범위|정리 기준|기준|목적지|저장 위치|참고(?: 폴더)?)\s*(?:은|는|:)\s*(.+)$/u);
+    let field: "scope" | "basis" | "destination" | "reference" | null = null;
+    let answer = value;
+    if (correction) {
+      field = correction[1] === "범위" ? "scope" : /기준/u.test(correction[1]) ? "basis" : correction[1].startsWith("참고") ? "reference" : "destination";
+      answer = correction[2].replace(/\s*바꿔\s*줘$/u, "").trim();
+    } else if (this.state.conversationStep && this.state.conversationStep !== "confirm") field = this.state.conversationStep;
+    else if (this.state.conversationStep === "confirm" && /^(?:이대로(?:자료)?확인해줘|자료확인(?:해줘|실행)?|준비해줘|다음|계속|이대로)$/u.test(compact)) {
+      this.publish({ ...this.state, conversationStep: null, issue: null });
+      await this.prepare();
+      return;
+    }
+    if (field === "basis") {
+      if (/^(?:다음|계속|네|아니|아니요|전송.*|.*(?:뭐야|어떤.*좋아|추천해줘|모르겠어))$/u.test(answer.replace(/\s/gu, ""))) {
+        this.publish({ ...this.state, issue: "예를 들어 ‘주제별로’ 또는 ‘본문 언어별로’처럼 원하는 분류 기준을 알려 주세요." });
+        return;
+      }
+      this.changeConversation({ basis: /^(?:기본|알아서|주제별로?)$/u.test(answer.replace(/\s/gu, "")) ? "본문 내용을 보고 주제별로 정리" : answer });
+      return;
+    }
+    if (field === "scope" && /^(?:전체|전부|다|모두|연결한폴더전체)(?:로|에서|만)?$/u.test(answer.replace(/\s/gu, ""))) {
+      this.changeConversation({ scope: { kind: "all" } });
+      return;
+    }
+    if (field === "scope" && /^(?:현재|지금|이)폴더(?:(?:만|에서)|(?:를)?정리(?:하고싶어|해줘))?$|^여기(?:만)?$/u.test(answer.replace(/\s/gu, ""))) {
+      if (context.currentPath) this.changeConversation({ scope: { kind: "folder", path: context.currentPath } });
+      else this.publish({ ...this.state, issue: "현재 보고 있는 폴더를 확인할 수 없어요. 폴더 이름이나 ‘전체’를 알려 주세요." });
+      return;
+    }
+    if (field === "destination" && /^(?:나중에(?:정할게|고를게)?|아직미정|미지정|계획에서(?:정할게|고를게))$/u.test(answer.replace(/\s/gu, ""))) {
+      this.changeConversation({ destination: null });
+      return;
+    }
+    if ((field === "destination" || field === "reference") && /^(?:현재|지금|이)폴더(?:로|를참고)?$/u.test(answer.replace(/\s/gu, ""))) {
+      if (context.currentPath) this.changeConversation({ [field]: context.currentPath });
+      else this.publish({ ...this.state, issue: "현재 폴더를 확인할 수 없어요. 정확한 경로나 폴더 선택으로 알려 주세요." });
+      return;
+    }
+    if (field && this.infer) {
+      const name = answer.replace(/\s*(?:폴더)?\s*(?:안에서|에서|만|으로|로)(?:\s*(?:해줘|정리해줘))?$/u, "").replace(/^['"]|['"]$/gu, "").trim();
+      if (!name || /["'“”「」『』]/u.test(name)) {
+        this.publish({ ...this.state, issue: "폴더 하나의 이름이나 정확한 경로로 알려 주세요. 여러 조건은 나눠서 답할 수 있어요." });
+        return;
+      }
+      const query = `"${name}"${field === "scope" ? "에서" : field === "reference" ? "를 참고" : "로"}`;
+      const sequence = this.sequence;
+      const abort = new AbortController();
+      this.abort = abort;
+      this.publish({ ...this.state, phase: "reading", issue: null });
+      try {
+        const inferred = await this.infer(query, abort.signal);
+        if (sequence !== this.sequence || abort.signal.aborted) return;
+        if (inferred[field] !== undefined) this.changeConversation({ [field]: inferred[field] });
+        else this.publish({ ...this.state, phase: "scope", issue: "폴더를 하나로 정하지 못했어요. 연결 폴더 안의 정확한 경로를 알려 주거나 폴더 선택으로 확인해 주세요." });
+      } catch (error) {
+        if (sequence === this.sequence && !abort.signal.aborted) {
+          this.publish({ ...this.state, phase: "scope", issue: "폴더를 확인하지 못했어요. 연결 상태와 이름을 확인해 주세요." });
+          if (error instanceof DOMException && ["NotAllowedError", "SecurityError"].includes(error.name)) this.permissionLost();
+        }
+      } finally { if (sequence === this.sequence) this.abort = null; }
+      return;
+    }
+    if (!field && /^(?:확인한)?일부(?:자료)?만(?:사용할게|사용|사용해줘)$/u.test(compact) && this.state.snapshot && !this.state.snapshot.complete) {
+      this.acceptPartial(true);
+      return;
+    }
+    if (!field && /^(?:자료)?(?:전송에동의(?:해|해요|합니다)|외부AI전송에동의(?:해|해요|합니다))$/u.test(compact) && this.state.snapshot) {
+      if (!action) this.publish({ ...this.state, issue: "현재 AI 전송을 사용할 수 없어요." });
+      else { this.consent(true); await this.send(action); }
+      return;
+    }
+    if (!field && this.state.snapshot && this.state.questions.length) {
+      this.updateReply(value);
+      this.submitReply();
+      if (!this.state.issue && !hasUnansweredReview(this.state.questions, this.state.answers)) this.confirmReview();
+      return;
+    }
+    this.publish({ ...this.state, issue: this.state.snapshot ? "바꿀 조건은 ‘범위는…’, ‘기준은…’, ‘목적지는…’으로 알려 주세요. AI 제안을 받으려면 ‘전송에 동의해’라고 답해 주세요." : "지금 묻는 범위·기준·목적지를 알려 주세요. ‘다음’으로 조건을 건너뛰지는 않아요." });
   };
 
   prepare = async () => {
@@ -274,6 +433,11 @@ export class OrganizationPreparationController {
       return;
     }
 
+    if (this.state.conversationStep !== null) {
+      this.publish({ ...this.state, phase: "scope", scope, conversationStep: this.nextConversationStep(), issue: null });
+      return;
+    }
+
     const sequence = this.sequence;
     const abort = new AbortController();
 
@@ -311,6 +475,7 @@ export class OrganizationPreparationController {
       const candidateIds = selectOrganizationCandidates(
         snapshot.documents,
         `${request}\n${basis}`,
+        this.state.purpose === "organize" ? LIVE_ORGANIZATION_LIMITS : undefined,
       ).map((document) => document.id);
 
       this.publish({
@@ -341,7 +506,7 @@ export class OrganizationPreparationController {
   };
 
   toggleDocument = (id: string) => {
-    if (!this.state.snapshot || !this.state.candidateIds.includes(id)) return;
+    if (!this.state.snapshot?.documents.some(document => document.id === id)) return;
 
     this.stop();
 
@@ -353,6 +518,7 @@ export class OrganizationPreparationController {
       ...this.state,
       phase: "ready",
       selectedIds,
+      issue: organizationSelectionIssue(this.state.snapshot.documents.filter(document => selectedIds.includes(document.id))),
       consentKey: null,
       result: null,
       answers: [],
@@ -406,6 +572,11 @@ export class OrganizationPreparationController {
     }
 
     const state = this.state;
+    const selectionIssue = organizationSelectionIssue(state.snapshot?.documents.filter(document => state.selectedIds.includes(document.id)) ?? []);
+    if (selectionIssue) {
+      this.publish({ ...state, consentKey: null, issue: selectionIssue });
+      return;
+    }
 
     if (
       state.purpose !== "organize" ||
@@ -428,6 +599,11 @@ export class OrganizationPreparationController {
 
   send = async (action: LiveOrganizationAction) => {
     const state = this.state;
+    const selectionIssue = organizationSelectionIssue(state.snapshot?.documents.filter(document => state.selectedIds.includes(document.id)) ?? []);
+    if (selectionIssue) {
+      this.publish({ ...state, consentKey: null, issue: selectionIssue });
+      return;
+    }
 
     if (
       state.purpose !== "organize" ||
@@ -524,7 +700,7 @@ export class OrganizationPreparationController {
             ).values(),
           ]
           : this.state.questions,
-        issue: result.ok ? null : LIVE_AI_MESSAGES[result.code],
+        issue: result.ok ? null : result.reason ? LIVE_AI_REASON_MESSAGES[result.reason] : LIVE_AI_MESSAGES[result.code],
       });
     } catch (error) {
       if (sequence !== this.sequence || abort.signal.aborted) return;
@@ -535,6 +711,7 @@ export class OrganizationPreparationController {
         consentKey: null,
         result: null,
         snapshot: transmitted ? state.snapshot : null,
+        conversationStep: transmitted ? null : this.nextConversationStep(),
         issue: transmitted
           ? LIVE_AI_MESSAGES.unavailable
           : "원본 내용이나 읽기 권한을 다시 확인해야 해요. 자료를 다시 준비하고 발췌를 확인해 주세요.",
@@ -762,6 +939,7 @@ export class OrganizationPreparationController {
     this.publish({
       ...this.state,
       phase: "draft",
+      conversationStep: this.state.purpose === "organize" ? this.nextConversationStep() : null,
       snapshot: null,
       selectedIds: [],
       candidateIds: [],
@@ -782,6 +960,7 @@ export class OrganizationPreparationController {
   reset = () => {
     this.stop();
     this.explicitConditions.clear();
+    this.questionHistory = [];
     this.answerTargets = [];
     this.picker.close();
     this.publish(initial);

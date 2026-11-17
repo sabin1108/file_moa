@@ -1,4 +1,4 @@
-export const AI_DAILY_LIMITS = { demo: 30, live: 10, global: 300 } as const;
+export const AI_DAILY_LIMITS = { demo: 30, live: 100, global: 300 } as const;
 
 export function aiUsageDay(now: number) {
   const date = new Date(now + 9 * 3600000).toISOString().slice(0, 10);

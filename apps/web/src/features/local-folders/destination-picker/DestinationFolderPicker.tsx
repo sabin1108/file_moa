@@ -11,7 +11,7 @@ import { DestinationPathForm } from "./DestinationPathForm";
 import { FolderUpButton } from "../browsing/navigation/FolderUpButton";
 /** 같은 계획 dialog 안의 탐색 면. 표시/키보드 초점만 관리하고 읽기·취소는 controller에 맡긴다. */
 
-export function DestinationFolderPicker({ controller, state, folderName, onChoose, allowCreation = true, onCancel, purpose = "목적지", showFiles = false }: {
+export function DestinationFolderPicker({ controller, state, folderName, onChoose, allowCreation = true, onCancel, purpose = "목적지", showFiles = false, hideHeader = false }: {
   controller: DestinationPickerController;
   state: DestinationPickerState;
   folderName: string;
@@ -20,6 +20,7 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
   onCancel?: () => void;
   purpose?: string;
   showFiles?: boolean;
+  hideHeader?: boolean;
 }) {
   const title = useRef<HTMLHeadingElement>(null);
   const previousPhase = useRef(state.phase);
@@ -63,7 +64,7 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
       aria-label={`${purpose} 폴더 선택`}
       data-destination-phase={state.phase}
     >
-      <div className={styles.header}>
+      {!hideHeader && <div className={styles.header}>
         <h3 ref={title} tabIndex={-1}>
           {purpose} 폴더 선택
         </h3>
@@ -74,7 +75,7 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
         >
           {purpose} 탐색 취소
         </button>
-      </div>
+      </div>}
       <DestinationPathForm
         path={state.requestedPath}
         rootName={folderName}
@@ -203,6 +204,7 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
             : ""}
       </p>
       <div aria-busy={pending} className={styles.contents}>
+        <section>
         <h4 className={styles.folderListTitle}>하위 폴더</h4>
         {state.phase === "ready" && folders.length === 0
           && (
@@ -233,13 +235,14 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
               ))}
             </ul>
           )}
-        {showFiles && <>
+        </section>
+        {showFiles && <section>
           <h4 className={styles.folderListTitle}>이 폴더의 파일 · {files.length}개</h4>
           {state.phase === "ready" && !files.length && <p className={styles.note}>이 위치에 파일이 없습니다.</p>}
           <ul className={styles.files} aria-label={`${purpose} 폴더의 파일`}>
             {files.map(file => <li key={file.name}><Icon name="file" size={18} /><span>{file.name}</span></li>)}
           </ul>
-        </>}
+        </section>}
       </div>
     </section>
   );

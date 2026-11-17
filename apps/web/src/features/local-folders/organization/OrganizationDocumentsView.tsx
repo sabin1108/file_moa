@@ -31,7 +31,7 @@ export function OrganizationDocumentsView({
             selected={selectedIds.includes(document.id)}
             previewing={previewId === document.id}
             selecting
-            selectionDisabled={pending || !candidateIds.includes(document.id)}
+            selectionDisabled={pending}
             previewDisabled={false}
             onToggle={() => onToggle(document.id)}
             onLongSelect={() => onToggle(document.id)}
@@ -43,7 +43,7 @@ export function OrganizationDocumentsView({
             {document.path.join(" / ")}
             {document.ocr && " · OCR 인식 글 · 원본 대조 필요"}
             {!candidateIds.includes(document.id) &&
-              " · 입력량 한도로 후보 제외"}
+              " · 직접 추가할 수 있어요"}
           </p>
           {previewId === document.id
             && (

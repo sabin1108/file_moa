@@ -14,6 +14,16 @@
 .preparation h2 {
   font-size: 18px;
 }
+.conversationReview { display: grid; gap: 12px; }
+.conditionSummary { display: grid; gap: 6px; margin: 0; font-size: 13px; color: var(--muted); max-height: 144px; overflow: auto; overscroll-behavior: contain; }
+.conditionSummary > div { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 8px; }
+.conditionSummary dd { margin: 0; overflow-wrap: anywhere; }
+.miniStructure { max-height: min(28dvh, 240px); overflow: auto; overscroll-behavior: contain; padding: 12px; border: 1px solid var(--border); border-radius: var(--ui-radius-control); }
+.reviewSubjects { list-style: none; margin: 0; padding: 0; }
+.reviewSubjects li + li { margin-top: 14px; }
+.reviewSubjects strong { font-size: 14px; overflow-wrap: anywhere; }
+.reviewSubjects p, .reviewSubjects small { font-size: 13px; line-height: 1.7; color: var(--muted); }
+.manualReview > summary { cursor: pointer; min-height: 44px; padding-block: 10px; font-size: 13px; color: var(--muted); }
 .preparation h3 {
   font-size: 16px;
 }
@@ -36,6 +46,7 @@
   font-weight: 600;
   margin-bottom: var(--ui-space-2);
 }
+.preparation .operationChoices { display: flex; flex-wrap: wrap; gap: 8px 24px; }
 .preparation p,
 .snapshot p {
   overflow-wrap: anywhere;
@@ -182,3 +193,29 @@
 .findEvidence[open] { flex-basis: 100%; }
 .findEvidence summary { min-height: 36px; display: list-item; cursor: pointer; color: var(--muted); }
 .findEvidence blockquote { margin: 8px 0; padding-left: 12px; border-left: 2px solid var(--border); overflow-wrap: anywhere; }
+.batchList {
+  display: grid;
+  gap: 16px;
+  max-height: 320px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 0;
+  list-style: none;
+}
+
+.batchList > li {
+  border-top: 1px solid var(--border);
+  padding: 16px 0;
+  overflow-wrap: anywhere;
+}
+
+.batchHeading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.batchList details { margin: 12px 0; }
+.batchList summary { min-height: 44px; cursor: pointer; }
+.executionSettings > summary { min-height: 44px; cursor: pointer; overflow-wrap: anywhere; }

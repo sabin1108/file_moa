@@ -42,6 +42,11 @@ afterEach(() => {
 });
 
 describe("OpenAI provider boundary", () => {
+  it("distinguishes incomplete token-limited output without retrying or parsing it", async () => {
+    fetchMock.mockReset().mockResolvedValueOnce(Response.json({ input_tokens: 100 })).mockResolvedValueOnce(Response.json({ status: "incomplete", incomplete_details: { reason: "max_output_tokens" }, output: [] }));
+    await expect(generateOpenAiJson(request, AbortSignal.timeout(1000))).rejects.toMatchObject({ code: "unavailable", reason: "output-limit" });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
   it("selects one configured provider and rejects missing keys, invalid settings and stale consent", () => {
     expect(getAiProvider()).toBe("openai");
     expect(() => requireAiProvider("gemini")).toThrow();

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { contentDates } from "./content-dates";
+import { LIVE_ORGANIZATION_LIMITS } from "./live-organization-limits";
 
 export { contentDates } from "./content-dates";
 
@@ -36,7 +37,7 @@ export const organizationResponseSchema = z.strictObject({
           .nullable(),
       }),
     )
-    .max(40),
+    .max(LIVE_ORGANIZATION_LIMITS.documents),
   held: z
     .array(
       z.strictObject({
@@ -44,7 +45,7 @@ export const organizationResponseSchema = z.strictObject({
         reason: z.string().trim().min(1).max(240),
       }),
     )
-    .max(40),
+    .max(LIVE_ORGANIZATION_LIMITS.documents),
 });
 
 export type OrganizationResponse = z.infer<typeof organizationResponseSchema>;

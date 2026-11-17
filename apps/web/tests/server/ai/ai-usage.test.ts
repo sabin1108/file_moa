@@ -105,6 +105,12 @@ describe("AI usage ledger write boundaries", () => {
     }));
   });
 
+  it("keeps known partial batch tokens without presenting them as complete usage", async () => {
+    const fixture = ledgerFixture();
+    await finishUsage(owner, requestId, "fixture", { inputTokens: 5, outputTokens: 7, totalTokens: 12 }, false);
+    expect(fixture.updateMany).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "unknown", inputTokens: 5, outputTokens: 7, totalTokens: 12 }) }));
+  });
+
   it("does not overwrite an already terminal event on a duplicate final settlement", async () => {
     const fixture = ledgerFixture({ updateCounts: [1, 0] });
 
@@ -133,13 +139,13 @@ describe("AI usage ledger reads", () => {
       const fixture = ledgerFixture();
       const key = dailyAiRules("live", owner.sessionUserId, Date.now())[0].key;
       const hashed = createHmac("sha256", "fixture-usage-secret").update("moa-rate-limit-v1\0").update(key).digest("hex");
-      fixture.rateLimitFind.mockResolvedValue([{ key: hashed, count: 10, lastRequest: BigInt(Date.now()) }]);
+      fixture.rateLimitFind.mockResolvedValue([{ key: hashed, count: 100, lastRequest: BigInt(Date.now()) }]);
       calls.session.mockResolvedValue(owner);
-      expect(await readUsage(new Headers())).toMatchObject({ used: 10, limit: 10, retryAfter: 1 });
+      expect(await readUsage(new Headers())).toMatchObject({ used: 100, limit: 100, retryAfter: 1 });
       calls.session.mockResolvedValue({ ...owner, workspaceId: "other-workspace" });
-      expect(await readUsage(new Headers())).toMatchObject({ used: 10, limit: 10, retryAfter: 1 });
+      expect(await readUsage(new Headers())).toMatchObject({ used: 100, limit: 100, retryAfter: 1 });
       vi.setSystemTime(new Date("2026-11-17T00:00:00+09:00"));
-      expect(await readUsage(new Headers())).toMatchObject({ used: 0, limit: 10, retryAfter: 0 });
+      expect(await readUsage(new Headers())).toMatchObject({ used: 0, limit: 100, retryAfter: 0 });
     } finally { vi.useRealTimers(); }
   });
   it("marks only this workspace's reservations older than ten minutes as unknown before listing", async () => {

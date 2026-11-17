@@ -7,7 +7,7 @@ export type ConversationRequestIntent = "find" | "organize";
 
 type RequestActions = {
   finding: Pick<DocumentFindController, "start" | "reset">;
-  organization: Pick<OrganizationPreparationController, "cancel" | "reset" | "update" | "prepare">;
+  organization: Pick<OrganizationPreparationController, "cancel" | "reset" | "update" | "prepare" | "beginConversation">;
   preview: { close: () => void };
 };
 
@@ -43,7 +43,7 @@ export function routeConversationRequest(
     actions.finding.reset();
     actions.organization.reset();
     actions.organization.update({ request: text });
-    void actions.organization.prepare();
+    void actions.organization.beginConversation();
   }
 
   return intent;
@@ -74,7 +74,8 @@ function preparePaths(actions: Pick<RequestActions, "organization" | "preview">,
   actions.preview.close();
   actions.organization.reset();
   actions.organization.update({ purpose, request, scope: { kind: "selected", entries: paths.map(path => ({ kind: "file", path })) }, basis: "", reference: null, destination: null });
-  void actions.organization.prepare();
+  if (purpose === "organize") void actions.organization.beginConversation();
+  else void actions.organization.prepare();
 }
 
 export function prepareQuestionSelection(actions: Pick<RequestActions, "organization" | "preview">, files: SourceListingState, question: string, canStart: boolean) {

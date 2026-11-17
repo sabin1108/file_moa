@@ -2,6 +2,7 @@ import type { ReferenceSnapshot } from "./source-snapshot-rules";
 import { copyFolderPath } from "../folder-path";
 import type { FolderHandle } from "../types";
 import { readSourceFolderListing } from "../browsing/source-folder-listing";
+import { LIVE_ORGANIZATION_LIMITS } from "../../../shared/live-organization-limits";
 
 /** Folder names only. No document content, permission prompt, network or writes. */
 
@@ -26,7 +27,7 @@ export async function readOrganizationFolders(
   for (let index = 0; index < queue.length; index++) {
     check();
 
-    if (directories.length >= 80 || Date.now() - started > 5000) {
+    if (directories.length >= LIVE_ORGANIZATION_LIMITS.referenceDirectories || Date.now() - started > 15000) {
       complete = false;
 
       break;
@@ -36,7 +37,7 @@ export async function readOrganizationFolders(
 
     bytes += new TextEncoder().encode(JSON.stringify(current)).byteLength;
 
-    if (bytes > 16384) {
+    if (bytes > 131072) {
       complete = false;
 
       break;
@@ -50,7 +51,7 @@ export async function readOrganizationFolders(
     if (listing.truncated) complete = false;
 
     for (const entry of listing.entries.filter(entry => entry.kind === "directory")) {
-      if (current.length - start.length >= depth || queue.length >= 200) {
+      if (current.length - start.length >= depth || queue.length >= LIVE_ORGANIZATION_LIMITS.referenceDirectories) {
         complete = false;
 
         continue;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useSharedSourceFolderConnection } from "../SourceFolderProvider";
 import { DestinationFolderPicker } from "../destination-picker/DestinationFolderPicker";
 import { ManagedFilesDialog } from "../operations/managed/ManagedFilesDialog";
@@ -10,6 +10,7 @@ import type { OrganizationPreparationState } from "./organization-preparation-co
 import styles from "./organization-preparation.module.css";
 import { hasUnansweredReview } from "../../../shared/live-organization-review";
 import { FileChangeComparison } from "../operations/FileChangeComparison";
+import { SelectionWorkspaceDialog } from "../destination-picker/SelectionWorkspaceDialog";
 import { managedWorkflowStep } from "../operations/managed/managed-workflow-step";
 
 export function OrganizationExecutionPanel({
@@ -35,8 +36,12 @@ export function OrganizationExecutionPanel({
     controller.managed.getServerSnapshot,
   );
   const folderName = connection.state.view?.folderName ?? "내 폴더";
-  const running = managed.phase === "running";
+  const running = managed.phase === "running" || ["reading", "checking", "sending"].includes(preparation.phase);
   const step = managedWorkflowStep(managed);
+  const settingsSummary = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (state.batches.length) settingsSummary.current?.focus({ preventScroll: true });
+  }, [state.batches.length]);
 
   return (
     <>
@@ -50,24 +55,31 @@ export function OrganizationExecutionPanel({
             aria-label="AI 제안 실제 작업 검토"
             data-organization-operation
           >
-            <h3>제안을 실제 작업 계획으로 검토</h3>
+            <h3>변경 계획</h3>
             <p>
-              복사/이동과 실제 목적지를 선택해 주세요. 파일을 바꾸려면 묶음별로
-              기존 검사와 실행 승인을 거칩니다.
+              {preparation.result.organization.matches.length}개 자료의 도착 위치를 확인하세요.
+              복사·이동을 고르고 묶음별 검사 후 직접 승인합니다.
             </p>
             {picker.open
               ? (
-                <DestinationFolderPicker
+                <SelectionWorkspaceDialog title="실제 목적지 선택" onClose={controller.picker.close}><DestinationFolderPicker
+                  hideHeader
                   controller={controller.picker}
                   state={picker}
                   folderName={folderName}
                   onChoose={controller.choose}
                   onCancel={controller.picker.close}
-                />
+                /></SelectionWorkspaceDialog>
               )
               : (
                 <>
-                  <fieldset disabled={running || state.stale}>
+                  <details open={!state.batches.length} className={styles.executionSettings}>
+                    <summary ref={settingsSummary}>
+                      {state.batches.length
+                        ? `${state.operation === "copy" ? "복사" : "이동"} · ${[folderName, ...(state.base ?? [])].join(" / ")} · 설정 변경`
+                        : "복사·이동과 목적지 선택"}
+                    </summary>
+                  <fieldset className={styles.operationChoices} disabled={running || state.stale}>
                     <legend>적용할 작업</legend>
                     {(["copy", "move"] as const).map((kind) => (
                       <label key={kind} className={styles.check}>
@@ -115,6 +127,7 @@ export function OrganizationExecutionPanel({
                       작업 계획 검토
                     </button>
                   </div>
+                  </details>
                   <FileChangeComparison
                     rootName={folderName}
                     operation={state.operation}
@@ -145,7 +158,8 @@ export function OrganizationExecutionPanel({
                     만들기로 생성하고 선택할 수 있습니다. 폴더 생성도 별도 명시
                     동작이며 자동 실행하지 않습니다.
                   </p>
-                  <ol>
+                  {state.batches.length > 0 && <h4>검토할 작업 {state.batches.length}개</h4>}
+                  <ol className={styles.batchList} aria-label="목적지별 작업">
                     {state.batches.map((batch, index) => {
                       const outcome = state.outcomes.find(
                         (outcome) => outcome.key === batch.key,
@@ -153,13 +167,16 @@ export function OrganizationExecutionPanel({
 
                       return (
                         <li key={batch.key}>
-                          <p>
-                            {batch.request.source.join(" / ") || folderName} ·{" "}
-                            {batch.request.names.join(", ")} →{" "}
+                          <div className={styles.batchHeading}><strong>
                             {(
                               outcome?.destination ?? batch.request.destination
-                            ).join(" / ")}
-                          </p>
+                            ).join(" / ") || folderName}
+                          </strong><span>{batch.request.names.length}개 파일</span></div>
+                          <details>
+                            <summary>포함 파일 보기</summary>
+                            <p>현재 위치: {[folderName, ...batch.request.source].join(" / ")}</p>
+                            <ul>{batch.request.names.map(name => <li key={name}>{name}</li>)}</ul>
+                          </details>
                           {outcome
                             && (
                               <p>

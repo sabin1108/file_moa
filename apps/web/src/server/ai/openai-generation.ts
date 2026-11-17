@@ -51,28 +51,39 @@ export async function generateOpenAiJson(
       signal,
       cache: "no-store",
       redirect: "error",
+    }).catch(() => {
+      if (signal.aborted) throw signal.reason;
+      throw new SampleAiError("unavailable", "network");
     });
 
-    return readProviderJson(response);
+    return readProviderJson(response, path === "responses" ? Math.max(65_536, Math.min(262_144, request.outputTokens * 32)) : 65_536);
   };
   const count = z.object({ input_tokens: z.number().int().nonnegative() }).parse(
     await call("responses/input_tokens", input),
   );
 
-  if (count.input_tokens > limits.inputTokens) throw new SampleAiError("input");
+  if (count.input_tokens > limits.inputTokens) throw new SampleAiError("input", "capacity");
 
-  const response = envelope.parse(await call("responses", {
+  const raw = await call("responses", {
     ...input,
     store: false,
     reasoning: { effort: "none" },
     max_output_tokens: request.outputTokens,
-  }));
+  });
+  const status = z.object({ status: z.string(), incomplete_details: z.object({ reason: z.string() }).nullable().optional() }).safeParse(raw);
+  if (status.success && status.data.status === "incomplete") throw new SampleAiError("unavailable", status.data.incomplete_details?.reason === "max_output_tokens" ? "output-limit" : "invalid-response");
+  const parsed = envelope.safeParse(raw);
+  if (!parsed.success) throw new SampleAiError("unavailable", "invalid-response");
+  const response = parsed.data;
   const texts = response.output.flatMap(item => item.type === "message" ? item.content.map(part => part.text) : []);
 
   if (!texts.length) throw new SampleAiError("unavailable");
 
+  let value: unknown;
+  try { value = JSON.parse(texts.join("")); }
+  catch { throw new SampleAiError("unavailable", "invalid-response"); }
   return {
-    value: JSON.parse(texts.join("")) as unknown,
+    value,
     model: response.model,
     usage: {
       inputTokens: response.usage.input_tokens,

@@ -12,6 +12,9 @@ import styles from "./organization-preparation.module.css";
 import type { LiveOrganizationAction } from "../../../shared/live-organization";
 import { actionClasses } from "../../../components/ui/action-classes";
 import { hasUnansweredReview } from "../../../shared/live-organization-review";
+import { LIVE_ORGANIZATION_LIMITS, organizationBatches, organizationSelectionIssue } from "../../../shared/live-organization-limits";
+import { AI_DAILY_LIMITS } from "../../../shared/ai-daily-limits";
+import { SelectionWorkspaceDialog } from "../destination-picker/SelectionWorkspaceDialog";
 
 const reasons: Record<string, string> = {
   "unsupported-extension": "TXT·MD·PDF·PNG·JPEG가 아닌 형식",
@@ -43,7 +46,6 @@ export function OrganizationSnapshotView({
   controller,
   state,
   organizeAction,
-  folderName,
   aiProvider = "gemini",
 }: {
   controller: OrganizationPreparationController;
@@ -53,6 +55,7 @@ export function OrganizationSnapshotView({
   aiProvider?: AiProvider | null;
 }) {
   const [confirmation, setConfirmation] = useState({ provider: aiProvider, accepted: false });
+  const [selecting, setSelecting] = useState(false);
 
   if (confirmation.provider !== aiProvider) {
     setConfirmation({ provider: aiProvider, accepted: false });
@@ -66,6 +69,8 @@ export function OrganizationSnapshotView({
   const unanswered = hasUnansweredReview(state.questions, state.answers);
   const consented = !!state.consentKey && !!aiProvider && confirmation.provider === aiProvider && confirmation.accepted;
   const providerLabel = aiProvider ? AI_PROVIDER_LABELS[aiProvider] : "설정되지 않은 외부 AI";
+  const documents = snapshot.documents.filter(document => state.selectedIds.includes(document.id));
+  const selectionIssue = organizationSelectionIssue(documents);
 
   return (
     <section
@@ -73,21 +78,11 @@ export function OrganizationSnapshotView({
       aria-label="전송 전 자료 확인"
       data-local-snapshot
     >
-      <details open={state.phase === "ready" && !unanswered}>
-        <summary>AI에 보낼 자료 확인 · {state.selectedIds.length}개</summary>
-        <p className={styles.note}>
-          참고:{" "}
-          {state.reference === null
-            ? "미지정"
-            : [folderName, ...state.reference].join(" / ")}{" "}
-          · 목적지:{" "}
-          {state.destination === null
-            ? "미지정"
-            : [folderName, ...state.destination].join(" / ")}
-        </p>
+      <div>
+        <button type="button" data-organization-select-documents className={actionClasses("secondary")} disabled={pending} onClick={() => setSelecting(true)}>자료 선택 · {state.selectedIds.length} / {snapshot.documents.length}개 · 발췌 확인</button>
         <p>
           {providerLabel}에 선택한 파일의 이름·상대 경로·발췌와 정리 조건을
-          보냅니다. 짧은 문서는 발췌에 전체 내용이 포함될 수 있습니다.
+          보냅니다. 선택한 발췌 {documents.reduce((sum, document) => sum + document.excerpt.length, 0).toLocaleString()}자 · 최대 {organizationBatches(documents).length}개 묶음으로 나눠 분석합니다. 짧은 문서는 전체 내용이 포함될 수 있습니다.
         </p>
         {!snapshot.complete
           && (
@@ -138,6 +133,7 @@ export function OrganizationSnapshotView({
               (!snapshot.complete && !state.partialAccepted)
               ||
               unanswered
+              || !!selectionIssue
               || !aiProvider
             }
             onChange={(event) => {
@@ -160,7 +156,7 @@ export function OrganizationSnapshotView({
                 ? "원본 재검사 중…"
                 : state.phase === "sending"
                   ? "AI 응답 대기 중…"
-                  : "확인한 발췌를 AI에 전송"}
+                  : state.issue ? "다시 분석 실행" : "AI 분석 실행"}
             </button>
           )}
         {consented
@@ -170,7 +166,7 @@ export function OrganizationSnapshotView({
               검사합니다.
             </p>
           )}
-        <section data-source-excerpts aria-label="전송할 파일 선택">
+        {selecting && <SelectionWorkspaceDialog title="정리할 자료 선택 · 발췌 확인" onClose={() => setSelecting(false)}><section data-source-excerpts aria-label="전송할 파일 선택">
           <h4>자료 선택 · {state.selectedIds.length} / {snapshot.documents.length}개</h4>
           <OrganizationDocumentsView
             documents={snapshot.documents}
@@ -179,7 +175,9 @@ export function OrganizationSnapshotView({
             pending={pending}
             onToggle={controller.toggleDocument}
           />
-        </section>
+          {selectionIssue && <StatusNotice state="attention" title={selectionIssue} />}
+          <button type="button" className={actionClasses("primary")} onClick={() => setSelecting(false)}>선택 완료 · 채팅으로 돌아가기</button>
+        </section></SelectionWorkspaceDialog>}
         {snapshot.reference
           && (
             <details data-reference-structure>
@@ -221,19 +219,17 @@ export function OrganizationSnapshotView({
           </p>
           <p className={styles.note}>
             발췌는 요청 단어 주변 최대 1,200자입니다. 의미 일치 판정은 아직 하지
-            않았습니다. 후보는 최대 40개·약 6,000자입니다. 요청·정리 기준·참고
+            않았습니다. 한 번에 최대 {LIVE_ORGANIZATION_LIMITS.documents}개·발췌 합계 {LIVE_ORGANIZATION_LIMITS.excerptCharacters.toLocaleString()}자입니다. 자동 추천에 없는 자료도 직접 선택할 수 있습니다. 요청·정리 기준·참고
             및 목적지 경로도 보냅니다. 파일 바이너리와 폴더 핸들은 보내지
             않습니다.
           </p>
           <p className={styles.note}>
-            작업 공간·계정당 시간당 10회, 샘플과 합쳐 분당 1회·시간당 12회
-            한도입니다. 입력은 최대 8,192토큰, 출력은 최대 3,200토큰입니다.
+            계정당 하루 {AI_DAILY_LIMITS.live}작업, 정식 사용 전체에서 하루 {AI_DAILY_LIMITS.global}작업까지입니다. 큰 작업은 여러 묶음으로 분석합니다. 묶음별 입력은 최대 {LIVE_ORGANIZATION_LIMITS.inputTokens.toLocaleString()}토큰, 출력은 최대 {LIVE_ORGANIZATION_LIMITS.outputTokens.toLocaleString()}토큰입니다.
             선택한 공급자에서 입력 토큰을 계산한 뒤 한도를 넘으면 생성을 중단하며 자동
-            재시도하지 않습니다. 전송 후 중지해도 이미 호출한 사용량은 반환되지
-            않을 수 있습니다.
+            재시도하지 않습니다. 전송한 분석 작업은 답변 기다리기를 중지해도 계속되어 사용량이 발생할 수 있습니다.
           </p>
         </details>
-      </details>
+      </div>
     </section>
   );
 }

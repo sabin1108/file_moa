@@ -6,7 +6,7 @@ import type { OrganizationRequest } from "../../shared/organization";
 
 /** Same intent/evidence policy for sample and authenticated local excerpts. */
 
-export async function generateOrganization(request: OrganizationRequest, signal: AbortSignal, provider: AiProvider = requireAiProvider()) {
+export async function generateOrganization(request: OrganizationRequest, signal: AbortSignal, provider: AiProvider = requireAiProvider(), limits = { inputTokens: 8192, outputTokens: 3200 }) {
   const reportRequested = /보고서/u.test(request.instruction);
 
   return generateAiJson(
@@ -41,7 +41,7 @@ export async function generateOrganization(request: OrganizationRequest, signal:
           : [])
       ].join("\n"),
       input: JSON.stringify(request),
-      outputTokens: 3200,
+      outputTokens: limits.outputTokens,
       schema: {
         type: "object",
         additionalProperties: false,
@@ -53,48 +53,50 @@ export async function generateOrganization(request: OrganizationRequest, signal:
             ? {
               questions: {
                 type: "array",
-                maxItems: 80,
+                maxItems: request.documents.length * 2,
                 items: {
                   type: "object",
                   additionalProperties: false,
                   required: ["documentId", "kind"],
                   properties: {
-                    documentId: { type: "string" },
+                    documentId: { type: "string", enum: request.documents.map(document => document.id) },
                     kind: { type: "string", enum: ["date", "destination"] }
                   }
                 }
               }
             }
             : {}),
-          summary: { type: "string" },
+          summary: { type: "string", minLength: 1, maxLength: 500 },
           matches: {
             type: "array",
+            maxItems: request.documents.length,
             items: {
               type: "object",
               additionalProperties: false,
               required: ["documentId", "destination", "evidence", "date"],
               properties: {
-                documentId: { type: "string" },
-                destination: { type: "array", items: { type: "string" } },
-                evidence: { type: "string" },
+                documentId: { type: "string", enum: request.documents.map(document => document.id) },
+                destination: { type: "array", minItems: 1, maxItems: 4, items: { type: "string", minLength: 1, maxLength: 64 } },
+                evidence: { type: "string", minLength: 8, maxLength: 180 },
                 date: { type: ["string", "null"] }
               }
             }
           },
           held: {
             type: "array",
+            maxItems: request.documents.length,
             items: {
               type: "object",
               additionalProperties: false,
               required: ["documentId", "reason"],
-              properties: { documentId: { type: "string" }, reason: { type: "string" } }
+              properties: { documentId: { type: "string", enum: request.documents.map(document => document.id) }, reason: { type: "string", minLength: 1, maxLength: 240 } }
             }
           }
         }
       }
     },
     signal,
-    { inputTokens: 8192 },
+    { inputTokens: limits.inputTokens },
     provider
   );
 }

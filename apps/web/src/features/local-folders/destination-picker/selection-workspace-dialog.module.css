@@ -1,0 +1,9 @@
+.dialog { width: min(1120px, calc(100vw - 32px)); height: min(960px, calc(100dvh - 32px)); max-height: none; margin: auto; padding: 24px; border: 1px solid var(--border); border-radius: var(--ui-radius-control); background: var(--surface); color: var(--text); }
+.dialog[open] { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 16px; }
+.dialog::backdrop { background: rgb(6 20 27 / 28%); }
+.header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.header h2 { font-size: 20px; }
+.body { min-height: 0; overflow: auto; overscroll-behavior: contain; }
+.dialog .body button { margin-top: 0; }
+.body > [data-destination-phase] { margin-top: 0; padding-top: 0; border-top: 0; }
+@media (max-width: 600px) { .dialog { width: 100vw; height: 100dvh; max-width: none; margin: 0; padding: 16px; border-radius: 0; } }

@@ -56,7 +56,8 @@ export function organizationExcerpt(text: string, instruction: string): string {
 
 export function selectOrganizationCandidates<T extends Candidate>(
   documents: readonly T[],
-  instruction: string
+  instruction: string,
+  limits: { documents: number; excerptCharacters: number } = { documents: 40, excerptCharacters: 6000 },
 ): T[] {
   const terms = organizationTerms(instruction);
   const month = instruction.match(/(1[0-2]|0?[1-9])월/u)?.[1];
@@ -87,12 +88,12 @@ export function selectOrganizationCandidates<T extends Candidate>(
       JSON.stringify({ id: document.id, name: document.name, excerpt: document.excerpt }).length +
       100;
 
-    if (characters + cost > 6000) continue;
+    if (characters + cost > limits.excerptCharacters) continue;
 
     selected.push(document);
     characters += cost;
 
-    if (selected.length === 40) break;
+    if (selected.length === limits.documents) break;
   }
 
   return selected;

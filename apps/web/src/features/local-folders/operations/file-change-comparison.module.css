@@ -17,6 +17,9 @@
   min-width: 0;
   padding-block: 16px;
   border-block: 1px solid var(--border);
+  max-height: 320px;
+  overflow: auto;
+  overscroll-behavior: contain;
 }
 .comparison h3 {
   margin: 0 0 16px;

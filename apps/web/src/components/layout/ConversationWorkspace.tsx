@@ -42,6 +42,8 @@ export function ConversationWorkspace({
   messageActions,
   panelTrigger: panelTriggerRef,
   panelModal = true,
+  focusMessageId,
+  onChooseTask,
 }: {
   messages: readonly ConversationMessage[];
   draft: string;
@@ -75,6 +77,8 @@ export function ConversationWorkspace({
   messageActions?: (message: ConversationMessage) => ReactNode;
   panelTrigger?: RefObject<HTMLElement | null>;
   panelModal?: boolean;
+  focusMessageId?: string;
+  onChooseTask?: () => void;
 }) {
   const trigger = useRef<HTMLElement | null>(null);
   const closePanel = () => onPanelChange(false);
@@ -92,6 +96,8 @@ export function ConversationWorkspace({
   const follow = useRef(true);
   const hasInteraction = interaction != null;
   const latestTextLength = messages.at(-1)?.text.length;
+  const focusIndex = focusMessageId ? messages.findIndex(message => message.id === focusMessageId) : -1;
+  const recentStart = focusIndex >= 0 ? Math.max(0, focusIndex - 1) : 0;
 
   useEffect(() => {
     if (!scrollMemoryRef || !thread.current) return;
@@ -121,16 +127,25 @@ export function ConversationWorkspace({
         : null;
     onSend();
   };
+  const renderMessage = (message: ConversationMessage) => <article key={message.id}
+    className={message.author === "user" ? styles.userMessage : styles.assistantMessage}
+    aria-label={message.author === "user" ? "나의 메시지" : "모아의 답변"}>
+    {message.author === "assistant" && <div className={styles.identity}><MoaMark size={22} />모아</div>}
+    <p>{message.text}</p>
+    {message.status && <small>{message.status}</small>}
+    {messageActions?.(message)}
+  </article>;
 
   return (
     <div
       className={styles.workspace}
       data-conversation-workspace
       data-panel-open={panelOpen}
+      data-focused-task={focusIndex >= 0}
     >
       <section className={styles.conversation} aria-label="대화 작업 공간">
         <div className={styles.toolbar}>
-          <span>채팅</span>
+          <div><span>채팅</span>{onChooseTask && <button type="button" disabled={pending} className={actionClasses("ghost")} onClick={onChooseTask}>작업 선택</button>}</div>
           {panel
             && (
               <div>
@@ -189,36 +204,8 @@ export function ConversationWorkspace({
           }}
         >
           <div className={styles.threadInner}>
-            {messages.length
-              ? messages.map((message) => (
-                <article
-                  key={message.id}
-                  className={
-                    message.author === "user"
-                      ? styles.userMessage
-                      : styles.assistantMessage
-                  }
-                  aria-label={
-                    message.author === "user" ? "나의 메시지" : "모아의 답변"
-                  }
-                >
-                  {message.author === "assistant"
-                    && (
-                      <div className={styles.identity}>
-                        <MoaMark size={22} />
-                        모아
-                      </div>
-                    )}
-                  <p>
-                    {message.text}
-                  </p>
-                  {message.status && <small>
-                    {message.status}
-                  </small>}
-                  {messageActions?.(message)}
-                </article>
-              ))
-              : intro}
+            {recentStart > 0 && <details className={styles.history}><summary>이전 메시지 {recentStart}개</summary>{messages.slice(0, recentStart).map(renderMessage)}</details>}
+            {messages.length ? messages.slice(recentStart).map(renderMessage) : intro}
             {pending && <p role="status">
               {pendingLabel}
             </p>}
@@ -231,7 +218,9 @@ export function ConversationWorkspace({
               )}
           </div>
         </div>
-        {scope != null && <div className={`${composer.scope} ${composer.contextRegion}`} data-tour="context">{scope}</div>}
+        {scope != null && <div className={`${composer.scope} ${composer.contextRegion}`} data-tour="context">
+          {focusIndex >= 0 ? <details className={styles.taskSettings}><summary>자료·대화 설정</summary>{scope}</details> : scope}
+        </div>}
         {showComposer
           && (
             <form
@@ -250,7 +239,7 @@ export function ConversationWorkspace({
                   id="message-draft"
                   value={draft}
                   maxLength={800}
-                  rows={3}
+                  rows={focusIndex >= 0 ? 2 : 3}
                   readOnly={pending}
                   placeholder={inputPlaceholder}
                   onChange={(event) => onDraftChange(event.target.value)}

@@ -1,11 +1,11 @@
 import "server-only";
-import type { AiProvider } from "../../shared/ai-provider";
+import type { AiProvider, AiFailureReason } from "../../shared/ai-provider";
 import type { SampleAiErrorCode } from "../../shared/sample-ai";
 
 export const AI_LIMITS = { inputTokens: 4096, outputTokens: 1600, timeoutMs: 25_000 } as const;
 
 export class SampleAiError extends Error {
-  constructor(readonly code: SampleAiErrorCode) {
+  constructor(readonly code: SampleAiErrorCode, readonly reason?: AiFailureReason) {
     super(code);
   }
 }
@@ -57,11 +57,11 @@ export function requireAiProvider(expected: unknown = getAiProvider()): AiProvid
   return configured;
 }
 
-export async function readProviderJson(response: Response): Promise<unknown> {
+export async function readProviderJson(response: Response, maximumBytes = 65_536): Promise<unknown> {
   if (!response.ok) {
     await response.body?.cancel().catch(() => undefined);
 
-    throw new SampleAiError(response.status === 429 ? "limit" : "unavailable");
+    throw new SampleAiError(response.status === 429 ? "limit" : "unavailable", response.status === 429 ? undefined : [401, 403].includes(response.status) ? "authorization" : [400, 404].includes(response.status) ? "configuration" : "upstream");
   }
 
   const reader = response.body?.getReader();
@@ -79,12 +79,15 @@ export async function readProviderJson(response: Response): Promise<unknown> {
 
       length += value.length;
 
-      if (length > 65_536) throw new SampleAiError("unavailable");
+      if (length > maximumBytes) throw new SampleAiError("unavailable", "output-limit");
 
       chunks.push(value);
     }
 
     return JSON.parse(Buffer.concat(chunks).toString("utf8")) as unknown;
+  } catch (error) {
+    if (error instanceof SyntaxError) throw new SampleAiError("unavailable", "invalid-response");
+    throw error;
   } finally {
     await reader.cancel().catch(() => undefined);
     reader.releaseLock();

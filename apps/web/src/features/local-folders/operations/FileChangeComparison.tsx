@@ -53,7 +53,7 @@ export function FileChangeComparison({
         </button>
       </div>
       <div className={styles.comparison} data-view={view}>
-        <section>
+        <section tabIndex={0} aria-label="현재 구조 미리보기">
           <h3>현재</h3>
           <PathTree
             rootName={rootName}
@@ -61,7 +61,7 @@ export function FileChangeComparison({
             label="현재 폴더 구조"
           />
         </section>
-        <section>
+        <section tabIndex={0} aria-label="도착 구조 미리보기">
           <h3>
             {operation
               ? `${operation === "copy" ? "복사" : "이동"} 후 예상 구조`
@@ -85,7 +85,7 @@ export function FileChangeComparison({
   );
 }
 
-function PathTree({
+export function PathTree({
   rootName,
   nodes,
   label,

@@ -75,7 +75,8 @@ export function parseOrganizationReply(
   const answers = new Map<string, ReviewAnswer>();
 
   for (const clause of clauses) {
-    const target = documentPrefix(clause, targets);
+    const common = clause.match(/^(?:모두|전부)(?=\s|$)\s*/u);
+    const target = documentPrefix(common ? clause.slice(common[0].length) : clause, targets);
     const value = target.text
       .replace(
         /\s*(?:정리해\s*줘|정리해\s*주세요|해\s*주세요|해\s*줘|하고)\s*[.!]?$/u,
@@ -121,10 +122,10 @@ export function parseOrganizationReply(
         ].map((documentId) => ({ documentId, exclude: true }));
       } else {
         const destination = value
-          .match(/^(.+?)\s*폴더(?:으로|로)$/u)?.[1]
+          .match(/^(.+?)\s*폴더(?:으로|로|에\s*(?:넣어|모아)\s*(?:줘|주세요))$/u)?.[1]
           .trim();
 
-        if (destination && target.documentId) {
+        if (destination && (target.documentId || common)) {
           const quoted = /^"[^"]+"$|^'[^']+'$/u.test(destination);
 
           if (!quoted && /\s/u.test(destination))
@@ -145,30 +146,32 @@ export function parseOrganizationReply(
       }
     }
 
-    if (candidates.length !== 1)
+    if (!candidates.length || (!common && candidates.length !== 1)
+      || new Set(candidates.map(answer => answer.documentId)).size !== candidates.length)
       throw Error("ambiguous-or-unsupported-review-reply");
 
-    const answer = candidates[0];
-    const previous = answers.get(answer.documentId);
+    for (const answer of candidates) {
+      const previous = answers.get(answer.documentId);
 
-    if (previous) {
-      for (const key of [
-        "date",
-        "dateLabel",
-        "destination",
-        "exclude",
-      ] as const) {
-        if (
-          previous[key] !== undefined &&
-          answer[key] !== undefined
-          &&
-          JSON.stringify(previous[key]) !== JSON.stringify(answer[key])
-        )
-          throw Error("conflicting-review-reply");
+      if (previous) {
+        for (const key of [
+          "date",
+          "dateLabel",
+          "destination",
+          "exclude",
+        ] as const) {
+          if (
+            previous[key] !== undefined &&
+            answer[key] !== undefined
+            &&
+            JSON.stringify(previous[key]) !== JSON.stringify(answer[key])
+          )
+            throw Error("conflicting-review-reply");
+        }
       }
-    }
 
-    answers.set(answer.documentId, { ...previous, ...answer });
+      answers.set(answer.documentId, { ...previous, ...answer });
+    }
   }
 
   return validateReviewAnswers([...answers.values()], documents);
