@@ -76,6 +76,30 @@ function sourceRepository() {
 }
 
 describe("account-scoped folder connections", () => {
+  it("resolves an explicit deep organization path without scanning unrelated folders or writing", async () => {
+    const session = new FolderConnectionSession(repository());
+    const names = ["note", "프로젝트", "개발", "문서", "영어"];
+    const folders = names.map(name => handle(name));
+    for (const [index, folder] of folders.entries()) {
+      folder.getFileHandle = vi.fn(async () => { throw new DOMException("missing", "NotFoundError"); });
+      folder.getDirectoryHandle = vi.fn(async (name, options) => {
+        expect(options?.create).not.toBe(true);
+        if (name !== names[index + 1]) throw new DOMException("missing", "NotFoundError");
+        return folders[index + 1];
+      });
+      folder.values = vi.fn(async function* () {
+        if (index !== folders.length - 1) throw Error("Unrelated directory scan");
+        return undefined;
+      });
+    }
+    await session.switchOwner(a);
+    await session.select("source", async () => folders[0]);
+    const result = await session.inferOrganization('"note / 프로젝트 / 개발 / 문서 / 영어 폴더에 넣어줘"로', new AbortController().signal);
+    expect(result.destination).toEqual(names.slice(1));
+    expect(folders[0].values).not.toHaveBeenCalled();
+    expect(folders.at(-1)?.values).toHaveBeenCalledOnce();
+    await expect(session.inferOrganization('"../바깥"로', AbortSignal.abort())).rejects.toThrow();
+  });
   it.each([false, true])("checks cancellation after the final model stamp read: %s", async cancel => {
     vi.stubGlobal("location", { origin: "https://semantic-fixture.invalid" });
     const session = new FolderConnectionSession(sourceRepository());

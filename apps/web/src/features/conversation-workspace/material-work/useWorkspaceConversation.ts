@@ -302,6 +302,7 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
   };
 
   return {
+    organizationFeedback: organization.issue ? "답변을 확인해 주세요" : organization.conversationStep ? "답변 반영 완료 · 다음 질문" : "답변 반영 완료",
     task,
     choosingTask,
     chooseTask: () => {

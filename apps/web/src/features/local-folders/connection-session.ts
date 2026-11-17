@@ -92,7 +92,7 @@ import { WorkflowDraftRepository, type WorkflowDraft } from "./workflow/workflow
 import { InlineEditorSession } from "./documents/editing/inline-editor-session";
 import { readSourceSnapshot } from "./organization/source-snapshot";
 import { readOrganizationFolders } from "./organization/organization-reference";
-import { inferOrganizationConditions } from "./organization/organization-intent";
+import { inferOrganizationConditions, organizationFolderPaths } from "./organization/organization-intent";
 import { LocalTextIndex, LOCAL_TEXT_INDEX_VERSION, withLocalIndexLock, tryWithLocalIndexLock } from "./search/documents/local-text-index";
 import { assertOrganizationBaseline } from "./organization/organization-operation";
 import type {
@@ -1235,11 +1235,24 @@ export class FolderConnectionSession {
       )
         throw Error("stale-connection-operation");
     };
+    const single = request.match(/^"([^"]+)"(?:에서|로|를 참고)$/u);
+    if (single) {
+      for (const path of organizationFolderPaths(single[1], root.name)) {
+        try {
+          await readSourceFolderListing(root, path, check);
+          check();
+          return inferOrganizationConditions(request, root.name, [path]);
+        } catch (error) {
+          check();
+          if (!(error instanceof DOMException) || !["NotFoundError", "TypeMismatchError"].includes(error.name)) throw error;
+        }
+      }
+    }
     const tree = await readOrganizationFolders(root, [], check, signal, 2);
 
     check();
 
-    return inferOrganizationConditions(request, root.name, tree.directories);
+    return inferOrganizationConditions(request, root.name, tree.directories, tree.complete);
   };
 
   searchSourceFolder = async (

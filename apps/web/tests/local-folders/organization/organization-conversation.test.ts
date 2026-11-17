@@ -3,6 +3,7 @@ import { OrganizationPreparationController } from "../../../src/features/local-f
 import type { SourceSnapshot } from "../../../src/features/local-folders/organization/source-snapshot-rules";
 import { parseOrganizationReply } from "../../../src/features/local-folders/organization/organization-reply";
 import { isOrganizationFollowup } from "../../../src/features/local-folders/organization/organization-conversation";
+import { inferOrganizationConditions } from "../../../src/features/local-folders/organization/organization-intent";
 
 const snapshot: SourceSnapshot = {
   documents: [{ id: "one", name: "memo.md", path: ["회사", "memo.md"], excerpt: "보고 내용", size: 10, lastModified: 1, sha256: "a".repeat(64), excerptHash: "b".repeat(64) }],
@@ -10,7 +11,7 @@ const snapshot: SourceSnapshot = {
 };
 function fixture() {
   const read = vi.fn(async () => snapshot);
-  const infer = vi.fn(async (text: string) => text.includes('"회사"') ? { scope: { kind: "folder" as const, path: ["회사"] } } : text.includes('"정리"') ? { destination: ["정리"] } : {});
+  const infer = vi.fn(async (text: string) => inferOrganizationConditions(text, "note", [[], ["회사"], ["정리"]]));
   const controller = new OrganizationPreparationController(read, vi.fn(), undefined, async () => ({ userId: "A", workspaceId: "A" }), infer);
   controller.update({ request: "자료를 정리해줘" });
   return { controller, read, infer };
@@ -31,6 +32,16 @@ it("asks missing conditions in chat and reads only after explicit local preparat
   await controller.replyToConversation("이대로 자료 확인해줘");
   expect(read).toHaveBeenCalledOnce();
   expect(controller.getSnapshot()).toMatchObject({ phase: "ready", conversationStep: null, consentKey: null });
+});
+
+it("accepts a natural destination answer without stripping characters from actual folder names", async () => {
+  const { controller, read } = fixture();
+  await controller.beginConversation();
+  await controller.replyToConversation("전체");
+  await controller.replyToConversation("주제별로");
+  await controller.replyToConversation("note / 정리 폴더에 넣어줘");
+  expect(controller.getSnapshot()).toMatchObject({ destination: ["정리"], conversationStep: "confirm", issue: null });
+  expect(read).not.toHaveBeenCalled();
 });
 
 it("never expands an absent current path or ambiguous folder reply to all files", async () => {

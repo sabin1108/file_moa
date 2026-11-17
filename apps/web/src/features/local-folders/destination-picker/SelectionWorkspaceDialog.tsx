@@ -33,6 +33,7 @@ export function SelectionWorkspaceDialog({ title, onClose, children }: {
     <header className={styles.header}><h2 id={id} ref={heading} tabIndex={-1}>{title}</h2>
       <button type="button" className={actionClasses("secondary")} onClick={onClose}>선택창 닫기</button>
     </header>
-    <div className={styles.body}>{children}</div>
+    <div className={styles.body} tabIndex={0} aria-label={`${title} 목록`}>{children}</div>
+    <p className={styles.hint}>아래로 스크롤해 목록 끝까지 확인할 수 있어요.</p>
   </dialog>;
 }

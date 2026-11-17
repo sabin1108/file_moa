@@ -120,6 +120,18 @@ describe("grounded questions and user answers", () => {
 });
 
 describe("bounded natural language conditions", () => {
+  it("accepts root-prefixed and Windows-relative paths, natural folder endings and unique leaf names", () => {
+    const paths = [[], ["프로젝트"], ["프로젝트", "영어"], ["가로"]];
+    for (const input of ["note / 프로젝트 / 영어", "프로젝트\\영어", "영어 폴더에 넣어줘", "영어 폴더 안으로", "영어 폴더", "영어에 넣어줘"]) {
+      expect(inferOrganizationConditions(`"${input}"로`, "note", paths).destination, input).toEqual(["프로젝트", "영어"]);
+    }
+    expect(inferOrganizationConditions('"가로"에서', "note", paths).scope).toEqual({ kind: "folder", path: ["가로"] });
+    expect(inferOrganizationConditions('"영어폴더에 넣어줘"로', "note", [...paths, ["영어폴더"]]).destination).toEqual(["영어폴더"]);
+    expect(inferOrganizationConditions('"영어"로', "note", paths, false).destination).toBeUndefined();
+    expect(inferOrganizationConditions('"영어"로', "note", [...paths, ["다른 곳", "영어"]]).destination).toBeUndefined();
+    expect(inferOrganizationConditions('"../영어"로', "note", paths).destination).toBeUndefined();
+    expect(inferOrganizationConditions('"C:\\note\\프로젝트\\영어"로', "note", paths).destination).toBeUndefined();
+  });
   const folders = [[], ["회사"], ["보고서"], ["검토"]];
 
   it("separates explicit quoted source, reference and destination without broadening scope", () => {

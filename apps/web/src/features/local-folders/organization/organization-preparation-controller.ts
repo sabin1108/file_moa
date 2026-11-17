@@ -311,7 +311,7 @@ export class OrganizationPreparationController {
       return;
     }
     if (field && this.infer) {
-      const name = answer.replace(/\s*(?:폴더)?\s*(?:안에서|에서|만|으로|로)(?:\s*(?:해줘|정리해줘))?$/u, "").replace(/^['"]|['"]$/gu, "").trim();
+      const name = answer.replace(/^['"]|['"]$/gu, "").trim();
       if (!name || /["'“”「」『』]/u.test(name)) {
         this.publish({ ...this.state, issue: "폴더 하나의 이름이나 정확한 경로로 알려 주세요. 여러 조건은 나눠서 답할 수 있어요." });
         return;

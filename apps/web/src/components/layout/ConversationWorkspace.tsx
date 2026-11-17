@@ -6,6 +6,7 @@ import { actionClasses } from "../ui/action-classes";
 import composer from "../../styles/composer.module.css";
 import styles from "./conversation-workspace.module.css";
 import { useDrawerDialog } from "./use-drawer-dialog";
+import { MoaLoader } from "../ui/feedback/MoaLoader";
 
 export type ConversationMessage = Readonly<{
   id: string;
@@ -44,6 +45,7 @@ export function ConversationWorkspace({
   panelModal = true,
   focusMessageId,
   onChooseTask,
+  replyLabel = "답변 반영 완료 · 다음 안내",
 }: {
   messages: readonly ConversationMessage[];
   draft: string;
@@ -79,6 +81,7 @@ export function ConversationWorkspace({
   panelModal?: boolean;
   focusMessageId?: string;
   onChooseTask?: () => void;
+  replyLabel?: string;
 }) {
   const trigger = useRef<HTMLElement | null>(null);
   const closePanel = () => onPanelChange(false);
@@ -107,7 +110,16 @@ export function ConversationWorkspace({
   }, [scrollMemoryRef]);
 
   useEffect(() => {
+    if (!focusMessageId || !thread.current) return;
+    const current = thread.current.querySelector<HTMLElement>('[data-current-reply="true"]');
+    if (!current) return;
+    const top = current.getBoundingClientRect().top - thread.current.getBoundingClientRect().top + thread.current.scrollTop - 16;
+    thread.current.scrollTo({ top, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+  }, [focusMessageId, latestTextLength]);
+
+  useEffect(() => {
     if (hasInteraction || !messages.length) return;
+    if (focusMessageId) return;
 
     if (follow.current && thread.current)
       thread.current.scrollTo({
@@ -116,7 +128,7 @@ export function ConversationWorkspace({
           ? "instant"
           : "smooth",
       });
-  }, [messages.length, latestTextLength, pending, hasInteraction]);
+  }, [messages.length, latestTextLength, pending, hasInteraction, focusMessageId]);
 
   const send = () => {
     if (composing.current || !canSend || pending || !draft.trim()) return;
@@ -128,9 +140,14 @@ export function ConversationWorkspace({
     onSend();
   };
   const renderMessage = (message: ConversationMessage) => <article key={message.id}
+    data-current-reply={message.id === focusMessageId || undefined}
     className={message.author === "user" ? styles.userMessage : styles.assistantMessage}
     aria-label={message.author === "user" ? "나의 메시지" : "모아의 답변"}>
-    {message.author === "assistant" && <div className={styles.identity}><MoaMark size={22} />모아</div>}
+    {message.author === "assistant" && <div className={styles.identity}><MoaMark size={22} />모아
+      {message.id === focusMessageId && <span className={styles.replyStatus} role="status" data-reply-pending={pending}>
+        {pending && <MoaLoader size={24} />}{pending ? pendingLabel : replyLabel}
+      </span>}
+    </div>}
     <p>{message.text}</p>
     {message.status && <small>{message.status}</small>}
     {messageActions?.(message)}
