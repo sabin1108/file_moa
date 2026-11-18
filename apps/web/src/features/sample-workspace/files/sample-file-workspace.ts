@@ -22,6 +22,9 @@ export const sampleFilesSchema = z.strictObject({
 });
 export type SampleFiles = z.infer<typeof sampleFilesSchema>;
 export type SampleFileNode = SampleFiles["nodes"][number];
+export function sampleFileContentKey(files: SampleFiles): string {
+  return JSON.stringify(files.nodes.map(node => JSON.stringify([node.kind, node.kind === "file" ? node.id : null, node.path, node.text, node.assetId])).sort());
+}
 const key = (path: readonly string[]) => JSON.stringify(path.map(comparableName));
 const within = (path: readonly string[], parent: readonly string[]) => path.length >= parent.length
   && parent.every((part, index) => comparableName(part) === comparableName(path[index]));
@@ -63,7 +66,11 @@ export function createSampleFiles(catalog: SampleCatalog, locations: Readonly<Re
   const folder = (path: string[]) => {
     for (let length = 1; length <= path.length; length++) {
       const parent = path.slice(0, length);
-      if (!nodes.some(node => equal(node.path, parent))) nodes.push({ id: crypto.randomUUID(), path: parent, kind: "directory", text: null, assetId: null });
+      if (!nodes.some(node => equal(node.path, parent))) {
+        const known = catalog.folders.find(item => equal(folderPath(item.id), parent));
+        const id = known && !catalog.documents.some(document => document.id === known.id) ? known.id : crypto.randomUUID();
+        nodes.push({ id, path: parent, kind: "directory", text: null, assetId: null });
+      }
     }
   };
   const folderPath = (id: string | null) => {
@@ -134,4 +141,48 @@ export function prepareSampleFileOperation(state: SampleFiles, request: ManagedR
     bytes: selected.reduce((sum, node) => sum + new TextEncoder().encode(node.text ?? "").byteLength, 0),
     paths: targets.map(path => [...path]), skipped: false,
   } };
+}
+
+export function sampleFileView(source: SampleCatalog, files: SampleFiles): { catalog: SampleCatalog; locations: Record<string, string | null> } {
+  const directories = files.nodes.filter(node => node.kind === "directory");
+  const folders = directories.filter(node => node.path[0] !== "받은 자료" || node.path.length > 1).map(node => ({
+    id: node.id, label: (node.path[0] === "정리한 자료" ? node.path.slice(1) : node.path).join("/"),
+  }));
+  const locations = Object.fromEntries(files.nodes.filter(node => node.kind === "file").map(node => [node.id,
+    node.path.length === 2 && node.path[0] === "받은 자료" ? null
+      : directories.find(parent => equal(parent.path, node.path.slice(0, -1)))!.id]));
+  const documents = files.nodes.filter(node => node.kind === "file").map(node => {
+    const original = source.documents.find(document => document.id === node.assetId) ?? source.documents.find(document => document.id === node.id);
+    return { ...(original ?? { format: node.path.at(-1)!.toLowerCase().endsWith(".md") ? "md" as const : "txt" as const,
+      proposal: { folderId: null, reason: "분류 기준 확인이 필요합니다.", reviewRequired: true } }),
+      id: node.id, name: node.path.at(-1)!, excerpt: node.text!, sourceFolderId: locations[node.id] ?? undefined };
+  });
+  return { catalog: { version: "1", folders, documents }, locations };
+}
+
+/** 여러 출발 위치의 AI 계획을 하나의 보존 기록과 파일 상태로 반영한다. */
+export function applySampleFileMoves(state: SampleFiles, moves: readonly { id: string; to: readonly string[] }[], folders: readonly { id: string; path: readonly string[] }[]): SampleFiles {
+  if (!moves.length || new Set(moves.map(move => move.id)).size !== moves.length) throw Error("managed-selection");
+  const originals = moves.map(move => {
+    const node = state.nodes.find(node => node.id === move.id && node.kind === "file");
+    if (!node) throw Error("managed-missing");
+    pathSchema.parse(move.to);
+    return node;
+  });
+  const directories: SampleFileNode[] = [];
+  for (const move of moves) {
+    for (let length = 1; length < move.to.length; length++) {
+      const path = move.to.slice(0, length);
+      const existing = [...state.nodes, ...directories].find(node => equal(node.path, path));
+      if (existing?.kind === "file") throw Error("managed-name-conflict");
+      if (!existing) directories.push({ id: folders.find(folder => equal(folder.path, path))?.id ?? crypto.randomUUID(), path: [...path], kind: "directory", text: null, assetId: null });
+    }
+  }
+  const nodes = state.nodes.map(node => {
+    const move = moves.find(move => move.id === node.id);
+    return move ? { ...node, path: [...move.to] } : node;
+  });
+  const archive = { id: crypto.randomUUID(), kind: "move" as const, time: new Date().toISOString(),
+    roots: originals.map(node => [...node.path]), nodes: originals.map(node => ({ ...node, path: [...node.path] })) };
+  return validateFiles({ nodes: [...nodes, ...directories], archives: [...state.archives, archive], selected: [] });
 }

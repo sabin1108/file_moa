@@ -9,7 +9,8 @@ import { conversationKinds } from "../../shared/ai-records";
 import { prepareSampleReply } from "./sample-experience";
 import { SAMPLE_ANSWER_LIMITS, sampleAnswerSchema, type SampleAnswerResult } from "../../shared/sample-answer";
 import { recordKinds } from "../../shared/record-kinds";
-import { parseSampleFiles, sampleFilesSchema, type SampleFiles } from "./files/sample-file-workspace";
+import { parseSampleFiles, sampleFilesSchema, sampleFileView, sampleFileContentKey, createSampleFiles, applySampleFileMoves, type SampleFiles } from "./files/sample-file-workspace";
+import { sampleMaterialsSchema, type SampleMaterial } from "../../shared/sample-materials";
 
 export const sampleRecordSchema = z.strictObject({
   id: z.string().min(1).max(80),
@@ -34,6 +35,8 @@ const fileFolderSelectionSchema = z.array(z.array(z.string().min(1).max(120)).mi
 const stateSchema = z.strictObject({
   version: z.literal("1"),
   files: sampleFilesSchema.nullable().default(null),
+  materialsVersion: z.literal(1).optional(),
+  materialRevision: z.number().int().nonnegative().default(0),
   mode: z.enum(conversationKinds).nullable().default(null),
   findings: z.array(z.string()).max(200).default([]),
   citations: z.array(z.string()).max(5).default([]),
@@ -68,6 +71,7 @@ const stateSchema = z.strictObject({
     usage: usageSchema,
   }).nullable().default(null),
   lastApplied: z.strictObject({
+    filesBefore: sampleFilesSchema.optional(),
     before: locationsSchema,
     after: locationsSchema,
     documentIds: z.array(z.string()).min(1).max(200),
@@ -77,6 +81,33 @@ const stateSchema = z.strictObject({
 });
 
 export type SampleState = z.infer<typeof stateSchema>;
+
+function synchronizeSampleFiles(catalog: SampleCatalog, state: SampleState, files: SampleFiles, changed = true): SampleState {
+  const view = sampleFileView(catalog, files);
+  const live = new Set(view.catalog.documents.map(document => document.id));
+  const folders = new Set(view.catalog.folders.map(folder => folder.id));
+  const pathExists = files.nodes.some(node => node.kind === "directory" && JSON.stringify(node.path) === JSON.stringify(state.path));
+  const questionSelected = state.questionSelected?.filter(id => live.has(id)) ?? null;
+  return {
+    ...state, files, materialsVersion: 1, locations: view.locations,
+    createdFolders: state.createdFolders.filter(folder => folders.has(folder.id)).map(folder => view.catalog.folders.find(current => current.id === folder.id)!),
+    ...(changed ? { selected: [], targets: {}, ai: null, organization: null, lastApplied: null, phase: "select" as const,
+      findings: [], citations: [], sourceReply: "", materialRevision: state.materialRevision + 1 } : {}),
+    fileSelected: files.selected.filter(id => live.has(id)),
+    fileSelectedFolders: files.nodes.filter(node => node.kind === "directory" && files.selected.includes(node.id)).map(node => node.path),
+    questionSelected: questionSelected === null || validQuestionSelection(view.catalog, questionSelected) ? questionSelected : [],
+    path: pathExists ? state.path : ["받은 자료"],
+  };
+}
+
+export function sampleSelectedMaterials(catalog: SampleCatalog, state: SampleState, ids: readonly string[]): SampleMaterial[] {
+  const active = sampleActiveCatalog(catalog, state);
+  return sampleMaterialsSchema.parse(ids.map(id => {
+    const document = active.documents.find(document => document.id === id);
+    if (!document) throw Error("invalid-sample-material");
+    return { id, name: document.name, excerpt: document.excerpt, sourcePath: sampleFolderPath(active, state.locations[id]) };
+  }));
+}
 
 export type SampleAction =
   | Readonly<{ type: "file-workspace"; files: SampleFiles }>
@@ -126,6 +157,7 @@ export function createSampleState(catalog: SampleCatalog): SampleState {
   return {
     version: "1",
     files: null,
+    materialRevision: 0,
     mode: null, findings: [], citations: [], sourceReply: "", records: [], guideStep: 0, guideDismissed: false,
     scope: "all", path: ["받은 자료"],
     phase: "select",
@@ -151,8 +183,12 @@ function equalLocations(first: SampleState["locations"], second: SampleState["lo
 export function restoreSampleState(catalog: SampleCatalog, serialized: string): SampleState {
   if (serialized.length > SAMPLE_STATE_CHARACTER_LIMIT) throw new Error("invalid-sample-state");
 
-  const state = stateSchema.parse(JSON.parse(serialized));
+  let state = stateSchema.parse(JSON.parse(serialized));
   if (state.files) parseSampleFiles(catalog, state.files);
+  if (state.files && !state.materialsVersion) state = synchronizeSampleFiles(catalog, state, state.files);
+  if (state.lastApplied?.filesBefore) parseSampleFiles(catalog, state.lastApplied.filesBefore);
+  const historicalIds = new Set([...catalog.documents.map(document => document.id),
+    ...(state.files?.archives.flatMap(archive => archive.nodes.filter(node => node.kind === "file").map(node => node.id)) ?? [])]);
 
   for (const folder of state.createdFolders) createdFolderPathSchema.parse(folder.label.split("/"));
 
@@ -174,9 +210,10 @@ export function restoreSampleState(catalog: SampleCatalog, serialized: string): 
   const documents = new Set(catalog.documents.map(document => document.id));
   const folders = new Set(catalog.folders.map(folder => folder.id));
   const validIds = (ids: readonly string[]) => new Set(ids).size === ids.length && ids.every(id => documents.has(id));
-  if (!validIds(state.findings) || !validIds(state.citations)
+  const validHistoricalIds = (ids: readonly string[]) => new Set(ids).size === ids.length && ids.every(id => documents.has(id) || historicalIds.has(id));
+  if (!validIds(state.findings) || !validHistoricalIds(state.citations)
     || new Set(state.records.map(record => record.id)).size !== state.records.length
-    || state.records.some(record => !validIds(record.sources))) throw Error("invalid-sample-experience");
+    || state.records.some(record => !validHistoricalIds(record.sources))) throw Error("invalid-sample-experience");
   const validLocations = (locations: SampleState["locations"]) => Object.keys(locations).length === documents.size
     && Object.entries(locations).every(([id, folder]) => documents.has(id) && (folder === null || folders.has(folder)));
 
@@ -249,7 +286,8 @@ export function restoreSampleState(catalog: SampleCatalog, serialized: string): 
   return state;
 }
 
-export function sampleActiveCatalog(catalog: SampleCatalog, state: Pick<SampleState, "createdFolders">): SampleCatalog {
+export function sampleActiveCatalog(catalog: SampleCatalog, state: Pick<SampleState, "createdFolders"> & Partial<Pick<SampleState, "files">>): SampleCatalog {
+  if (state.files) catalog = sampleFileView(catalog, state.files).catalog;
   return {
     ...catalog,
     folders: [...catalog.folders.filter(folder => !state.createdFolders.some(created => created.id === folder.id)), ...state.createdFolders]
@@ -270,12 +308,12 @@ function validFolderSelection(catalog: SampleCatalog, paths: readonly (readonly 
 }
 
 /** 질문 선택은 폴더 관리·정리 계획의 선택과 별도로 보관한다. null만 첫 체험 기본값을 뜻한다. */
-export function sampleQuestionSelection(catalog: SampleCatalog, state: Pick<SampleState, "questionSelected" | "locations" | "createdFolders">): string[] {
+export function sampleQuestionSelection(catalog: SampleCatalog, state: Pick<SampleState, "questionSelected" | "locations" | "createdFolders"> & Partial<Pick<SampleState, "files">>): string[] {
   if (state.questionSelected !== null) return state.questionSelected;
   const active = sampleActiveCatalog(catalog, state);
   const ids: string[] = [];
   let characters = 0;
-  for (const document of catalog.documents) {
+  for (const document of active.documents) {
     const folder = active.folders.find(folder => folder.id === state.locations[document.id]);
     if (folder?.label.split("/").at(-1) !== "웹사이트 문서") continue;
     if (ids.length >= SAMPLE_ANSWER_LIMITS.documents || characters + document.excerpt.length > SAMPLE_ANSWER_LIMITS.excerptCharacters) continue;
@@ -303,21 +341,22 @@ export function organizationRequest(catalog: SampleCatalog, instruction: string,
         id,
         name: document.name,
         excerpt: document.excerpt,
-        sourcePath: catalog.folders.find(folder => folder.id === document.sourceFolderId)?.label.split("/") ?? ["받은 자료"]
+        sourcePath: sampleFolderPath(catalog, document.sourceFolderId ?? null)
       };
     })
   };
 }
 
 function sampleRequest(catalog: SampleCatalog, selected: readonly string[]) {
+  const folders = catalog.folders.filter(folder => folder.label);
   return parseClassificationRequest({
     documents: selected.map(id => {
       const { name, excerpt } = catalog.documents.find(document => document.id === id)!;
 
       return { id, name, excerpt };
     }),
-    folders: catalog.folders,
-  }, { mode: "sample", documents: catalog.documents, folders: catalog.folders });
+    folders,
+  }, { mode: "sample", documents: catalog.documents, folders });
 }
 
 export function sampleFolderPath(catalog: SampleCatalog, id: string | null): string[] {
@@ -400,11 +439,15 @@ export function sampleChangePlan(catalog: SampleCatalog, state: SampleState): Fi
 }
 
 export function transitionSampleState(catalog: SampleCatalog, state: SampleState, action: SampleAction): SampleState {
+  const sourceCatalog = catalog;
   if (action.type === "reset") return createSampleState(catalog);
   if (action.type === "file-workspace") {
     if (state.phase === "review") throw Error("sample-review-required");
-    return { ...state, files: parseSampleFiles(catalog, action.files) };
+    const files = parseSampleFiles(catalog, action.files);
+    const before = state.files ?? createSampleFiles(sampleActiveCatalog(catalog, state), state.locations);
+    return synchronizeSampleFiles(catalog, state, files, sampleFileContentKey(before) !== sampleFileContentKey(files));
   }
+  catalog = sampleActiveCatalog(catalog, state);
   if (action.type === "conversation") {
     if (!action.text.trim() || action.text.length > 8000) throw Error("invalid-sample-message");
     return { ...state, draft: "", messages: [...state.messages, { id: `org-${crypto.randomUUID()}`, author: action.author, text: action.text }].slice(-40) };
@@ -561,7 +604,7 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
 
   if (action.type === "back") {
     const createdFolders = state.phase === "review" && state.organization ? state.organization.foldersBefore : state.createdFolders;
-    const folders = sampleActiveCatalog(catalog, { createdFolders });
+    const folders = sampleActiveCatalog(sourceCatalog, { createdFolders, files: state.files });
     return {
       ...state,
       phase: "select",
@@ -621,17 +664,25 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
 
     if (plan.conflictCount) throw new Error("sample-plan-conflict");
 
-    const locations = { ...state.locations, ...state.targets };
     const foldersBefore = state.organization?.foldersBefore ?? state.createdFolders;
+    const filesBefore = state.files ?? createSampleFiles(sampleActiveCatalog(sourceCatalog, { createdFolders: foldersBefore }), state.locations);
+    const files = applySampleFileMoves(filesBefore, state.selected.map(id => ({ id,
+      to: [...sampleFolderPath(catalog, state.targets[id]), catalog.documents.find(document => document.id === id)!.name],
+    })), catalog.folders.map(folder => ({ id: folder.id, path: sampleFolderPath(catalog, folder.id) })));
+    const locations = sampleFileView(sourceCatalog, files).locations;
     const createdFolders = state.createdFolders.filter(folder => foldersBefore.some(before => before.id === folder.id) || Object.values(locations).includes(folder.id));
 
     return {
       ...state,
       phase: "result",
+      files,
+      materialsVersion: 1,
+      materialRevision: state.materialRevision + 1,
       locations,
       createdFolders,
       lastApplied: {
-        before: { ...state.locations },
+        filesBefore,
+        before: sampleFileView(sourceCatalog, filesBefore).locations,
         after: { ...locations },
         documentIds: [...state.selected],
         foldersBefore,
@@ -650,15 +701,21 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
 
   if (!state.lastApplied || !equalLocations(state.locations, state.lastApplied.after)) throw new Error("sample-restore-unavailable");
 
+  const files = state.lastApplied.filesBefore
+    ? { ...state.lastApplied.filesBefore, archives: state.files?.archives ?? state.lastApplied.filesBefore.archives }
+    : state.files;
+
   return {
     ...state,
     phase: "select",
+    files,
+    materialRevision: state.materialRevision + 1,
     locations: { ...state.lastApplied.before },
     targets: {},
     ai: null,
     organization: null,
     createdFolders: state.lastApplied.foldersBefore,
-    fileSelectedFolders: state.fileSelectedFolders.filter(path => validFolderSelection(sampleActiveCatalog(catalog, { createdFolders: state.lastApplied!.foldersBefore }), [path])),
+    fileSelectedFolders: state.fileSelectedFolders.filter(path => validFolderSelection(sampleActiveCatalog(sourceCatalog, { createdFolders: state.lastApplied!.foldersBefore, files }), [path])),
     lastApplied: null,
     messages: [
       ...state.messages,

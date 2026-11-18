@@ -19,11 +19,11 @@ export function SampleMaterialPicker({ catalog, store, onClose }: {
   const selected = sampleQuestionSelection(catalog, state);
   const active = sampleActiveCatalog(catalog, state);
   const disabled = aiPending || expired;
-  const characters = catalog.documents.filter(document => selected.includes(document.id)).reduce((sum, document) => sum + document.excerpt.length, 0);
-  const visible = catalog.documents.filter(document => `${document.name} ${sampleFolderPath(active, state.locations[document.id]).join("/")} ${document.excerpt}`.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+  const characters = active.documents.filter(document => selected.includes(document.id)).reduce((sum, document) => sum + document.excerpt.length, 0);
+  const visible = active.documents.filter(document => `${document.name} ${sampleFolderPath(active, state.locations[document.id]).join("/")} ${document.excerpt}`.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
   const toggle = (id: string) => store.dispatch({ type: "select-question", ids: selected.includes(id) ? selected.filter(value => value !== id) : [...selected, id] });
   return <SelectionWorkspaceDialog title="질문할 예시 자료 선택" onClose={onClose}>
-    <p>선택 {selected.length} / {catalog.documents.length}개 · 발췌 {characters.toLocaleString()}자 · 최대 {SAMPLE_ANSWER_LIMITS.documents}개·{SAMPLE_ANSWER_LIMITS.excerptCharacters.toLocaleString()}자</p>
+    <p>선택 {selected.length} / {active.documents.length}개 · 발췌 {characters.toLocaleString()}자 · 최대 {SAMPLE_ANSWER_LIMITS.documents}개·{SAMPLE_ANSWER_LIMITS.excerptCharacters.toLocaleString()}자</p>
     <label>이름·폴더·내용으로 찾기<input type="search" value={query} onChange={event => setQuery(event.target.value)} /></label>
     <div className={styles.actions}>
       <button type="button" className={actionClasses("secondary")} disabled={disabled} onClick={() => store.dispatch({ type: "select-question", ids: visible.map(document => document.id) })}>보이는 자료 전체 선택</button>

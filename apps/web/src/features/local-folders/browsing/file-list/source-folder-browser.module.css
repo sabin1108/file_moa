@@ -15,7 +15,7 @@
 .contents { margin-top: 8px; }
 .entries { display: block; margin: 0; padding: 0; list-style: none; }
 .entries li { min-width: 0; }
-.entry { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; height: 100%; padding: 10px 8px; border: 0; border-bottom: 1px solid #edf0f2; border-radius: 0; background: var(--surface); color: var(--text); font: inherit; text-align: left; }
+.entry { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 10px 8px; border: 0; border-bottom: 1px solid #edf0f2; border-radius: 0; background: var(--surface); color: var(--text); font: inherit; text-align: left; }
 button.entry { cursor: pointer; }
 button.entry:hover:not(:disabled) { background: var(--panel); }
 button.entry:disabled { cursor: default; }

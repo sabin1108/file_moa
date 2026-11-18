@@ -10,6 +10,7 @@ import type { OrganizationRequest } from "../../shared/organization";
 import { validateReviewAnswers } from "../../shared/live-organization-review";
 import { SAMPLE_ORGANIZATION_LIMITS, sampleOrganizationContextSchema, type SampleOrganizationResult } from "../../shared/sample-organization";
 import { LIVE_ORGANIZATION_LIMITS } from "../../shared/live-organization-limits";
+import { resolveSampleMaterials, sampleMaterialsSchema, SAMPLE_MATERIAL_LIMITS } from "../../shared/sample-materials";
 
 const inputSchema = z.strictObject({
   requestId: z.uuid(),
@@ -17,6 +18,7 @@ const inputSchema = z.strictObject({
   instruction: z.string().trim().min(2).max(800),
   consent: z.literal(true),
   context: sampleOrganizationContextSchema.optional(),
+  documents: sampleMaterialsSchema.optional(),
 });
 
 export async function organizeSample(value: unknown, context: SampleAiContext, expectedProvider?: AiProvider | null): Promise<SampleOrganizationResult> {
@@ -28,27 +30,15 @@ export async function organizeSample(value: unknown, context: SampleAiContext, e
 
     const parsed = inputSchema.safeParse(value);
 
-    if (!parsed.success) return { ok: false, code: "input" };
+    if (!parsed.success || Buffer.byteLength(JSON.stringify(value), "utf8") > SAMPLE_MATERIAL_LIMITS.requestBytes) return { ok: false, code: "input" };
 
     const input = parsed.data;
     const catalog = getSampleCatalog();
 
-    if (
-      new Set(input.documentIds).size !== input.documentIds.length
-      ||
-      input.documentIds.some(id => !catalog.documents.some(document => document.id === id))
-    )
-      return { ok: false, code: "input" };
-
-    const request: OrganizationRequest = {
-      instruction: input.instruction,
-      documents: input.documentIds.map(id => {
-        const document = catalog.documents.find(document => document.id === id)!;
-        const source = catalog.folders.find(folder => folder.id === document.sourceFolderId)?.label;
-
-        return { id, name: document.name, excerpt: document.excerpt, sourcePath: source?.split("/") ?? ["받은 자료"] };
-      })
-    };
+    let documents;
+    try { documents = resolveSampleMaterials(input.documentIds, input.documents, catalog); }
+    catch { return { ok: false, code: "input" }; }
+    const request: OrganizationRequest = { instruction: input.instruction, documents };
     if (request.documents.reduce((sum, document) => sum + document.excerpt.length, 0) > SAMPLE_ORGANIZATION_LIMITS.excerptCharacters) return { ok: false, code: "input" };
     let answers;
     try { answers = validateReviewAnswers(input.context?.answers ?? [], request.documents); }

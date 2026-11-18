@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { SampleAiResult, SampleAiUsage } from "./sample-ai";
 import { reviewAnswerSchema, type ReviewQuestion } from "./live-organization-review";
 import type { OrganizationResponse } from "./organization";
+import type { SampleMaterial } from "./sample-materials";
 
 export const SAMPLE_ORGANIZATION_LIMITS = { documents: 100, excerptCharacters: 50_000 } as const;
 const path = z.array(z.string().trim().min(1).max(120).refine(value => !/[\\/\u0000-\u001f<>:"|?*]/u.test(value) && ![".", "..", ".moa-history"].includes(value.toLowerCase()))).max(20);
@@ -27,5 +28,6 @@ export type SampleOrganizationAction = (input: {
   documentIds: string[];
   instruction: string;
   consent: true;
-  context?: SampleOrganizationContext
+  context?: SampleOrganizationContext;
+  documents?: SampleMaterial[];
 }) => Promise<SampleOrganizationResult>;

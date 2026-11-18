@@ -1,7 +1,7 @@
 .toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: var(--ui-space-3); margin-top: var(--ui-space-3); }
 .selectAll { display: inline-flex; align-items: center; gap: var(--ui-space-2); min-height: var(--ui-control-height); cursor: pointer; }
 .count { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
-.fileRow { position: relative; display: flex; align-items: stretch; height: 100%; min-width: 0; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: var(--surface); touch-action: pan-y; user-select: none; -webkit-touch-callout: none; }
+.fileRow { position: relative; display: flex; align-items: stretch; min-width: 0; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: var(--surface); touch-action: pan-y; user-select: none; -webkit-touch-callout: none; }
 .fileRow[data-holding="true"]::after { content: ""; position: absolute; pointer-events: none; left: 0; bottom: 0; width: 100%; height: 3px; background: var(--focus); transform-origin: left; animation: press-progress 650ms linear; }
 @keyframes press-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .fileRow[data-selected="true"] { background: var(--selection, var(--panel)); box-shadow: inset 3px 0 var(--text); }

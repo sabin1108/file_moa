@@ -19,7 +19,7 @@ export function createSamplePreparation(catalog: SampleCatalog, getState: () => 
   return new OrganizationPreparationController(async (scope, _instruction, signal) => {
     const state = getState();
     const active = sampleActiveCatalog(catalog, state);
-    const documents = await Promise.all(catalog.documents.flatMap(document => {
+    const documents = await Promise.all(active.documents.flatMap(document => {
       const path = [...sampleFolderPath(active, state.locations[document.id]), document.name];
       const prefix = (candidate: readonly string[]) => candidate.every((part, index) => path[index] === part);
       const included = scope.kind === "all" || (scope.kind === "folder" ? prefix(scope.path)

@@ -1,5 +1,7 @@
 # 코드 읽기 안내 — 화면 진입부터 로컬 파일 읽기까지
 
+2026-11-18 데모 현재 자료 연결: `sample-file-workspace.sampleFileView` → `sample-state.sampleActiveCatalog`에서 현재 파일을 질문·검색·정리 화면에 공급한다. `sampleSelectedMaterials` → 서버 `resolveSampleMaterials` → 인용/분류 근거 검증으로 이어진다. AI 계획 적용·되돌리기는 같은 파일 노드를 갱신하며 동의와 준비 상태는 자료 개정 번호로 무효화한다. [검증·한계](verification/demo-material-sync-20261118/README.md).
+
 2026-11-18 데모 파일 작업: `SampleWorkspace` → `SampleFilesWorkspace` → `SampleFileController` → 순수 `sample-file-workspace` 규칙 → `SampleWorkspaceStore`/`sample-state` 저장·복원 순서다. 정식 파일 UI의 생성 폼·관리 dialog·목적지 picker를 재사용하며 실제 폴더 핸들 대신 탭의 예시 사본을 사용한다. 검색 대화는 공통 `ConversationWorkspace`의 지난 기록 접기와 검색 panel의 스크롤 중 실행 조작을 사용한다. [변경 파일·검증·한계](verification/resume-fixes-20261118/README.md).
 
 초보자용 통합 해설은 [모아 전체 코드 흐름 설명서](모아_전체_코드_흐름_설명서.md)를 먼저 읽는다. 아래는 필요한 소스로 빠르게 이동하기 위한 지도와 날짜별 구현 맥락이다.

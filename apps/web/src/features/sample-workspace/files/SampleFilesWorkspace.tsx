@@ -59,7 +59,7 @@ export function SampleFilesWorkspace({ sourceCatalog, store }: { sourceCatalog: 
         {preview && <SampleDocumentPreview document={preview} headingRef={heading} assetId={previewNode?.assetId} onClose={() => setPreviewId(null)}
           onEdit={!disabled && /\.(md|txt)$/i.test(preview.name) ? () => { void files.managed.open({ kind: "edit", source: previewNode!.path.slice(0, -1), names: [preview.name], destination: [] }); } : undefined} />}
       </FilePreviewPane>}>
-      <p>파일 작업은 이 탭의 예시 사본에 적용됩니다. AI 질문·정리는 서버가 제공한 원문을 사용합니다.</p>
+      <p>파일 작업은 이 탭의 예시 사본에 적용됩니다. AI 질문·정리는 전송에 동의한 현재 자료의 내용과 위치를 사용합니다.</p>
       {snapshot.expired && <StatusNotice state="attention" title="샘플 세션이 만료됐어요" action={<a href="/demo/start">새 세션 시작</a>} />}
       {snapshot.notice && <StatusNotice state="attention" title="샘플 안내" detail={snapshot.notice} compact={snapshot.notice.startsWith("이 탭에서 보관한")} />}
       {snapshot.state.phase === "review" && <StatusNotice state="attention" title="채팅의 정리 계획 검토를 먼저 마치거나 취소해 주세요." />}

@@ -5,6 +5,7 @@ import {
   restoreSampleState,
   transitionSampleState,
   sampleQuestionSelection,
+  sampleSelectedMaterials,
   type SampleAction,
   type SampleState
 } from "./sample-state";
@@ -108,7 +109,7 @@ export class SampleWorkspaceStore {
 
     try {
       const state = transitionSampleState(this.catalog, this.snapshot.state, action);
-      if (action.type === "reset") this.organization.reset();
+      if (action.type === "reset" || state.materialRevision !== this.snapshot.state.materialRevision) this.organization.reset();
       const serialized = JSON.stringify(state);
       if (serialized.length > SAMPLE_STATE_CHARACTER_LIMIT) throw Error("sample-state-limit");
       let notice: string | null = null;
@@ -165,7 +166,9 @@ export class SampleWorkspaceStore {
     this.snapshot = { ...this.snapshot, aiPending: true, notice: null };
     this.emit();
     try {
-      const result = await request({ requestId, mode, messages, documentIds: mode === "grounded" ? [...questionIds] : [], consent: true });
+      const result = await request({ requestId, mode, messages, documentIds: mode === "grounded" ? [...questionIds] : [], consent: true,
+        ...(mode === "grounded" && state.files ? { documents: sampleSelectedMaterials(this.catalog, state, questionIds) } : {}),
+      });
       if (generation !== this.generation || performance.now() >= this.deadline) return;
       if (result.ok) { this.dispatch({ type: "ai-answer", requestId, mode, question: state.draft, result }); return; }
       this.snapshot = { ...this.snapshot, aiPending: false, notice: (result.reason ? LIVE_AI_REASON_MESSAGES[result.reason] : SAMPLE_AI_MESSAGES[result.code]) + (result.retryAfter ? ` 약 ${result.retryAfter}초 뒤 다시 시도할 수 있어요.` : "") };
@@ -224,7 +227,10 @@ export class SampleWorkspaceStore {
     this.emit();
 
     try {
-      const result = await request({ requestId: crypto.randomUUID(), documentIds: [...documentIds], instruction, consent: true, ...(context ? { context } : {}) });
+      const state = this.snapshot.state;
+      const result = await request({ requestId: crypto.randomUUID(), documentIds: [...documentIds], instruction, consent: true, ...(context ? { context } : {}),
+        ...(state.files ? { documents: sampleSelectedMaterials(this.catalog, state, documentIds) } : {}),
+      });
 
       if (generation !== this.generation || performance.now() >= this.deadline) return;
 

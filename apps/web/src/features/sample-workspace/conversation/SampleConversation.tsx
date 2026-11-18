@@ -68,14 +68,14 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
   const [projectId, setProjectId] = useState("");
   const heading = useRef<HTMLHeadingElement>(null);
   const panelTrigger = useRef<HTMLElement | null>(null);
-  const scopedDocuments = catalog.documents.filter(document => scope === "all"
+  const scopedDocuments = activeCatalog.documents.filter(document => scope === "all"
     || (scope === "selected"
       ? selectedIds.includes(document.id)
       : path.every((part, index) => sampleFolderPath(activeCatalog, state.locations[document.id])[index] === part)));
   const documentIds = preparation.selectedIds;
-  const consentKey = JSON.stringify([aiProvider, mode, state.draft.trim(), [...(mode === "grounded" ? selectedIds : mode === "organize" ? documentIds : [])].sort()]);
+  const consentKey = JSON.stringify([aiProvider, mode, state.materialRevision, state.draft.trim(), [...(mode === "grounded" ? selectedIds : mode === "organize" ? documentIds : [])].sort()]);
   const consented = !!aiProvider && (mode === "chat" || consent === consentKey);
-  const questionDocuments = catalog.documents.filter(document => selectedIds.includes(document.id));
+  const questionDocuments = activeCatalog.documents.filter(document => selectedIds.includes(document.id));
   const questionScopeIssue = questionDocuments.length > SAMPLE_ANSWER_LIMITS.documents
     ? `질문 자료는 최대 ${SAMPLE_ANSWER_LIMITS.documents}개까지 선택해 주세요.`
     : questionDocuments.reduce((sum, document) => sum + document.excerpt.length, 0) > SAMPLE_ANSWER_LIMITS.excerptCharacters
@@ -84,7 +84,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
   const disabled = !ready || expired || aiPending || replying || ["reading", "checking", "sending"].includes(preparation.phase);
   const consentDisabled = disabled || !aiProvider || !state.draft.trim();
   const needsConsent = !consentDisabled && !consented;
-  const previewDocument = catalog.documents.find(document => document.id === previewId);
+  const previewDocument = activeCatalog.documents.find(document => document.id === previewId);
 
   useEffect(() => {
     if (previewId) heading.current?.focus({ preventScroll: false });
@@ -232,7 +232,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
             {questionScopeIssue && <p role="alert">{questionScopeIssue}</p>}
             <div className={options.transmissionConsent} data-consent-required={needsConsent}><label><input type="checkbox" data-demo-ai-consent checked={consented} disabled={consentDisabled}
               onChange={event => setConsent(event.target.checked ? consentKey : null)} /><span>이 질문·최근 대화·선택한 발췌를 {providerLabel}로 보내는 데 동의해요.</span></label></div>
-            {state.citations.length > 0 && <p>답변 출처: {state.citations.map(id => <button key={id} type="button" className={actionClasses("ghost")} onClick={() => openPreview(id)}>{catalog.documents.find(document => document.id === id)?.name}</button>)}</p>}
+            {state.citations.length > 0 && <p>답변 출처: {state.citations.map(id => <button key={id} type="button" className={actionClasses("ghost")} onClick={() => openPreview(id)}>{activeCatalog.documents.find(document => document.id === id)?.name}</button>)}</p>}
           </section> : undefined}
         draft={state.draft}
         onDraftChange={fill}
@@ -301,7 +301,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
               >
                 <option value="all">
                   {"모든 샘플 "}
-                  {catalog.documents.length}개
+                  {activeCatalog.documents.length}개
                 </option>
                 <option value="folder">현재 폴더와 하위 자료</option>
                 <option value="selected">
@@ -324,15 +324,15 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
         panel={
           <>
             <ConversationPanelNavigation selected={tourRecordKind ? "records" : panelView} onOpen={openPanel} />
-            <div hidden={!showingRecords}><SampleLibraryPanel key={resetVersion} previewKind={tourRecordKind ?? undefined} state={state} catalog={catalog} disabled={disabled} dispatch={store.dispatch} onPreview={openPreview}
+            <div hidden={!showingRecords}><SampleLibraryPanel key={resetVersion} previewKind={tourRecordKind ?? undefined} state={state} catalog={activeCatalog} disabled={disabled} dispatch={store.dispatch} onPreview={openPreview}
               onReveal={() => { setRecordsOpen(true); setPanelOpen(true); }} /></div>
             <div hidden={!!tourRecordKind || panelView !== "settings"}><ConversationSettingsPanel includeMemory={false} onIncludeMemory={() => {}} projectId={projectId} onProjectId={setProjectId}
               canUseMemory={false} disabled={disabled} provider={aiProvider ? providerLabel : null} temporary dailyLimit={AI_DAILY_LIMITS.demo} storageDescription="이 탭의 샘플 세션 동안 임시 보관합니다. 새로고침해도 복원되며 실제 폴더에는 저장하지 않아요." onStorage={() => openPanel("storage")}
               onReplayTour={() => { setPanelOpen(false); requestAnimationFrame(replayWorkspaceTour); }} /></div>
             <div hidden={showingRecords || panelView === "settings"}>
             {mode === "find" && state.findings.length > 0 && <section aria-label="샘플 검색 결과"><h2>검색 결과 {state.findings.length}개</h2>{state.findings.map(id => <p key={id}>
-              <button type="button" onClick={() => openPreview(id)}>{catalog.documents.find(document => document.id === id)?.name}</button></p>)}</section>}
-            {mode === "grounded" && state.citations.length > 0 && <section aria-label="답변 출처"><h2>확인한 출처</h2>{state.citations.map(id => <p key={id}><button type="button" onClick={() => openPreview(id)}>{catalog.documents.find(document => document.id === id)?.name}</button></p>)}</section>}
+              <button type="button" onClick={() => openPreview(id)}>{activeCatalog.documents.find(document => document.id === id)?.name}</button></p>)}</section>}
+            {mode === "grounded" && state.citations.length > 0 && <section aria-label="답변 출처"><h2>확인한 출처</h2>{state.citations.map(id => <p key={id}><button type="button" onClick={() => openPreview(id)}>{activeCatalog.documents.find(document => document.id === id)?.name}</button></p>)}</section>}
             <WorkflowTransition step={`${state.phase}:${aiPending}`}>
               <SampleFolderPanel
                 catalog={activeCatalog}
@@ -353,7 +353,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
                     >
                       미리보기 닫기
                     </button>
-                    <SampleDocumentPreview document={previewDocument} headingRef={heading} />
+                    <SampleDocumentPreview document={previewDocument} headingRef={heading} assetId={state.files?.nodes.find(node => node.id === previewDocument.id)?.assetId} />
                   </div>
                 )}
             </WorkflowTransition>

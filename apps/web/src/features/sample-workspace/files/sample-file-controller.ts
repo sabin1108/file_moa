@@ -5,7 +5,7 @@ import { ManagedFilesController } from "../../local-folders/operations/managed/m
 import type { ManagedPreview, ManagedRequest, ManagedResult } from "../../local-folders/operations/managed/managed-files";
 import { sampleActiveCatalog, type SampleState } from "../sample-state";
 import type { SampleWorkspaceStore } from "../sample-workspace-store";
-import { createSampleFiles, createSampleEntry, prepareSampleFileOperation, type SampleFiles } from "./sample-file-workspace";
+import { createSampleFiles, createSampleEntry, prepareSampleFileOperation, sampleFileView, type SampleFiles } from "./sample-file-workspace";
 
 /** 공통 파일 작업 controller의 I/O만 탭의 예시 자료로 바꾼다. 실제 핸들·서버 호출은 없다. */
 export class SampleFileController {
@@ -91,19 +91,6 @@ export class SampleFileController {
   };
 
   view = (): { catalog: SampleCatalog; locations: SampleState["locations"] } => {
-    const files = this.files();
-    const directories = files.nodes.filter(node => node.kind === "directory");
-    const folders = directories.filter(node => node.path[0] !== "받은 자료" || node.path.length > 1).map(node => ({
-      id: node.id, label: (node.path[0] === "정리한 자료" ? node.path.slice(1) : node.path).join("/"),
-    }));
-    const documents = files.nodes.filter(node => node.kind === "file").map(node => {
-      const source = this.catalog.documents.find(document => document.id === node.assetId);
-      return { ...(source ?? { format: node.path.at(-1)!.toLowerCase().endsWith(".md") ? "md" as const : "txt" as const,
-        proposal: { folderId: null, reason: "", reviewRequired: false } }), id: node.id, name: node.path.at(-1)!, excerpt: node.text! };
-    });
-    const locations = Object.fromEntries(files.nodes.filter(node => node.kind === "file").map(node => [node.id,
-      node.path.length === 2 && node.path[0] === "받은 자료" ? null
-        : directories.find(parent => JSON.stringify(parent.path) === JSON.stringify(node.path.slice(0, -1)))!.id]));
-    return { catalog: { version: "1", folders, documents }, locations };
+    return sampleFileView(this.catalog, this.files());
   };
 }

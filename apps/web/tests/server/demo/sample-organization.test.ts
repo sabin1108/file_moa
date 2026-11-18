@@ -29,6 +29,21 @@ const input = () => ({
 });
 const context = () => ({ token: createSampleSession().token, visitorToken: createDemoVisitor().token, origin: "http://127.0.0.1:3034" });
 
+it("organizes the edited snapshot and its current path, including newly created files", async () => {
+  const current = { id: crypto.randomUUID(), name: "새 초안.md", excerpt: "현재 탭에서 편집한 문서의 기술 설명입니다.", sourcePath: ["받은 자료", "옮긴 폴더"] };
+  generate.mockResolvedValueOnce({ value: { summary: "현재 내용으로 정리", matches: [{ documentId: current.id, destination: ["개발"], evidence: current.excerpt, date: null }], held: [] }, model: "fixture", usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 } });
+  expect(await organizeSample({ ...input(), documentIds: [current.id], documents: [current] }, context())).toMatchObject({ ok: true });
+  expect(JSON.parse(generate.mock.calls[0][0].input).documents).toMatchObject([current]);
+});
+
+it("rejects invalid current document snapshots before reservation", async () => {
+  const current = { id: "report-1014", name: "보고서.md", excerpt: "이 탭의 수정 내용입니다.", sourcePath: ["받은 자료"] };
+  for (const documents of [[current], [{ ...current, sourcePath: ["받은 자료", ".."] }], [{ ...current, excerpt: "가".repeat(50_001) }]]) {
+    expect(await organizeSample({ ...input(), documents }, context())).toMatchObject({ ok: false, code: "input" });
+  }
+  expect(reserve).not.toHaveBeenCalled();
+});
+
 beforeEach(() => {
   vi.stubEnv("DEMO_ACCESS_TOKEN", "a".repeat(64));
   vi.stubEnv("AI_PROVIDER", "gemini");
