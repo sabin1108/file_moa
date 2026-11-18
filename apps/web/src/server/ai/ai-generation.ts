@@ -11,12 +11,12 @@ export async function generateAiJson(
   signal: AbortSignal,
   limits: { inputTokens: number } = AI_LIMITS,
   provider: AiProvider = requireAiProvider(),
-  profile: AiGenerationProfile = "default") {
+  profile: AiGenerationProfile = "default", onText?: (text: string) => void) {
   requireAiProvider(provider);
 
-  if (provider === "openai") return generateOpenAiJson(request, signal, limits, profile);
+  if (provider === "openai") return generateOpenAiJson(request, signal, limits, profile, onText);
 
-  return generateGeminiJson(request, signal, limits);
+  return generateGeminiJson(request, signal, limits, onText);
 }
 
 export async function generateClassification(request: ClassificationRequest, signal: AbortSignal,

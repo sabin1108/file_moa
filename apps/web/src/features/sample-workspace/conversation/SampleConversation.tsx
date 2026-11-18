@@ -38,7 +38,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
   answerAction: SampleAnswerAction;
   aiProvider?: AiProvider | null
 }) {
-  const { state, ready, expired, notice, aiPending } = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
+  const { state, ready, expired, notice, aiPending, streamText, streamId } = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
   const preparation = useSyncExternalStore(store.organization.subscribe, store.organization.getSnapshot, store.organization.getServerSnapshot);
   const [replying, setReplying] = useState(false);
   const [selectingMaterials, setSelectingMaterials] = useState(false);
@@ -63,11 +63,11 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
   const [panelView, setPanelView] = useState<ConversationPanelView>("records");
   const tourRecordKind = useWorkspaceTourRecordView();
   const showingRecords = !!tourRecordKind || recordsOpen;
-  const [resetting, setResetting] = useState(false);
-  const [resetVersion, setResetVersion] = useState(0);
+  const [requestEdit, setRequestEdit] = useState<string | null>(null);
   const [projectId, setProjectId] = useState("");
   const heading = useRef<HTMLHeadingElement>(null);
   const panelTrigger = useRef<HTMLElement | null>(null);
+  const transferVersion = useRef(0);
   const scopedDocuments = activeCatalog.documents.filter(document => scope === "all"
     || (scope === "selected"
       ? selectedIds.includes(document.id)
@@ -94,7 +94,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
     const unfinishedReview = state.phase === "review" && !!state.organization?.response.held.length;
     if (!ready || expired || state.mode !== "organize" || (state.phase !== "select" && !unfinishedReview) || store.organization.getSnapshot().request) return;
     if (unfinishedReview) store.dispatch({ type: "back" });
-    store.organization.update({ request: "자료 정리" });
+    store.organization.update({ request: "자료 정리", destination: ["정리한 자료", "정리 결과"] });
     void store.organization.beginConversation().then(() => {
       const prompt = organizationConversationPrompt(store.organization.getSnapshot());
       store.dispatch({ type: "conversation", author: "assistant", text: `${prompt.title}\n${prompt.text}` });
@@ -108,7 +108,10 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
   }, [ready, expired, state.mode, state.messages, store]);
 
   const fill = (value: string) => {
-    store.dispatch({ type: "draft", value });
+    if (mode === "organize") {
+      if (requestEdit !== null) setRequestEdit(value);
+      else store.organization.updateReply(value);
+    } else store.dispatch({ type: "draft", value });
     setConsent(null);
   };
   const openPreview = (id: string) => {
@@ -129,13 +132,15 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
     store.dispatch({ type: "conversation", author: "assistant", text: `${prompt.title}\n${prompt.text}` });
   };
   const chooseTask = (kind: ConversationKind) => {
+    transferVersion.current++;
     if (store.getSnapshot().state.phase === "review") store.dispatch({ type: "back" });
     store.dispatch({ type: "mode", mode: kind });
+    setRequestEdit(null);
     setConsent(null);
     setPanelOpen(false);
     if (kind === "organize") {
       store.organization.reset();
-      store.organization.update({ request: state.draft.trim() || "자료 정리" });
+      store.organization.update({ request: state.draft.trim() || "자료 정리", destination: ["정리한 자료", "정리 결과"] });
       void store.organization.beginConversation().then(showOrganizationPrompt);
     } else if (kind === "grounded") {
       store.dispatch({ type: "conversation", author: "assistant", text: "어떤 자료로 질문할까요? ‘질문할 자료 선택’에서 파일과 발췌를 살펴본 뒤 채팅에 궁금한 내용을 적어 주세요." });
@@ -143,6 +148,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
   };
   const transmitOrganization = async () => {
     if (!aiProvider || expired || !ready || aiPending) return;
+    const version = ++transferVersion.current;
     await store.organization.sendPrepared(async prepared => {
       const instruction = prepared.request === "자료 정리" ? prepared.basis : `${prepared.request}\n${prepared.basis}`;
       return await store.requestOrganization(organizeAction, instruction, prepared.selectedIds, {
@@ -151,12 +157,11 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
         answers: [...prepared.answers],
       }) ?? { ok: false, code: "unavailable" };
     });
-    showOrganizationPrompt();
+    if (version === transferVersion.current) showOrganizationPrompt();
   };
   const replyOrganization = async (text: string) => {
     if (disabled) return;
     store.dispatch({ type: "conversation", author: "user", text });
-    if (store.getSnapshot().state.phase === "review") store.dispatch({ type: "back" });
     setReplying(true);
     try {
       if (/^(?:자료)?전송에\s*동의(?:해|해요|합니다)[.!?]?$/u.test(text.trim()) && store.organization.getSnapshot().snapshot) {
@@ -164,12 +169,24 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
         await transmitOrganization();
       } else {
         await store.organization.replyToConversation(text, { currentPath: path });
+        if (!store.organization.getSnapshot().issue) {
+          store.organization.updateReply("");
+          if (store.getSnapshot().state.phase === "review" && !store.organization.getSnapshot().result) store.dispatch({ type: "back" });
+        }
         showOrganizationPrompt();
       }
     } finally { setReplying(false); }
   };
   const send = () => {
-    if (mode === "organize") { void replyOrganization(state.draft); return; }
+    if (mode === "organize") {
+      if (requestEdit !== null) {
+        if (state.phase === "review") store.dispatch({ type: "back" });
+        store.organization.update({ request: requestEdit.trim() });
+        setRequestEdit(null);
+        void store.organization.beginConversation().then(showOrganizationPrompt);
+      } else void replyOrganization(preparation.replyDraft);
+      return;
+    }
     panelTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     if (mode !== "chat") setPanelView("sources");
     if (mode !== "find" && !consented) return;
@@ -197,16 +214,6 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
       }
       tools={
         <>
-          <button
-            type="button"
-            className={actionClasses("ghost")}
-            disabled={disabled}
-            onClick={() => {
-              setResetting(true);
-            }}
-          >
-            처음부터 다시
-          </button>
           <Link href="/login" className={actionClasses("ghost")}>
             정식으로 사용
           </Link>
@@ -215,9 +222,10 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
     >
       <ConversationWorkspace
         messages={[...state.messages.map(message => message.model ? { ...message, status: `${message.model} · AI 응답` } : message),
-          ...(aiPending && mode !== "organize" ? [{ id: "sample-pending-question", author: "user" as const, text: state.draft }] : [])]}
+          ...(aiPending && mode !== "organize" ? [{ id: "sample-pending-question", author: "user" as const, text: state.draft }] : []),
+          ...(aiPending || replying ? [{ id: `sample-pending-${streamId ?? "reply"}`, author: "assistant" as const, text: streamText || "", status: streamText ? "생성 중 · 아직 검증 전입니다" : "" }] : [])]}
         showComposer={state.mode !== null}
-        focusMessageId={aiPending && mode !== "organize" ? "sample-pending-question" : latestAssistantId}
+        focusMessageId={aiPending || replying ? `sample-pending-${streamId ?? "reply"}` : latestAssistantId}
         replyLabel={mode === "organize" ? "현재 안내 · 채팅으로 답해 주세요" : "답변 완료"}
         onChooseTask={() => {
           if (state.phase === "review") store.dispatch({ type: "back" });
@@ -234,13 +242,13 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
               onChange={event => setConsent(event.target.checked ? consentKey : null)} /><span>이 질문·최근 대화·선택한 발췌를 {providerLabel}로 보내는 데 동의해요.</span></label></div>
             {state.citations.length > 0 && <p>답변 출처: {state.citations.map(id => <button key={id} type="button" className={actionClasses("ghost")} onClick={() => openPreview(id)}>{activeCatalog.documents.find(document => document.id === id)?.name}</button>)}</p>}
           </section> : undefined}
-        draft={state.draft}
+        draft={mode === "organize" ? requestEdit ?? preparation.replyDraft : state.draft}
         onDraftChange={fill}
         pending={aiPending || replying}
-        pendingLabel={aiPending ? "모아가 선택한 자료로 답변을 준비하고 있어요…" : "답변을 반영하고 다음 안내를 준비하고 있어요…"}
+        pendingLabel={aiPending ? streamText ? "답변 생성 중…" : "답변 생성 중 · 자료와 요청을 확인하고 있어요…" : "답변을 반영하고 다음 안내를 준비하고 있어요…"}
         inputLabel="AI에게 질문하기"
-        inputPlaceholder={mode === "organize" ? organizationConversationPrompt(preparation).example : conversationInputPlaceholder(state.mode)}
-        onCancel={() => { store.cancelAi(); store.organization.cancel(); }}
+        inputPlaceholder={mode === "organize" ? requestEdit !== null ? "최초 정리 요청을 수정하세요" : organizationConversationPrompt(preparation).example : conversationInputPlaceholder(state.mode)}
+        onCancel={() => { transferVersion.current++; store.cancelAi(); store.organization.cancelSend(); }}
         panelOpen={panelOpen || !!tourRecordKind}
         panelModal={!tourRecordKind}
         panelTrigger={panelTrigger}
@@ -255,19 +263,18 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
           setPanelOpen(open);
         }}
         planReady={false}
-        canSend={!disabled && !!state.draft.trim() && (mode === "organize" || (state.phase !== "review" && (mode === "find" || (!!aiProvider && consented)) && (mode !== "grounded" || selectedIds.length > 0 && !questionScopeIssue)))}
+        canSend={!disabled && !!(mode === "organize" ? requestEdit ?? preparation.replyDraft : state.draft).trim() && (mode === "organize" || (state.phase !== "review" && (mode === "find" || (!!aiProvider && consented)) && (mode !== "grounded" || selectedIds.length > 0 && !questionScopeIssue)))}
         onSend={send}
-        submitLabel="보내기"
+        submitLabel={mode === "organize" ? requestEdit !== null ? "요청 수정 반영" : "답변 반영" : "보내기"}
         intro={<>
           <ConversationTaskIntro mode={state.mode} disabled={disabled || state.phase === "review"} onChoose={chooseTask} />
           <p role="note" className={options.taskDescription}>개인정보나 비밀번호는 입력하지 마세요. 대화는 이 탭에 임시 보관됩니다.</p>
         </>}
         notice={
           <>
-            {resetting && <section role="group" aria-label="샘플 초기화 확인"><p>이 세션의 대화·정리 내역·임시 기록을 처음으로 돌릴까요?</p>
-              <button type="button" className={actionClasses("primary")} disabled={disabled} onClick={() => {
-                store.dispatch({ type: "reset" }); setConsent(null); setPreviewId(null); setResetVersion(value => value + 1); setResetting(false); setRecordsOpen(false);
-              }}>초기화 확인</button><button type="button" className={actionClasses("ghost")} onClick={() => setResetting(false)}>취소</button></section>}
+            {mode === "organize" && preparation.request && <button type="button" className={actionClasses("ghost")} disabled={disabled} onClick={() => {
+              setRequestEdit(requestEdit === null ? preparation.request : null);
+            }}>{requestEdit === null ? "최초 정리 요청 수정" : "요청 수정 취소 · 답변으로 돌아가기"}</button>}
             {notice && <StatusNotice state="attention" title="요청 안내" detail={notice} compact={notice.startsWith("이 탭에서 보관한")} />}
             {expired
               && (
@@ -324,7 +331,7 @@ export function SampleConversation({ catalog, store, organizeAction, answerActio
         panel={
           <>
             <ConversationPanelNavigation selected={tourRecordKind ? "records" : panelView} onOpen={openPanel} />
-            <div hidden={!showingRecords}><SampleLibraryPanel key={resetVersion} previewKind={tourRecordKind ?? undefined} state={state} catalog={activeCatalog} disabled={disabled} dispatch={store.dispatch} onPreview={openPreview}
+            <div hidden={!showingRecords}><SampleLibraryPanel previewKind={tourRecordKind ?? undefined} state={state} catalog={activeCatalog} disabled={disabled} dispatch={store.dispatch} onPreview={openPreview}
               onReveal={() => { setRecordsOpen(true); setPanelOpen(true); }} /></div>
             <div hidden={!!tourRecordKind || panelView !== "settings"}><ConversationSettingsPanel includeMemory={false} onIncludeMemory={() => {}} projectId={projectId} onProjectId={setProjectId}
               canUseMemory={false} disabled={disabled} provider={aiProvider ? providerLabel : null} temporary dailyLimit={AI_DAILY_LIMITS.demo} storageDescription="이 탭의 샘플 세션 동안 임시 보관합니다. 새로고침해도 복원되며 실제 폴더에는 저장하지 않아요." onStorage={() => openPanel("storage")}

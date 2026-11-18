@@ -7,7 +7,7 @@ import type { AiGenerationProfile } from "../ai/ai-models";
 
 /** Same intent/evidence policy for sample and authenticated local excerpts. */
 
-export async function generateOrganization(request: OrganizationRequest, signal: AbortSignal, provider: AiProvider = requireAiProvider(), limits = { inputTokens: 8192, outputTokens: 3200 }, profile: AiGenerationProfile = "default") {
+export async function generateOrganization(request: OrganizationRequest, signal: AbortSignal, provider: AiProvider = requireAiProvider(), limits = { inputTokens: 8192, outputTokens: 3200 }, profile: AiGenerationProfile = "default", onText?: (text: string) => void) {
   const documents = request.documents.map(document => ({ ...document, evidenceOptions: (document.excerpt.match(/[^\r\n]{1,160}/gu) ?? []).map(part => part.trim()).filter(part => part.length >= 8 && part.length <= 180) }));
   const evidenceOptions = [...new Set(documents.flatMap(document => document.evidenceOptions))];
 
@@ -101,6 +101,7 @@ export async function generateOrganization(request: OrganizationRequest, signal:
     signal,
     { inputTokens: limits.inputTokens },
     provider,
-    profile
+    profile,
+    onText
   );
 }

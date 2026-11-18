@@ -21,7 +21,7 @@ const inputSchema = z.strictObject({
   documents: sampleMaterialsSchema.optional(),
 });
 
-export async function organizeSample(value: unknown, context: SampleAiContext, expectedProvider?: AiProvider | null): Promise<SampleOrganizationResult> {
+export async function organizeSample(value: unknown, context: SampleAiContext, expectedProvider?: AiProvider | null, onText?: (text: string) => void, signal?: AbortSignal): Promise<SampleOrganizationResult> {
   try {
     requireSampleContext(context);
     if (!readSampleSession(context.token)) return { ok: false, code: "session" };
@@ -55,8 +55,8 @@ export async function organizeSample(value: unknown, context: SampleAiContext, e
 
     let result: Awaited<ReturnType<typeof generateLiveOrganizationBatches>>;
     try {
-      result = await generateLiveOrganizationBatches(prepared, answers, reservation.signal, reservation.provider,
-        async () => { requireSampleContext(context); }, () => {}, "demo");
+      result = await generateLiveOrganizationBatches(prepared, answers, signal ? AbortSignal.any([signal, reservation.signal]) : reservation.signal, reservation.provider,
+        async () => { requireSampleContext(context); }, () => {}, "demo", onText);
     } catch (error) {
       requireSampleContext(context);
       const failure = sampleAiFailure(error);

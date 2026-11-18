@@ -18,6 +18,18 @@ function fixture() {
 }
 
 describe("shared demo organization preparation", () => {
+  it("preserves the prepared selection, questions and consent while drafting, and retains them when generation is canceled", async () => {
+    const { controller, off } = fixture();
+    controller.update({ request: "최초 요청", scope: { kind: "all" }, basis: "주제별", destination: ["정리한 자료", "정리 결과"] });
+    await controller.prepare();
+    controller.consent(true);
+    const before = controller.getSnapshot();
+    controller.updateReply("현재 질문에 대한 답변 초안");
+    expect(controller.getSnapshot()).toMatchObject({ request: "최초 요청", snapshot: before.snapshot, selectedIds: before.selectedIds, consentKey: before.consentKey, questions: before.questions });
+    controller.cancelSend();
+    expect(controller.getSnapshot()).toMatchObject({ selectedIds: before.selectedIds, snapshot: before.snapshot, replyDraft: "현재 질문에 대한 답변 초안", consentKey: null });
+    off();
+  });
   it("turns an empty or unclear proposal into the next basis question without applying or resending", async () => {
     const { store, controller, off } = fixture();
     controller.update({ request: "자료 정리", scope: { kind: "all" }, basis: "알아서 보기 편하게 해줘" });

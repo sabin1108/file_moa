@@ -942,6 +942,12 @@ export class OrganizationPreparationController {
     this.picker.close();
     this.publish({ ...this.state, picking: null });
   };
+  cancelSend = () => {
+    if (!this.state.snapshot) { this.cancel(); return; }
+    this.stop();
+    this.publish({ ...this.state, phase: "ready", consentKey: null, result: null,
+      issue: "생성을 중지했어요. 선택한 자료와 답변은 유지했습니다. 다시 전송하려면 동의해 주세요." });
+  };
   cancel = () => {
     const transmitted = this.state.phase === "sending";
     const reading = this.state.phase === "reading";

@@ -16,6 +16,10 @@ const boundaryRules = new Set([
 // Adversarial snippets exercise the actual repository ESLint configuration, not a copy of its rules.
 const cases = [
   ['UI direct fetch', 'src/features/check.ts', 'export const load = () => fetch("/api/private");', false],
+  ['fixed demo stream', 'src/features/sample-workspace/sample-stream.ts', 'export const load = () => fetch("/api/demo/stream", { method: "POST", credentials: "same-origin", redirect: "error" });', true],
+  ['demo cannot access other endpoints', 'src/features/sample-workspace/sample-stream.ts', 'export const load = () => fetch("/api/chat", { method: "POST", credentials: "same-origin", redirect: "error" });', false],
+  ['demo cannot alias fetch', 'src/features/sample-workspace/sample-stream.ts', 'export const load = fetch;', false],
+  ['demo cannot follow redirects', 'src/features/sample-workspace/sample-stream.ts', 'export const load = () => fetch("/api/demo/stream", { method: "POST", credentials: "same-origin" });', false],
   ['fixed chat stream transport', 'src/features/conversation-workspace/messaging/chat-stream.ts', 'export const load = () => fetch("/api/chat", { method: "POST", credentials: "same-origin", redirect: "error" });', true],
   ['chat cannot access other endpoints', 'src/features/conversation-workspace/messaging/chat-stream.ts', 'export const load = () => fetch("/api/private", { method: "POST", credentials: "same-origin", redirect: "error" });', false],
   ['chat cannot alias fetch', 'src/features/conversation-workspace/messaging/chat-stream.ts', 'export const load = fetch;', false],

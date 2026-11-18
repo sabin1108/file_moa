@@ -14,6 +14,7 @@ import { SAMPLE_ORGANIZATION_LIMITS } from "../../../shared/sample-organization"
 import type { SampleCatalog } from "../../../shared/sample-contract";
 import type { SampleWorkspaceStore } from "../sample-workspace-store";
 import { sampleActiveCatalog } from "../sample-state";
+import { organizationPathSchema } from "../../../shared/organization";
 import { SamplePlanReview } from "./SamplePlanReview";
 import styles from "../../local-folders/organization/organization-preparation.module.css";
 
@@ -31,6 +32,7 @@ export function SampleOrganizationPanel({ catalog, store, provider, onReply, onT
   const picker = useSyncExternalStore(controller.picker.subscribe, controller.picker.getSnapshot, controller.picker.getServerSnapshot);
   const [selecting, setSelecting] = useState(false);
   const [assignment, setAssignment] = useState("same");
+  const [folderIssue, setFolderIssue] = useState<string | null>(null);
   const [acceptedProvider, setAcceptedProvider] = useState<string | null>(null);
   const busy = disabled || ["reading", "checking", "sending"].includes(state.phase);
   const selected = state.snapshot?.documents.filter(document => state.selectedIds.includes(document.id)) ?? [];
@@ -43,6 +45,18 @@ export function SampleOrganizationPanel({ catalog, store, provider, onReply, onT
 
   return <section data-sample-preparation className={styles.preparation} aria-label="예시 자료 정리">
     <p className={styles.note}>예시 자료와 복구 기능이 준비되어 있어요. 이 체험에서는 샘플만 바뀌며 개인 폴더를 연결하지 않습니다.</p>
+    {!planning && !state.snapshot && <form className={styles.basis} onSubmit={event => {
+      event.preventDefault();
+      const parsed = organizationPathSchema.safeParse([String(new FormData(event.currentTarget).get("folder") ?? "").trim()]);
+      if (!parsed.success) { setFolderIssue("폴더 이름은 64자 이내로, 경로 기호 없이 적어 주세요."); return; }
+      setFolderIssue(null);
+      controller.update({ destination: ["정리한 자료", ...parsed.data] });
+      void controller.beginConversation().then(tellPrompt);
+    }}><label>정리용 폴더<input name="folder" defaultValue={state.destination?.at(-1) ?? "정리 결과"} maxLength={64} required disabled={busy} /></label>
+      <p>정리한 자료 / {state.destination?.at(-1) ?? "정리 결과"} 안에 모읍니다. 검토 후 적용할 때 폴더를 만들어요.</p>
+      <button type="submit" className={actionClasses("secondary")} disabled={busy}>정리용 폴더 이름 반영</button>
+      {folderIssue && <p role="alert">{folderIssue}</p>}
+    </form>}
     {state.issue && <StatusNotice state="attention" title={state.issue} />}
     {state.conversationStep && state.conversationStep !== "scope" && <button type="button" className={actionClasses("ghost")} disabled={busy} onClick={() => {
       controller.backConversation(); tellPrompt();

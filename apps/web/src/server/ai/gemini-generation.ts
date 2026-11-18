@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { AiJsonRequest } from "../../shared/ai-provider";
 import { AI_LIMITS, readProviderJson, SampleAiError } from "./ai-provider";
 import { parseAiJson } from "./parse-ai-json";
+import { readJsonGenerationStream } from "./json-generation-stream";
 
 export const SAMPLE_GEMINI_MODEL = "gemini-3.5-flash-lite";
 const envelope = z.object({
@@ -18,7 +19,7 @@ const envelope = z.object({
 });
 
 export async function generateGeminiJson(request: AiJsonRequest, signal: AbortSignal,
-  limits: { inputTokens: number } = AI_LIMITS) {
+  limits: { inputTokens: number } = AI_LIMITS, onText?: (text: string) => void) {
   signal.throwIfAborted();
 
   const key = process.env.GEMINI_API_KEY?.trim();
@@ -38,7 +39,8 @@ export async function generateGeminiJson(request: AiJsonRequest, signal: AbortSi
   const call = async (method: "countTokens" | "generateContent", body: unknown) => {
     signal.throwIfAborted();
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${SAMPLE_GEMINI_MODEL}:${method}`, {
+    const endpoint = method === "generateContent" && onText ? "streamGenerateContent?alt=sse" : method;
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${SAMPLE_GEMINI_MODEL}:${endpoint}`, {
       method: "POST",
       headers: { "content-type": "application/json", "x-goog-api-key": key },
       body: JSON.stringify(body),
@@ -50,6 +52,7 @@ export async function generateGeminiJson(request: AiJsonRequest, signal: AbortSi
       throw new SampleAiError("unavailable", "network");
     });
 
+    if (method === "generateContent" && onText) return readJsonGenerationStream(response, signal, "gemini", onText);
     return readProviderJson(response, method === "generateContent" ? Math.max(65_536, Math.min(262_144, request.outputTokens * 32)) : 65_536);
   };
   const count = z.object({ totalTokens: z.number().int().positive() }).parse(await call("countTokens", {

@@ -8,7 +8,7 @@ const serverBoundaryRule = {
       client: 'Server modules cannot declare "use client".',
       action: 'Action entry points in src/app/actions must declare "use server".',
       location: 'Keep "use server" entry points in src/app/actions; shared services belong in src/server.',
-      chat: 'The chat transport may only POST to /api/chat with same-origin credentials and redirect rejection.',
+      chat: 'Stream transports may only POST to their fixed same-origin endpoint with redirect rejection.',
     },
   },
   create(context) {
@@ -18,7 +18,9 @@ const serverBoundaryRule = {
 
     return {
       Identifier(node) {
-        if (!filename.endsWith('/src/features/conversation-workspace/messaging/chat-stream.ts') || node.name !== 'fetch') return;
+        const endpoint = filename.endsWith('/src/features/conversation-workspace/messaging/chat-stream.ts') ? '/api/chat'
+          : filename.endsWith('/src/features/sample-workspace/sample-stream.ts') ? '/api/demo/stream' : null;
+        if (!endpoint || node.name !== 'fetch') return;
 
         const call = node.parent;
         const options = call.arguments?.[1];
@@ -30,7 +32,7 @@ const serverBoundaryRule = {
           return matches.length === 1 ? matches[0].value?.value : undefined;
         };
 
-        if (call.type !== 'CallExpression' || call.callee !== node || call.arguments[0]?.value !== '/api/chat'
+        if (call.type !== 'CallExpression' || call.callee !== node || call.arguments[0]?.value !== endpoint
           || property('method') !== 'POST'
           || property('credentials') !== 'same-origin'
           || property('redirect') !== 'error') {
@@ -91,7 +93,7 @@ export const serverBoundaryConfig = [
     },
   },
   {
-    files: ["src/features/conversation-workspace/messaging/chat-stream.ts"],
+    files: ["src/features/conversation-workspace/messaging/chat-stream.ts", "src/features/sample-workspace/sample-stream.ts"],
     rules: {
       "no-restricted-globals": ["error", ...["XMLHttpRequest", "WebSocket", "EventSource"].map(name => ({ name, message: directAccessMessage }))],
     },

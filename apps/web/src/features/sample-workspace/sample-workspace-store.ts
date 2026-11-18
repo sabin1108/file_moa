@@ -23,7 +23,9 @@ type Snapshot = Readonly<{
   ready: boolean;
   expired: boolean;
   notice: string | null;
-  aiPending: boolean
+  aiPending: boolean;
+  streamText: string;
+  streamId: string | null;
 }>;
 
 export class SampleWorkspaceStore {
@@ -33,12 +35,14 @@ export class SampleWorkspaceStore {
   private readonly initial: Snapshot;
   private loaded = false;
   private generation = 0;
+  private abort: AbortController | null = null;
+  private pendingQuestion: string | undefined;
   private readonly deadline: number;
   readonly storageKey: string;
   readonly organization;
 
   constructor(private catalog: SampleCatalog, session: SampleSession, private storage: () => SampleStorage = () => sessionStorage, remainingMs = SAMPLE_LIFETIME_MS) {
-    this.initial = { state: createSampleState(catalog), ready: false, expired: false, notice: null, aiPending: false };
+    this.initial = { state: createSampleState(catalog), ready: false, expired: false, notice: null, aiPending: false, streamText: "", streamId: null };
     this.snapshot = this.initial;
     this.storageKey = `moa.sample.v1.${session.id}`;
     this.deadline = performance.now() + Math.max(0, Math.min(remainingMs, SAMPLE_LIFETIME_MS));
@@ -80,6 +84,7 @@ export class SampleWorkspaceStore {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
       this.generation++;
+      this.abort?.abort();
       this.snapshot = { ...this.snapshot, expired: true, aiPending: false };
       this.emit();
     }, Math.max(0, this.deadline - performance.now()));
@@ -90,6 +95,7 @@ export class SampleWorkspaceStore {
       if (!this.listeners.size) {
         clearTimeout(this.timer);
         this.generation++;
+        this.abort?.abort();
         this.snapshot = { ...this.snapshot, aiPending: false };
       }
     };
@@ -99,6 +105,7 @@ export class SampleWorkspaceStore {
     if (!this.snapshot.ready) return false;
 
     this.generation++;
+    this.abort?.abort();
 
     if (performance.now() >= this.deadline) {
       this.snapshot = { ...this.snapshot, expired: true, aiPending: false };
@@ -120,7 +127,7 @@ export class SampleWorkspaceStore {
         notice = "샘플 변경은 이 탭에 적용했지만 임시 보관하지 못했습니다. 새로고침하면 변경이 사라질 수 있어요.";
       }
 
-      this.snapshot = { state, ready: true, expired: false, notice, aiPending: false };
+      this.snapshot = { state, ready: true, expired: false, notice, aiPending: false, streamText: "", streamId: null };
     } catch (error) {
       const period = error instanceof Error && ["unconfirmed-find-period", "unsupported-find-period"].includes(error.message);
       this.snapshot = { ...this.snapshot, aiPending: false, notice: period
@@ -135,14 +142,34 @@ export class SampleWorkspaceStore {
   };
 
   cancelAi = () => {
+    this.preservePartial(this.pendingQuestion);
     this.generation++;
+    this.abort?.abort();
     this.snapshot = {
       ...this.snapshot,
       aiPending: false,
+      streamText: "", streamId: null,
       notice: "응답 대기를 취소했어요. 이미 전송한 요청은 서버에서 끝날 수 있으며 요청 한도는 복원되지 않아요."
     };
     this.emit();
   };
+
+  private preservePartial(question?: string) {
+    const text = this.snapshot.streamText;
+    if (text.trim()) this.dispatch({ type: "incomplete-answer", text, question });
+  }
+
+  private beginStream(requestId: string, generation: number, question?: string) {
+    this.pendingQuestion = question;
+    this.abort = new AbortController();
+    this.snapshot = { ...this.snapshot, aiPending: true, notice: null, streamText: "", streamId: requestId };
+    this.emit();
+    return (text: string) => {
+      if (generation !== this.generation || performance.now() >= this.deadline || this.abort?.signal.aborted) return;
+      this.snapshot = { ...this.snapshot, streamText: text.slice(0, 8000) };
+      this.emit();
+    };
+  }
 
   requestAnswer = async (request: SampleAnswerAction, mode: "chat" | "grounded") => {
     const state = this.snapshot.state;
@@ -163,17 +190,18 @@ export class SampleWorkspaceStore {
     while (messages.length > 1 && messages.reduce((sum, message) => sum + message.content.length, 0) > 12000) messages = messages.slice(2);
     const generation = ++this.generation;
     const requestId = crypto.randomUUID();
-    this.snapshot = { ...this.snapshot, aiPending: true, notice: null };
-    this.emit();
+    const onText = this.beginStream(requestId, generation, state.draft);
     try {
       const result = await request({ requestId, mode, messages, documentIds: mode === "grounded" ? [...questionIds] : [], consent: true,
         ...(mode === "grounded" && state.files ? { documents: sampleSelectedMaterials(this.catalog, state, questionIds) } : {}),
-      });
+      }, onText, this.abort!.signal);
       if (generation !== this.generation || performance.now() >= this.deadline) return;
       if (result.ok) { this.dispatch({ type: "ai-answer", requestId, mode, question: state.draft, result }); return; }
+      this.preservePartial(state.draft);
       this.snapshot = { ...this.snapshot, aiPending: false, notice: (result.reason ? LIVE_AI_REASON_MESSAGES[result.reason] : SAMPLE_AI_MESSAGES[result.code]) + (result.retryAfter ? ` 약 ${result.retryAfter}초 뒤 다시 시도할 수 있어요.` : "") };
     } catch {
       if (generation !== this.generation || performance.now() >= this.deadline) return;
+      this.preservePartial(state.draft);
       this.snapshot = { ...this.snapshot, aiPending: false, notice: SAMPLE_AI_MESSAGES.unavailable };
     }
     this.emit();
@@ -222,15 +250,14 @@ export class SampleWorkspaceStore {
     if (!this.dispatch({ type: "intent", instruction, recordMessage: !context })) return;
 
     const generation = ++this.generation;
-
-    this.snapshot = { ...this.snapshot, aiPending: true, notice: null };
-    this.emit();
+    const requestId = crypto.randomUUID();
+    const onText = this.beginStream(requestId, generation);
 
     try {
       const state = this.snapshot.state;
-      const result = await request({ requestId: crypto.randomUUID(), documentIds: [...documentIds], instruction, consent: true, ...(context ? { context } : {}),
+      const result = await request({ requestId, documentIds: [...documentIds], instruction, consent: true, ...(context ? { context } : {}),
         ...(state.files ? { documents: sampleSelectedMaterials(this.catalog, state, documentIds) } : {}),
-      });
+      }, onText, this.abort!.signal);
 
       if (generation !== this.generation || performance.now() >= this.deadline) return;
 
@@ -239,6 +266,7 @@ export class SampleWorkspaceStore {
         return accepted ? result : { ok: false as const, code: "unavailable" as const, reason: "invalid-plan" as const };
       }
 
+      this.preservePartial();
       this.snapshot = {
         ...this.snapshot,
         aiPending: false,
@@ -249,7 +277,7 @@ export class SampleWorkspaceStore {
       return result;
     } catch {
       if (generation !== this.generation || performance.now() >= this.deadline) return;
-
+      this.preservePartial();
       this.snapshot = { ...this.snapshot, aiPending: false, notice: SAMPLE_AI_MESSAGES.unavailable };
     }
 

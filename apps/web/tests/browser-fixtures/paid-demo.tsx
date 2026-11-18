@@ -19,7 +19,8 @@ const catalog: SampleCatalog = {
 const store = new SampleWorkspaceStore(catalog, { kind: "sample", id: capacity ? "capacity-browser-fixture" : "paid-browser-fixture", expiresAt: Date.now() + 3600000, version: "1" });
 const control = { store, answers: [] as SampleAnswerRequest[], organizations: 0, organizationInputs: [] as Parameters<SampleOrganizationAction>[0][], review: false, emptyOrganization: false, malformedOrganization: false, hold: false, failure: null as SampleAiErrorCode | null, resolve: [] as (() => void)[] };
 const usage = { inputTokens: 10, outputTokens: 10, totalTokens: 20 };
-const answer: SampleAnswerAction = async input => {
+const answer: SampleAnswerAction = async (input, onText) => {
+  Object.assign(control, { preview: onText });
   control.answers.push(input);
   const selected = (input.documents ?? catalog.documents).find(document => document.id === input.documentIds[0]);
   const result: SampleAnswerResult = control.failure ? { ok: false, code: control.failure } : { ok: true,
@@ -27,7 +28,8 @@ const answer: SampleAnswerAction = async input => {
   if (control.hold) return new Promise(resolve => control.resolve.push(() => resolve(result)));
   return result;
 };
-const organize: SampleOrganizationAction = async input => {
+const organize: SampleOrganizationAction = async (input, onText) => {
+  Object.assign(control, { preview: onText });
   control.organizations++;
   control.organizationInputs.push(input);
   if (control.emptyOrganization) return { ok: true, organization: { summary: "열람 기록은 제공되지 않았어요. 본문 주제별로 정리할까요?", matches: [], held: [] }, questions: [], model: "fixture", usage };

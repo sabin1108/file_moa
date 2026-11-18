@@ -30,4 +30,4 @@ export type SampleOrganizationAction = (input: {
   consent: true;
   context?: SampleOrganizationContext;
   documents?: SampleMaterial[];
-}) => Promise<SampleOrganizationResult>;
+}, onText?: (text: string) => void, signal?: AbortSignal) => Promise<SampleOrganizationResult>;

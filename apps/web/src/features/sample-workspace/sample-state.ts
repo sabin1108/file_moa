@@ -110,6 +110,7 @@ export function sampleSelectedMaterials(catalog: SampleCatalog, state: SampleSta
 }
 
 export type SampleAction =
+  | Readonly<{ type: "incomplete-answer"; text: string; question?: string }>
   | Readonly<{ type: "file-workspace"; files: SampleFiles }>
   | Readonly<{ type: "conversation"; author: "user" | "assistant"; text: string }>
   | Readonly<{ type: "select-file-folders"; paths: readonly (readonly string[])[] }>
@@ -448,6 +449,12 @@ export function transitionSampleState(catalog: SampleCatalog, state: SampleState
     return synchronizeSampleFiles(catalog, state, files, sampleFileContentKey(before) !== sampleFileContentKey(files));
   }
   catalog = sampleActiveCatalog(catalog, state);
+  if (action.type === "incomplete-answer") {
+    const text = `생성이 끝나지 않아 검증하지 못한 답변입니다. 정리 계획에는 적용하지 않았어요.\n\n${action.text}`.slice(0, 8000);
+    return { ...state, messages: [...state.messages,
+      ...(action.question ? [{ id: `partial-question-${crypto.randomUUID()}`, author: "user" as const, text: action.question }] : []),
+      { id: `partial-answer-${crypto.randomUUID()}`, author: "assistant" as const, text }].slice(-40) };
+  }
   if (action.type === "conversation") {
     if (!action.text.trim() || action.text.length > 8000) throw Error("invalid-sample-message");
     return { ...state, draft: "", messages: [...state.messages, { id: `org-${crypto.randomUUID()}`, author: action.author, text: action.text }].slice(-40) };

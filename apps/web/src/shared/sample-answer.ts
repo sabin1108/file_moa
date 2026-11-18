@@ -19,4 +19,4 @@ export const sampleAnswerRequestSchema = z.strictObject({
 export type SampleAnswerRequest = z.infer<typeof sampleAnswerRequestSchema>;
 export type SampleAnswerResult = { ok: true; answer: GroundedAnswer; model: string; usage: SampleAiUsage }
   | Extract<SampleAiResult, { ok: false }>;
-export type SampleAnswerAction = (input: SampleAnswerRequest) => Promise<SampleAnswerResult>;
+export type SampleAnswerAction = (input: SampleAnswerRequest, onText?: (text: string) => void, signal?: AbortSignal) => Promise<SampleAnswerResult>;

@@ -201,3 +201,5 @@ production 게스트 보호경로3개와 demo3개 각각3회/history9, 실제 de
 <!-- grounded-folder-selection-20261116 -->
 
 2026-11-18 데모 파일 체험·검색 화면: [최종 검증과 조건](verification/resume-fixes-20261118/README.md). 최종 로컬 production 6경로×2폭×3회 36표본, JS/CSS 54파일·4,568,817바이트. 같은 Ego 페이지·워밍된 브라우저 캐시·합성 초대/샘플 세션·공개 AI 비활성 조건이다. LCP 중앙값 56~88ms와 CLS 최대 0.063245는 짧은 로컬 관측이며 현장 INP·실계정 성능·AI 지연·실디스크·장기 메모리 또는 전후 개선율로 확대하지 않는다.
+
+2026-11-18 데모 생성 진행: [검증 범위와 자산 비용](verification/demo-flow-stream-20261118/README.md). 최종 JS/CSS54개4,578,381bytes(+5,377). 증분 SSE·메모리 진행 상태를 사용하며 실제 수신과 최종 검증을 분리한다. 합성 브라우저 대기를 모델 지연·field INP·개선율로 확대하지 않는다.

@@ -4,6 +4,7 @@ import type { AiJsonRequest } from "../../shared/ai-provider";
 import { AI_LIMITS, readProviderJson, SampleAiError } from "./ai-provider";
 import { parseAiJson } from "./parse-ai-json";
 import { OPENAI_MODELS, type AiGenerationProfile } from "./ai-models";
+import { readJsonGenerationStream } from "./json-generation-stream";
 
 export const OPENAI_MODEL = OPENAI_MODELS.default.model;
 
@@ -31,6 +32,7 @@ export async function generateOpenAiJson(
   signal: AbortSignal,
   limits: { inputTokens: number } = AI_LIMITS,
   profile: AiGenerationProfile = "default",
+  onText?: (text: string) => void,
 ) {
   signal.throwIfAborted();
 
@@ -61,6 +63,7 @@ export async function generateOpenAiJson(
       throw new SampleAiError("unavailable", "network");
     });
 
+    if (path === "responses" && onText) return readJsonGenerationStream(response, signal, "openai", onText);
     return readProviderJson(response, path === "responses" ? Math.max(65_536, Math.min(262_144, request.outputTokens * 32)) : 65_536);
   };
   const count = z.object({ input_tokens: z.number().int().nonnegative() }).parse(
@@ -73,6 +76,7 @@ export async function generateOpenAiJson(
     ...input,
     store: false,
     max_output_tokens: request.outputTokens,
+    ...(onText ? { stream: true } : {}),
   });
   const status = z.object({ status: z.string(), incomplete_details: z.object({ reason: z.string() }).nullable().optional() }).safeParse(raw);
   if (status.success && status.data.status === "incomplete") throw new SampleAiError("unavailable", status.data.incomplete_details?.reason === "max_output_tokens" ? "output-limit" : "invalid-response");

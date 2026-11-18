@@ -15,6 +15,30 @@ function fixture() {
 }
 afterEach(() => vi.useRealTimers());
 
+it("keeps live text in memory, then saves incomplete output while preserving draft and selection", async () => {
+  const { store, off, storage, session } = fixture();
+  store.dispatch({ type: "mode", mode: "grounded" });
+  store.dispatch({ type: "select-question", ids: ["one"] });
+  store.dispatch({ type: "draft", value: "원래 질문" });
+  let resolve!: (result: SampleAnswerResult) => void;
+  let preview!: (text: string) => void;
+  const pending = store.requestAnswer((_input, onText) => { preview = onText!; return new Promise(done => { resolve = done; }); }, "grounded");
+  expect(store.getSnapshot()).toMatchObject({ aiPending: true, streamText: "" });
+  preview("원문을 보니");
+  expect(store.getSnapshot().streamText).toBe("원문을 보니");
+  expect(storage.getItem(store.storageKey)).not.toContain("원문을 보니");
+  resolve({ ok: false, code: "unavailable", reason: "invalid-evidence" });
+  await pending;
+  expect(store.getSnapshot().state).toMatchObject({ draft: "원래 질문", questionSelected: ["one"], phase: "select" });
+  expect(store.getSnapshot().state.messages.at(-1)?.text).toContain("검증하지 못한 답변");
+  const restored = new SampleWorkspaceStore(catalog, session, () => storage);
+  const close = restored.subscribe(() => {});
+  expect(restored.getSnapshot().state.messages.at(-1)?.text).toContain("원문을 보니");
+  preview("늦게 온 변경");
+  expect(store.getSnapshot().streamText).not.toBe("늦게 온 변경");
+  close(); off();
+});
+
 it("calls only once on explicit send and restores the real answer without replay", async () => {
   const { store, off, storage, session } = fixture();
   const action = vi.fn().mockResolvedValue(success);
