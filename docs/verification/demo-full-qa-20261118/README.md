@@ -52,3 +52,11 @@
 - `pnpm test -- apps/web/tests/local-folders/operations/managed/managed-files.disk.test.ts apps/web/tests/sample-workspace/sample-capacity.test.ts --maxWorkers=1`
 - `pnpm test:database`: 일회용 DB와 모의 메일/OAuth. `--ui`·실제 메일 전송은 이번 실행에 포함하지 않았다.
 - `.omx/verification/demo-full-qa-20261118/`: `actual-*.json`, `copy-trash.json`, `recovered.json`, `browser-capacity-ime.json`, `browser-failures.json`, `account-*.json`, `capacity.json`, `browser-performance.json`, `performance.json` 및 로그. 실행 스크립트/응답은 비밀·개인 기록과 함께 Git에서 제외한다.
+
+## 배포 후 일반 텍스트 재검증
+
+기능/검증 커밋 `4e8ebab`을 main에 커밋·origin/main으로 푸시했고 [Vercel 배포가 성공했다](https://vercel.com/sabins-projects-011c6dea/web/DXEkeCpwjDy6FytBsudazsxz7cAf). 배포 대상9파일에서 알려진 비밀 값9개와 일치한 내용은0개였고 기존 개인 기록3개는 제외했다.
+
+새 운영 배포에서 실제 Astra를 2회 더 호출했다. 자료 비교는 두 현재 경로·12월18일·민서·두 인용을 유지하면서 표/강조 문법 없는 문단과 목록으로 답했다. 일반 대화도 자연스러운 짧은 목록으로 답했고 표/강조/제목/코드블록 문법이 없었다. 총 실제 호출은8회이며 모델·한도·공급자 설정을 바꾸지 않았다. 운영 health200과390/1440px의 최신 답변 표시/가로 넘침 없음도 확인했다. 기존 대화의 원문은 다시 쓰지 않았다.
+
+최종 빌드도 JS/CSS54파일·4,573,004bytes로 앞선 관측과 같았다. 브라우저 공간6과 소유3049/3051 서버는 종료했다. 후속 문서 커밋에는 제품 코드 변경이 없다. 증거는 `actual-plain-grounded.json`, `actual-plain-chat.json`, `validation.json`, `release.json`, `release-scan.json`, `final-chat-*.png`다.
