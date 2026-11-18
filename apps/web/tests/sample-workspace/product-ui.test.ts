@@ -9,6 +9,26 @@ const catalog: SampleCatalog = { version: "1", folders: [{ id: "work", label: "�
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push() {} }), usePathname: () => "/demo/files", useSearchParams: () => new URLSearchParams() }));
 
 describe("demo presents the product UI", () => {
+  it("provides a close action and downloads edited examples rather than an unknown server asset", async () => {
+    const { SampleDocumentPreview } = await import("../../src/features/sample-workspace/files/SampleDocumentPreview");
+    const html = renderToStaticMarkup(createElement(SampleDocumentPreview, {
+      document: { ...catalog.documents[0], id: "created-file", excerpt: "편집한 예시" },
+      headingRef: { current: null }, assetId: null, onClose() {}, onEdit() {},
+    }));
+    expect(html).toContain('aria-label="문서 미리보기 닫기"');
+    expect(html).toContain("data:text/plain;charset=utf-8,");
+    expect(html).not.toContain("/demo/assets/created-file");
+  });
+  it("blocks the virtual container as a destination while retaining real-folder root selection", async () => {
+    const { DestinationFolderPicker } = await import("../../src/features/local-folders/destination-picker/DestinationFolderPicker");
+    const { DestinationPickerController } = await import("../../src/features/local-folders/destination-picker/destination-picker-controller");
+    const controller = new DestinationPickerController(async path => ({ path, entries: [], truncated: false }), () => {});
+    await controller.show([]);
+    const props = { controller, state: controller.getSnapshot(), folderName: "예시 자료", onChoose() {}, allowCreation: false };
+    const button = (html: string) => html.match(/<button[^>]*aria-label="예시 자료 폴더를 목적지로 선택"[^>]*>/)?.[0];
+    expect(button(renderToStaticMarkup(createElement(DestinationFolderPicker, { ...props, allowRootSelection: false })))).toContain('disabled=""');
+    expect(button(renderToStaticMarkup(createElement(DestinationFolderPicker, props)))).not.toContain('disabled=""');
+  });
   it("keeps folder browsing free of demo-only AI classification and guided steps", async () => {
     const { SampleWorkspace } = await import("../../src/features/sample-workspace/SampleWorkspace");
     const html = renderToStaticMarkup(createElement(SampleWorkspace, { catalog,

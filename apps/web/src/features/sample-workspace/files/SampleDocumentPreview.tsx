@@ -4,11 +4,15 @@ import type { SampleDocument } from "../../../shared/sample-contract";
 import { actionClasses } from "../../../components/ui/action-classes";
 import styles from "../sample-workspace.module.css";
 
-export function SampleDocumentPreview({ document, headingRef }: {
+export function SampleDocumentPreview({ document, headingRef, assetId, onEdit, onClose }: {
   document: SampleDocument;
-  headingRef: RefObject<HTMLHeadingElement | null>
+  headingRef: RefObject<HTMLHeadingElement | null>;
+  assetId?: string | null;
+  onEdit?: () => void;
+  onClose?: () => void;
 }) {
-  const asset = `/demo/assets/${encodeURIComponent(document.id)}`;
+  const asset = assetId === null ? `data:text/plain;charset=utf-8,${encodeURIComponent(document.excerpt)}`
+    : `/demo/assets/${encodeURIComponent(assetId ?? document.id)}`;
 
   return (
     <section className={styles.preview} aria-labelledby="sample-preview-title" id="sample-preview">
@@ -19,9 +23,11 @@ export function SampleDocumentPreview({ document, headingRef }: {
           </h2>
           <p>{document.format.toUpperCase()} · 준비된 샘플 문서</p>
         </div>
+        {onEdit && <button type="button" className={actionClasses("secondary")} onClick={onEdit}>편집</button>}
         <a href={asset} download={document.name} className={actionClasses("secondary")}>
           파일 받기
         </a>
+        {onClose && <button type="button" aria-label="문서 미리보기 닫기" className={actionClasses("secondary")} onClick={onClose}>닫기</button>}
       </div>
       {document.format === "pdf"
         ? (

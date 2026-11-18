@@ -9,6 +9,7 @@ import { conversationKinds } from "../../shared/ai-records";
 import { prepareSampleReply } from "./sample-experience";
 import { SAMPLE_ANSWER_LIMITS, sampleAnswerSchema, type SampleAnswerResult } from "../../shared/sample-answer";
 import { recordKinds } from "../../shared/record-kinds";
+import { parseSampleFiles, sampleFilesSchema, type SampleFiles } from "./files/sample-file-workspace";
 
 export const sampleRecordSchema = z.strictObject({
   id: z.string().min(1).max(80),
@@ -32,6 +33,7 @@ const usageSchema = z.strictObject({
 const fileFolderSelectionSchema = z.array(z.array(z.string().min(1).max(120)).min(1).max(20)).max(200);
 const stateSchema = z.strictObject({
   version: z.literal("1"),
+  files: sampleFilesSchema.nullable().default(null),
   mode: z.enum(conversationKinds).nullable().default(null),
   findings: z.array(z.string()).max(200).default([]),
   citations: z.array(z.string()).max(5).default([]),
@@ -77,6 +79,7 @@ const stateSchema = z.strictObject({
 export type SampleState = z.infer<typeof stateSchema>;
 
 export type SampleAction =
+  | Readonly<{ type: "file-workspace"; files: SampleFiles }>
   | Readonly<{ type: "conversation"; author: "user" | "assistant"; text: string }>
   | Readonly<{ type: "select-file-folders"; paths: readonly (readonly string[])[] }>
   | Readonly<{ type: "select-files"; ids: readonly string[] }>
@@ -122,6 +125,7 @@ export type SampleAction =
 export function createSampleState(catalog: SampleCatalog): SampleState {
   return {
     version: "1",
+    files: null,
     mode: null, findings: [], citations: [], sourceReply: "", records: [], guideStep: 0, guideDismissed: false,
     scope: "all", path: ["받은 자료"],
     phase: "select",
@@ -148,6 +152,7 @@ export function restoreSampleState(catalog: SampleCatalog, serialized: string): 
   if (serialized.length > SAMPLE_STATE_CHARACTER_LIMIT) throw new Error("invalid-sample-state");
 
   const state = stateSchema.parse(JSON.parse(serialized));
+  if (state.files) parseSampleFiles(catalog, state.files);
 
   for (const folder of state.createdFolders) createdFolderPathSchema.parse(folder.label.split("/"));
 
@@ -321,6 +326,7 @@ export function sampleFolderPath(catalog: SampleCatalog, id: string | null): str
   const folder = catalog.folders.find(candidate => candidate.id === id);
 
   if (!folder) throw new Error("invalid-sample-folder");
+  if (!folder.label) return ["정리한 자료"];
 
   return folder.label.startsWith("받은 자료/") ? folder.label.split("/") : ["정리한 자료", ...folder.label.split("/")];
 }
@@ -395,6 +401,10 @@ export function sampleChangePlan(catalog: SampleCatalog, state: SampleState): Fi
 
 export function transitionSampleState(catalog: SampleCatalog, state: SampleState, action: SampleAction): SampleState {
   if (action.type === "reset") return createSampleState(catalog);
+  if (action.type === "file-workspace") {
+    if (state.phase === "review") throw Error("sample-review-required");
+    return { ...state, files: parseSampleFiles(catalog, action.files) };
+  }
   if (action.type === "conversation") {
     if (!action.text.trim() || action.text.length > 8000) throw Error("invalid-sample-message");
     return { ...state, draft: "", messages: [...state.messages, { id: `org-${crypto.randomUUID()}`, author: action.author, text: action.text }].slice(-40) };

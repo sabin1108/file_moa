@@ -168,7 +168,7 @@ export function useWorkspaceConversation(chat: ReturnType<typeof useGeneralChat>
 
     const kind = selected ?? intent;
 
-    if (!selected && connected && task?.kind === "organize" && !task.waitingForSource
+    if (!selected && kind !== "find" && connected && task?.kind === "organize" && !task.waitingForSource
       && canContinueWorkspaceTask(mode, "organize") && isOrganizationFollowup(request)) {
       const id = chat.recordTask("organize", request, "조건을 확인하고 있어요.", "pending");
       if (!id) return;

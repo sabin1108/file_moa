@@ -71,8 +71,10 @@ function RecordPreviewProbe({ children }: { children: ReactNode }) {
   const [preview, setPreview] = useState<TourRecordKind | null>(null);
 
   return <WorkspaceTourRecordView.Provider value={preview ?? automatic}>
+    <div data-fixture-record-controls>
     <button data-fixture-record-preview onClick={() => setPreview("wiki")}>검증용 위키 임시 보기</button>
     <button data-fixture-record-preview-close onClick={() => setPreview(null)}>검증용 임시 보기 종료</button>
+    </div>
     {children}
   </WorkspaceTourRecordView.Provider>;
 }

@@ -111,6 +111,7 @@ export function LiveConversation({ organizeAction, groundedAction, readUsage, qu
     <ConversationWorkspace
       messages={workflow.choosingTask ? [] : messages}
       focusMessageId={!workflow.choosingTask && workflow.task?.kind === "organize" ? `${workflow.task.id}:answer` : undefined}
+      collapseBeforeMessageId={workflow.task?.kind === "find" ? `${workflow.task.id}:answer` : undefined}
       replyLabel={workflow.organizationFeedback}
       onChooseTask={workflow.chooseTask}
       scrollMemoryRef={scrollMemoryRef}

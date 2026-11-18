@@ -76,6 +76,7 @@ async function inspectApp(state, width) {
   });
   await page.eval(() => {
     document.querySelector('[data-fixture-view]')?.parentElement.setAttribute('hidden', '');
+    document.querySelector('[data-fixture-record-controls]')?.setAttribute('hidden', '');
   });
 
   const metrics = await page.eval(probe);
@@ -87,6 +88,7 @@ async function inspectApp(state, width) {
   tasteChecks.push({ state, width, findings });
   await page.eval(() => {
     document.querySelector('[data-fixture-view]')?.parentElement.removeAttribute('hidden');
+    document.querySelector('[data-fixture-record-controls]')?.removeAttribute('hidden');
   });
 }
 
@@ -645,19 +647,26 @@ try {
   await click('[data-find-prepare]');
   await until(() => document.querySelector('[data-local-preparation]')?.textContent.includes('late-evidence.md'));
   check(
-    'preparation re-reads the selected source and does not transmit',
+    'preparation retains the selected source and waits for explicit local confirmation',
     await page.eval(
-      before => listingProbe.productBodyReads > before && liveTransferProbe.calls.length === 0
+      before => listingProbe.productBodyReads === before && liveTransferProbe.calls.length === 0
         && document.querySelector('[data-local-preparation]').textContent.includes('선택한 항목 1개'),
       beforePrepare
     )
   );
+  await page.eval(() => [...document.querySelectorAll('[data-local-preparation] button')].find(button => button.textContent.trim() === '주제별로').click());
+  await until(() => [...document.querySelectorAll('[data-local-preparation] button')].some(button => ['나중에 정할게', '자료 확인 실행'].includes(button.textContent.trim())));
+  await page.eval(() => [...document.querySelectorAll('[data-local-preparation] button')].find(button => button.textContent.trim() === '나중에 정할게')?.click());
+  await until(() => [...document.querySelectorAll('[data-local-preparation] button')].some(button => button.textContent.trim() === '자료 확인 실행'));
+  await page.eval(() => [...document.querySelectorAll('[data-local-preparation] button')].find(button => button.textContent.trim() === '자료 확인 실행').click());
+  await until(() => !!document.querySelector('[data-local-snapshot]') || !!document.querySelector('[data-confirm-review]'));
+  check('explicit local confirmation re-reads sources without model transmission', await page.eval(before => listingProbe.productBodyReads > before && liveTransferProbe.calls.length === 0, beforePrepare));
   check(
     'fresh preparation has no inherited transfer consent',
-    await page.eval(() => !document.querySelector('[data-action="live-organization-send"]:not(:disabled)'))
+    await page.eval(() => !!document.querySelector('[data-live-send]:disabled') && !document.querySelector('[data-local-consent]')?.checked)
   );
   await page.screenshot({ path: `${output}/selected-preparation.png`, format: 'png', fullPage: true });
-  await fill("#message-draft", "회의 자료");
+  await fill("#message-draft", "다른 자료");
   await click('[data-action="organization-send"]');
   await until(() => document.querySelector("[data-request-intent-choice]"));
   await click("[data-fixture-owner]");

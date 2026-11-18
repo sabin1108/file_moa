@@ -195,3 +195,5 @@ production 게스트 보호경로3개와 demo3개 각각3회/history9, 실제 de
 최신 자료 창 진입·폴더 선택·복원 안내: [검증 보고서](verification/demo-folder-selection-20261116/README.md). 최종 로컬6경로×2폭×3회36표본, JS/CSS54파일4,592,221bytes. 4폭 간격/알림/긴누르기·Space/F5를 별도검증했다. 변경 전 동일조건 비교·실사용 INP·실계정/모델 지연은 미측정이다.
 
 <!-- grounded-folder-selection-20261116 -->
+
+2026-11-18 데모 파일 체험·검색 화면: [최종 검증과 조건](verification/resume-fixes-20261118/README.md). 최종 로컬 production 6경로×2폭×3회 36표본, JS/CSS 54파일·4,568,817바이트. 같은 Ego 페이지·워밍된 브라우저 캐시·합성 초대/샘플 세션·공개 AI 비활성 조건이다. LCP 중앙값 56~88ms와 CLS 최대 0.063245는 짧은 로컬 관측이며 현장 INP·실계정 성능·AI 지연·실디스크·장기 메모리 또는 전후 개선율로 확대하지 않는다.

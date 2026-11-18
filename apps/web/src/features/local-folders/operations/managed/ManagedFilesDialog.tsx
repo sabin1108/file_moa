@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { StatusNotice } from "../../../../components/ui/feedback/StatusNotice";
 import { actionClasses } from "../../../../components/ui/action-classes";
 import { managedMessages } from "./managed-files";
@@ -19,13 +19,16 @@ import planStyles from "../planning/file-change-plan.module.css";
 
 const titles = { copy: "파일·폴더 복사", move: "파일·폴더 이동", trash: "휴지통으로 보내기", edit: "문서 편집", recover: "보존본 복구" };
 
-export function ManagedFilesDialog({ controller, folderName, disabled, onChanged, step, returnLabel = "폴더로 돌아가기" }: {
+export function ManagedFilesDialog({ controller, folderName, disabled, onChanged, step, returnLabel = "폴더로 돌아가기", creation, editCharacterLimit, allowRootSelection = true }: {
   controller: ManagedFilesController;
   folderName: string;
   disabled: boolean;
   onChanged: () => void;
   step?: string;
   returnLabel?: string;
+  creation?: ReactNode;
+  editCharacterLimit?: number;
+  allowRootSelection?: boolean;
 }) {
   const state = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getServerSnapshot);
   const url = useWorkflowUrl("managed");
@@ -217,6 +220,8 @@ export function ManagedFilesDialog({ controller, folderName, disabled, onChanged
                           controller={controller.picker}
                           state={picker}
                           folderName={folderName}
+                          creation={creation}
+                          allowRootSelection={allowRootSelection}
                           onChoose={() => {
                             void controller.choose();
                           }}
@@ -224,6 +229,7 @@ export function ManagedFilesDialog({ controller, folderName, disabled, onChanged
                       )
                       : (
                         <ManagedOperationView
+                          editCharacterLimit={editCharacterLimit}
                           controller={controller}
                           state={state}
                           folderName={folderName}

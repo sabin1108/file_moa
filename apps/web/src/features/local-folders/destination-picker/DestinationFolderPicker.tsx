@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { actionClasses } from "../../../components/ui/action-classes";
 import { Icon } from "../../../components/ui/Icon";
 import { StatusNotice } from "../../../components/ui/feedback/StatusNotice";
@@ -11,7 +11,7 @@ import { DestinationPathForm } from "./DestinationPathForm";
 import { FolderUpButton } from "../browsing/navigation/FolderUpButton";
 /** 같은 계획 dialog 안의 탐색 면. 표시/키보드 초점만 관리하고 읽기·취소는 controller에 맡긴다. */
 
-export function DestinationFolderPicker({ controller, state, folderName, onChoose, allowCreation = true, onCancel, purpose = "목적지", showFiles = false, hideHeader = false }: {
+export function DestinationFolderPicker({ controller, state, folderName, onChoose, allowCreation = true, onCancel, purpose = "목적지", showFiles = false, hideHeader = false, creation, allowRootSelection = true }: {
   controller: DestinationPickerController;
   state: DestinationPickerState;
   folderName: string;
@@ -21,6 +21,8 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
   purpose?: string;
   showFiles?: boolean;
   hideHeader?: boolean;
+  creation?: ReactNode;
+  allowRootSelection?: boolean;
 }) {
   const title = useRef<HTMLHeadingElement>(null);
   const previousPhase = useRef(state.phase);
@@ -145,7 +147,7 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
         <button
           type="button"
           className={actionClasses("primary", styles.choose)}
-          disabled={state.phase !== "ready"}
+          disabled={state.phase !== "ready" || (!allowRootSelection && !path.length)}
           onClick={onChoose}
           aria-label={`${currentName} 폴더를 ${purpose}로 선택`}
         >
@@ -156,13 +158,13 @@ export function DestinationFolderPicker({ controller, state, folderName, onChoos
       {allowCreation && state.phase === "ready"
         && (
           <section className={styles.creationSection} aria-label="현재 위치에 새 항목 만들기">
-            <NewEntryForm
+            {creation ?? <NewEntryForm
               key={`creation:${JSON.stringify(path)}`}
               path={path}
               folderName={folderName}
               disabled={state.phase !== "ready"}
               onCreated={() => void controller.retry()}
-            />
+            />}
           </section>
         )}
       <div className={styles.feedback}>

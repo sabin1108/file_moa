@@ -1,6 +1,6 @@
 # 개인 AI 작업 공간
 
-최신 배포: [Luna 고정·초대 데모의 실제 배포 검증](docs/verification/paid-ai-deploy-20261116/README.md). 준비 답변을 제거하고 실제 AI 전송·데모30회/계정10회·공유 초대를 적용했습니다. 실제 사이트에서 일반/후속 대화·자료 답변·정리 제안4회와 UI28개/접근14개를 확인했습니다. 아래 과거 공개 데모/준비 답변 안내와 구분하며, 새 방문자는 초대 URL로 진입합니다. [앞선 로컬 구현 검증](docs/verification/paid-ai-demo-20261116/README.md)은 당시 조건의 기록입니다.
+현재 정식 버전은 **Luna 고정**이며, 초대 데모의 대화·자료 질문·정리에는 **Astra / medium**을 사용합니다. 데모의 다양한 요청·제외·복합 조건 처리와 빈 결과의 질문 복귀는 [최신 데모 검증](docs/verification/demo-general-intent-20261117/README.md)을 따릅니다. 새 방문자는 초대 URL로 진입합니다. [2026-11-16 초대 데모 배포 검증](docs/verification/paid-ai-deploy-20261116/README.md)과 [앞선 로컬 구현 검증](docs/verification/paid-ai-demo-20261116/README.md)은 당시 조건의 기록입니다.
 
 사용자가 요청한 방식으로 로컬 파일·폴더를 정리하고, 선택 자료로 보고서·이력서 등 문서를 만드는 브라우저 서비스입니다. 임시 이름은 모아입니다.
 

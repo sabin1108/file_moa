@@ -209,7 +209,7 @@ export function DocumentFindPanel({
               이 기기에서만 검색합니다.
             </p>
             {queryAction && owner && <RemoteQueryControl key={`${owner.userId}:${owner.workspaceId}:${state.request}`} action={queryAction} owner={owner} question={state.request} filters={state.filters} onApply={controller.configure} />}
-            <div className={styles.actions}>
+            <div className={`${styles.actions} ${findStyles.searchAction}`}>
               <button type="submit" data-find-search className={actionClasses("primary")}><Icon name="search" size={18} />검색 시작</button>
             </div>
           </fieldset>

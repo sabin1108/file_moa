@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { SampleCatalog } from "../../../shared/sample-contract";
 import type { SampleState } from "../sample-state";
 import { sampleFolderPath } from "../sample-state";
@@ -23,11 +23,15 @@ export function sampleFolderListing(catalog: SampleCatalog, state: Pick<SampleSt
   ] };
 }
 
-export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onToggle, disabled, selecting = false, selectedFolders = [], onToggleFolder }: {
+export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onToggle, disabled, selecting = false, selectedFolders = [], onToggleFolder, creation, historyControls, onReviewPlan, onTrash }: {
   catalog: SampleCatalog; state: ListingState; path: readonly string[];
   onOpen: (path: string[]) => void; onPreview: (id: string) => void; onToggle: (id: string) => void; disabled: boolean; selecting?: boolean;
   selectedFolders?: readonly (readonly string[])[];
   onToggleFolder?: (path: readonly string[]) => void;
+  creation?: ReactNode;
+  historyControls?: ReactNode;
+  onReviewPlan?: (operation: "copy" | "move") => void;
+  onTrash?: () => void;
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   const [query, setQuery] = useState("");
@@ -75,7 +79,8 @@ export function SampleFolderPanel({ catalog, state, path, onOpen, onPreview, onT
       allowFolderSelection={canSelectFolders}
       selectionLocked={state.phase === "review" || (!selecting && state.phase !== "select")} previewSupported={() => true}
       connectionControls={<span data-tour="folder-connection">예시 자료 · 연결됨</span>}
-      historyControls={null} creation={null} previewName={null} searchState={search}
+      historyControls={historyControls ?? null} creation={creation ?? null} previewName={null} searchState={search}
+      onReviewPlan={onReviewPlan} onTrash={onTrash}
       onOpen={path => { setQuery(""); onOpen([...path]); }}
       onOpenFile={path => {
         const document = catalog.documents.find(document => document.name === path.at(-1) && JSON.stringify(sampleFolderPath(catalog, state.locations[document.id])) === JSON.stringify(path.slice(0, -1)));

@@ -94,7 +94,7 @@ export function DocumentFindResults({
             {document.finding.relevance?.kind === "related" && <p className={styles.findStatus} data-find-related>관련 자료 · 선호 조건 미확인: {document.finding.relevance.missing.join(", ")}</p>}
             {((document.contentAvailable !== false && document.finding.relevance?.kind !== "related") || document.finding.kind !== "matched" || document.finding.dates.length > 0) && <p className={styles.findStatus} data-verified={document.finding.kind === "matched"}>
               {document.finding.kind === "matched"
-                ? document.contentAvailable === false ? "날짜 조건 일치" : document.retrieval ? "필수 조건 확인" : document.finding.relevance?.kind === "related" ? "필수 조건 일치" : "✓ 조건 일치"
+                ? document.contentAvailable === false ? "날짜 조건 일치" : document.retrieval ? "필수 조건 확인" : document.finding.relevance?.kind === "related" ? "필수 조건 일치" : "조건 일치"
                 : document.finding.kind === "date-unknown"
                   ? "날짜 확인 필요"
                   : "여러 날짜가 있어 확인 필요"}

@@ -32,12 +32,14 @@ export function ManagedOperationView({
   folderName,
   onReturn,
   returnLabel,
+  editCharacterLimit = 2 * 1024 * 1024,
 }: {
   controller: ManagedFilesController;
   state: ManagedFilesState;
   folderName: string;
   onReturn: () => void;
   returnLabel: string;
+  editCharacterLimit?: number;
 }) {
   const cancel = useRef<HTMLButtonElement>(null);
 
@@ -69,7 +71,7 @@ export function ManagedOperationView({
             문서 편집 내용
             <textarea
               value={state.text}
-              maxLength={2 * 1024 * 1024}
+              maxLength={editCharacterLimit}
               readOnly={state.phase !== "draft"}
               spellCheck={false}
               onChange={(event) => controller.setText(event.target.value)}

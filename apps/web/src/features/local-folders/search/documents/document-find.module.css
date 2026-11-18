@@ -17,6 +17,7 @@
 .panel fieldset fieldset > legend { font-size: 14px; }
 .panel fieldset fieldset > label { font-size: 13px; }
 .panel [data-find-search] { min-width: 148px; }
+.searchAction { position: sticky; bottom: 0; z-index: 1; padding-block: 12px; background: var(--surface); border-top: 1px solid var(--border); }
 .results { padding-top: 8px; }
 .resultHeading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
 .resultHeading h3 { font-size: 18px; }

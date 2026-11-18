@@ -44,6 +44,7 @@ export function ConversationWorkspace({
   panelTrigger: panelTriggerRef,
   panelModal = true,
   focusMessageId,
+  collapseBeforeMessageId,
   onChooseTask,
   replyLabel = "답변 반영 완료 · 다음 안내",
 }: {
@@ -80,6 +81,7 @@ export function ConversationWorkspace({
   panelTrigger?: RefObject<HTMLElement | null>;
   panelModal?: boolean;
   focusMessageId?: string;
+  collapseBeforeMessageId?: string;
   onChooseTask?: () => void;
   replyLabel?: string;
 }) {
@@ -100,6 +102,8 @@ export function ConversationWorkspace({
   const hasInteraction = interaction != null;
   const latestTextLength = messages.at(-1)?.text.length;
   const focusIndex = focusMessageId ? messages.findIndex(message => message.id === focusMessageId) : -1;
+  const historyIndex = collapseBeforeMessageId ? messages.findIndex(message => message.id === collapseBeforeMessageId) : -1;
+  const historyEnd = Math.max(0, historyIndex > 0 && messages[historyIndex - 1].author === "user" ? historyIndex - 1 : historyIndex);
 
   useEffect(() => {
     if (!scrollMemoryRef || !thread.current) return;
@@ -221,7 +225,8 @@ export function ConversationWorkspace({
           }}
         >
           <div className={styles.threadInner}>
-            {messages.length ? messages.map(renderMessage) : intro}
+            {historyEnd > 0 && <details className={styles.taskSettings}><summary>앞선 대화 {historyEnd}개 보기</summary>{messages.slice(0, historyEnd).map(renderMessage)}</details>}
+            {messages.length ? messages.slice(historyEnd).map(renderMessage) : intro}
             {pending && <p role="status">
               {pendingLabel}
             </p>}
