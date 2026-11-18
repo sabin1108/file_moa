@@ -196,7 +196,10 @@ export class SampleWorkspaceStore {
         ...(mode === "grounded" && state.files ? { documents: sampleSelectedMaterials(this.catalog, state, questionIds) } : {}),
       }, onText, this.abort!.signal);
       if (generation !== this.generation || performance.now() >= this.deadline) return;
-      if (result.ok) { this.dispatch({ type: "ai-answer", requestId, mode, question: state.draft, result }); return; }
+      if (result.ok) {
+        if (!this.dispatch({ type: "ai-answer", requestId, mode, question: state.draft, result })) this.preservePartial(state.draft);
+        return;
+      }
       this.preservePartial(state.draft);
       this.snapshot = { ...this.snapshot, aiPending: false, notice: (result.reason ? LIVE_AI_REASON_MESSAGES[result.reason] : SAMPLE_AI_MESSAGES[result.code]) + (result.retryAfter ? ` 약 ${result.retryAfter}초 뒤 다시 시도할 수 있어요.` : "") };
     } catch {
@@ -263,6 +266,7 @@ export class SampleWorkspaceStore {
 
       if (result.ok) {
         const accepted = this.dispatch({ type: "organization-propose", instruction, candidateIds: documentIds, result, ...(context ? { context } : {}) });
+        if (!accepted) this.preservePartial();
         return accepted ? result : { ok: false as const, code: "unavailable" as const, reason: "invalid-plan" as const };
       }
 

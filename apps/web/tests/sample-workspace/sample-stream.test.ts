@@ -12,6 +12,7 @@ it("shows text before completion, without retrying a truncated or mismatched str
   vi.stubGlobal("fetch", fetcher);
   expect(await requestSampleStream("answer", "openai", { requestId }, text)).toEqual({ ok: false, code: "timeout" });
   expect(text).toHaveBeenCalledWith("생성된 일부");
+  expect(fetcher.mock.calls[0][0]).toBe("/demo/stream");
   fetcher.mockResolvedValue(response([{ type: "accepted" }, { type: "text", text: "일부" }]));
   await expect(requestSampleStream("answer", "openai", { requestId }, text)).rejects.toThrow("incomplete");
   fetcher.mockResolvedValue(response([{ type: "accepted" }, { type: "text", text: "잘못된 요청", requestId: crypto.randomUUID() }]));

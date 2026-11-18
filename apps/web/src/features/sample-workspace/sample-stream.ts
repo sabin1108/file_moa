@@ -5,7 +5,7 @@ import { readSseData } from "../../shared/sse";
 import { sampleStreamEventSchema } from "../../shared/sample-stream";
 
 export async function requestSampleStream(kind: "answer" | "organization", provider: AiProvider | null, input: { requestId: string }, onText?: (text: string) => void, signal = new AbortController().signal) {
-  const response = await fetch("/api/demo/stream", { method: "POST", credentials: "same-origin", redirect: "error", headers: { "content-type": "application/json" }, body: JSON.stringify({ kind, provider, input }), signal, cache: "no-store" });
+  const response = await fetch("/demo/stream", { method: "POST", credentials: "same-origin", redirect: "error", headers: { "content-type": "application/json" }, body: JSON.stringify({ kind, provider, input }), signal, cache: "no-store" });
   if (!response.ok || !response.body || !response.headers.get("content-type")?.startsWith("text/event-stream")) {
     await response.body?.cancel().catch(() => undefined);
     throw new Error("sample-stream-unavailable");

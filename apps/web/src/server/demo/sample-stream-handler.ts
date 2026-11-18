@@ -15,13 +15,13 @@ export async function handleSampleStream(request: Request) {
   const jar = await cookies();
   const context = { token: jar.get(SAMPLE_COOKIE)?.value, visitorToken: jar.get(DEMO_VISITOR_COOKIE)?.value, origin: request.headers.get("origin") };
   try { requireSampleContext(context); }
-  catch { return Response.json({ error: "session-or-origin" }, { status: 403 }); }
+  catch { return Response.json({ error: "session-or-origin" }, { status: 403, headers: { "cache-control": "no-store" } }); }
   let body;
   let requestId: string;
   try {
     body = inputSchema.parse(await readProviderJson(new Response(request.body), 263_000));
     requestId = z.object({ requestId: z.uuid() }).parse(body.input).requestId;
-  } catch { return Response.json({ error: "input" }, { status: 400 }); }
+  } catch { return Response.json({ error: "input" }, { status: 400, headers: { "cache-control": "no-store" } }); }
   const abort = new AbortController();
   const signal = AbortSignal.any([request.signal, abort.signal]);
   const encoder = new TextEncoder();

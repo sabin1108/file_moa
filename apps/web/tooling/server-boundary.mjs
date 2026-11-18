@@ -19,7 +19,7 @@ const serverBoundaryRule = {
     return {
       Identifier(node) {
         const endpoint = filename.endsWith('/src/features/conversation-workspace/messaging/chat-stream.ts') ? '/api/chat'
-          : filename.endsWith('/src/features/sample-workspace/sample-stream.ts') ? '/api/demo/stream' : null;
+          : filename.endsWith('/src/features/sample-workspace/sample-stream.ts') ? '/demo/stream' : null;
         if (!endpoint || node.name !== 'fetch') return;
 
         const call = node.parent;

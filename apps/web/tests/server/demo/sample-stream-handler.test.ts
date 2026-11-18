@@ -7,7 +7,7 @@ vi.mock("../../../src/server/demo/sample-answer", () => ({ answerSample: mocks.a
 vi.mock("../../../src/server/demo/sample-organization", () => ({ organizeSample: mocks.organize }));
 import { handleSampleStream } from "../../../src/server/demo/sample-stream-handler";
 const input = { requestId: "d986bf5f-e730-447d-a3c0-d48cf4a91483" };
-const request = (body: unknown) => new Request("https://fixture.invalid/api/demo/stream", { method: "POST", headers: { origin: "https://fixture.invalid" }, body: JSON.stringify(body) });
+const request = (body: unknown) => new Request("https://fixture.invalid/demo/stream", { method: "POST", headers: { origin: "https://fixture.invalid" }, body: JSON.stringify(body) });
 beforeEach(() => { mocks.context.mockReset(); mocks.answer.mockReset(); mocks.organize.mockReset(); });
 it("streams accepted and readable deltas before completion, excluding raw plans and reasoning", async () => {
   let done!: () => void;

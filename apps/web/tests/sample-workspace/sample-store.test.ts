@@ -32,6 +32,19 @@ const memory = () => {
 afterEach(() => vi.useRealTimers());
 
 describe("sample session storage boundary", () => {
+  it("retains received text if the completed organization plan fails the final client check", async () => {
+    const store = new SampleWorkspaceStore(catalog, session("invalid-stream-plan"), memory);
+    const off = store.subscribe(() => {});
+    const result = await store.requestOrganization(async (_input, onText) => {
+      onText?.("자료를 검토한 제안입니다.");
+      return { ok: true, model: "fixture", usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
+        organization: { summary: "자료를 검토한 제안입니다.", matches: [{ documentId: "outside", destination: ["회의"], evidence: "확인할 수 없는 외부 근거입니다.", date: null }], held: [] } };
+    }, "주제별로 정리", ["one"]);
+    expect(result).toMatchObject({ ok: false, reason: "invalid-plan" });
+    expect(store.getSnapshot().state).toMatchObject({ phase: "select", organization: null });
+    expect(store.getSnapshot().state.messages.at(-1)?.text).toContain("검증하지 못한 답변");
+    off();
+  });
   it("keeps a canceled organization draft and ignores its late plan without replay on reload", async () => {
     const storage = memory();
     const contentCatalog: SampleCatalog = { ...catalog, documents: [{ ...catalog.documents[0], excerpt: "회의 기록과 다음 일정입니다." }] };
