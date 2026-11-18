@@ -37,3 +37,7 @@
 | `/demo/settings` | 40.9ms | 60ms | 0 |
 
 정적 JS/CSS 전체는 54파일·4,573,004bytes로 직전 기록보다 +4,187bytes다. 초기 전송량·동일 조건 전후 개선율·인증 사용자 성능이나 AI 응답 시간으로 해석하지 않는다. `.omx/verification/material-sync-20261118/performance.json`에 표본을 보관했다.
+
+## 배포 확인
+
+기능 커밋 `0e46349f693e244b2008ebbb292e25cb16685226`을 main에 커밋·origin/main으로 푸시했고 [Vercel 배포가 성공했다](https://vercel.com/sabins-projects-011c6dea/web/83HWxa6E9yiUFLL6zZDJL5qkRzNS). 운영 데모의 새 안내·생성→편집→현재 질문 발췌→F5 보존과 health 200을 확인했다. 유료 AI 요청은 보내지 않았다. 실제 Next 로컬 production에서도 생성 문서의 질문 선택 연결·390/1440px 행 높이·가로 넘침을 확인했다. 배포 대상 25파일에서 알려진 로컬 비밀 값 9개와 일치한 값은 0개였으며 개인 기록 3개는 제외했다. 이후 문서만 보완한 커밋에는 기능 변경이 없다.
