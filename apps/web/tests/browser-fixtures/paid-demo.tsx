@@ -10,12 +10,13 @@ import type { SampleAiErrorCode } from "../../src/shared/sample-ai";
 import type { SampleCatalog } from "../../src/shared/sample-contract";
 import "../../src/styles/globals.css";
 
+const capacity = new URLSearchParams(location.search).get("capacity") === "100";
 const catalog: SampleCatalog = {
   version: "1", folders: [{ id: "work", label: "업무" }, { id: "web", label: "받은 자료/개발/웹사이트 문서" }],
-  documents: Array.from({ length: 42 }, (_, index) => ({ id: `doc-${index + 1}`, name: `회의자료-${index + 1}.md`, format: "md" as const,
-    ...(index < 2 ? { sourceFolderId: "web" } : {}), excerpt: `합성 회의 자료 ${index + 1}입니다. 다음 작업과 일정을 검토했습니다.`, proposal: { folderId: "work", reason: "회의", reviewRequired: false } })),
+  documents: Array.from({ length: capacity ? 100 : 42 }, (_, index) => ({ id: `doc-${index + 1}`, name: `회의자료-${index + 1}.md`, format: "md" as const,
+    ...(index < 2 ? { sourceFolderId: "web" } : {}), excerpt: `합성 회의 자료 ${index + 1}입니다. 다음 작업과 일정을 검토했습니다.`.padEnd(capacity ? 500 : 0, "가"), proposal: { folderId: "work", reason: "회의", reviewRequired: false } })),
 };
-const store = new SampleWorkspaceStore(catalog, { kind: "sample", id: "paid-browser-fixture", expiresAt: Date.now() + 3600000, version: "1" });
+const store = new SampleWorkspaceStore(catalog, { kind: "sample", id: capacity ? "capacity-browser-fixture" : "paid-browser-fixture", expiresAt: Date.now() + 3600000, version: "1" });
 const control = { store, answers: [] as SampleAnswerRequest[], organizations: 0, organizationInputs: [] as Parameters<SampleOrganizationAction>[0][], review: false, emptyOrganization: false, malformedOrganization: false, hold: false, failure: null as SampleAiErrorCode | null, resolve: [] as (() => void)[] };
 const usage = { inputTokens: 10, outputTokens: 10, totalTokens: 20 };
 const answer: SampleAnswerAction = async input => {
