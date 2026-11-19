@@ -117,7 +117,7 @@ export function ConversationWorkspace({
     const current = thread.current.querySelector<HTMLElement>('[data-current-reply="true"]');
     if (!current) return;
     const top = current.getBoundingClientRect().top - thread.current.getBoundingClientRect().top + thread.current.scrollTop - 16;
-    thread.current.scrollTo({ top, behavior: pending || matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+    thread.current.scrollTo({ top, behavior: "instant" });
   }, [focusMessageId, pending]);
 
   useEffect(() => {

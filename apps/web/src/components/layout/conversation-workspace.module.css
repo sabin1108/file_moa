@@ -75,9 +75,6 @@
   font-size: 13px;
 }
 .replyStatus { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; font-size: 13px; color: var(--muted); }
-.assistantMessage[data-current-reply="true"] > p { animation: replyArrival 240ms ease-out; }
-@keyframes replyArrival { from { opacity: .55; } to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .assistantMessage[data-current-reply="true"] > p { animation: none; } }
 .taskSettings > summary { min-height: 44px; align-content: center; cursor: pointer; font-size: 13px; color: var(--muted); }
 .workspace[data-focused-task="true"] [data-tour="context"] { margin-bottom: 0; }
 .workspace[data-focused-task="true"] [data-tour="composer"] textarea { min-height: 56px; }
